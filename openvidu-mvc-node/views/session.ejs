@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8"></meta>
+	<title>OpenVidu Demo Java MVC Secure</title>
+	<link rel="stylesheet" type="text/css" href="style.css"></link>
+</head>
+
+<body>
+
+	<h2>
+		<%= sessionName %>
+	</h2>
+	<form action="/leave-session" method="post">
+		<input style="display:none" name="sessionname" value="<%= sessionName %>"></input>
+		<input style="display:none" name="token" value="<%= token %>"></input>
+		<button type="submit" onclick="leaveSession()">Leave session</button>
+	</form>
+	<div id="publisher"></div>
+	<div id="subscriber"></div>
+
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="OpenVidu.js"></script>
+
+<script>
+	var sessionId = <%- JSON.stringify(sessionId) %>;
+	var token = <%- JSON.stringify(token) %>;
+	var nickName = <%- JSON.stringify(nickName) %>;
+	var userName = <%- JSON.stringify(userName) %>;
+	var sessionName = <%- JSON.stringify(sessionName) %>;
+	console.warn('Request of SESSIONID and TOKEN gone WELL (SESSIONID:' +
+		sessionId + ", TOKEN:" + token + ")");
+
+	// 1) Get an OpenVidu object and initialize a Session
+	var OV = new OpenVidu("wss://" + location.hostname + ":8443/");
+	var session = OV.initSession("apikey", sessionId);
+
+	// 2) Specify the actions when events take place
+	session.on('streamCreated', function (event) {
+		// Subscribe to the stream to receive it
+		var subscriber = session.subscribe(event.stream, 'subscriber');
+		subscriber.on('videoElementCreated', function (event) {
+			// Add a new HTML element for the user's nickname
+			appendUserData(event.element, subscriber.stream.connection);
+		});
+	});
+
+	session.on('streamDestroyed', function (event) {
+		// Delete the HTML element with the user's nickname
+		removeUserData(event.stream.connection);
+	});
+
+	// 3) Connect to the session
+	session.connect(token, '{"clientData": "' + nickName + '"}', function (error) {
+
+		// If the connection is successful 
+		if (!error) {
+
+			// If the user has enough permissions
+			if (isPublisher(userName)) {
+
+				// 4) Get your own camera stream with the desired resolution and publish it, only if the user is supposed to do so
+				var publisher = OV.initPublisher('publisher', {
+					audio: true,
+					video: true,
+					quality: 'MEDIUM'
+				});
+
+				// 5) Publish your stream
+				session.publish(publisher);
+
+			} else {
+				console.warn('You don\'t have permissions to publish');
+			}
+		} else {
+			console.warn('There was an error connecting to the session:', error.code, error.message);
+		}
+	});
+
+	function leaveSession() {
+		session.disconnect();
+	}
+
+	function appendUserData(videoElement, connection) {
+		var clientDataJSON = JSON.parse(connection.data.split('%/%')[0]);
+		var serverDataJSON = JSON.parse(connection.data.split('%/%')[1]);
+		$('<p id="data-' + connection.connectionId + '">Nickname: ' + clientDataJSON.clientData +
+			'<br/>Username: ' + serverDataJSON.serverData + '</p>'
+		).insertAfter(videoElement);
+	}
+
+	function removeUserData(connection) {
+		$("#data-" + connection.connectionId).remove();
+	}
+
+	function isPublisher(userName) {
+		return userName.includes('publisher');
+	}
+</script>
+
+</html>

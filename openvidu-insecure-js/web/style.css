@@ -1,0 +1,16 @@
+#publisher {
+	float: left;
+	width: 20%;
+	margin: 10px;
+}
+
+#subscriber {
+	float: left;
+	width: 20%;
+	margin: 10px;
+}
+
+video {
+	width: 100%;
+	height: auto;
+}

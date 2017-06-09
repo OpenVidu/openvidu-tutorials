@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8"></meta>
+    <title>OpenVidu Demo Node MVC Secure</title>
+    <link rel="stylesheet" type="text/css" href="style.css"></link>
+</head>
+
+<body>
+    <h1>
+        Hello, <span style="color: red"><%= user %></span>! Join a video session
+    </h1>
+    <form action="/session" method="post">
+        <p>
+            <label>User</label> <input type="text" id="data" name="data" required="true"></input>
+        </p>
+        <p>
+            <label>Session</label> <input type="text" id="sessionname" name="sessionname" required="true"></input>
+        </p>
+        <p>
+            <button type="submit">Join!</button>
+        </p>
+    </form>
+    <p>
+        <form action="/" method="post">
+            <input type="hidden" name="islogout" value="true"></input>
+            <button type="submit">Log out</button>
+        </form>
+    </p>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script>
+    window.onload = function () { // Generate participant info
+        $("#sessionname").val("Session " + Math.floor(Math.random() * 10));
+		$("#data").val("Participant " + Math.floor(Math.random() * 100));
+    }
+</script>
+
+</html>

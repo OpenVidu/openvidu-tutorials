@@ -1,0 +1,102 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ 	<modelVersion>4.0.0</modelVersion>
+
+  	<groupId>io.openvidu</groupId>
+  	<artifactId>openvidu-js-java</artifactId>
+  	<version>0.0.1-SNAPSHOT</version>
+  	<packaging>jar</packaging>
+
+  	<name>openvidu-js-java</name>
+  	<url>http://maven.apache.org</url>
+  
+ 	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>1.4.1.RELEASE</version>
+	</parent>
+
+  	<properties>
+    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    	<java.version>1.8</java.version>
+    	<start-class>io.openvidu.sample.secure.spa.java.App</start-class>
+		<docker.image.prefix>openvidu</docker.image.prefix>
+  	</properties>
+  	
+  	<build>
+  
+	  	<finalName>${project.artifactId}-${project.version}</finalName>
+	  
+	  	<plugins>
+	  	
+		    <plugin>
+		        <groupId>org.springframework.boot</groupId>
+		        <artifactId>spring-boot-maven-plugin</artifactId>
+		        <dependencies>
+	            	<dependency>
+	                	<groupId>org.springframework</groupId>
+	                	<artifactId>springloaded</artifactId>
+	                	<version>1.2.6.RELEASE</version>
+	            	</dependency>
+	        	</dependencies>
+		    </plugin>
+		    
+		    <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<configuration>
+					<mainClass>${start-class}</mainClass>
+				</configuration>
+			</plugin>
+
+			<plugin>
+	            <groupId>com.spotify</groupId>
+	            <artifactId>docker-maven-plugin</artifactId>
+	            <version>0.2.3</version>
+	            <configuration>
+	                <imageName>${docker.image.prefix}/${project.artifactId}</imageName>
+	                <dockerDirectory>src/main/docker</dockerDirectory>
+	                <resources>
+	                    <resource>
+	                        <targetPath>/</targetPath>
+	                        <directory>${project.build.directory}</directory>
+	                        <include>${project.build.finalName}.war</include>
+	                    </resource>
+	                </resources>
+	            </configuration>
+        	</plugin>
+		    
+		</plugins>
+	</build>
+
+ 	<dependencies>
+ 	
+   		<dependency>
+      		<groupId>junit</groupId>
+      		<artifactId>junit</artifactId>
+      		<scope>test</scope>
+    	</dependency>
+    	
+    	<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>com.googlecode.json-simple</groupId>
+		    <artifactId>json-simple</artifactId>
+		</dependency>
+		
+		<dependency>
+		    <groupId>io.openvidu</groupId>
+		    <artifactId>openvidu-java-client</artifactId>
+		    <version>0.0.1-SNAPSHOT</version>
+		</dependency>
+	
+  	</dependencies>
+</project>

@@ -1,0 +1,82 @@
+<html>
+
+<head>
+	<title>OpenVidu Sample</title>
+
+	<meta charset="utf-8">
+	<link rel="styleSheet" href="style.css" type="text/css" media="screen">
+
+</head>
+
+<body>
+
+	<div id="not-logged">
+		<form onsubmit="return false">
+			<p>
+				<label>User</label>
+				<input type="text" id="user" required>
+			</p>
+			<p>
+				<label>Pass</label>
+				<input type="password" id="pass" required>
+			</p>
+			<p>
+				<button id="login-btn" onclick="logIn()">Log in</button>
+			</p>
+		</form>
+		<table style="border: 1px solid">
+			<tr>
+				<th>User</th>
+				<th>Pass</th>
+			</tr>
+			<tr>
+				<td>publisher1</td>
+				<td>pass</td>
+			</tr>
+			<tr>
+				<td>publisher2</td>
+				<td>pass</td>
+			</tr>
+			<tr>
+				<td>subscriber</td>
+				<td>pass</td>
+			</tr>
+		</table>
+		<p>PUBLISHER: send and receive media</p><p>SUBSCRIBER: receive media</p>
+	</div>
+
+	<div id="logged" hidden>
+		<div id="join">
+			<h1>Hello, <span id="name-user" style="color:red"></span>! Join a video session</h1>
+			<form onsubmit="return false">
+				<p>
+					<label>Name:</label>
+					<input type="text" id="participantName" required>
+				</p>
+				<p>
+					<label>Session:</label>
+					<input type="text" id="sessionName" required>
+				</p>
+				<p>
+					<button id="join-btn" onclick="joinSession()">Join!</button>
+				</p>
+			</form>
+			<p>
+				<button id="logout-btn" onclick="logOut()">Log out</button>
+			</p>
+		</div>
+
+		<div id="session" style="display: none;">
+			<h2 id="session-header"></h2>
+			<input type="button" id="buttonLeaveSession" onmouseup="removeUser(); leaveSession()" value="Leave session">
+			<div id="publisher"></div>
+			<div id="subscriber"></div>
+		</div>
+	</div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<script src="OpenVidu.js"></script>
+<script src="app.js"></script>
+
+</html>
