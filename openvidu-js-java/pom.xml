@@ -19,7 +19,7 @@
   	<properties>
     	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     	<java.version>1.8</java.version>
-    	<start-class>io.openvidu.sample.secure.spa.java.App</start-class>
+    	<start-class>io.openvidu.js.java.App</start-class>
 		<docker.image.prefix>openvidu</docker.image.prefix>
   	</properties>
   	
