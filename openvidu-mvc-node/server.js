@@ -1,3 +1,8 @@
+var OpenVidu = require('openvidu-node-client').OpenVidu;
+var Session = require('openvidu-node-client').Session;
+var OpenViduRole = require('openvidu-node-client').OpenViduRole;
+var TokenOptions = require('openvidu-node-client').TokenOptions;
+
 // Check launch arguments
 if (process.argv.length != 4) {
     console.log("Usage: node " + __filename + " OPENVIDU_URL OPENVIDU_SECRET");
@@ -38,28 +43,31 @@ var options = {
 https.createServer(options, app).listen(5000);
 console.log("App listening on port https://[]:5000");
 
-// Environment variables
-var OPENVIDU_URL = process.argv[2];
-var OPENVIDU_SECRET = process.argv[3];
-
 // Mock database
 var users = [{
     user: "publisher1",
     pass: "pass",
-    role: "PUBLISHER"
+    role: OpenViduRole.PUBLISHER
 }, {
     user: "publisher2",
     pass: "pass",
-    role: "PUBLISHER"
+    role: OpenViduRole.PUBLISHER
 }, {
     user: "subscriber",
     pass: "pass",
-    role: "SUBSCRIBER"
+    role: OpenViduRole.SUBSCRIBER
 }];
 
+// Environment variables
+var OPENVIDU_URL = process.argv[2];
+var OPENVIDU_SECRET = process.argv[3];
+
+// OpenVidu object
+var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
+
 // Objects for storing active sessions and users
-var mapSessionNameSessionId = {};
-var mapSessionIdsTokens = {};
+var mapSessionNameSession = {};
+var mapSessionIdTokens = {};
 
 
 // APIRest
@@ -122,11 +130,17 @@ app.post('/session', (req, res) => {
         var serverData = '{"serverData": "' + req.session.loggedUser + '"}';
         console.log("Getting sessionId and token | {sessionName}={" + sessionName + "}");
 
-        var sessionId = mapSessionNameSessionId[sessionName];
-        if (sessionId) {
+        var mySession = mapSessionNameSession[sessionName];
+        var tokenOptions = new TokenOptions.Builder()
+            .role(role)
+            .data('{"serverData": "' + req.session.loggedUser + '"}')
+            .build();
+
+        if (mySession) {
             console.log('Existing session ' + sessionName);
-            getToken(sessionId, role, serverData, function (token) {
-                mapSessionIdsTokens[sessionId].push(token);
+            mySession.generateToken(tokenOptions, function (token) {
+                var sessionId = mySession.getSessionId();
+                mapSessionIdTokens[sessionId].push(token);
                 console.log('SESSIONID: ' + sessionId);
                 console.log('TOKEN: ' + token);
                 res.render('session.ejs', {
@@ -139,11 +153,13 @@ app.post('/session', (req, res) => {
             });
         } else {
             console.log('New session ' + sessionName);
-            getSessionId(function (sessionId) {
-                mapSessionNameSessionId[sessionName] = sessionId;
-                mapSessionIdsTokens[sessionId] = [];
-                getToken(sessionId, role, serverData, function (token) {
-                    mapSessionIdsTokens[sessionId].push(token);
+            mySession = OV.createSession();
+            mySession.getSessionId(function (sessionId) {
+                mapSessionNameSession[sessionName] = mySession;
+                mapSessionIdTokens[sessionId] = [];
+
+                mySession.generateToken(tokenOptions, function (token) {
+                    mapSessionIdTokens[sessionId].push(token);
                     console.log('SESSIONID: ' + sessionId);
                     console.log('TOKEN: ' + token);
                     res.render('session.ejs', {
@@ -168,14 +184,14 @@ app.post('/leave-session', (req, res) => {
         var token = req.body.token;
         console.log('Removing user | {sessionName, token}={' + sessionName + ', ' + token + '}');
 
-        var sessionId = mapSessionNameSessionId[sessionName];
-        if (sessionId) {
-            var tokens = mapSessionIdsTokens[sessionId];
+        var mySession = mapSessionNameSession[sessionName];
+        if (mySession) {
+            var tokens = mapSessionIdTokens[mySession.getSessionId()];
             if (tokens) {
                 var index = tokens.indexOf(token);
                 if (index !== -1) { // User left the session
                     tokens.splice(index, 1);
-                    console.log(sessionName + ': ' + mapSessionIdsTokens[sessionId].toString());
+                    console.log(sessionName + ': ' + mapSessionIdTokens[mySession.getSessionId()].toString());
                 } else {
                     var msg = 'Problems in the app server: the TOKEN wasn\'t valid';
                     console.log(msg);
@@ -183,9 +199,9 @@ app.post('/leave-session', (req, res) => {
                         user: req.session.loggedUser
                     });
                 }
-                if (mapSessionIdsTokens[sessionId].length == 0) { // Last user left the session
+                if (mapSessionIdTokens[mySession.getSessionId()].length == 0) { // Last user left the session
                     console.log(sessionName + ' empty!');
-                    delete mapSessionNameSessionId[sessionName];
+                    delete mapSessionNameSession[sessionName];
                 }
                 res.render('dashboard.ejs', {
                     user: req.session.loggedUser
@@ -219,72 +235,4 @@ function isLogged(session) {
 
 function getBasicAuth() {
     return 'Basic ' + (new Buffer('OPENVIDUAPP:' + OPENVIDU_SECRET).toString('base64'));
-}
-
-// HTTP request to OpenVidu Server to get a sessionId
-function getSessionId(callback) {
-    var options = {
-        hostname: OPENVIDU_URL,
-        port: 8443,
-        path: '/api/sessions',
-        method: 'POST',
-        headers: {
-            'Authorization': getBasicAuth()
-        }
-    };
-    const req = https.request(options, (res) => {
-        var body = '';
-        res.on('data', (d) => {
-            // Continuously update stream with data
-            body += d;
-        });
-        res.on('end', function () {
-            // Data reception is done
-            var parsed = JSON.parse(body);
-            callback(parsed.id);
-        });
-    });
-
-    req.on('error', (e) => {
-        console.error(e);
-    });
-    req.end();
-}
-
-// HTTP request to OpenVidu Server to get a token
-function getToken(sessionId, role, data, callback) {
-    var requestBody = JSON.stringify({
-        'session': sessionId,
-        'role': role,
-        'data': data
-    });
-   var options = {
-        hostname: OPENVIDU_URL,
-        port: 8443,
-        path: '/api/tokens',
-        method: 'POST',
-        headers: {
-            'Authorization': getBasicAuth(),
-            'Content-Type': 'application/json',
-            'Content-Length': Buffer.byteLength(requestBody)
-        }
-    };
-    const req = https.request(options, (res) => {
-        var body = '';
-        res.on('data', (d) => {
-            // Continuously update stream with data
-            body += d;
-        });
-        res.on('end', function () {
-            // Data reception is done
-            var parsed = JSON.parse(body);
-            callback(parsed.token);
-        });
-    });
-
-    req.on('error', (e) => {
-        console.error(e);
-    });
-    req.write(requestBody);
-    req.end();
 }
