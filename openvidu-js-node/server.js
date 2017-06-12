@@ -150,6 +150,7 @@ app.post('/api-sessions/remove-user', function (req, res) {
         var sessionName = req.body.sessionName;
         var token = req.body.token;
         console.log('Removing user | {sessionName, token}={' + sessionName + ", " + token + '}');
+        
         var mySession = mapSessionNameSession[sessionName];
         if (mySession) {
             var tokens = mapSessionIdTokens[mySession.getSessionId()];
