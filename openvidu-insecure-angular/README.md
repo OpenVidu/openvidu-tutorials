@@ -1,88 +1,150 @@
 # openvidu-insecure-angular
 
-This repository contains a group videoconference sample application implemented using OpenVidu. This application is a SPA page implemented in [Angular 2](http://angular.io) and was generated with [angular-cli](https://github.com/angular/angular-cli) version 1.0.0-beta.17.
+This is the Angular version of _openvidu-insecure-js_. Try it if you plan to use Angular framework for your frontend.
 
-## Start OpenVidu Development Server
+## Understanding this example
 
-To develop a videoconference application with OpenVidu you first have to start an OpenVidu Development Server, that contains all needed services. OpenVidu Development Server is distributed in a single docker image. 
+<p align="center">
+  <img src="https://docs.google.com/uc?id=0B61cQ4sbhmWSbmtwcXNnXy1ZSkU">
+</p>
 
-To execute OpenVidu Development Server in your local development computer, you need to have docker software installed. You can [install it on Windows, Mac or Linux](https://docs.docker.com/engine/installation/).
+OpenVidu is composed by the three modules displayed on the image above in its insecure version.
 
-To start OpenVidu Development Server execute the following command (depending on your configuration it is is possible that you need to execute it with 'sudo'):
+- **openvidu-browser**: NPM package for your Angular app. It allows you to manage your video-calls straight away from your clients
+- **openvidu-server**: Java application that controls Kurento Media Server
+- **Kurento Media Server**: server that handles low level operations of media flow transmissions
 
-<pre>
-docker run -p 8443:8443 --rm -e KMS_STUN_IP=193.147.51.12 -e KMS_STUN_PORT=3478 openvidu/openvidu-server-kms
-</pre>
+> You will only have to make use of **openvidu-browser** NPM package to get this sample app working
 
-And then wait to a log trace similar to this:
+## Executing this example
 
-<pre>
-INFO: Started OpenViduServer in 5.372 seconds (JVM running for 6.07)
-</pre>
+1. Clone the repo:
 
-If you have installed Docker Toolbox in Windows or Mac, you need to know the IP address of your docker machine excuting the following command:
+	```bash
+	git clone https://github.com/OpenVidu/openvidu-tutorials.git
+	```
+	
+2. You will need angular-cli to serve the Angular frontend. You can install it with the following command:
 
-<pre>
-docker-machine ip default
-</pre>
+	```bash
+	npm install -g @angular/cli
+	```
 
-Then, open in your browser and visit URL `https://127.0.0.1:8443` (or if you are using Docker Toolbox in Windows or Mac visit `https://<IP>:8443`). Then, browser will complain about insecure certificate. Please accept the selfsigned certificate as valid.
+3. To run the sample application, execute the following command in the project:
 
-Now you are ready to execute the sample application.
+	```bash
+	cd openvidu-insecure-angular
+	npm install
+	ng serve
+	```
 
-## Executing sample application
+4. _openvidu-server_ and _Kurento Media Server_ must be up and running in your development machine. The easiest way is running this Docker container which wraps both of them (you will need [Docker CE](https://store.docker.com/search?type=edition&offering=community)):
 
-In this repository you have a sample JavaScript application that use OpenVidu Development Server to allow videoconferences  between a group of users. Please clone it with the following command (you need git installed in your development machine):
+	```bash
+	docker run -p 8443:8443 --rm -e KMS_STUN_IP=193.147.51.12 -e KMS_STUN_PORT=3478 -e openvidu.security=false openvidu/openvidu-server-kms
+	```
 
-<pre>
-git clone https://github.com/OpenVidu/openvidu-sample-basic-ng2
-</pre>
+5. Go to [`localhost:4200`](http://localhost:4200) to test the app once the server is running. The first time you use the docker container, an alert message will suggest you accept the self-signed certificate of _openvidu-server_ when you first try to join a video-call.
 
-Then, install NPM dependencies with:
+## Understanding the code
 
-<pre>
-cd openvidu-sample-basic-ng2
-npm install
-</pre>
+This is an Angular project generated with angular-cli, and therefore you will see lots of configuration files and other stuff that doesn't really matter to us. After getting `openvidu-browser` NPM package (`npm install openvidu-browser`), we will focus on the following files under `src/app/` folder:
 
-If you obtain an error executing this command, be sure you have installed Node 4 or highe together with NPM 3 or higher.
+- `app.component.ts`: AppComponent, main component of the app. It contains the functionalities for joining a video-call and for handling the video-calls themselves.
+- `app.component.html`: HTML for AppComponent.
+- `app.component.css`: CSS for AppComponent.
+- `stream.component.css`: StreamComponent, auxiliary component to manage Stream objects on our own. It wraps the final HTML `<video>` which will display the video of its Stream property, as well as the user's nickname in a `<p>` element.
 
-Then, you execute the development Angular 2 server executing 
+Let's see how `app.component.ts` uses `openvidu-browser`:
 
-<pre>
-ng serve
-</pre>
+- First line imports the necessary objects from `openvidu-browser`:
 
-Navigate to `http://localhost:4200/`. The app will automatically reload if you change any of the source files.
+	```typescript
+	import { OpenVidu, Session, Stream } from 'openvidu-browser';
+	```
+- `app.component.ts` declares the following properties:
 
-If you are using Docker Toolbox for Windows or Mac, you need to modify the sample application code. You have to change the following line in the file `src/app/app.component.ts`:
+	```typescript
+	// OpenVidu objects
+  OV: OpenVidu;
+  session: Session;
 
-<pre>
-this.openVidu = new OpenVidu("wss://127.0.0.1:8443/");
-</pre>
+  // Streams to feed StreamComponent's
+  remoteStreams: Stream[] = [];
+  localStream: Stream;
 
-You have to change `127.0.0.1` with the IP of the OpenVidu Development Server obtained in the previous step.
+  // Join form
+  sessionId: string;
+  token: string;
+	```
+	`OpenVidu` object will allow us to get a `Session` object, which is declared just after it. `remoteStreams` array will store the active streams of other users in the video-call and `localStream` will be your own local webcam stream. Finally, `sessionId` and `token` params simply represent the video-call and your participant's nickname, as you will see in a moment.
 
-Then you can go to `http://localhost:4200/` to use the sample application. 
+- Whenever a user clicks on the submit input defined in `app.component.html`, `joinSession()` method is called:
 
-As you can see, the user name and session is filled automatically in the form to make easier testing the app. 
+	```typescript
+	this.OV = new OpenVidu('wss://' + location.hostname + ':8443/');
+    this.session = this.OV.initSession('apikey', this.sessionId);
+	```
+	Since we are in a local sample app, `OV` is initialize with `localhost:8443` as its _openvidu-server_ URL. `session` is initialize with `sessionId` param: this means we will connect to `sessionId` video-call. In this case, this parameter is binded from an `<input>` element of `app.component.html`, which may be filled by the user.
 
-If you open `http://localhost:4200/` in two tabs, you can simulate two users talking together. You can open as tabs as you want, but you need a very powerful development machine to test 3 or more users.
+	```javascript
+	this.session.on('streamCreated', (event) => {
+      this.remoteStreams.push(event.stream); // Add the new stream to 'remoteStreams' array
+      this.session.subscribe(event.stream, ''); // Empty string for no video element
+    });
 
-For now, it is not possible use the sample application from a different computer.
+    this.session.on('streamDestroyed', (event) => {
+      event.preventDefault(); // Avoid OpenVidu trying to remove the HTML video element
+      this.deleteRemoteStream(event.stream); // Remove the stream from 'remoteStreams' array
+    });
+	```
+	Here we subscribe to the Session events that interest us. As we are using Angular framework, a good approach will be treating each Stream as a component, contained in a StreamComponent. Thus, we need to store each new stream we received in an array (`remoteStreams`), and we must remove from it every deleted stream whenever it is necessary. To achieve this, we use the following events:
+	 - `streamCreated`: for each new Stream received by OpenVidu, we store it in our `remoteStreams` array and immediately subscribe to it so we can receive its video (empty string as second parameter, so OpenVidu doesn't create an HTML video on its own). HTML template of AppComponent will show the new video, as it contains an `ngFor` directive which will create a new StreamComponent for each Stream object stored in the array:
 
-## Troubleshooting
+   ```html
+   <div id="subscriber">
+		<div *ngFor="let s of this.remoteStreams">
+			<stream-component [stream]="s"></stream-component>
+		</div>
+	</div>
+	```
+	
+	 - `streamDestroyed`: for each Stream that has been destroyed (which means a user has left the video-call), we remove it from `remoteStreams` array, so Angular will automatically delete the required StreamComponent from HTML. We call `event.preventDefault()` to cancel OpenVidu default behaviour towards `streamDestroyed` event, which is the deletion of the previously created HTML video element on `streamCreated` event. Because we are handling the video elements by ourselves taking advantage of Angular capabilities, we tell OpenVidu not to create them on `streamCreated` and not to delete them on `streamDestroyed`, by passing an empty string as second parameter on `Session.subscribe()` method on `streamCreated` and by calling `event.preventDefault()` on `streamDestroyed`.
 
-If you click the joing button and nothing happens, check the developer tools log. If you see
+- Finally connect to the session and publish your webcam:
 
-<pre>
-Chrome: using SDP PlanB
-lang.js:234Angular 2 is running in the development mode. Call enableProdMode() to enable the production mode.
-Participant.js:32 New local participant undefined, streams opts:  []
-jsonrpcclient.js:127 Connecting websocket to URI: wss://127.0.0.1:8443/room
-browser.js:38 WebSocket connection to 'wss://127.0.0.1:8443/room' failed: WebSocket opening handshake was canceledws @ browser.js:38WebSocketWithReconnection @ webSocketWithReconnection.js:59JsonRpcClient @ jsonrpcclient.js:125OpenVidu.initJsonRpcClient @ OpenVidu.js:63OpenVidu.connect @ OpenVidu.js:35AppComponent.joinSession @ app.component.ts:46_View_AppComponent1._handle_submit_5_0 @ AppComponent.ngfactory.js:533(anonymous function) @ view.js:403(anonymous function) @ dom_renderer.js:249(anonymous function) @ dom_events.js:26ZoneDelegate.invoke @ zone.js:232onInvoke @ ng_zone_impl.js:43ZoneDelegate.invoke @ zone.js:231Zone.runGuarded @ zone.js:128NgZoneImpl.runInnerGuarded @ ng_zone_impl.js:72NgZone.runGuarded @ ng_zone.js:235outsideHandler @ dom_events.js:26ZoneDelegate.invokeTask @ zone.js:265Zone.runTask @ zone.js:154ZoneTask.invoke @ zone.js:335
-</pre>
+	```javascript
+	this.session.connect(this.token, '{"clientData": "' + this.token + '"}', (error) => {
+      // If the connection is successful, initialize a publisher and publish to the session
+      if (!error) {
 
-You have to go to
+        // 4) Get your own camera stream with the desired resolution and publish it, only if the user is supposed to do so
+        let publisher = this.OV.initPublisher('', {
+          audio: true,
+          video: true,
+          quality: 'MEDIUM'
+        });
 
-https://localhost:8443/ or https://127.0.0.1:8443/ and accept the certificate 
+        this.localStream = publisher.stream;
+
+        // 5) Publish your stream
+        this.session.publish(publisher);
+
+      } else {
+        console.log('There was an error connecting to the session:', error.code, error.message);
+      }
+    });
+	```
+	
+	`token` param is irrelevant when using insecure version of OpenVidu. Second parameter will supply the user's nickname showed by StreamComponent inside its `<p>` element. So in this case it is a JSON formatted string with a "clientData" tag with "token" value, which is retrieved from HTML input `<input type="text" name="token" id="token" [(ngModel)]="token" required>` (filled by the user).
+
+	In the callback of `Session.connect` method, we check the connection has been succesful (`error` value must be _null_) and right after that we get a `Publisher` object with both audio and video activated and MEDIUM quality. We then store our local Stream (contained in `Publisher.stream` object) in `localStream` and publish the Publisher object through `Session.publish()` method. The rest of users will receive our Stream object and will execute their `streamCreated` event.
+	
+	With regard to our local Stream, AppComponent's HTML template has also one StreamComponent declaration ready to show our own webcam as we did with remote streams:
+	```html
+	<div id="publisher">
+		<div *ngIf="this.localStream">
+			<stream-component [stream]="this.localStream"></stream-component>
+		</div>
+	</div>
+	```

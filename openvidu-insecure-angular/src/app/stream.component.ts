@@ -1,49 +1,41 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, DoCheck } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 import { Stream } from 'openvidu-browser';
 
 @Component({
-    selector: 'stream',
-    styles: [`    
-        .participant {
-	        float: left;
-	        width: 20%;
-	        margin: 10px;
-        }
-        .participant video {
-	        width: 100%;
-	        height: auto;
+    selector: 'stream-component',
+    styles: [`
+        video {
+            width: 100%;
+            height: auto;
         }`],
     template: `
-        <div class='participant'>
-          <p>{{stream.getId()}}</p>
+        <div>
           <video autoplay="true" [src]="videoSrc"></video>
+          <p>{{this.getNicknameTag()}}</p>
         </div>`
 })
-export class StreamComponent {
+export class StreamComponent implements DoCheck {
 
     @Input()
     stream: Stream;
 
-    videoSrc: SafeUrl;
+    videoSrc: SafeUrl = '';
+    videSrcUnsafe = '';
 
     constructor(private sanitizer: DomSanitizer) { }
 
-    ngOnInit() {
+    ngDoCheck() {
+        if (!(this.videSrcUnsafe === this.stream.getVideoSrc())) {
+            // src of Stream object has changed
+            this.videoSrc = this.sanitizer.bypassSecurityTrustUrl(this.stream.getVideoSrc());
+            this.videSrcUnsafe = this.stream.getVideoSrc();
+        }
+    }
 
-        let int = setInterval(() => {
-            if (this.stream.getWrStream()) {
-                this.videoSrc = this.sanitizer.bypassSecurityTrustUrl(
-                    URL.createObjectURL(this.stream.getWrStream()));
-                console.log("Video tag src=" + this.videoSrc);
-                clearInterval(int);
-            }
-        }, 1000);
-
-        //this.stream.addEventListener('src-added', () => {
-        //    this.video.src = this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(this.stream.getWrStream())).toString();
-        //});
+    getNicknameTag() {
+        return 'Nickname: ' + JSON.parse(this.stream.connection.data).clientData;
     }
 
 }
