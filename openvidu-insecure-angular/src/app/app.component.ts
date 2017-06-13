@@ -55,7 +55,7 @@ export class AppComponent {
       // If the connection is successful, initialize a publisher and publish to the session
       if (!error) {
 
-        // 4) Get your own camera stream with the desired resolution and publish it, only if the user is supposed to do so
+        // 4) Get your own camera stream with the desired resolution and publish it
         let publisher = this.OV.initPublisher('', {
           audio: true,
           video: true,

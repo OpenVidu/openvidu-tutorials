@@ -118,7 +118,7 @@ Let's see how `app.component.ts` uses `openvidu-browser`:
       // If the connection is successful, initialize a publisher and publish to the session
       if (!error) {
 
-        // 4) Get your own camera stream with the desired resolution and publish it, only if the user is supposed to do so
+        // 4) Get your own camera stream with the desired resolution and publish it
         let publisher = this.OV.initPublisher('', {
           audio: true,
           video: true,
@@ -147,4 +147,17 @@ Let's see how `app.component.ts` uses `openvidu-browser`:
 			<stream-component [stream]="this.localStream"></stream-component>
 		</div>
 	</div>
+	```
+	Last point worth considering is the `ngDoCheck()` implementation of StreamComponent. As we are handling Stream objects by ourselves (task which usually is taken care by OpenVidu), and because the URL of Stream objects takes some time to get its final value as the WebRTC negotiation takes place, we must listen to any change in `stream` @Input property. This allows us to update `videoSrc` value of the component, which finally ends up being the _src_ value of the `<video>` element. If we didn't do this, the Stream object will update its _src_ property, but our StreamComponent would keep the same initial `videoSrc` value. This ensures that all our StreamComponent's will properly display all the videos in the video-call using the correct _src_ value.
+	
+	```javascript
+	ngDoCheck() { // Detect any change in 'stream' property
+        // If 'src' of Stream object has changed, 'videoSrc' value must be updated
+        if (!(this.videSrcUnsafe === this.stream.getVideoSrc())) {
+            // Angular mandatory URL sanitization
+            this.videoSrc = this.sanitizer.bypassSecurityTrustUrl(this.stream.getVideoSrc());
+            // Auxiliary value to store the URL as a string for upcoming comparisons
+            this.videSrcUnsafe = this.stream.getVideoSrc();
+        }
+    }
 	```
