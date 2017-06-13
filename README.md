@@ -21,7 +21,7 @@ Angular version of _openvidu-insecure-js_. Try it if you plan to use Angular fra
 A secure OpenVidu sample app with a Java backend and a SPA frontend. It makes use of _openvidu-java-client_ to get the necessary params from OpenVidu Server.
 
 <p align="center">
-  <img src="https://docs.google.com/uc?id=0B61cQ4sbhmWSaTFwWW5seUwyVTQ">
+  <img src="https://docs.google.com/uc?id=0B61cQ4sbhmWScllLNlZTLVBTaUU">
 </p>
 
 ## [openvidu-js-node](https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-js-node)
@@ -29,15 +29,22 @@ A secure OpenVidu sample app with a Java backend and a SPA frontend. It makes us
 A secure OpenVidu sample app with a Node backend and a SPA frontend. It makes use of the _openvidu-node-client_ to get the necessary params from OpenVidu Server.
 
 <p align="center">
-  <img src="https://docs.google.com/uc?id=0B61cQ4sbhmWSUHFGTS14YkU3eTQ">
+  <img src="https://docs.google.com/uc?id=0B61cQ4sbhmWSVkNVZ2s3cmk2aHM">
 </p>
 
 ## [openvidu-mvc-java](https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-mvc-java)
 
-A secure OpenVidu sample app with a Java backend and a traditional MVC frontend. With regard to the use of OpenVidu, it is identical to _openvidu-js-java_. This tutorial is intended for developers who feel more comfortable with MVC web architectures for their frontends.
-[Thymeleaf](http://www.thymeleaf.org/) is the template engine of choice for this tutorial.
+A secure OpenVidu sample app with a Java backend and a traditional MVC frontend. With regard to the use of OpenVidu, it is identical to _openvidu-js-java_. This tutorial is intended for developers who feel more comfortable with MVC web architectures for their frontends. [Thymeleaf](http://www.thymeleaf.org/) is the template engine of choice for this tutorial.
+
+<p align="center">
+  <img src="https://docs.google.com/uc?id=0B61cQ4sbhmWSQzJGRDhzS1dNZFk">
+</p>
 
 ## [openvidu-mvc-node](https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-mvc-node)
 
-A secure OpenVidu sample app with a Node backend and a traditional MVC frontend. With regard to the use of OpenVidu, it is identical to _openvidu-js-node_. This tutorial is intended for developers who feel more comfortable with MVC web architectures for their frontends.
-[Embedded JavaScript](http://www.embeddedjs.com/) is the template engine of choice for this tutorial.
+A secure OpenVidu sample app with a Node backend and a traditional MVC frontend. With regard to the use of OpenVidu, it is identical to _openvidu-js-node_. This tutorial is intended for developers who feel more comfortable with MVC web architectures for their frontends. [Embedded JavaScript](http://www.embeddedjs.com/) is the template engine of choice for this tutorial.
+
+<p align="center">
+  <img src="https://docs.google.com/uc?id=0B61cQ4sbhmWSSGxqS2hYOVQzLW8">
+</p>
+
