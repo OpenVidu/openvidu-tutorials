@@ -49,36 +49,49 @@ function joinSession() {
 	var sessionId = document.getElementById("sessionId").value;
 	var token = document.getElementById("participantId").value;
 
-	// 1) Get an OpenVidu object and init a session with a sessionId
+	// --- 1) Get an OpenVidu object and init a session with a sessionId ---
 
+	// OpenVidu listening on "localhost:8443"
 	OV = new OpenVidu("wss://" + location.hostname + ":8443/");
-	session = OV.initSession("apikey", sessionId);
+
+	// We will join the video-call "sessionId"
+	session = OV.initSession(sessionId);
 
 
-	// 2) Specify the actions when events take place
+	// --- 2) Specify the actions when events take place ---
 
+	// On every new Stream received...
 	session.on('streamCreated', function (event) {
-		// Subscribe to the stream to receive it
+
+		// Subscribe to the Stream to receive it. HTML video will be appended to element with 'subscriber' id
 		var subscriber = session.subscribe(event.stream, 'subscriber');
+
+		// When the HTML video has been appended to DOM...
 		subscriber.on('videoElementCreated', function (event) {
-			// Add a new HTML element for the user's nickname
+
+			// Add a new <p> element for the user's nickname just below its video
 			appendUserData(event.element, subscriber.stream.connection);
 		});
 	});
 
+	// On every Stream destroyed...
 	session.on('streamDestroyed', function (event) {
-		// Delete the HTML element with the user's nickname
+
+		// Delete the HTML element with the user's nickname. HTML videos are automatically removed from DOM
 		removeUserData(event.stream.connection);
 	});
 
 
-	// 3) Connect to the session
+	// --- 3) Connect to the session ---
 
+	// 'token' param irrelevant when using insecure version of OpenVidu. Second param will be received by every user
+	// in Stream.connection.data property, which will be appended to DOM as the user's nickname
 	session.connect(token, '{"clientData": "' + token + '"}', function (error) {
+
 		// If the connection is successful, initialize a publisher and publish to the session
 		if (!error) {
 
-			// 4) Get your own camera stream with the desired resolution and publish it, if the user is supposed to do so
+			// --- 4) Get your own camera stream with the desired resolution and publish it ---
 
 			var publisher = OV.initPublisher('publisher', {
 				audio: true,
@@ -86,7 +99,7 @@ function joinSession() {
 				quality: 'MEDIUM'
 			});
 
-			// 5) Publish your stream
+			// --- 5) Publish your stream ---
 
 			session.publish(publisher);
 
@@ -108,7 +121,7 @@ function leaveSession() {
 
 	session.disconnect();
 
-	// Removing all HTML elements with the user's nicknames
+	// Removing all HTML elements with the user's nicknames. HTML videos are automatically removed when leaving a Session
 	removeAllUserData();
 
 	document.getElementById('join').style.display = 'block';

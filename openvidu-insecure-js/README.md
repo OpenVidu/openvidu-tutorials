@@ -72,24 +72,31 @@ Let's see how `app.js` uses `OpenVidu.js`:
 - Let's initialize a new session and configure our events:
 
 	```javascript
+	// --- 1) Get an OpenVidu object and init a session with a sessionId ---
+
+	// OpenVidu listening on "localhost:8443"
 	OV = new OpenVidu("wss://" + location.hostname + ":8443/");
-	session = OV.initSession("apikey", sessionId);
+
+	// We will join the video-call "sessionId"
+	session = OV.initSession(sessionId);
 	```
 	Since we are in a local sample app, `OV` object is initialize with `localhost:8443` as its _openvidu-server_ URL. `session` object is initialize with `sessionId` param: this means we will connect to `sessionId` video-call. In this case, this parameter is retrieve from HTML input 	`<input type="text" id="sessionId" required>`, which may be filled by the user.
 
 	```javascript
+	// --- 2) Specify the actions when events take place ---
+
+	// On every new Stream received...
 	session.on('streamCreated', function (event) {
-		// Subscribe to the stream to receive it
+
+		// Subscribe to the Stream to receive it. HTML video will be appended to element with 'subscriber' id
 		var subscriber = session.subscribe(event.stream, 'subscriber');
+
+		// When the HTML video has been appended to DOM...
 		subscriber.on('videoElementCreated', function (event) {
-			// Add a new HTML element for the user's nickname
+
+			// Add a new <p> element for the user's nickname just below its video
 			appendUserData(event.element, subscriber.stream.connection);
 		});
-	});
-
-	session.on('streamDestroyed', function (event) {
-		// Delete the HTML element with the user's nickname
-		removeUserData(event.stream.connection);
 	});
 	```
 	Here we subscribe to the events that interest us. In this case, we want to receive all videos published to the video-call, as well as displaying every user's nickname nex to its video. To achieve this:
@@ -100,26 +107,31 @@ Let's see how `app.js` uses `OpenVidu.js`:
 - Finally connect to the session and publish your webcam:
 
 	```javascript
+	// --- 3) Connect to the session ---
+
+	// 'token' param irrelevant when using insecure version of OpenVidu. Second param will be received by every user
+	// in Stream.connection.data property, which will be appended to DOM as the user's nickname
 	session.connect(token, '{"clientData": "' + token + '"}', function (error) {
-			// If the connection is successful, initialize a publisher and publish to the session
-			if (!error) {
-	
-				// 4) Get your own camera stream with the desired resolution and publish it, if the user is supposed to do so
-	
-				var publisher = OV.initPublisher('publisher', {
-					audio: true,
-					video: true,
-					quality: 'MEDIUM'
-				});
-	
-				// 5) Publish your stream
-	
-				session.publish(publisher);
-	
-			} else {
-				console.log('There was an error connecting to the session:', error.code, error.message);
-			}
-		});
+
+		// If the connection is successful, initialize a publisher and publish to the session
+		if (!error) {
+
+			// --- 4) Get your own camera stream with the desired resolution and publish it ---
+
+			var publisher = OV.initPublisher('publisher', {
+				audio: true,
+				video: true,
+				quality: 'MEDIUM'
+			});
+
+			// --- 5) Publish your stream ---
+
+			session.publish(publisher);
+
+		} else {
+			console.log('There was an error connecting to the session:', error.code, error.message);
+		}
+	});
 	```
 	
 	`token` param is irrelevant when using insecure version of OpenVidu. Remember `videoElementCreated` event, when we added the user's nickname to the HTML? Well, second parameter is the actual value you will receive in `Stream.connection.data` property. So in this case it is a JSON formatted string with a "clientData" tag with "token" value, which is retrieved from HTML input `<input type="text" id="participantId" required>` (filled by the user).
