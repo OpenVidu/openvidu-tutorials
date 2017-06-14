@@ -98,6 +98,13 @@ Let's see how `app.js` uses `OpenVidu.js`:
 			appendUserData(event.element, subscriber.stream.connection);
 		});
 	});
+
+	// On every Stream destroyed...
+	session.on('streamDestroyed', function (event) {
+
+		// Delete the HTML element with the user's nickname. HTML videos are automatically removed from DOM
+		removeUserData(event.stream.connection);
+	});
 	```
 	Here we subscribe to the events that interest us. In this case, we want to receive all videos published to the video-call, as well as displaying every user's nickname nex to its video. To achieve this:
 	 - `streamCreated`: for each new Stream received by OpenVidu, we immediately subscribe to it so we can see its video. A new HTML video element will be appended to element with id 'subscriber'. 
@@ -118,6 +125,7 @@ Let's see how `app.js` uses `OpenVidu.js`:
 
 			// --- 4) Get your own camera stream with the desired resolution and publish it ---
 
+			// Both audio and video will be active. HTML video element will be appended to element with publisher' id
 			var publisher = OV.initPublisher('publisher', {
 				audio: true,
 				video: true,
