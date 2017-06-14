@@ -81,21 +81,39 @@ Let's see how `app.component.ts` uses `openvidu-browser`:
 
 - Whenever a user clicks on the submit input defined in `app.component.html`, `joinSession()` method is called:
 
-	```typescript
+	```javascript
+	// --- 1) Get an OpenVidu object and init a session with a sessionId ---
+	
+	// OpenVidu listening on "localhost:8443"
 	this.OV = new OpenVidu('wss://' + location.hostname + ':8443/');
-    this.session = this.OV.initSession('apikey', this.sessionId);
+
+	// We will join the video-call "sessionId"
+    this.session = this.OV.initSession(this.sessionId);
 	```
 	Since we are in a local sample app, `OV` is initialize with `localhost:8443` as its _openvidu-server_ URL. `session` is initialize with `sessionId` param: this means we will connect to `sessionId` video-call. In this case, this parameter is binded from an `<input>` element of `app.component.html`, which may be filled by the user.
 
 	```javascript
+	// --- 2) Specify the actions when events take place ---
+
+	// On every new Stream received...
 	this.session.on('streamCreated', (event) => {
-      this.remoteStreams.push(event.stream); // Add the new stream to 'remoteStreams' array
-      this.session.subscribe(event.stream, ''); // Empty string for no video element
+	
+	  // Add the new stream to 'remoteStreams' array
+      this.remoteStreams.push(event.stream);
+      
+      // Subscribe to the Stream to receive it. Second parameter is an empty string 
+      // so OpenVidu doesn't create an HTML video by its own 
+      this.session.subscribe(event.stream, '');
     });
 
+	// On every Stream destroyed...
     this.session.on('streamDestroyed', (event) => {
-      event.preventDefault(); // Avoid OpenVidu trying to remove the HTML video element
-      this.deleteRemoteStream(event.stream); // Remove the stream from 'remoteStreams' array
+    
+	  // Avoid OpenVidu trying to remove the HTML video element
+      event.preventDefault();
+      
+      // Remove the stream from 'remoteStreams' array
+      this.deleteRemoteStream(event.stream);
     });
 	```
 	Here we subscribe to the Session events that interest us. As we are using Angular framework, a good approach will be treating each Stream as a component, contained in a StreamComponent. Thus, we need to store each new stream we received in an array (`remoteStreams`), and we must remove from it every deleted stream whenever it is necessary. To achieve this, we use the following events:
@@ -114,20 +132,31 @@ Let's see how `app.component.ts` uses `openvidu-browser`:
 - Finally connect to the session and publish your webcam:
 
 	```javascript
+
+	// --- 3) Connect to the session ---
+
+	// 'token' param irrelevant when using insecure version of OpenVidu. Second param will be received by every user
+	// in Stream.connection.data property, which will be appended to DOM as the user's nickname
 	this.session.connect(this.token, '{"clientData": "' + this.token + '"}', (error) => {
-      // If the connection is successful, initialize a publisher and publish to the session
+		
+      // If the connection is successful...
       if (!error) {
 
-        // 4) Get your own camera stream with the desired resolution and publish it
+        // --- 4) Get your own camera stream with the desired resolution and publish it ---
+
+		// Both audio and video will be active. HTML video element will be appended to element with 'publisher' id
         let publisher = this.OV.initPublisher('', {
           audio: true,
           video: true,
           quality: 'MEDIUM'
         });
 
+		
+        //Store your webcam stream in 'localStream' object
         this.localStream = publisher.stream;
 
-        // 5) Publish your stream
+        // --- 5) Publish your stream ---
+        
         this.session.publish(publisher);
 
       } else {
@@ -152,10 +181,13 @@ Let's see how `app.component.ts` uses `openvidu-browser`:
 	
 	```javascript
 	ngDoCheck() { // Detect any change in 'stream' property
+	
         // If 'src' of Stream object has changed, 'videoSrc' value must be updated
         if (!(this.videSrcUnsafe === this.stream.getVideoSrc())) {
+            
             // Angular mandatory URL sanitization
             this.videoSrc = this.sanitizer.bypassSecurityTrustUrl(this.stream.getVideoSrc());
+	
             // Auxiliary value to store the URL as a string for upcoming comparisons
             this.videSrcUnsafe = this.stream.getVideoSrc();
         }

@@ -125,7 +125,7 @@ Let's see how `app.js` uses `OpenVidu.js`:
 
 			// --- 4) Get your own camera stream with the desired resolution and publish it ---
 
-			// Both audio and video will be active. HTML video element will be appended to element with publisher' id
+			// Both audio and video will be active. HTML video element will be appended to element with 'publisher' id
 			var publisher = OV.initPublisher('publisher', {
 				audio: true,
 				video: true,
