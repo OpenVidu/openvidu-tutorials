@@ -118,18 +118,18 @@ public class SessionController {
 						System.out.println(sessionName + " empty!");
 					}
 					model.addAttribute("sessionId", sessionId);
-					return "leave-session";
+					return "redirect:/dashboard";
 				} else {
 					System.out.println("Problems in the app server: the TOKEN wasn't valid");
-					return "leave-session";
+					return "redirect:/dashboard";
 				}
 			} else {
 				System.out.println("Problems in the app server: the SESSIONID wasn't valid");
-				return "leave-session";
+				return "redirect:/dashboard";
 			}
 		} else {
 			System.out.println("Problems in the app server: the SESSION does not exist");
-			return "leave-session";
+			return "redirect:/dashboard";
 		}
 	}
 

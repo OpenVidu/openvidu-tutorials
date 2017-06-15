@@ -37,6 +37,16 @@ public class LoginController {
 		users.put("subscriber", new MyUser("subscriber", "pass", OpenViduRole.SUBSCRIBER));
 	}
 
+	@RequestMapping(value = "/")
+	public String logout(HttpSession httpSession) {
+		if (checkUserLogged(httpSession)) {
+			return "redirect:/dashboard";
+		} else {
+			httpSession.invalidate();
+			return "index";
+		}
+	}
+
 	@RequestMapping(value = "/dashboard", method = { RequestMethod.GET, RequestMethod.POST })
 	public String login(@RequestParam(name = "user", required = false) String user,
 			@RequestParam(name = "pass", required = false) String pass, Model model, HttpSession httpSession) {
@@ -53,33 +63,18 @@ public class LoginController {
 			model.addAttribute("username", user);
 			return "dashboard";
 		} else {
-			return "index";
+			return "redirect:/";
 		}
 	}
 
-	@RequestMapping(value = "/", method = RequestMethod.GET)
+	@RequestMapping(value = "/logout", method = RequestMethod.POST)
 	public String logout(Model model, HttpSession httpSession) {
-		if (checkUserLogged(httpSession)) {
-			model.addAttribute("username", httpSession.getAttribute("loggedUser"));
-			return "dashboard";
-		}
 		httpSession.invalidate();
-		return "index";
-	}
-
-	@RequestMapping(value = "/", method = RequestMethod.POST)
-	public String logout(@RequestParam(name = "islogout", required = false) String islogout, HttpSession httpSession) {
-		if (checkUserLogged(httpSession) && islogout.equals("true")){
-			System.out.println("'" + httpSession.getAttribute("loggedUser") + "' has logged out");
-			httpSession.invalidate();
-		}
-		return "index";
+		return "redirect:/";
 	}
 
 	private boolean login(String user, String pass) {
-		return (user != null && 
-				pass != null && 
-				users.containsKey(user) && users.get(user).pass.equals(pass));
+		return (user != null && pass != null && users.containsKey(user) && users.get(user).pass.equals(pass));
 	}
 
 	private boolean checkUserLogged(HttpSession httpSession) {
