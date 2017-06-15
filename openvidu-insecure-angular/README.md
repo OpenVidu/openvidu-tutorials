@@ -145,19 +145,18 @@ Let's see how `app.component.ts` uses `openvidu-browser`:
         // --- 4) Get your own camera stream with the desired resolution and publish it ---
 
 		// Both audio and video will be active. HTML video element will be appended to element with 'publisher' id
-        let publisher = this.OV.initPublisher('', {
-          audio: true,
-          video: true,
-          quality: 'MEDIUM'
-        });
-
+		let publisher = this.OV.initPublisher('', {
+			audio: true,
+			video: true,
+			quality: 'MEDIUM'
+		});
 		
-        //Store your webcam stream in 'localStream' object
-        this.localStream = publisher.stream;
+		//Store your webcam stream in 'localStream' object
+		this.localStream = publisher.stream;
 
-        // --- 5) Publish your stream ---
-        
-        this.session.publish(publisher);
+		// --- 5) Publish your stream ---
+
+		this.session.publish(publisher);
 
       } else {
         console.log('There was an error connecting to the session:', error.code, error.message);
