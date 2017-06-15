@@ -63,6 +63,7 @@ public class LoginController {
 			model.addAttribute("username", user);
 			return "dashboard";
 		} else {
+			httpSession.invalidate();
 			return "redirect:/";
 		}
 	}

@@ -66,6 +66,7 @@ public class SessionController {
 
 				return "session";
 			} catch (Exception e) {
+				model.addAttribute("username", httpSession.getAttribute("loggedUser"));
 				return "dashboard";
 			}
 
@@ -89,6 +90,7 @@ public class SessionController {
 
 				return "session";
 			} catch (Exception e) {
+				model.addAttribute("username", httpSession.getAttribute("loggedUser"));
 				return "dashboard";
 			}
 		}

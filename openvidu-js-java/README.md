@@ -44,11 +44,11 @@ OpenVidu is composed by the modules displayed on the image above.
 	docker run -p 8443:8443 --rm -e KMS_STUN_IP=193.147.51.12 -e KMS_STUN_PORT=3478 -e openvidu.secret=MY_SECRET openvidu/openvidu-server-kms
 	```
 
-5. Go to [`https://localhost:5000`](https://localhost:5000) to test the app once the server is running. The first time you use the docker container, an alert message will suggest you accept the self-signed certificate of _openvidu-server_ when you first try to join a video-call.
+5. Go to [`https://localhost:5000`](https://localhost:5000) to test the app once the server is running. The first time you use the docker container, an alert message will suggest you accept the self-signed certificate of _openvidu-server_ when you first try to join a video-call. To test two users in the same computer, use a standard window and an incognito window.
 
 ## Understanding the code
 
-This is a very basic web application with a pretty simple vanilla JS/HTML/CSS frontend and a straightforward Java backend. OpenVidu assumes you can identify your users so you can tell which users can connect to which video-calls, and what role each one of them will have in them. You can do this as you prefer. Here our backend will manage the users and their sessions by using the non-intrusive _HttpSession_ API. In these posts multiple options for user session management in Java are explained, inlcuding the one used in this tutorial: [journaldev.com](http://www.journaldev.com/1907/java-session-management-servlet-httpsession-url-rewriting), [studytonight.com](http://www.studytonight.com/servlet/session-management.php).
+This is a very basic web application with a pretty simple vanilla JS/HTML/CSS frontend and a straightforward Java backend. OpenVidu assumes you can identify your users so you can tell which users can connect to which video-calls, and what role (and therefore what permissions) each one of them will have in the calls. You can do this as you prefer. Here our backend will manage the users and their sessions by using the non-intrusive _HttpSession_ API. In these posts multiple options for user session management in Java are explained, inlcuding the one used in this tutorial: [journaldev.com](http://www.journaldev.com/1907/java-session-management-servlet-httpsession-url-rewriting), [studytonight.com](http://www.studytonight.com/servlet/session-management.php).
 
 - Backend: SpringBoot app with the following classes (`src/main/java` path, `io.openvidu.js.java` package)
 	- `App.java` : entrypoint for the app
@@ -56,9 +56,9 @@ This is a very basic web application with a pretty simple vanilla JS/HTML/CSS fr
 	- `SessionController.java` : rest controller for getting sessionId's and tokens. It also stores our active video-calls and the users connected to them
 
 - Frontend: Pure JS/HTML/CSS files (`src/main/resources/static`)
-	- `OpenVidu.js`: openvidu-browser library. You don't have to manipulate this file. 
-	- `app.js`: sample application main JavaScritp file, which makes use of _OpenVidu.js_.
-	- `index.html`: HTML code for the form to login, the form to connect to a video-call and for the video-call itself.
+	- `OpenVidu.js` : openvidu-browser library. You don't have to manipulate this file. 
+	- `app.js` : sample application main JavaScritp file, which makes use of _OpenVidu.js_.
+	- `index.html` : HTML code for the form to login, the form to connect to a video-call and for the video-call itself.
 		It has two links to both JavaScript files: 
 		```html
 		<script src="OpenVidu.js"></script>
@@ -162,7 +162,7 @@ Let's describe the code following this scenario: a user logs in to the app and c
 		});
 	}
 	```
-	Here is the second time we must call our `httpRequest()` method, sending the session we want to connect ("TUTORIAL") and waiting to get a _sessionId_ and a _token_ as response. The interesting part here is in `SessionController.java`. First of all there are some important attributes in this controller we must mention:
+	Here is the second time we must call our `httpRequest()` method, sending the session we want to connect ("TUTORIAL") and waiting to get a _sessionId_ and a _token_ as response. The interesting part here is in `SessionController.java`. First of all there are some important attributes in this class we must mention:
 
 	```java
 	// OpenVidu object to ask openvidu-server for sessionId and token
@@ -185,6 +185,7 @@ Let's describe the code following this scenario: a user logs in to the app and c
 	@RequestMapping(value = "/api-sessions/get-sessionid-token", method = RequestMethod.POST)
 	public ResponseEntity<JSONObject> getSessionIdToken(@RequestBody String sessionNameParam, 
 			HttpSession httpSession) throws ParseException {
+		// Check the user is logged ... 
 
 		JSONObject sessionJSON = (JSONObject) new JSONParser().parse(sessionNameParam);
 		
@@ -266,7 +267,7 @@ Let's describe the code following this scenario: a user logs in to the app and c
 	
 	// On every Stream destroyed...
 	session.on('streamDestroyed', function (event) {
-		// Delete the HTML element with the user's nickname
+		// Delete the HTML element with the user's name and nickname
 		removeUserData(event.stream.connection);
 	});
 	
@@ -313,7 +314,8 @@ Let's describe the code following this scenario: a user logs in to the app and c
 
 
 3. **Another user connects to the video-call**
-The process would be exactly the same as before until `SessionController.java` executes `getSessionIdAndToken()` method. Now session 'TUTORIAL' already exists, so in the _if-else_ statement the _if_ branch would be the one executed:
+
+	The process would be exactly the same as before until `SessionController.java` executes `getSessionIdAndToken()` method. Now session 'TUTORIAL' already exists, so in the _if-else_ statement the _if_ branch would be the one executed:
 
 	```java
 	if (this.mapSessions.get(sessionName) != null) {
@@ -344,12 +346,12 @@ The process would be exactly the same as before until `SessionController.java` e
 		}
 	}
 	```
-	The code executed in `app.js` would be also the same. After the `Session.publish()` method has been succesful, both users will be seeing each other's video, as well as the username and the nickname below it.
+	The code executed in `app.js` would also be the same. After the `Session.publish()` method has been succesful, both users will be seeing each other's video, as well as the username and the nickname below it.
 
 4. **Users leave the video-call**
 
-	After a while both users decide to leave the session. Here is where the last HTTP operation takes place: we must let the backend know that certain user has left the session so it can update the collections with the active sessions and tokens.
-	In `app.js` we run the following HTTP POST operation:
+	After a while both users decide to leave the session. Apart from calling `leaveSession()` (and therefore `session.disconnect()`) to destroy the connection on openvidu-server, we need to run the last HTTP operation: we must let the backend know that certain user has left the session so it can update the collections with the active sessions and tokens. To sum up, `session.disconnect()` updates our openvidu-server and the POST operation updates our backend.
+	For the POST operation, in `app.js` we run:
 
 	```javascript
 	function removeUser() {
@@ -372,6 +374,7 @@ The process would be exactly the same as before until `SessionController.java` e
 	@RequestMapping(value = "/api-sessions/remove-user", method = RequestMethod.POST)
 	public ResponseEntity<JSONObject> removeUser(@RequestBody String sessionNameToken, 
 		HttpSession httpSession) throws Exception {
+		// Check the user is logged ... 
 
 		// Retrieve the params from BODY
 		JSONObject sessionNameTokenJSON = (JSONObject) new JSONParser().parse(sessionNameToken);
@@ -409,4 +412,6 @@ The process would be exactly the same as before until `SessionController.java` e
 
 ---
 
-> At this point we have covered all the important code from the tutorial. With this scenario we have seen the most common use-case, but you can modify whatever you want to suit your needs. And remember that this is one single approach, using certain technologies: **you can implement your frontend and your backend as you want**. The only actual requirements are getting ***sessionId*** and ***token*** params from  ***openvidu-server*** and using them along with ***openvidu-browser*** to connect your clients to the sessions.
+> At this point we have covered all the important code from the tutorial. With this scenario we have seen the most common use-case, but you can modify whatever you want to suit your needs. And remember that this is just one of the many possible approaches: **you can implement your frontend and your backend as you want**. 
+> 
+> The only actual requirements are getting ***sessionId*** and ***token*** params from  ***openvidu-server*** (by using one of the available clients or with the REST API) and using them along with ***openvidu-browser*** to connect your clients to the sessions.
