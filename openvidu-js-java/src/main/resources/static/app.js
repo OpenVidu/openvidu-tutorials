@@ -159,7 +159,7 @@ function joinSession() {
 				// If the user has enough permissions
 				if (isPublisher()) {
 
-					// 4) Get your own camera stream with the desired resolution and publish it
+					// 4) Get your own camera stream with the desired resolution
 
 					var publisher = OV.initPublisher('publisher', {
 						audio: true,

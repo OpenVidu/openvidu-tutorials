@@ -282,11 +282,11 @@ session.connect(token, '{"clientData": "' + nickName + '"}', function (err) {
 
 		// Here we check somehow if the user has at least 'PUBLISHER' role before
 		// trying to publish its stream. Even if someone modified the client's code and
-		// published the stream, it won't work if the token sent in Session.connect
+		// published the stream, it wouldn't work if the token sent in Session.connect
 		// method doesn't belong to a 'PUBLIHSER' role
 		if (isPublisher(userName)) {
 
-			// --- 4) Get your own camera stream and publish it ---
+			// --- 4) Get your own camera stream ---
 			
 			var publisher = OV.initPublisher('publisher', {
 				audio: true,

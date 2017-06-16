@@ -50,7 +50,7 @@ OpenVidu is composed by the modules displayed on the image above.
 
 ## Understanding the code
 
-This is a very basic web application with a pretty simple vanilla JS/HTML/CSS frontend and a straightforward Node backend with [_express_](http://expressjs.com/es/). OpenVidu assumes you can identify your users so you can tell which users can connect to which video-calls, and what role (and therefore what permissions) each one of them will have in the calls. You can do this as you prefer. Here our backend will manage the users and their sessions with the easy-to-use and non-intrusive [_express-session_](https://github.com/expressjs/session) API.
+This is a very basic web application with a pretty simple vanilla JS/HTML/CSS frontend and a straightforward Node backend with [_express_](http://expressjs.com). OpenVidu assumes you can identify your users so you can tell which users can connect to which video-calls, and what role (and therefore what permissions) each one of them will have in the calls. You can do this as you prefer. Here our backend will manage the users and their sessions with the easy-to-use and non-intrusive [_express-session_](https://github.com/expressjs/session) API.
 
 - **Backend**: node server
 	- `server.js` : single file which handles all operations of server.
@@ -74,7 +74,7 @@ Let's describe the code following this scenario: a user logs in to the app and c
 
 ### 1) User logs in
 
-We have implemented a method for making HTTP requests to the backend, as we will need to 	make at least three of them: one for logging in, one for getting the sessionId and a valid token from openvidu-server and a one for letting know our backend when any user leaves the video-call. The header of the method looks like this:
+We have implemented a method for making HTTP requests to the backend, as we will need to 	make at least three of them: one for logging in, one for getting the sessionId and a valid token from openvidu-server and one for letting know our backend when any user leaves the video-call. The header of the method looks like this:
 
 ```javascript
 function httpRequest(method, url, body, errorMsg, callback)
@@ -133,7 +133,7 @@ app.post('/api-login/login', function (req, res) {
 
 ### 2) User connects to "TUTORIAL" video-call
 
-HTML will display now the user has logged in a different form, asking for the video-call to connect and the nickname the user wants to have in it. So our 'publisher1' user would write TUTORIAL in "Session" field and press "Join!" button:
+HTML will display now the user has logged a different form, asking for the video-call to connect and the nickname the user wants to have in it. So our 'publisher1' user would write TUTORIAL in "Session" field and press "Join!" button:
 
 <p align="center">
   <img src="https://docs.google.com/uc?id=0B61cQ4sbhmWSWkJsOFltSXhYbmc">
@@ -281,11 +281,11 @@ session.connect(token, '{"clientData": "' + $("#participantName").val() + '"}', 
 
 		// Here we check somehow if the user has at least 'PUBLISHER' role before
 		// trying to publish its stream. Even if someone modified the client's code and
-		// published the stream, it won't work if the token sent in Session.connect
+		// published the stream, it wouldn't work if the token sent in Session.connect
 		// method doesn't belong to a 'PUBLIHSER' role
 		if (isPublisher()) {
 
-			// --- 4) Get your own camera stream and publish it ---
+			// --- 4) Get your own camera stream ---
 
 			var publisher = OV.initPublisher('publisher', {
 				audio: true,

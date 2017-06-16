@@ -142,7 +142,7 @@ Let's see how `app.component.ts` uses `openvidu-browser`:
       // If the connection is successful...
       if (!error) {
 
-        // --- 4) Get your own camera stream with the desired resolution and publish it ---
+        // --- 4) Get your own camera stream with the desired resolution ---
 
 		// Both audio and video will be active. HTML video element will be appended to element with 'publisher' id
 		let publisher = this.OV.initPublisher('', {

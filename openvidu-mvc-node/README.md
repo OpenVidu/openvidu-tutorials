@@ -52,7 +52,7 @@ OpenVidu is composed by the modules displayed on the image above.
 
 ## Understanding the code
 
-This is a very basic web application with a pretty simple vanilla JS/HTML/CSS frontend and a straightforward Node backend built with [_express_](http://expressjs.com/es/) that serves HTML files with a MVC approach, building the templates with the help of [Embedded JavaScript](http://www.embeddedjs.com/).
+This is a very basic web application with a pretty simple vanilla JS/HTML/CSS frontend and a straightforward Node backend built with [_express_](http://expressjs.com) that serves HTML files with a MVC approach, building the templates with the help of [Embedded JavaScript](http://www.embeddedjs.com/).
 
 OpenVidu assumes you can identify your users so you can tell which users can connect to which video-calls, and what role (and therefore what permissions) each one of them will have in the calls. You can do this as you prefer. Here our backend will manage the users and their sessions with the easy-to-use and non-intrusive [_express-session_](https://github.com/expressjs/session) API.
 
@@ -290,11 +290,11 @@ session.connect(token, '{"clientData": "' + nickName + '"}', function (err) {
 
 		// Here we check somehow if the user has at least 'PUBLISHER' role before
 		// trying to publish its stream. Even if someone modified the client's code and
-		// published the stream, it won't work if the token sent in Session.connect
+		// published the stream, it wouldn't work if the token sent in Session.connect
 		// method doesn't belong to a 'PUBLIHSER' role
 		if (isPublisher(userName)) {
 
-			// --- 4) Get your own camera stream and publish it ---
+			// --- 4) Get your own camera stream ---
 			
 			var publisher = OV.initPublisher('publisher', {
 				audio: true,

@@ -123,7 +123,7 @@ Let's see how `app.js` uses `OpenVidu.js`:
 		// If the connection is successful, initialize a publisher and publish to the session
 		if (!error) {
 
-			// --- 4) Get your own camera stream with the desired resolution and publish it ---
+			// --- 4) Get your own camera stream with the desired resolution ---
 
 			// Both audio and video will be active. HTML video element will be appended to element with 'publisher' id
 			var publisher = OV.initPublisher('publisher', {

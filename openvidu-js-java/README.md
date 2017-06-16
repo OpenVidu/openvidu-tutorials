@@ -74,7 +74,7 @@ Let's describe the code following this scenario: a user logs in to the app and c
 
 ### 1)  User logs in
 
-We have implemented a method for making HTTP requests to the backend, as we will need to 	make at least three of them: one for logging in, one for getting the sessionId and a valid token from openvidu-server and a one for letting know our backend when any user leaves the video-call. The header of the method looks like this:
+We have implemented a method for making HTTP requests to the backend, as we will need to make at least three of them: one for logging in, one for getting the sessionId and a valid token from openvidu-server and one for letting know our backend when any user leaves the video-call. The header of the method looks like this:
 
 ```javascript
 function httpRequest(method, url, body, errorMsg, callback)
@@ -136,7 +136,7 @@ public ResponseEntity<Object> login(@RequestBody String userPass, HttpSession ht
 
 ### 2) User connects to "TUTORIAL" video-call
 
-HTML will display now the user has logged in a different form, asking for the video-call to connect and the nickname the user wants to have in it. So our 'publisher1' user would write TUTORIAL in "Session" field and press "Join!" button:
+HTML will display now the user has logged a different form, asking for the video-call to connect and the nickname the user wants to have in it. So our 'publisher1' user would write TUTORIAL in "Session" field and press "Join!" button:
 
 <p align="center">
   <img src="https://docs.google.com/uc?id=0B61cQ4sbhmWSWkJsOFltSXhYbmc">
@@ -288,11 +288,11 @@ session.connect(token, '{"clientData": "' + $("#participantName").val() + '"}', 
 
 		// Here we check somehow if the user has at least 'PUBLISHER' role before
 		// trying to publish its stream. Even if someone modified the client's code and
-		// published the stream, it won't work if the token sent in Session.connect
+		// published the stream, it wouldn't work if the token sent in Session.connect
 		// method doesn't belong to a 'PUBLIHSER' role
 		if (isPublisher()) {
 
-			// --- 4) Get your own camera stream and publish it ---
+			// --- 4) Get your own camera stream ---
 
 			var publisher = OV.initPublisher('publisher', {
 				audio: true,

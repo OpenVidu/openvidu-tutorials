@@ -91,7 +91,7 @@ function joinSession() {
 		// If the connection is successful, initialize a publisher and publish to the session
 		if (!error) {
 
-			// --- 4) Get your own camera stream with the desired resolution and publish it ---
+			// --- 4) Get your own camera stream with the desired resolution ---
 
 			var publisher = OV.initPublisher('publisher', {
 				audio: true,
