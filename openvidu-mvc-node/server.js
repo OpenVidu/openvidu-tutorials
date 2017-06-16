@@ -130,14 +130,14 @@ app.post('/session', (req, res) => {
         var serverData = '{"serverData": "' + req.session.loggedUser + '"}';
         console.log("Getting sessionId and token | {sessionName}={" + sessionName + "}");
 
-        var mySession = mapSessionNameSession[sessionName];
         var tokenOptions = new TokenOptions.Builder()
+            .data(serverData)
             .role(role)
-            .data('{"serverData": "' + req.session.loggedUser + '"}')
             .build();
 
-        if (mySession) {
+        if (mapSessionNameSession[sessionName]) {
             console.log('Existing session ' + sessionName);
+            var mySession = mapSessionNameSession[sessionName];
             mySession.generateToken(tokenOptions, function (token) {
                 var sessionId = mySession.getSessionId();
                 mapSessionIdTokens[sessionId].push(token);
@@ -153,7 +153,7 @@ app.post('/session', (req, res) => {
             });
         } else {
             console.log('New session ' + sessionName);
-            mySession = OV.createSession();
+            var mySession = OV.createSession();
             mySession.getSessionId(function (sessionId) {
                 mapSessionNameSession[sessionName] = mySession;
                 mapSessionIdTokens[sessionId] = [];

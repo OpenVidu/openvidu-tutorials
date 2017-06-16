@@ -1,6 +1,6 @@
 # openvidu-js-java
 
-A secure OpenVidu sample app with a Java backend and a SPA frontend. It makes use of openvidu-java-client to get the necessary params from OpenVidu Server.
+A secure OpenVidu sample app with a Java backend and a SPA frontend. It makes use of _openvidu-java-client_ to get the necessary params from OpenVidu Server.
 
 ## Understanding this example
 
@@ -48,7 +48,7 @@ OpenVidu is composed by the modules displayed on the image above.
 
 ## Understanding the code
 
-This is a very basic web application with a pretty simple vanilla JS/HTML/CSS frontend and a straightforward Java backend. OpenVidu assumes you can identify your users so you can tell which users can connect to which video-calls, and what role (and therefore what permissions) each one of them will have in the calls. You can do this as you prefer. Here our backend will manage the users and their sessions by using the non-intrusive _HttpSession_ API. In these posts multiple options for user session management in Java are explained, inlcuding the one used in this tutorial: [journaldev.com](http://www.journaldev.com/1907/java-session-management-servlet-httpsession-url-rewriting), [studytonight.com](http://www.studytonight.com/servlet/session-management.php).
+This is a very basic web application with a pretty simple vanilla JS/HTML/CSS frontend and a straightforward Java backend. OpenVidu assumes you can identify your users so you can tell which users can connect to which video-calls, and what role (and therefore what permissions) each one of them will have in the calls. You can do this as you prefer. Here our backend will manage the users and their sessions with the easy-to-use and non-intrusive _HttpSession_ API. In these posts multiple options for user session management in Java are explained, inlcuding the one used in this tutorial: [journaldev.com](http://www.journaldev.com/1907/java-session-management-servlet-httpsession-url-rewriting), [studytonight.com](http://www.studytonight.com/servlet/session-management.php).
 
 - Backend: SpringBoot app with the following classes (`src/main/java` path, `io.openvidu.js.java` package)
 	- `App.java` : entrypoint for the app
@@ -179,7 +179,7 @@ Let's describe the code following this scenario: a user logs in to the app and c
 	private String SECRET;
 	```
 
-	Rest controller method begins retrieving the param send by the client, which in this case is the video-call name ("TUTORIAL"), as well as preparing two params we will need a little further on: `role` and `serverData`.
+	Rest controller method begins retrieving the param send by the client, which in this case is the video-call name ("TUTORIAL"), as well as preparing a param we will need a little further on: `tokenOptions`.
 
 	```java
 	@RequestMapping(value = "/api-sessions/get-sessionid-token", method = RequestMethod.POST)
@@ -199,6 +199,9 @@ Let's describe the code following this scenario: a user logs in to the app and c
 		// In this case, a JSON with the value we stored in the HttpSession object on login
 		String serverData = "{\"serverData\": \"" + httpSession.getAttribute("loggedUser") + "\"}";
 
+		// Build tokenOptions object with the serverData and the role
+		TokenOptions tokenOptions = new TokenOptions.Builder().data(serverData).role(role).build();
+
 		JSONObject responseJson = new JSONObject();
 	```
 	
@@ -217,9 +220,8 @@ Let's describe the code following this scenario: a user logs in to the app and c
 			Session session = this.openVidu.createSession();
 			// Get the sessionId
 			String sessionId = session.getSessionId();
-			// Generate a new token with the recently retrieved serverData and role
-			String token = session.generateToken(new
-				TokenOptions.Builder().data(serverData).role(role).build());
+			// Generate a new token with the recently created tokenOptions
+			String token = session.generateToken(tokenOptions);
 
 			// Store the session and the token in our collections
 			this.mapSessions.put(sessionName, session);
@@ -325,10 +327,8 @@ Let's describe the code following this scenario: a user logs in to the app and c
 			// Get the existing sessionId from our collection with 
 			// the sessionName param ("TUTORIAL")
 			String sessionId = this.mapSessions.get(sessionName).getSessionId();
-			// Generate a new token with the recently retrieved serverData and role
-			String token = this.mapSessions.get(sessionName)
-			.generateToken(new
-				TokenOptions.Builder().data(serverData).role(role).build());
+			// Generate a new token with the recently created tokenOptions
+			String token = this.mapSessions.get(sessionName).generateToken(tokenOptions);
 			
 			// Update our collection storing the new token
 			this.mapSessionIdsTokens.get(sessionId).put(token, OpenViduRole.PUBLISHER);

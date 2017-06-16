@@ -47,14 +47,14 @@ public class SessionController {
 
 		OpenViduRole role = LoginController.users.get(httpSession.getAttribute("loggedUser")).role;
 		String serverData = "{\"serverData\": \"" + httpSession.getAttribute("loggedUser") + "\"}";
+		TokenOptions tokenOptions = new TokenOptions.Builder().data(serverData).role(role).build();
 
 		if (this.mapSessions.get(sessionName) != null) {
 			// Session already exists: return existing sessionId and a new token
 			System.out.println("Existing session " + sessionName);
 			try {
 				String sessionId = this.mapSessions.get(sessionName).getSessionId();
-				String token = this.mapSessions.get(sessionName)
-						.generateToken(new TokenOptions.Builder().data(serverData).role(role).build());
+				String token = this.mapSessions.get(sessionName).generateToken(tokenOptions);
 
 				this.mapSessionIdsTokens.get(sessionId).put(token, OpenViduRole.PUBLISHER);
 
@@ -76,7 +76,7 @@ public class SessionController {
 			try {
 				Session session = this.openVidu.createSession();
 				String sessionId = session.getSessionId();
-				String token = session.generateToken(new TokenOptions.Builder().data(serverData).role(role).build());
+				String token = session.generateToken(tokenOptions);
 
 				this.mapSessions.put(sessionName, session);
 				this.mapSessionIdsTokens.put(sessionId, new ConcurrentHashMap<>());

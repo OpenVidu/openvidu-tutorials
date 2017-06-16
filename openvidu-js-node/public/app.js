@@ -121,6 +121,7 @@ function httpRequest(method, url, body, errorMsg, callback) {
 /* APPLICATION BACKEND METHODS */
 
 
+
 /* OPENVIDU METHODS */
 
 function joinSession() {
@@ -128,8 +129,8 @@ function joinSession() {
 
 		// 1) Get an OpenVidu object and init a session with a sessionId
 
-		OV = new OpenVidu("wss://" + location.hostname + ":8443/");
-		session = OV.initSession("apikey", sessionId);
+		OV = new OpenVidu();
+		session = OV.initSession(sessionId);
 
 
 		// 2) Specify the actions when events take place

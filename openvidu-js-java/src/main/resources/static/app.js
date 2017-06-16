@@ -19,7 +19,7 @@ window.onbeforeunload = function () { // Gracefully leave session
 function appendUserData(videoElement, connection) {
 	var clientDataJSON = JSON.parse(connection.data.split('%/%')[0]);
 	var serverDataJSON = JSON.parse(connection.data.split('%/%')[1]);
-	$("<p id='data-" + connection.connectionId + "' class='data-node'>Nickname: " + clientDataJSON.clientData + 
+	$("<p id='data-" + connection.connectionId + "' class='data-node'>Nickname: " + clientDataJSON.clientData +
 		"<br/>Username: " + serverDataJSON.serverData + "</p>"
 	).insertAfter(videoElement);
 }
@@ -130,7 +130,7 @@ function joinSession() {
 		// 1) Get an OpenVidu object and init a session with a sessionId
 
 		OV = new OpenVidu();
-		session = OV.initSession("apikey", sessionId);
+		session = OV.initSession(sessionId);
 
 
 		// 2) Specify the actions when events take place
