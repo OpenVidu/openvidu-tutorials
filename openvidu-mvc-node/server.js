@@ -1,9 +1,11 @@
+/* CONFIGURATION */
+
 var OpenVidu = require('openvidu-node-client').OpenVidu;
 var Session = require('openvidu-node-client').Session;
 var OpenViduRole = require('openvidu-node-client').OpenViduRole;
 var TokenOptions = require('openvidu-node-client').TokenOptions;
 
-// Check launch arguments
+// Check launch arguments: must receive openvidu-server URL and the secret
 if (process.argv.length != 4) {
     console.log("Usage: node " + __filename + " OPENVIDU_URL OPENVIDU_SECRET");
     process.exit(-1);
@@ -11,37 +13,37 @@ if (process.argv.length != 4) {
 // For demo purposes we ignore self-signed certificate
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
 
-// Imports
+// Node imports
 var express = require('express');
 var fs = require('fs');
 var session = require('express-session');
 var https = require('https');
-var bodyParser = require('body-parser'); // pull information from HTML POST (express4)
-var app = express(); // create our app w/ express
+var bodyParser = require('body-parser'); // Pull information from HTML POST (express4)
+var app = express(); // Create our app with express
 
-// Configuration
+// Server configuration
 app.use(session({
     saveUninitialized: true,
     resave: false,
     secret: 'MY_SECRET'
 }));
-app.use(express.static(__dirname + '/public')); // set the static files location /public/img will be /img for users
+app.use(express.static(__dirname + '/public')); // set the static files location
 app.use(bodyParser.urlencoded({
     'extended': 'true'
-})); // parse application/x-www-form-urlencoded
+})); // Parse application/x-www-form-urlencoded
 app.use(bodyParser.json()); // parse application/json
 app.use(bodyParser.json({
     type: 'application/vnd.api+json'
-})); // parse application/vnd.api+json as json
+})); // Parse application/vnd.api+json as json
 app.set('view engine', 'ejs'); // Embedded JavaScript as template engine
 
-// listen (start app with node server.js)
+// Listen (start app with node server.js)
 var options = {
     key: fs.readFileSync('openvidukey.pem'),
     cert: fs.readFileSync('openviducert.pem')
 };
 https.createServer(options, app).listen(5000);
-console.log("App listening on port https://[]:5000");
+console.log("App listening on https://localhost:5000");
 
 // Mock database
 var users = [{
@@ -69,25 +71,28 @@ var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
 var mapSessionNameSession = {};
 var mapSessionIdTokens = {};
 
+/* CONFIGURATION */
 
-// APIRest
-app.get('/', (req, res) => {
-    if (req.session.loggedUser) { // User is logged in: redirect to '/dashboard'
-        res.render('dashboard.ejs', {
-            user: req.session.loggedUser
-        });
-    } else { // User is not logged in: redirect to '/'
+
+
+/* REST API */
+
+app.post('/', loginController);
+app.get('/', loginController);
+
+function loginController(req, res) {
+    if (req.session.loggedUser) { // User is logged
+        user = req.session.loggedUser;
+        res.redirect('/dashboard');
+    } else { // User is not logged
         req.session.destroy();
         res.render('index.ejs');
     }
-});
+}
 
-app.post('/', (req, res) => {
-    if (req.session.loggedUser && (req.body.islogout == 'true')) { // User wants to logout
-        console.log("'" + req.session.loggedUser + "' has logged out");
-        req.session.destroy();
-    }
-    res.render('index.ejs');
+app.post('/logout', (req, res) => {
+    req.session.destroy();
+    res.redirect('/');
 });
 
 app.post('/dashboard', dashboardController);
@@ -114,7 +119,7 @@ function dashboardController(req, res) {
         } else {
             console.log("'" + user + "' invalid credentials");
             req.session.destroy();
-            res.render('index.ejs');
+            res.redirect('/');
         }
     }
 }
@@ -122,7 +127,7 @@ function dashboardController(req, res) {
 app.post('/session', (req, res) => {
     if (!isLogged(req.session)) {
         req.session.destroy();
-        res.render('index.ejs');
+        res.redirect('/');
     } else {
         var clientData = req.body.data;
         var sessionName = req.body.sessionname;
@@ -195,33 +200,31 @@ app.post('/leave-session', (req, res) => {
                 } else {
                     var msg = 'Problems in the app server: the TOKEN wasn\'t valid';
                     console.log(msg);
-                    res.render('dashboard.ejs', {
-                        user: req.session.loggedUser
-                    });
+                    res.redirect('/dashboard');
                 }
                 if (mapSessionIdTokens[mySession.getSessionId()].length == 0) { // Last user left the session
                     console.log(sessionName + ' empty!');
                     delete mapSessionNameSession[sessionName];
                 }
-                res.render('dashboard.ejs', {
-                    user: req.session.loggedUser
-                });
+                res.redirect('/dashboard');
             } else {
                 var msg = 'Problems in the app server: the SESSIONID wasn\'t valid';
                 console.log(msg);
-                res.render('dashboard.ejs', {
-                    user: req.session.loggedUser
-                });
+                res.redirect('/dashboard');
             }
         } else {
             var msg = 'Problems in the app server: the SESSION does not exist';
             console.log(msg);
-            res.render('dashboard.ejs', {
-                user: req.session.loggedUser
-            });
+            res.redirect('/dashboard');
         }
     }
 });
+
+/* REST API */
+
+
+
+/* AUXILIARY METHODS */
 
 function login(user, pass) {
     return (user != null &&
@@ -236,3 +239,5 @@ function isLogged(session) {
 function getBasicAuth() {
     return 'Basic ' + (new Buffer('OPENVIDUAPP:' + OPENVIDU_SECRET).toString('base64'));
 }
+
+/* AUXILIARY METHODS */

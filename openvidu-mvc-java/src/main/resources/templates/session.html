@@ -34,7 +34,7 @@
 	console.warn('Request of SESSIONID and TOKEN gone WELL (SESSIONID:' +
 		sessionId + ", TOKEN:" + token + ")");
 
-	// 1) Get an OpenVidu object an initialize a Session
+	// 1) Get an OpenVidu object and initialize a Session
 	var OV = new OpenVidu();
 	var session = OV.initSession(sessionId);
 
@@ -87,7 +87,7 @@
 	function appendUserData(videoElement, connection) {
 		var clientDataJSON = JSON.parse(connection.data.split('%/%')[0]);
 		var serverDataJSON = JSON.parse(connection.data.split('%/%')[1]);
-		$('<p id="data-' + connection.connectionId + '">Nickname: ' + clientDataJSON.clientData + 
+		$('<p id="data-' + connection.connectionId + '">Nickname: ' + clientDataJSON.clientData +
 			'<br/>Username: ' + serverDataJSON.serverData + '</p>'
 		).insertAfter(videoElement);
 	}

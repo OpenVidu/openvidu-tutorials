@@ -42,7 +42,7 @@ var options = {
     cert: fs.readFileSync('openviducert.pem')
 };
 https.createServer(options, app).listen(5000);
-console.log("App listening on port https://[]:5000");
+console.log("App listening on port https://localhost:5000");
 
 // Mock database
 var users = [{

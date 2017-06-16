@@ -32,12 +32,12 @@ OpenVidu is composed by the modules displayed on the image above.
 	sudo apt-get install npm
 	```
 
-3. To run the sample application, execute the following commands in the project. They will install the NPM dependencies and will execute `server.js` server passing two arguments: "localhost" as the URL where _openvidu-server_ will be listening and "MY_SECRET" as the secret share with it:
+3. To run the sample application, execute the following commands in the project. They will install the NPM dependencies and will execute `server.js` server passing two arguments: "localhost:8443" as the URL where _openvidu-server_ will be listening and "MY_SECRET" as the secret share with it:
 
 	```bash
 	cd openvidu-js-node
 	npm install
-	node server.js localhost MY_SECRET
+	node server.js localhost:8443 MY_SECRET
 	```
 
 4. _openvidu-server_ and _Kurento Media Server_ must be up and running in your development machine. The easiest way is running this Docker container which wraps both of them (you will need [Docker CE](https://store.docker.com/search?type=edition&offering=community)):
@@ -50,7 +50,7 @@ OpenVidu is composed by the modules displayed on the image above.
 
 ## Understanding the code
 
-This is a very basic web application with a pretty simple vanilla JS/HTML/CSS frontend and a straightforward Node backend with [express](http://expressjs.com/es/). OpenVidu assumes you can identify your users so you can tell which users can connect to which video-calls, and what role (and therefore what permissions) each one of them will have in the calls. You can do this as you prefer. Here our backend will manage the users and their sessions with the easy-to-use and non-intrusive [_express-session_](https://github.com/expressjs/session) API.
+This is a very basic web application with a pretty simple vanilla JS/HTML/CSS frontend and a straightforward Node backend with [_express_](http://expressjs.com/es/). OpenVidu assumes you can identify your users so you can tell which users can connect to which video-calls, and what role (and therefore what permissions) each one of them will have in the calls. You can do this as you prefer. Here our backend will manage the users and their sessions with the easy-to-use and non-intrusive [_express-session_](https://github.com/expressjs/session) API.
 
 - **Backend**: node server
 	- `server.js` : single file which handles all operations of server.
@@ -105,7 +105,7 @@ Let's describe the code following this scenario: a user logs in to the app and c
 	}
 	```
 
-	`server.js` at `/api-login/login` checks the params are correct and if so sets an active session for the newly logged user (adding a _loggedUser_ attribute with its username in the _req.session_ object):
+	`server.js` at `/api-login/login` checks the params are correct and if so sets an active session for the newly logged user (adding a _loggedUser_ property with its username in the _req.session_ object):
 
 	```javascript
 	app.post('/api-login/login', function (req, res) {

@@ -13,18 +13,17 @@
     </h1>
     <form action="/session" method="post">
         <p>
-            <label>User</label> <input type="text" id="data" name="data" required="true"></input>
+            <label>Name: </label> <input name="data" required="true"></input>
         </p>
         <p>
-            <label>Session</label> <input type="text" id="sessionname" name="sessionname" required="true"></input>
+            <label>Session: </label> <input name="sessionname" required="true"></input>
         </p>
         <p>
             <button type="submit">Join!</button>
         </p>
     </form>
     <p>
-        <form action="/" method="post">
-            <input type="hidden" name="islogout" value="true"></input>
+        <form action="/logout" method="post">
             <button type="submit">Log out</button>
         </form>
     </p>
@@ -33,8 +32,8 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 <script>
     window.onload = function () { // Generate participant info
-        $("#sessionname").val("Session " + Math.floor(Math.random() * 10));
-		$("#data").val("Participant " + Math.floor(Math.random() * 100));
+        $("input[name='sessionname']").val("Session " + Math.floor(Math.random() * 10));
+		$("input[name='data']").val("Participant " + Math.floor(Math.random() * 100));
     }
 </script>
 

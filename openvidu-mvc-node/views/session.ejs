@@ -35,8 +35,8 @@
 		sessionId + ", TOKEN:" + token + ")");
 
 	// 1) Get an OpenVidu object and initialize a Session
-	var OV = new OpenVidu("wss://" + location.hostname + ":8443/");
-	var session = OV.initSession("apikey", sessionId);
+	var OV = new OpenVidu();
+	var session = OV.initSession(sessionId);
 
 	// 2) Specify the actions when events take place
 	session.on('streamCreated', function (event) {

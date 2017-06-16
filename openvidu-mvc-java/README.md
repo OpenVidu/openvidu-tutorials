@@ -339,7 +339,7 @@ Let's describe the code following this scenario: a user logs in to the app and c
 		}
 	}
 	```
-	The code executed in `session.html` _< scrpipt >_ tag would also be the same. After the `Session.publish()` method has been succesful, both users will be seeing each other's video, as well as the username and the nickname below it.
+	The code executed in `session.html` _< script >_ tag would also be the same. After the `Session.publish()` method has been succesful, both users will be seeing each other's video, as well as the username and the nickname below it.
 
 4. **Users leave the video-call**
 
