@@ -121,8 +121,8 @@ function dashboardController(req, res) {
 		
 		if (login(user, pass)) { // Correct user-pass
 			// Validate session and return OK 
-	        // Value stored in req.session allows us to identify the user in future requests
-	        req.session.loggedUser = user;
+			// Value stored in req.session allows us to identify the user in future requests
+	    	req.session.loggedUser = user;
 			res.render('dashboard.ejs', {
 				user: user
 			});

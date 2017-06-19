@@ -230,7 +230,7 @@ else {
 		// Store the session and the token in our collections
 		this.mapSessions.put(sessionName, session);
 		this.mapSessionIdsTokens.put(sessionId, new ConcurrentHashMap<>());
-		this.mapSessionIdsTokens.get(sessionId).put(token, OpenViduRole.PUBLISHER);
+		this.mapSessionIdsTokens.get(sessionId).put(token, role);
 
 		// Prepare the response with the sessionId and the token
 		responseJson.put(0, sessionId);
@@ -336,7 +336,7 @@ if (this.mapSessions.get(sessionName) != null) {
 		String token = this.mapSessions.get(sessionName).generateToken(tokenOptions);
 		
 		// Update our collection storing the new token
-		this.mapSessionIdsTokens.get(sessionId).put(token, OpenViduRole.PUBLISHER);
+		this.mapSessionIdsTokens.get(sessionId).put(token, role);
 		
 		// Prepare the response with the sessionId and the token
 		responseJson.put(0, sessionId);

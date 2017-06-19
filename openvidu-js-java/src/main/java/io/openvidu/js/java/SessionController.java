@@ -66,7 +66,7 @@ public class SessionController {
 				String sessionId = this.mapSessions.get(sessionName).getSessionId();
 				String token = this.mapSessions.get(sessionName).generateToken(tokenOptions);
 
-				this.mapSessionIdsTokens.get(sessionId).put(token, OpenViduRole.PUBLISHER);
+				this.mapSessionIdsTokens.get(sessionId).put(token, role);
 
 				responseJson.put(0, sessionId);
 				responseJson.put(1, token);
@@ -86,7 +86,7 @@ public class SessionController {
 
 				this.mapSessions.put(sessionName, session);
 				this.mapSessionIdsTokens.put(sessionId, new ConcurrentHashMap<>());
-				this.mapSessionIdsTokens.get(sessionId).put(token, OpenViduRole.PUBLISHER);
+				this.mapSessionIdsTokens.get(sessionId).put(token, role);
 
 				responseJson.put(0, sessionId);
 				responseJson.put(1, token);
