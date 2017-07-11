@@ -1,0 +1,146 @@
+html,
+body {
+	height: 100%;
+	overflow: hidden;
+}
+
+div#join {
+	text-align: center;
+	height: 100%;
+	background-color: #ffffff;
+}
+
+div#session {
+	height: 100%;
+	background-color: #000000;
+	position: relative;
+	padding-top: 50px;
+}
+
+.col-centered {
+	float: none !important;
+	margin: 0 auto;
+}
+
+.jumbotron {
+	margin-top: 100px;
+}
+
+#publisher {
+	min-width: 33%;
+	flex: 1;
+	display: flex;
+	flex-direction: row;
+	align-content: center;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+#subscriber video {
+	padding: 0;
+}
+
+.no-margin {
+	margin: 0;
+}
+
+#videos {
+	flex: 1;
+	display: flex;
+	min-height: 200px;
+	flex-wrap: wrap;
+	height: 100%;
+}
+
+video {
+	min-width: 33%;
+	flex: 1;
+	display: flex;
+	flex-direction: row;
+	align-content: center;
+	flex-wrap: wrap;
+	justify-content: center;
+}
+
+span.glyphicon {
+	min-height: 20px;
+	line-height: 16px;
+}
+
+
+/* xs ans md screen resolutions*/
+
+@media screen and (max-width: 991px) {
+	#publisher video {
+		height: 100%;
+	}
+	#publisher video.video4 {
+		width: 50%;
+	}
+	#publisher .video1 {
+		width: 100%;
+	}
+	#publisher.video2 {
+		height: 50%;
+	}
+	#publisher.video3 {
+		height: 33%;
+	}
+	#publisher.video4 {
+		height: 50%;
+		width: 33%;
+	}
+	#publisher.videoMore {
+		height: 33%;
+		width: 50%;
+	}
+	.video2 {
+		height: 50%;
+		min-width: 100%;
+	}
+	.video3 {
+		height: 33%;
+		min-width: 100%;
+	}
+	.video4 {
+		height: 50%;
+		width: 50%;
+		min-width: 50%;
+	}
+	.videoMore {
+		height: 33%;
+		width: 50%;
+		min-width: 50%;
+	}
+}
+
+.noheight {
+	height: auto !important;
+}
+
+nav {
+	height: 50px;
+	margin: 0;
+}
+
+nav div.container {
+	padding-top: 8px;
+	padding-bottom: 8
+}
+
+form {
+	max-width: 30%;
+	float: right;
+}
+
+.float-right {
+	float: right;
+}
+
+.mute-button {
+	margin-right: 5px;
+}
+
+button {
+	font-weight: bold !important;
+}
