@@ -41,7 +41,7 @@ function joinRoom(sessionId) {
 	OV = new OpenVidu();
 
 	// We will join the room "sessionId"
-	session = OV.initSession("wss://225428f6.ngrok.io/" + sessionId);
+	session = OV.initSession("wss://" + location.hostname + ":8443/" + sessionId);
 
 
 	// --- 2) Specify the actions when events take place ---
