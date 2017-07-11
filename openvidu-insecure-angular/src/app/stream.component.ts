@@ -12,8 +12,8 @@ import { Stream } from 'openvidu-browser';
         }`],
     template: `
         <div>
-          <video autoplay="true" [src]="videoSrc"></video>
-          <p>{{this.getNicknameTag()}}</p>
+          <video autoplay="true" [src]="videoSrc" [id]="'native-video-' + this.stream.connection.connectionId + '_webcam'"></video>
+          <p [id]="'data-' + this.stream.connection.connectionId">{{this.getNicknameTag()}}</p>
         </div>`
 })
 export class StreamComponent implements DoCheck {

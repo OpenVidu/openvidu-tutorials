@@ -3,7 +3,7 @@
 	<form (submit)="joinSession()" accept-charset="UTF-8">
 		<p>
 			<label>Participant:</label>
-			<input type="text" name="token" id="token" [(ngModel)]="token" required>
+			<input type="text" name="token" id="participantId" [(ngModel)]="token" required>
 		</p>
 		<p>
 			<label>Session:</label>
@@ -16,8 +16,8 @@
 </div>
 
 <div *ngIf="session">
-	<h2>{{sessionId}}</h2>
-	<input type="button" (click)="leaveSession()" value="Leave session">
+	<h2 id="session-header">{{sessionId}}</h2>
+	<input id="buttonLeaveSession" type="button" (click)="leaveSession()" value="Leave session">
 	<div id="publisher">
 		<div *ngIf="this.localStream">
 			<stream-component [stream]="this.localStream"></stream-component>
