@@ -52,10 +52,10 @@ function joinSession() {
 	// --- 1) Get an OpenVidu object and init a session with a sessionId ---
 
 	// OpenVidu listening on "localhost:8443"
-	OV = new OpenVidu("wss://" + location.hostname + ":8443/");
+	OV = new OpenVidu();
 
 	// We will join the video-call "sessionId"
-	session = OV.initSession(sessionId);
+	session = OV.initSession("wss://" + location.hostname + ":8443/" + sessionId);
 
 
 	// --- 2) Specify the actions when events take place ---

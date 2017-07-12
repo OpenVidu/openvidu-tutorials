@@ -36,8 +36,8 @@ export class AppComponent {
   }
 
   joinSession() {
-    this.OV = new OpenVidu('wss://' + location.hostname + ':8443/');
-    this.session = this.OV.initSession('apikey', this.sessionId);
+    this.OV = new OpenVidu();
+    this.session = this.OV.initSession('wss://' + location.hostname + ':8443/' + this.sessionId);
 
     // 2) Specify the actions when events take place
     this.session.on('streamCreated', (event) => {

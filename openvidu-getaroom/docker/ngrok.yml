@@ -1,0 +1,5 @@
+web_addr: 0.0.0.0:4040
+tunnels:
+  app:
+    addr: 8443
+    proto: http
