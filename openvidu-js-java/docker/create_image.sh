@@ -26,7 +26,7 @@ cp target/openvidu-server-0.0.1-SNAPSHOT.jar ../openvidu-server.jar
 
 cd ..
 
-docker build -t openvidu/openvidu-sample-secure .
+docker build -t openvidu/basic-webinar-demo .
 
 rm ./openvidu-sample-secure.jar
 rm ./openvidu-server.jar

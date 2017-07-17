@@ -19,7 +19,7 @@ cp target/openvidu-server-0.0.1-SNAPSHOT.jar ../openvidu-server.jar
 
 # Build docker image
 cd ..
-docker build -t openvidu/openvidu-plainjs-demo .
+docker build -t openvidu/basic-videoconference-demo .
 
 # Delete unwanted files
 rm -rf ./openvidu-server
