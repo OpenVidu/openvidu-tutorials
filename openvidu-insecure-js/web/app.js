@@ -18,12 +18,21 @@ function generateParticipantInfo() {
 }
 
 function appendUserData(videoElement, connection) {
-	var clientDataJSON = JSON.parse(connection.data);
-	var dataNode = document.createElement('p');
+	var userData;
+	var nodeId;
+	if (typeof connection === "string") {
+		userData = connection;
+		nodeId = connection;
+	} else {
+		userData = JSON.parse(connection.data).clientData;
+		nodeId = connection.connectionId;
+	}
+	var dataNode = document.createElement('div');
 	dataNode.className = "data-node";
-	dataNode.id = "data-" + connection.connectionId;
-	dataNode.innerHTML = "Nickname: " + clientDataJSON.clientData;
+	dataNode.id = "data-" + nodeId;
+	dataNode.innerHTML = "<p>" + userData + "</p>";
 	videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling);
+	addClickListener(videoElement, userData);
 }
 
 function removeUserData(connection) {
@@ -36,6 +45,22 @@ function removeAllUserData() {
 	while (nicknameElements[0]) {
 		nicknameElements[0].parentNode.removeChild(nicknameElements[0]);
 	}
+}
+
+function addClickListener(videoElement, userData) {
+	videoElement.addEventListener('click', function () {
+		var mainVideo = document.querySelector('#main-video video');
+		var mainUserData = document.querySelector('#main-video p');
+		if (mainVideo.src !== videoElement.src) {
+			mainUserData.innerHTML = userData;
+			mainVideo.src = videoElement.src;
+		}
+	});
+}
+
+function initMainVideo(videoElement, userData) {
+	document.querySelector('#main-video video').src = videoElement.src;
+	document.querySelector('#main-video p').innerHTML = userData;
 }
 
 /* APPLICATION SPECIFIC METHODS */
@@ -64,7 +89,7 @@ function joinSession() {
 	session.on('streamCreated', function (event) {
 
 		// Subscribe to the Stream to receive it. HTML video will be appended to element with 'subscriber' id
-		var subscriber = session.subscribe(event.stream, 'subscriber');
+		var subscriber = session.subscribe(event.stream, 'video-container');
 
 		// When the HTML video has been appended to DOM...
 		subscriber.on('videoElementCreated', function (event) {
@@ -93,10 +118,15 @@ function joinSession() {
 
 			// --- 4) Get your own camera stream with the desired resolution ---
 
-			var publisher = OV.initPublisher('publisher', {
+			var publisher = OV.initPublisher('video-container', {
 				audio: true,
 				video: true,
 				quality: 'MEDIUM'
+			});
+
+			publisher.on('videoElementCreated', function (event) {
+				initMainVideo(event.element, token);
+				appendUserData(event.element, token);
 			});
 
 			// --- 5) Publish your stream ---
@@ -108,7 +138,7 @@ function joinSession() {
 		}
 	});
 
-	document.getElementById('session-header').innerText = sessionId;
+	document.getElementById('session-title').innerText = sessionId;
 	document.getElementById('join').style.display = 'none';
 	document.getElementById('session').style.display = 'block';
 

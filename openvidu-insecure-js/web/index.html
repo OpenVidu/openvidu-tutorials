@@ -1,39 +1,71 @@
 <html>
 
 <head>
-	<title>OpenVidu Sample</title>
+	<title>openvidu-insecure-js</title>
 
-	<meta charset="utf-8">
-	<link rel="styleSheet" href="style.css" type="text/css" media="screen">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
 
+	<!-- Bootstrap -->
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+	    crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	    crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+	    crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!-- Bootstrap -->
+
+	<link rel="stylesheet" href="style.css" type="text/css" media="screen">
 	<script src="OpenVidu.js"></script>
 	<script src="app.js"></script>
 </head>
 
 <body>
-	<div id="join">
-		<h1>Join a video session</h1>
-		<form onsubmit="return joinSession()" accept-charset="UTF-8">
-			<p>
-				<label>Participant:</label>
-				<input type="text" id="participantId" required>
-			</p>
-			<p>
-				<label>Session:</label>
-				<input type="text" id="sessionId" required>
-			</p>
-			<p>
-				<input type="submit" name="commit" value="Join!">
-			</p>
-		</form>
+
+	<nav class="navbar navbar-default">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">OpenVidu Tutorial</a>
+				<a class="navbar-brand nav-icon" href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-insecure-js" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container vertical-center">
+		<div id="join" class="jumbotron horizontal-center">
+			<h1>Join a video session</h1>
+			<form class="form-group" onsubmit="return joinSession()">
+				<p>
+					<label>Participant</label>
+					<input class="form-control" type="text" id="participantId" required>
+				</p>
+				<p>
+					<label>Session</label>
+					<input class="form-control" type="text" id="sessionId" required>
+				</p>
+				<p class="text-center">
+					<input class="btn btn-lg btn-success" type="submit" name="commit" value="Join!">
+				</p>
+			</form>
+		</div>
+
+		<div id="session" style="display: none;">
+			<div id="session-header">
+				<h1 id="session-title"></h1>
+				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" onmouseup="leaveSession()" value="Leave session">
+			</div>
+			<div id="main-video" class="col-md-6"><p></p><video id="main-video-element" autoplay src=""></video></div>
+			<div id="video-container" class="col-md-6"></div>
+		</div>
 	</div>
 
-	<div id="session" style="display: none;">
-		<h2 id="session-header"></h2>
-		<input type="button" id="buttonLeaveSession" onmouseup="leaveSession()" value="Leave session">
-		<div id="publisher"></div>
-		<div id="subscriber"></div>
-	</div>
+	<footer class="footer">
+		<div class="container">
+			<div class="text-muted">OpenVidu © 2017</div>
+			<a href="http://www.codeurjc.es/" target="_blank"><img src="https://codeurjc.files.wordpress.com/2016/01/logo_cetrado_negro.png?w=275&h=165"/></a>
+		</div>
+	</footer>
+
 </body>
 
 </html>
