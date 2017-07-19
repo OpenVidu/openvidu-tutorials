@@ -21,18 +21,19 @@ window.addEventListener('load', function () {
 });
 
 // Disconnect participant on browser's window closed
-window.onbeforeunload = function () {
-	session.disconnect()
-};
+window.addEventListener('beforeunload', function () {
+	session.disconnect();
+});
 
 
 function joinRoom(sessionId) {
-	// If the user is joining to a new room
+
 	if (!sessionId) {
+		// If the user is joining to a new room
 		var sessionId = '#' + randomString();
 	}
 
-	// As insecure OpenVidu, the user's token will be a random id
+	// As insecure OpenVidu, the user's token can be a random string
 	var userId = randomString();
 
 	// --- 1) Get an OpenVidu object and init a session with a sessionId ---
@@ -105,10 +106,10 @@ function joinRoom(sessionId) {
 
 function leaveRoom() {
 
-	// 6) Leave the session by calling 'disconnect' method over the Session object
+	// --- 6) Leave the session by calling 'disconnect' method over the Session object ---
 	session.disconnect();
+	
 	showJoinHideSession();
-
 	window.location.href = window.location.origin;
 }
 

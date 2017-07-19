@@ -1,5 +1,5 @@
 import { OpenVidu, Session, Stream } from 'openvidu-browser';
-import { Component, HostListener } from '@angular/core';
+import { Component, HostListener, Input } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +19,9 @@ export class AppComponent {
   // Join form
   sessionId: string;
   token: string;
+
+  @Input()
+  mainVideoStream: Stream;
 
   constructor() {
     this.generateParticipantInfo();
@@ -63,6 +66,7 @@ export class AppComponent {
         });
 
         this.localStream = publisher.stream;
+        this.mainVideoStream = this.localStream;
 
         // 5) Publish your stream
         this.session.publish(publisher);
@@ -97,6 +101,10 @@ export class AppComponent {
     if (index > -1) {
       this.remoteStreams.splice(index, 1);
     }
+  }
+
+  private getMainVideoStream(stream: Stream) {
+    this.mainVideoStream = stream;
   }
 
 }

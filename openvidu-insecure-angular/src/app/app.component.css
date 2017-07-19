@@ -1,11 +1,23 @@
-#publisher {
-	float: left;
-	width: 20%;
-	margin: 10px;
+.stream-container {
+	padding: 0;
 }
 
-#subscriber {
-	float: left;
-	width: 20%;
-	margin: 10px;
+#session {
+	padding-top: 70px;
+	height: 100vh;
+	height: 100%;
+	width: 100%;
+}
+
+#session-header {
+	margin-bottom: 20px;
+}
+
+#session-title {
+	display: inline-block;
+}
+
+#buttonLeaveSession {
+	float: right;
+	margin-top: 20px;
 }

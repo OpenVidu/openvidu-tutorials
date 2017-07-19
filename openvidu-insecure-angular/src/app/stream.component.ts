@@ -1,4 +1,4 @@
-import { Component, Input, DoCheck } from '@angular/core';
+import { Component, Input, Output, DoCheck, EventEmitter } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 import { Stream } from 'openvidu-browser';
@@ -9,17 +9,35 @@ import { Stream } from 'openvidu-browser';
         video {
             width: 100%;
             height: auto;
+            float: left;
+            cursor: pointer;
+        }
+        div div {
+            position: absolute;
+            background: #f8f8f8;
+            padding-left: 5px;
+            padding-right: 5px;
+            color: #777777;
+            font-weight: bold;
+            border-bottom-right-radius: 4px;
+        }
+        p{
+            margin: 0;
         }`],
     template: `
         <div>
-          <video autoplay="true" [src]="videoSrc" [id]="'native-video-' + this.stream.connection.connectionId + '_webcam'"></video>
-          <p [id]="'data-' + this.stream.connection.connectionId">{{this.getNicknameTag()}}</p>
+          <video autoplay="true" [src]="videoSrc" [id]="'native-video-' + this.stream.connection.connectionId + '_webcam'"
+            (click)="this.videoClicked()"></video>
+          <div [id]="'data-' + this.stream.connection.connectionId"><p>{{this.getNicknameTag()}}</p></div>
         </div>`
 })
 export class StreamComponent implements DoCheck {
 
     @Input()
     stream: Stream;
+
+    @Output()
+    mainVideoStream = new EventEmitter();
 
     videoSrc: SafeUrl = '';
     videSrcUnsafe = '';
@@ -37,7 +55,11 @@ export class StreamComponent implements DoCheck {
     }
 
     getNicknameTag() {
-        return 'Nickname: ' + JSON.parse(this.stream.connection.data).clientData;
+        return JSON.parse(this.stream.connection.data).clientData;
+    }
+
+    videoClicked() {
+        this.mainVideoStream.next(this.stream);
     }
 
 }

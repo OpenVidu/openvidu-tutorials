@@ -1,31 +1,36 @@
-<div *ngIf="!session">
-	<h1>Join a video session</h1>
-	<form (submit)="joinSession()" accept-charset="UTF-8">
-		<p>
-			<label>Participant:</label>
-			<input type="text" name="token" id="participantId" [(ngModel)]="token" required>
-		</p>
-		<p>
-			<label>Session:</label>
-			<input type="text" name="sessionId" id="sessionId" [(ngModel)]="sessionId" required>
-		</p>
-		<p>
-			<input type="submit" name="commit" value="Join!">
-		</p>
-	</form>
-</div>
-
-<div *ngIf="session">
-	<h2 id="session-header">{{sessionId}}</h2>
-	<input id="buttonLeaveSession" type="button" (click)="leaveSession()" value="Leave session">
-	<div id="publisher">
-		<div *ngIf="this.localStream">
-			<stream-component [stream]="this.localStream"></stream-component>
-		</div>
+<div class="container vertical-center">
+	<div *ngIf="!session" id="join" class="jumbotron horizontal-center">
+		<h1>Join a video session</h1>
+		<form class="form-group" (submit)="joinSession()">
+			<p>
+				<label>Participant</label>
+				<input class="form-control" type="text" name="token" id="participantId" [(ngModel)]="token" required>
+			</p>
+			<p>
+				<label>Session</label>
+				<input class="form-control" type="text" name="sessionId" id="sessionId" [(ngModel)]="sessionId" required>
+			</p>
+			<p class="text-center">
+				<input class="btn btn-lg btn-success" type="submit" name="commit" value="Join!">
+			</p>
+		</form>
 	</div>
-	<div id="subscriber">
-		<div *ngFor="let s of this.remoteStreams">
-			<stream-component [stream]="s"></stream-component>
+
+	<div *ngIf="session" id="session">
+		<div id="session-header">
+			<h1 id="session-title">{{sessionId}}</h1>
+			<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" (click)="leaveSession()" value="Leave session">
+		</div>
+		<div *ngIf="this.mainVideoStream" id="main-video" class="col-md-6">
+			<stream-component [stream]="this.mainVideoStream"></stream-component>
+		</div>
+		<div id="video-container" class="col-md-6">
+			<div class="stream-container col-md-6 col-xs-6" *ngIf="this.localStream">
+				<stream-component [stream]="this.localStream" (mainVideoStream)="getMainVideoStream($event)"></stream-component>
+			</div>
+			<div class="stream-container col-md-6 col-xs-6" *ngFor="let s of this.remoteStreams">
+				<stream-component [stream]="s" (mainVideoStream)="getMainVideoStream($event)"></stream-component>
+			</div>
 		</div>
 	</div>
 </div>
