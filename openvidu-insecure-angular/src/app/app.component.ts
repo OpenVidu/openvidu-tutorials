@@ -20,8 +20,9 @@ export class AppComponent {
   sessionId: string;
   token: string;
 
-  @Input()
-  mainVideoStream: Stream;
+  // Main video of the page, will be 'localStream' or one of the 'remoteStreams',
+  // updated by an Output event of StreamComponent children
+  @Input() mainVideoStream: Stream;
 
   constructor() {
     this.generateParticipantInfo();
@@ -39,36 +40,67 @@ export class AppComponent {
   }
 
   joinSession() {
+
+    // --- 1) Get an OpenVidu object and init a session with a sessionId ---
+
+    // Init OpenVidu object
     this.OV = new OpenVidu();
+
+    // We will join the video-call "sessionId". This parameter must start with the URL of OpenVidu Server
     this.session = this.OV.initSession('wss://' + location.hostname + ':8443/' + this.sessionId);
 
-    // 2) Specify the actions when events take place
+
+    // --- 2) Specify the actions when events take place ---
+
+    // On every new Stream received...
     this.session.on('streamCreated', (event) => {
-      this.remoteStreams.push(event.stream); // Add the new stream to 'remoteStreams' array
-      this.session.subscribe(event.stream, ''); // Empty string for no video element
+
+      // Add the new stream to 'remoteStreams' array
+      this.remoteStreams.push(event.stream);
+
+      // Subscribe to the Stream to receive it. Second parameter is an empty string
+      // so OpenVidu doesn't create an HTML video by its own
+      this.session.subscribe(event.stream, '');
     });
 
+    // On every Stream destroyed...
     this.session.on('streamDestroyed', (event) => {
-      event.preventDefault(); // Avoid OpenVidu trying to remove the HTML video element
-      this.deleteRemoteStream(event.stream); // Remove the stream from 'remoteStreams' array
+
+      // Avoid OpenVidu trying to remove the HTML video element
+      event.preventDefault();
+
+      // Remove the stream from 'remoteStreams' array
+      this.deleteRemoteStream(event.stream);
     });
 
-    // 3) Connect to the session
+
+    // --- 3) Connect to the session ---
+
+    // 'token' param irrelevant when using insecure version of OpenVidu. Second param will be received by every user
+    // in Stream.connection.data property, which will be appended to DOM as the user's nickname
     this.session.connect(this.token, '{"clientData": "' + this.token + '"}', (error) => {
-      // If the connection is successful, initialize a publisher and publish to the session
+
+     // If connection successful, initialize a publisher and publish to the session
       if (!error) {
 
-        // 4) Get your own camera stream with the desired resolution
+        // --- 4) Get your own camera stream with the desired resolution ---
+
+        // Both audio and video will be active. Second parameter is an empty string
+        // so OpenVidu doesn't create an HTML video by its own
         let publisher = this.OV.initPublisher('', {
           audio: true,
           video: true,
           quality: 'MEDIUM'
         });
 
+        // Store your webcam stream in 'localStream' object
         this.localStream = publisher.stream;
+        // Set the main video in the page to display our webcam
         this.mainVideoStream = this.localStream;
 
-        // 5) Publish your stream
+
+        // --- 5) Publish your stream ---
+
         this.session.publish(publisher);
 
       } else {

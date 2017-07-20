@@ -76,10 +76,10 @@ function joinSession() {
 
 	// --- 1) Get an OpenVidu object and init a session with a sessionId ---
 
-	// OpenVidu listening on "localhost:8443"
+	// Init OpenVidu object
 	OV = new OpenVidu();
 
-	// We will join the video-call "sessionId"
+	// We will join the video-call "sessionId". This parameter must start with the URL of OpenVidu Server
 	session = OV.initSession("wss://" + location.hostname + ":8443/" + sessionId);
 
 
@@ -124,6 +124,7 @@ function joinSession() {
 				quality: 'MEDIUM'
 			});
 
+			// When our HTML video has been added to DOM...
 			publisher.on('videoElementCreated', function (event) {
 				initMainVideo(event.element, token);
 				appendUserData(event.element, token);
@@ -147,13 +148,15 @@ function joinSession() {
 
 function leaveSession() {
 
-	// 6) Leave the session by calling 'disconnect' method over the Session object
+	// --- 6) Leave the session by calling 'disconnect' method over the Session object ---
 
 	session.disconnect();
 
-	// Removing all HTML elements with the user's nicknames. HTML videos are automatically removed when leaving a Session
+	// Removing all HTML elements with the user's nicknames. 
+	// HTML videos are automatically removed when leaving a Session
 	removeAllUserData();
 
+	// Back to 'Join session' page
 	document.getElementById('join').style.display = 'block';
 	document.getElementById('session').style.display = 'none';
 }

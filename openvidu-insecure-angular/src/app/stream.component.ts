@@ -45,10 +45,13 @@ export class StreamComponent implements DoCheck {
     constructor(private sanitizer: DomSanitizer) { }
 
     ngDoCheck() { // Detect any change in 'stream' property
+
         // If 'src' of Stream object has changed, 'videoSrc' value must be updated
         if (!(this.videSrcUnsafe === this.stream.getVideoSrc())) {
+
             // Angular mandatory URL sanitization
             this.videoSrc = this.sanitizer.bypassSecurityTrustUrl(this.stream.getVideoSrc());
+
             // Auxiliary value to store the URL as a string for upcoming comparisons
             this.videSrcUnsafe = this.stream.getVideoSrc();
         }
