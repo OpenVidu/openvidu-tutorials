@@ -1,10 +1,11 @@
 var OV;
-var userName;
 var session;
-var sessionName;
-var participantName;
+
 var sessionId;
 var token;
+var nickName;
+var userName;
+var sessionName;
 
 
 /* OPENVIDU METHODS */
@@ -30,7 +31,7 @@ function joinSession() {
 			// When the HTML video has been appended to DOM...
 			subscriber.on('videoElementCreated', function (event) {
 			
-				// Add a new <p> element for the user's name and nickname just below its video
+				// Add a new HTML element for the user's name and nickname over its video
 				appendUserData(event.element, subscriber.stream.connection);
 			});
 		});
@@ -44,7 +45,7 @@ function joinSession() {
 		// --- 3) Connect to the session passing the retrieved token and some more data from
 		//         the client (in this case a JSON with the nickname chosen by the user) ---
 
-		session.connect(token, '{"clientData": "' + participantName + '"}', function (error) {
+		session.connect(token, '{"clientData": "' + nickName + '"}', function (error) {
 
 			// If the connection is successful, initialize a publisher and publish to the session
 			if (!error) {
@@ -66,7 +67,7 @@ function joinSession() {
 					// When our HTML video has been added to DOM...
 					publisher.on('videoElementCreated', function (event) {
 						// Init the main video with ours and append our data
-						var userData = {nickName: participantName, userName: userName};
+						var userData = {nickName: nickName, userName: userName};
 						initMainVideo(event.element, userData);
 						appendUserData(event.element, userData);
 					});
@@ -78,7 +79,7 @@ function joinSession() {
 
 				} else {
 					console.warn('You don\'t have permissions to publish');
-					initMainVideoThumbnail();
+					initMainVideoThumbnail(); // Show SUBSCRIBER message in main video
 				}
 			} else {
 				console.warn('There was an error connecting to the session:', error.code, error.message);
@@ -142,7 +143,7 @@ function logOut() {
 }
 
 function getSessionIdAndToken(callback) {
-	participantName = $("#participantName").val();
+	nickName = $("#participantName").val();
 	sessionName = $("#sessionName").val();
 	var jsonBody = JSON.stringify({
 		'session': sessionName
