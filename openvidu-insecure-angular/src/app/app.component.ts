@@ -112,8 +112,10 @@ export class AppComponent {
   }
 
   leaveSession() {
-    // Disconnect from session and empty all properties
+    // --- 6) Leave the session by calling 'disconnect' method over the Session object ---
     if (this.OV) { this.session.disconnect(); };
+
+    // Empty all properties...
     this.remoteStreams = [];
     this.localStream = null;
     this.session = null;

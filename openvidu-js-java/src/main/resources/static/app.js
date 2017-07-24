@@ -24,8 +24,8 @@ function joinSession() {
 		session.on('streamCreated', function (event) {
 
 			// Subscribe to the Stream to receive it
-			// HTML video will be appended to element with 'subscriber' id
-			var subscriber = session.subscribe(event.stream, 'subscriber');
+			// HTML video will be appended to element with 'video-container' id
+			var subscriber = session.subscribe(event.stream, 'video-container');
 			
 			// When the HTML video has been appended to DOM...
 			subscriber.on('videoElementCreated', function (event) {
