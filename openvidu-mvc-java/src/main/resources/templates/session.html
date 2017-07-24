@@ -1,102 +1,213 @@
-<!DOCTYPE html>
 <html>
 
 <head>
-	<meta charset="UTF-8"></meta>
-	<title>OpenVidu Demo Java MVC Secure</title>
-	<link rel="stylesheet" type="text/css" href="style.css"></link>
+	<title>openvidu-mvc-java</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8"></meta>
+
+	<!-- Bootstrap -->
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+	    crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	    crossorigin="anonymous"></link>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+	    crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
+	<!-- Bootstrap -->
+
+	<link rel="styleSheet" href="style.css" type="text/css" media="screen"></link>
+	<script src="OpenVidu.js"></script>
 </head>
 
 <body>
 
-	<h2 th:text="${sessionName}"></h2>
-	<form action="/leave-session" method="post">
-		<input type="hidden" name="session-name" th:value="${sessionName}"></input>
-		<input type="hidden" name="token" th:value="${token}"></input>
-		<button type="submit" onclick="leaveSession()">Leave session</button>
-	</form>
-	<div id="publisher"></div>
-	<div id="subscriber"></div>
+	<nav class="navbar navbar-default">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#">OpenVidu Tutorial</a>
+				<a class="navbar-brand nav-icon" href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-mvc-java" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+			</div>
+		</div>
+	</nav>
+
+	<div class="container vertical-center">
+		<div id="logged" class="horizontal-center">
+			<div id="session">
+				<div id="session-header">
+					<h1 th:text="${sessionName}" id="session-title"></h1>
+					<form action="/leave-session" method="post">
+						<input type="hidden" name="session-name" th:value="${sessionName}"></input>
+						<input type="hidden" name="token" th:value="${token}"></input>
+						<button id="buttonLeaveSession" class="btn btn-large btn-danger" type="submit" onclick="leaveSession()">Leave session</button>
+					</form>
+				</div>
+				<div id="main-video" class="col-md-6">
+					<p class="nickName"></p>
+					<p class="userName"></p>
+					<video autoplay="true" src=""></video>
+				</div>
+				<div id="video-container" class="col-md-6"></div>
+			</div>
+		</div>
+	</div>
+
+	<footer class="footer">
+		<div class="container">
+			<div class="text-muted">OpenVidu © 2017</div>
+			<a href="http://www.codeurjc.es/" target="_blank"><img src="https://codeurjc.files.wordpress.com/2016/01/logo_cetrado_negro.png?w=275&amp;h=165"/></a>
+		</div>
+	</footer>
 
 </body>
-
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-<script src="OpenVidu.js"></script>
 
 <script th:inline="javascript">
 
 	var sessionId = [[${sessionId}]];
 	var token = [[${token}]];
-	var nickName = [[${nickName}]];
+	var participantName = [[${nickName}]];
 	var userName = [[${userName}]];
 	var sessionName = [[${sessionName}]];
 
 	console.warn('Request of SESSIONID and TOKEN gone WELL (SESSIONID:' +
 		sessionId + ", TOKEN:" + token + ")");
 
-	// 1) Get an OpenVidu object and initialize a Session
+	// --- 1) Get an OpenVidu object and init a session with the retrieved sessionId ---
+
 	var OV = new OpenVidu();
 	var session = OV.initSession(sessionId);
 
-	// 2) Specify the actions when events take place
+
+	// --- 2) Specify the actions when events take place ---
+
+	// On every new Stream received...
 	session.on('streamCreated', function (event) {
-		// Subscribe to the stream to receive it
-		var subscriber = session.subscribe(event.stream, 'subscriber');
+
+		// Subscribe to the Stream to receive it
+		// HTML video will be appended to element with 'video-container' id
+		var subscriber = session.subscribe(event.stream, 'video-container');
+		
+		// When the HTML video has been appended to DOM...
 		subscriber.on('videoElementCreated', function (event) {
-			// Add a new HTML element for the user's nickname
+		
+			// Add a new HTML element for the user's name and nickname just below its video
 			appendUserData(event.element, subscriber.stream.connection);
 		});
 	});
 
+	// On every Stream destroyed...
 	session.on('streamDestroyed', function (event) {
-		// Delete the HTML element with the user's nickname
+		// Delete the HTML element with the user's name and nickname
 		removeUserData(event.stream.connection);
 	});
 
 	// 3) Connect to the session
-	session.connect(token, '{"clientData": "' + nickName + '"}', function (error) {
+	session.connect(token, '{"clientData": "' + participantName + '"}', function (error) {
 
 		// If the connection is successful 
 		if (!error) {
 
 			// If the user has enough permissions
-			if (isPublisher(userName)) {
+			if (isPublisher()) {
 
-				// 4) Get your own camera stream with the desired resolution and publish it, only if the user is supposed to do so
-				var publisher = OV.initPublisher('publisher', {
+				// --- 4) Get your own camera stream ---
+
+				var publisher = OV.initPublisher('video-container', {
 					audio: true,
 					video: true,
 					quality: 'MEDIUM'
 				});
 
-				// 5) Publish your stream
+				// When our HTML video has been added to DOM...
+				publisher.on('videoElementCreated', function (event) {
+					// Init the main video with ours and append our data
+					var userData = {nickName: participantName, userName: userName};
+					initMainVideo(event.element, userData);
+					appendUserData(event.element, userData);
+				});
+
+
+				// --- 5) Publish your stream ---
+
 				session.publish(publisher);
 
 			} else {
 				console.warn('You don\'t have permissions to publish');
+				initMainVideoThumbnail();
 			}
 		} else {
 			console.warn('There was an error connecting to the session:', error.code, error.message);
 		}
 	});
 
+
 	function leaveSession() {
+
+		// --- 6) Leave the session by calling 'disconnect' method over the Session object ---
 		session.disconnect();
 	}
 
 	function appendUserData(videoElement, connection) {
-		var clientDataJSON = JSON.parse(connection.data.split('%/%')[0]);
-		var serverDataJSON = JSON.parse(connection.data.split('%/%')[1]);
-		$('<p id="data-' + connection.connectionId + '">Nickname: ' + clientDataJSON.clientData +
-			'<br/>Username: ' + serverDataJSON.serverData + '</p>'
-		).insertAfter(videoElement);
+		var clientData;
+		var serverData;
+		var nodeId;
+		if (connection.nickName) { // Appending local video data
+			clientData = connection.nickName;
+			serverData = connection.userName;
+			nodeId = 'main-videodata';
+		} else {
+			clientData = JSON.parse(connection.data.split('%/%')[0]).clientData;
+			serverData = JSON.parse(connection.data.split('%/%')[1]).serverData;
+			nodeId = connection.connectionId;
+		}
+		var dataNode = document.createElement('div');
+		dataNode.className = "data-node";
+		dataNode.id = "data-" + nodeId;
+		dataNode.innerHTML = '<p class="nickName">' + clientData + '</p><p class="userName">'+ serverData + '</p>';
+		videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling);
+		addClickListener(videoElement, clientData, serverData);
 	}
 
 	function removeUserData(connection) {
+		var userNameRemoved = $("#data-" + connection.connectionId);
+		if ($(userNameRemoved).find('p.userName').html() === $('#main-video p.userName').html()) {
+			cleanMainVideo(); // The participant focused in the main video has left
+		}
 		$("#data-" + connection.connectionId).remove();
 	}
 
-	function isPublisher(userName) {
+	function removeAllUserData() {
+		$(".data-node").remove();
+	}
+
+	function cleanMainVideo() {
+		$('#main-video video').attr('src', '');
+		$('#main-video p').each(function () {
+			$(this).html('');
+		});
+	}
+
+	function addClickListener(videoElement, clientData, serverData) {
+		videoElement.addEventListener('click', function () {
+			var mainVideo = $('#main-video video');
+			if (mainVideo.attr('src') !== videoElement.src) {
+				$('#main-video p.nickName').html(clientData);
+				$('#main-video p.userName').html(serverData);
+				mainVideo.attr('src', videoElement.src);
+			}
+		});
+	}
+
+	function initMainVideo(videoElement, userData) {
+		$('#main-video video').attr("src", videoElement.src);
+		$('#main-video p.nickName').html(userData.nickName);
+		$('#main-video p.userName').html(userData.userName);
+	}
+
+	function initMainVideoThumbnail() {
+		$('#main-video video').css("background", "url('images/subscriber-msg.jpg') round");
+	}
+
+	function isPublisher() {
 		return userName.includes('publisher');
 	}
 </script>
