@@ -4,6 +4,7 @@
 
 	<title>OpenVidu getaroom</title>
 	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="shortcut icon" href="resources/images/favicon.ico" type="image/x-icon">
 
 	<script src="OpenVidu.js"></script>
 	<script src="app.js"></script>
@@ -12,11 +13,15 @@
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
 	    crossorigin="anonymous"></script>
 
-	<!--Bootstrap -->
+	<!-- Bootstrap -->
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+	    crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
 	    crossorigin="anonymous">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
 	    crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!-- Bootstrap -->
 
 	<!--Custom styles -->
 	<link rel="styleSheet" href="style.css" type="text/css" media="screen">
@@ -25,39 +30,65 @@
 
 <body>
 
-	<!-- Join page template -->
-	<div id="join" class="row no-margin" style="display: none;">
-		<div class="jumbotron col-lg-4 col-md-6 col-centered">
-			<h1>Join a room!</h1>
-			<button type="button" class="btn btn-success" onclick="joinRoom()">Join Room</button>
+	<nav id="nav-join" class="navbar navbar-default" hidden>
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="#"><span class="arciform">openVidu getaroom</span></a>
+				<a class="navbar-brand nav-icon" href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-getaroom" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+			</div>
 		</div>
-	</div>
+	</nav>
 
-	<!-- Session page template -->
-	<div id="session" style="display: none;">
-		<nav class="navbar navbar-default navbar-fixed-top">
-			<div class="container">
-				<button type="button" class="btn btn-danger" onclick="leaveRoom()">Leave Room</button>
+	<nav id="nav-session" class="navbar navbar-default" hidden>
+		<div class="container">
+			<div class="navbar-header">
+				<a href="http://www.openvidu.io/" target="_blank"><img src="resources/images/openvidu_globe_bg_transp_cropped.png"/></a>
+				<button id="leave-room" type="button" class="btn btn-danger" onclick="leaveRoom()">Leave Room</button>
 				<form>
 					<div class="input-group">
 						<input type="text" class="form-control" placeholder="Some path" id="copy-input">
 						<span class="input-group-btn">
-      						<button class="btn btn-default" type="button" id="copy-button" data-toggle="tooltip" data-placement="button" title="Copy to Clipboard">Share the URL</button>
-   						</span>
+								<button class="btn btn-default" type="button" id="copy-button" data-toggle="tooltip" data-placement="button" title="Copy to Clipboard">Share the URL</button>
+							</span>
 					</div>
 				</form>
 				<button id="mute-video" type="button" class="btn btn-primary float-right mute-button" onclick="muteVideo()">
-      				<span class="glyphicon glyphicon-facetime-video"></span> <span class="hidden-xs">Video</span>
-   				</button>
+						<span class="glyphicon glyphicon-facetime-video"></span> <span class="hidden-xs">Video</span>
+					</button>
 				<button id="mute-audio" type="button" class="btn btn-primary float-right mute-button" onclick="muteAudio()">
-      				<span class="glyphicon glyphicon-volume-up"></span> <span class="hidden-xs">Audio</span>
-   				</button>
+						<span class="glyphicon glyphicon-volume-up"></span> <span class="hidden-xs">Audio</span>
+					</button>
 			</div>
-		</nav>
-		<div id="videos" class="row no-margin">
-			<div id="publisher"></div>
 		</div>
+	</nav>
+
+	<div id="main-container" class="container">
+
+		<!-- Join page template -->
+		<div id="join" class="row no-margin" hidden>
+			<div class="jumbotron col-lg-4 col-md-6 col-centered">
+				<div id="img-div"><img src="resources/images/openvidu_grey_bg_transp_cropped.png" /></div>
+				<h1 class="arciform">getaroom</h1>
+				<button type="button" class="btn btn-success" onclick="joinRoom()">Go!</button>
+			</div>
+		</div>
+
+		<!-- Session page template -->
+		<div id="session" hidden>
+
+			<div id="videos" class="row no-margin">
+				<div id="publisher"></div>
+			</div>
+		</div>
+
 	</div>
+
+	<footer class="footer">
+		<div class="container">
+			<div class="text-muted arciform">openVidu © 2017</div>
+			<a href="http://www.openvidu.io/" target="_blank"><img src="resources/images/openvidu_globe_bg_transp_cropped.png"/></a>
+		</div>
+	</footer>
 
 </body>
 

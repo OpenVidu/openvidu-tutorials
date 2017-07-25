@@ -28,9 +28,10 @@ window.addEventListener('beforeunload', function () {
 
 function joinRoom(sessionId) {
 
+	var pathname = (location.pathname.slice(-1) === "/" ? location.pathname : location.pathname+"/");
 	if (!sessionId) {
 		// If the user is joining to a new room
-		var sessionId = '#' + randomString();
+		sessionId = '#' + randomString();
 	}
 
 	// As insecure OpenVidu, the user's token can be a random string
@@ -38,11 +39,11 @@ function joinRoom(sessionId) {
 
 	// --- 1) Get an OpenVidu object and init a session with a sessionId ---
 
-	// OpenVidu listening on "localhost:8443"
+	// Init OpenVidu object
 	OV = new OpenVidu();
 
-	// We will join the room "sessionId"
-	session = OV.initSession("wss://" + location.hostname + ":8443/" + sessionId);
+	// We will join the video-call "sessionId". This parameter must start with the URL of OpenVidu Server, with secure WebSocket protocol ('wss://')
+	session = OV.initSession("wss://" + location.hostname + ":8443" + pathname + sessionId);
 
 
 	// --- 2) Specify the actions when events take place ---
@@ -95,7 +96,7 @@ function joinRoom(sessionId) {
 		}
 	});
 
-	window.history.pushState("", "", '/' + sessionId);
+	window.history.pushState("", "", pathname + sessionId);
 
 	showSessionHideJoin();
 	initializeSessionView();
@@ -110,7 +111,7 @@ function leaveRoom() {
 	session.disconnect();
 	
 	showJoinHideSession();
-	window.location.href = window.location.origin;
+	window.location.href = window.location.origin + window.location.pathname;
 }
 
 
@@ -152,14 +153,22 @@ function randomString() {
 
 // 'Session' page
 function showSessionHideJoin() {
+	$('#nav-join').hide();
+	$('#nav-session').show();
 	$('#join').hide();
 	$('#session').show();
+	$('footer').hide();
+	$('#main-container').removeClass('container');
 }
 
 // 'Join' page 
 function showJoinHideSession() {
+	$('#nav-join').show();
+	$('#nav-session').hide();
 	$('#join').show();
 	$('#session').hide();
+	$('footer').show();
+	$('#main-container').addClass('container');
 }
 
 // Prepare HTML dynamic elements (URL clipboard input)
