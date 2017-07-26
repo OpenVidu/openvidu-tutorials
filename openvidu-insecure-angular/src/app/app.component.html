@@ -1,19 +1,22 @@
-<div class="container vertical-center">
-	<div *ngIf="!session" id="join" class="jumbotron horizontal-center">
-		<h1>Join a video session</h1>
-		<form class="form-group" (submit)="joinSession()">
-			<p>
-				<label>Participant</label>
-				<input class="form-control" type="text" name="token" id="participantId" [(ngModel)]="token" required>
-			</p>
-			<p>
-				<label>Session</label>
-				<input class="form-control" type="text" name="sessionId" id="sessionId" [(ngModel)]="sessionId" required>
-			</p>
-			<p class="text-center">
-				<input class="btn btn-lg btn-success" type="submit" name="commit" value="Join!">
-			</p>
-		</form>
+<div id="main-container" class="container">
+	<div *ngIf="!session" id="join">
+		<div id="img-div"><img src="src/assets/images/openvidu_grey_bg_transp_cropped.png" /></div>
+		<div id="join-dialog" class="jumbotron vertical-center">
+			<h1>Join a video session</h1>
+			<form class="form-group" (submit)="joinSession()">
+				<p>
+					<label>Participant</label>
+					<input class="form-control" type="text" id="participantId" name="participantId" [(ngModel)]="token" required>
+				</p>
+				<p>
+					<label>Session</label>
+					<input class="form-control" type="text" id="sessionId" name="sessionId" [(ngModel)]="sessionId" required>
+				</p>
+				<p class="text-center">
+					<input class="btn btn-lg btn-success" type="submit" name="commit" value="Join!">
+				</p>
+			</form>
+		</div>
 	</div>
 
 	<div *ngIf="session" id="session">

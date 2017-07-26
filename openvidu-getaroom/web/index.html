@@ -1,17 +1,10 @@
 <html>
 
 <head>
+	<title>openvidu-getaroom</title>
 
-	<title>OpenVidu getaroom</title>
-	<meta charset="utf-8" name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
 	<link rel="shortcut icon" href="resources/images/favicon.ico" type="image/x-icon">
-
-	<script src="OpenVidu.js"></script>
-	<script src="app.js"></script>
-
-	<!-- jQuery -->
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
-	    crossorigin="anonymous"></script>
 
 	<!-- Bootstrap -->
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
@@ -23,18 +16,19 @@
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<!-- Bootstrap -->
 
-	<!--Custom styles -->
 	<link rel="styleSheet" href="style.css" type="text/css" media="screen">
-
+	<script src="OpenVidu.js"></script>
+	<script src="app.js"></script>
 </head>
 
 <body>
 
-	<nav id="nav-join" class="navbar navbar-default" hidden>
+	<nav id="nav-join" class="navbar navbar-default">
 		<div class="container">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="#"><span class="arciform">openVidu getaroom</span></a>
-				<a class="navbar-brand nav-icon" href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-getaroom" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+				<a class="navbar-brand" href="/"><img class="demo-logo" src="resources/images/openvidu_vert_white_bg_trans_cropped.png"/> getaroom</a>
+        		<a class="navbar-brand nav-icon" href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-getaroom" title="GitHub Repository" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+				<a class="navbar-brand nav-icon" href="http://www.openvidu.io/docs/tutorials/openvidu-getaroom/" title="Documentation" target="_blank"><i class="fa fa-book" aria-hidden="true"></i></a>
 			</div>
 		</div>
 	</nav>
@@ -42,7 +36,7 @@
 	<nav id="nav-session" class="navbar navbar-default" hidden>
 		<div class="container">
 			<div class="navbar-header">
-				<a href="http://www.openvidu.io/" target="_blank"><img src="resources/images/openvidu_globe_bg_transp_cropped.png"/></a>
+				<a class="navbar-brand" href="/"><img class="demo-logo" src="resources/images/openvidu_vert_white_bg_trans_cropped.png"/> getaroom</a>
 				<button id="leave-room" type="button" class="btn btn-danger" onclick="leaveRoom()">Leave Room</button>
 				<form>
 					<div class="input-group">
@@ -66,9 +60,9 @@
 
 		<!-- Join page template -->
 		<div id="join" class="row no-margin" hidden>
-			<div class="jumbotron col-lg-4 col-md-6 col-centered">
-				<div id="img-div"><img src="resources/images/openvidu_grey_bg_transp_cropped.png" /></div>
-				<h1 class="arciform">getaroom</h1>
+			<div id="img-div"><img src="resources/images/openvidu_grey_bg_transp_cropped.png" /></div>
+			<div id="join-dialog" class="jumbotron vertical-center">
+				<h1 class="arciform">Get a room</h1>
 				<button type="button" class="btn btn-success" onclick="joinRoom()">Go!</button>
 			</div>
 		</div>
@@ -85,8 +79,8 @@
 
 	<footer class="footer">
 		<div class="container">
-			<div class="text-muted arciform">openVidu © 2017</div>
-			<a href="http://www.openvidu.io/" target="_blank"><img src="resources/images/openvidu_globe_bg_transp_cropped.png"/></a>
+			<div class="text-muted">OpenVidu © 2017</div>
+			<a href="http://www.openvidu.io/" target="_blank"><img class="openvidu-logo" src="resources/images/openvidu_globe_bg_transp_cropped.png"/></a>
 		</div>
 	</footer>
 

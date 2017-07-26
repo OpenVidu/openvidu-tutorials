@@ -4,6 +4,7 @@
 	<title>openvidu-insecure-js</title>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+	<link rel="shortcut icon" href="resources/images/favicon.ico" type="image/x-icon">
 
 	<!-- Bootstrap -->
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
@@ -25,28 +26,32 @@
 	<nav class="navbar navbar-default">
 		<div class="container">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="#">OpenVidu Tutorial</a>
-				<a class="navbar-brand nav-icon" href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-insecure-js" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+				<a class="navbar-brand" href="/"><img class="demo-logo" src="resources/images/openvidu_vert_white_bg_trans_cropped.png"/> Insecure JS</a>
+				<a class="navbar-brand nav-icon" href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-insecure-js" title="GitHub Repository" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+				<a class="navbar-brand nav-icon" href="http://www.openvidu.io/docs/tutorials/openvidu-insecure-js/" title="Documentation" target="_blank"><i class="fa fa-book" aria-hidden="true"></i></a>
 			</div>
 		</div>
 	</nav>
 
-	<div class="container vertical-center">
-		<div id="join" class="jumbotron horizontal-center">
-			<h1>Join a video session</h1>
-			<form class="form-group" onsubmit="return joinSession()">
-				<p>
-					<label>Participant</label>
-					<input class="form-control" type="text" id="participantId" required>
-				</p>
-				<p>
-					<label>Session</label>
-					<input class="form-control" type="text" id="sessionId" required>
-				</p>
-				<p class="text-center">
-					<input class="btn btn-lg btn-success" type="submit" name="commit" value="Join!">
-				</p>
-			</form>
+	<div id="main-container" class="container">
+		<div id="join">
+			<div id="img-div"><img src="resources/images/openvidu_grey_bg_transp_cropped.png" /></div>
+			<div id="join-dialog" class="jumbotron vertical-center">
+				<h1>Join a video session</h1>
+				<form class="form-group" onsubmit="return joinSession()">
+					<p>
+						<label>Participant</label>
+						<input class="form-control" type="text" id="participantId" required>
+					</p>
+					<p>
+						<label>Session</label>
+						<input class="form-control" type="text" id="sessionId" required>
+					</p>
+					<p class="text-center">
+						<input class="btn btn-lg btn-success" type="submit" name="commit" value="Join!">
+					</p>
+				</form>
+			</div>
 		</div>
 
 		<div id="session" style="display: none;">
@@ -62,7 +67,7 @@
 	<footer class="footer">
 		<div class="container">
 			<div class="text-muted">OpenVidu © 2017</div>
-			<a href="http://www.codeurjc.es/" target="_blank"><img src="https://codeurjc.files.wordpress.com/2016/01/logo_cetrado_negro.png?w=275&h=165"/></a>
+			<a href="http://www.openvidu.io/" target="_blank"><img class="openvidu-logo" src="resources/images/openvidu_globe_bg_transp_cropped.png"/></a>
 		</div>
 	</footer>
 

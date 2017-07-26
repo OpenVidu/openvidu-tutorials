@@ -110,7 +110,7 @@ function leaveRoom() {
 	// --- 6) Leave the session by calling 'disconnect' method over the Session object ---
 	session.disconnect();
 	
-	showJoinHideSession();
+	// Back to welcome page
 	window.location.href = window.location.origin + window.location.pathname;
 }
 
