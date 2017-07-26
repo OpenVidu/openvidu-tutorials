@@ -28,7 +28,6 @@ window.addEventListener('beforeunload', function () {
 
 function joinRoom(sessionId) {
 
-	var pathname = (location.pathname.slice(-1) === "/" ? location.pathname : location.pathname+"/");
 	if (!sessionId) {
 		// If the user is joining to a new room
 		sessionId = '#' + randomString();
@@ -96,6 +95,7 @@ function joinRoom(sessionId) {
 		}
 	});
 
+	var pathname = (location.pathname.slice(-1) === "/" ? location.pathname : location.pathname+"/");
 	window.history.pushState("", "", pathname + sessionId);
 
 	showSessionHideJoin();

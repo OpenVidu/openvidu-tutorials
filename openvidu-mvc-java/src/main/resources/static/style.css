@@ -74,8 +74,8 @@ input.btn {
 }
 
 .btn-success {
-	background-color: #1dd36b !important;
-	border-color: #1dd36b;
+	background-color: #06d362 !important;
+	border-color: #06d362;
 }
 
 .btn-success:hover {
@@ -94,8 +94,8 @@ input.btn {
 }
 
 .btn-warning {
-	background-color: #ffcc3a !important;
-	border-color: #ffcc3a;
+	background-color: #ffcc00 !important;
+	border-color: #ffcc00;
 	color: #4d4d4d;
 }
 
