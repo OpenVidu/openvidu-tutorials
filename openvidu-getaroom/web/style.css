@@ -70,9 +70,18 @@ input.btn {
 	font-weight: bold;
 }
 
+.btn {
+	font-weight: bold !important;
+}
+
 .btn-success {
-	background-color: #0088aa !important;
-	border-color: #0088aa;
+	background-color: #1dd36b !important;
+	border-color: #1dd36b;
+}
+
+.btn-success:hover {
+	background-color: #1abd61 !important;
+	border-color: #1abd61;
 }
 
 .footer {
