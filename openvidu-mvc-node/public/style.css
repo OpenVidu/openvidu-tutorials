@@ -5,8 +5,12 @@ html {
 
 nav {
 	height: 50px;
-	position: absolute !important;
 	width: 100%;
+	z-index: 1;
+	background-color: #4d4d4d !important;
+	border-color: #4d4d4d !important;
+	border-top-right-radius: 0 !important;
+	border-top-left-radius: 0 !important;
 }
 
 .navbar-header {
@@ -18,19 +22,99 @@ nav {
 	float: right;
 }
 
+nav a {
+	color: #ccc !important;
+}
+
 nav i.fa {
 	font-size: 40px;
+	color: #ccc;
+}
+
+nav a:hover {
+	color: #a9a9a9 !important;
+}
+
+nav i.fa:hover {
+	color: #a9a9a9;
+}
+
+#main-container {
+	padding-bottom: 80px;
 }
 
 .vertical-center {
-	min-height: 100%;
-	min-height: 100vh;
-	display: flex;
-	align-items: center;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
 }
 
 .horizontal-center {
 	margin: 0 auto;
+}
+
+.form-control {
+	color: #0088aa;
+	font-weight: bold;
+}
+
+.form-control:focus {
+	border-color: #0088aa;
+	-webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(0, 136, 170, 0.6);
+	box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075), 0 0 8px rgba(0, 136, 170, 0.6);
+}
+
+input.btn {
+	font-weight: bold;
+}
+
+.btn {
+	font-weight: bold !important;
+}
+
+.btn-success {
+	background-color: #1dd36b !important;
+	border-color: #1dd36b;
+}
+
+.btn-success:hover {
+	background-color: #1abd61 !important;
+	border-color: #1abd61;
+}
+
+.btn-info {
+	background-color: #0088aa !important;
+	border-color: #0088aa;
+}
+
+.btn-info:hover {
+	background-color: #00708c !important;
+	border-color: #00708c;
+}
+
+.btn-warning {
+	background-color: #ffcc3a !important;
+	border-color: #ffcc3a;
+	color: #4d4d4d;
+}
+
+.btn-warning:hover {
+	background-color: #eabb3a !important;
+	border-color: #eabb3a;
+	color: #4d4d4d;
+}
+
+.btn-warning:active {
+	color: #4d4d4d;
+}
+
+.btn-warning:focus {
+	color: #4d4d4d;
+}
+
+.btn-warning:active:focus {
+	color: #4d4d4d;
 }
 
 .footer {
@@ -38,18 +122,67 @@ nav i.fa {
 	bottom: 0;
 	width: 100%;
 	height: 60px;
-	background-color: #f8f8f8;
+	background-color: #4d4d4d;
 }
 
 .footer .text-muted {
 	margin: 20px 0;
 	float: left;
+	color: #ccc;
 }
 
-.footer img {
-	height: 50px;
+.openvidu-logo {
+	height: 35px;
 	float: right;
-	margin: 5px 0;
+	margin: 12px 0;
+	-webkit-transition: all 0.1s ease-in-out;
+	-moz-transition: all 0.1s ease-in-out;
+	-o-transition: all 0.1s ease-in-out;
+	transition: all 0.1s ease-in-out;
+}
+
+.openvidu-logo:hover {
+	-webkit-filter: grayscale(0.5);
+	filter: grayscale(0.5);
+}
+
+.demo-logo {
+	margin: 0;
+	height: 22px;
+	float: left;
+	padding-right: 8px;
+}
+
+a:hover .demo-logo {
+	-webkit-filter: brightness(0.7);
+	filter: brightness(0.7);
+}
+
+#join-dialog h1 {
+	color: #4d4d4d;
+	font-weight: bold;
+	text-align: center;
+}
+
+#join-dialog label {
+	color: #0088aa;
+}
+
+#join-dialog input.btn {
+	margin-top: 15px;
+}
+
+#join-dialog hr {
+	background: #4d4d4d;
+}
+
+#img-div {
+	text-align: center;
+    padding-bottom: 3em;
+}
+
+#img-div img {
+	height: 15%;
 }
 
 #logged {
@@ -58,14 +191,7 @@ nav i.fa {
 
 #join {
 	max-width: 700px;
-	margin: auto;
-}
-
-#session {
-	padding-top: 70px;
-	height: 100vh;
-	height: 100%;
-	width: 100%;
+    margin: auto;
 }
 
 #session-header {
@@ -111,12 +237,12 @@ nav i.fa {
 
 #video-container p.userName {
 	float: right;
-	border-bottom-left-radius: 4px;
-	border-bottom-right-radius: 0px;
-	font-weight: lighter;
-	font-size: 12px;
-	background: #777777;
-	color: #f8f8f8;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 0px;
+    font-weight: lighter;
+    font-size: 12px;
+    background: #777777;
+    color: #f8f8f8;
 }
 
 video {
@@ -140,14 +266,15 @@ video {
 	position: absolute;
 	right: 0;
 	font-size: 16px !important;
-	margin-right: 15px;
-	border-bottom-left-radius: 4px;
-	border-bottom-right-radius: 0px;
-	font-weight: lighter;
-	font-size: 12px;
-	background: #777777;
-	color: #f8f8f8;
+    margin-right: 15px;
+    border-bottom-left-radius: 4px;
+    border-bottom-right-radius: 0px;
+    font-weight: lighter;
+    font-size: 12px;
+    background: #777777;
+    color: #f8f8f8;
 }
+
 
 #session img {
 	width: 100%;
@@ -181,7 +308,6 @@ table i {
 
 #login-info {
 	text-align: right;
-	margin-bottom: 1em;
 }
 
 #login-info form {
@@ -195,4 +321,30 @@ table i {
 
 #name-user {
 	font-weight: bold;
+}
+
+
+/* xs ans md screen resolutions*/
+
+@media screen and (max-width: 991px) {
+	.container .navbar-header {
+		margin-right: 0 !important;
+		margin-left: 0 !important;
+	}
+	.nav-icon {
+		padding: 9px 8px 9px 8px;
+	}
+	nav i.fa {
+		font-size: 32px;
+	}
+	.vertical-center {
+		width: 85%;
+		padding-top: 10px;
+	}
+	#img-div {
+		padding-bottom: 1em;
+	}
+	#img-div img {
+		height: 10%;
+	}
 }

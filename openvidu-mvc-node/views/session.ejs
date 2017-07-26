@@ -1,9 +1,10 @@
 <html>
 
 <head>
-	<title>openvidu-mvc-java</title>
+	<title>openvidu-mvc-node</title>
 
 	<meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8"></meta>
+	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon"></link>
 
 	<!-- Bootstrap -->
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
@@ -24,20 +25,22 @@
 	<nav class="navbar navbar-default">
 		<div class="container">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="#">OpenVidu Tutorial</a>
-				<a class="navbar-brand nav-icon" href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-mvc-node" target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+				<a class="navbar-brand" href="/"><img class="demo-logo" src="images/openvidu_vert_white_bg_trans_cropped.png"/> MVC Node</a>
+				<a class="navbar-brand nav-icon" href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-mvc-node" title="GitHub Repository"
+				    target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
+				<a class="navbar-brand nav-icon" href="http://www.openvidu.io/docs/tutorials/openvidu-mvc-node/" title="Documentation" target="_blank"><i class="fa fa-book" aria-hidden="true"></i></a>
 			</div>
 		</div>
 	</nav>
 
-	<div class="container vertical-center">
-		<div id="logged" class="horizontal-center">
+	<div id="main-container" class="container">
+		<div id="logged">
 			<div id="session">
 				<div id="session-header">
 					<h1 id="session-title"><%= sessionName %></h1>
 					<form action="/leave-session" method="post">
-						<input style="display:none" name="sessionname" value="<%= sessionName %>"></input>
-						<input style="display:none" name="token" value="<%= token %>"></input>
+						<input type="hidden" name="session-name" value="<%= sessionName %>"></input>
+						<input type="hidden" name="token" value="<%= token %>"></input>
 						<button id="buttonLeaveSession" class="btn btn-large btn-danger" type="submit" onclick="leaveSession()">
 							Leave session</button>
 					</form>
@@ -55,7 +58,7 @@
 	<footer class="footer">
 		<div class="container">
 			<div class="text-muted">OpenVidu © 2017</div>
-			<a href="http://www.codeurjc.es/" target="_blank"><img src="https://codeurjc.files.wordpress.com/2016/01/logo_cetrado_negro.png?w=275&amp;h=165"/></a>
+			<a href="http://www.openvidu.io/" target="_blank"><img class="openvidu-logo" src="images/openvidu_globe_bg_transp_cropped.png"/></a>
 		</div>
 	</footer>
 

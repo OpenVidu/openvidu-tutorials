@@ -36,7 +36,6 @@ nav a:hover {
 }
 
 nav i.fa:hover {
-	font-size: 40px;
 	color: #a9a9a9;
 }
 
@@ -70,9 +69,52 @@ input.btn {
 	font-weight: bold;
 }
 
+.btn {
+	font-weight: bold !important;
+}
+
 .btn-success {
+	background-color: #1dd36b !important;
+	border-color: #1dd36b;
+}
+
+.btn-success:hover {
+	background-color: #1abd61 !important;
+	border-color: #1abd61;
+}
+
+.btn-info {
 	background-color: #0088aa !important;
 	border-color: #0088aa;
+}
+
+.btn-info:hover {
+	background-color: #00708c !important;
+	border-color: #00708c;
+}
+
+.btn-warning {
+	background-color: #ffcc3a !important;
+	border-color: #ffcc3a;
+	color: #4d4d4d;
+}
+
+.btn-warning:hover {
+	background-color: #eabb3a !important;
+	border-color: #eabb3a;
+	color: #4d4d4d;
+}
+
+.btn-warning:active {
+	color: #4d4d4d;
+}
+
+.btn-warning:focus {
+	color: #4d4d4d;
+}
+
+.btn-warning:active:focus {
+	color: #4d4d4d;
 }
 
 .footer {
