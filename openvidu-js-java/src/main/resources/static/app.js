@@ -123,7 +123,7 @@ function logIn() {
 		'pass': pass
 	});
 
-	httpRequest('POST', '/api-login/login', jsonBody, 'Login WRONG', function successCallback(response) {
+	httpRequest('POST', 'api-login/login', jsonBody, 'Login WRONG', function successCallback(response) {
 		console.warn(userName + ' login');
 		$("#name-user").text(user);
 		$("#not-logged").hide();
@@ -135,7 +135,7 @@ function logIn() {
 }
 
 function logOut() {
-	httpRequest('GET', '/api-login/logout', null, 'Logout WRONG', function successCallback(response) {
+	httpRequest('GET', 'api-login/logout', null, 'Logout WRONG', function successCallback(response) {
 		console.warn(userName + ' logout');
 		$("#not-logged").show();
 		$("#logged").hide();
@@ -149,7 +149,7 @@ function getSessionIdAndToken(callback) {
 		'session': sessionName
 	});
 
-	httpRequest('POST', '/api-sessions/get-sessionid-token', jsonBody, 'Request of SESSIONID and TOKEN gone WRONG:', function successCallback(response) {
+	httpRequest('POST', 'api-sessions/get-sessionid-token', jsonBody, 'Request of SESSIONID and TOKEN gone WRONG:', function successCallback(response) {
 		sessionId = response[0];
 		token = response[1];
 		console.warn('Request of SESSIONID and TOKEN gone WELL (SESSIONID:' + sessionId + ", TOKEN:" + token + ")");
@@ -163,7 +163,7 @@ function removeUser() {
 		'token': token
 	});
 
-	httpRequest('POST', '/api-sessions/remove-user', jsonBody, 'User couldn\'t be removed from session', function successCallback(response) {
+	httpRequest('POST', 'api-sessions/remove-user', jsonBody, 'User couldn\'t be removed from session', function successCallback(response) {
 		console.warn(userName + " correctly removed from session");
 	});
 }
