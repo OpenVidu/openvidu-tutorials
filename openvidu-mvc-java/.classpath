@@ -27,6 +27,5 @@
 			<attribute name="maven.pomderived" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/openvidu-java-client/target/openvidu-java-client-1.0.0-beta.1.jar"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>
