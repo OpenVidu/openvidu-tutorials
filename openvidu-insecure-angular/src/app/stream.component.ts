@@ -26,8 +26,8 @@ import { Stream } from 'openvidu-browser';
         }`],
     template: `
         <div>
-          <video autoplay="true" [src]="videoSrc" [id]="'native-video-' + this.stream.connection.connectionId + '_webcam'"
-            (click)="this.videoClicked()"></video>
+          <video [src]="videoSrc" [id]="'native-video-' + this.stream.connection.connectionId + '_webcam'"
+            (click)="this.videoClicked()" autoplay="true" [muted]="this.isMuted"></video>
           <div [id]="'data-' + this.stream.connection.connectionId"><p>{{this.getNicknameTag()}}</p></div>
         </div>`
 })
@@ -35,6 +35,9 @@ export class StreamComponent implements DoCheck {
 
     @Input()
     stream: Stream;
+
+    @Input()
+    isMuted: boolean;
 
     @Output()
     mainVideoStream = new EventEmitter();

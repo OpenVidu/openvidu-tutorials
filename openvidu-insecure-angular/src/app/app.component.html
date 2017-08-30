@@ -25,14 +25,14 @@
 			<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" (click)="leaveSession()" value="Leave session">
 		</div>
 		<div *ngIf="this.mainVideoStream" id="main-video" class="col-md-6">
-			<stream-component [stream]="this.mainVideoStream"></stream-component>
+			<stream-component [stream]="this.mainVideoStream" [isMuted]="true"></stream-component>
 		</div>
 		<div id="video-container" class="col-md-6">
 			<div *ngIf="this.localStream" class="stream-container col-md-6 col-xs-6">
-				<stream-component [stream]="this.localStream" (mainVideoStream)="getMainVideoStream($event)"></stream-component>
+				<stream-component [stream]="this.localStream" [isMuted]="true" (mainVideoStream)="getMainVideoStream($event)"></stream-component>
 			</div>
 			<div *ngFor="let s of this.remoteStreams" class="stream-container col-md-6 col-xs-6">
-				<stream-component [stream]="s" (mainVideoStream)="getMainVideoStream($event)"></stream-component>
+				<stream-component [stream]="s" [isMuted]="false" (mainVideoStream)="getMainVideoStream($event)"></stream-component>
 			</div>
 		</div>
 	</div>
