@@ -13,8 +13,8 @@ window.onbeforeunload = function () {
 };
 
 function generateParticipantInfo() {
-	document.getElementById("sessionId").value = "SessionA";
-	document.getElementById("participantId").value = "Participant" + Math.floor(Math.random() * 100);
+	$("#sessionId").val("SessionA");
+	$("#participantId").val("Participant" + Math.floor(Math.random() * 100));
 }
 
 function appendUserData(videoElement, connection) {
@@ -61,6 +61,7 @@ function addClickListener(videoElement, userData) {
 function initMainVideo(videoElement, userData) {
 	document.querySelector('#main-video video').src = videoElement.src;
 	document.querySelector('#main-video p').innerHTML = userData;
+	$('#main-video video').prop('muted', true);
 }
 
 /* APPLICATION SPECIFIC METHODS */
@@ -80,7 +81,7 @@ function joinSession() {
 	OV = new OpenVidu();
 
 	// We will join the video-call "sessionId". This parameter must start with the URL of OpenVidu Server
-	session = OV.initSession("wss://" + location.hostname + ":8443/" + sessionId);
+	session = OV.initSession("wss://" + location.hostname + ":8443/" + sessionId + '?secret=MY_SECRET');
 
 
 	// --- 2) Specify the actions when events take place ---
@@ -128,6 +129,7 @@ function joinSession() {
 			publisher.on('videoElementCreated', function (event) {
 				initMainVideo(event.element, token);
 				appendUserData(event.element, token);
+				$(event.element).prop('muted', true);
 			});
 
 			// --- 5) Publish your stream ---

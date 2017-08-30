@@ -17,7 +17,7 @@
 	<!-- Bootstrap -->
 
 	<link rel="styleSheet" href="style.css" type="text/css" media="screen"></link>
-	<script src="openvidu-browser-1.0.3-beta.1.js"></script>
+	<script src="openvidu-browser-1.0.3-beta.3.js"></script>
 </head>
 
 <body>
@@ -92,7 +92,7 @@
 		// When the HTML video has been appended to DOM...
 		subscriber.on('videoElementCreated', function (event) {
 		
-			// Add a new HTML element for the user's name and nickname just below its video
+			// Add a new HTML element for the user's name and nickname over its video
 			appendUserData(event.element, subscriber.stream.connection);
 		});
 	});
@@ -115,7 +115,7 @@
 			// trying to publish its stream. Even if someone modified the client's code and
 			// published the stream, it wouldn't work if the token sent in Session.connect
 			// method doesn't belong to a 'PUBLIHSER' role
-			if (isPublisher(userName)) {
+			if (isPublisher()) {
 
 				// --- 4) Get your own camera stream ---
 
@@ -128,9 +128,13 @@
 				// When our HTML video has been added to DOM...
 				publisher.on('videoElementCreated', function (event) {
 					// Init the main video with ours and append our data
-					var userData = {nickName: nickName, userName: userName};
+					var userData = {
+						nickName: nickName,
+						userName: userName
+					};
 					initMainVideo(event.element, userData);
 					appendUserData(event.element, userData);
+					$(event.element).prop('muted', true);
 				});
 
 
@@ -150,7 +154,7 @@
 	
 	function leaveSession() {
 
-		// 6) Leave the session by calling 'disconnect' method over the Session object
+		// --- 6) Leave the session by calling 'disconnect' method over the Session object ---
 		session.disconnect();
 	}
 
@@ -170,7 +174,7 @@
 		var dataNode = document.createElement('div');
 		dataNode.className = "data-node";
 		dataNode.id = "data-" + nodeId;
-		dataNode.innerHTML = '<p class="nickName">' + clientData + '</p><p class="userName">'+ serverData + '</p>';
+		dataNode.innerHTML = '<p class="nickName">' + clientData + '</p><p class="userName">' + serverData + '</p>';
 		videoElement.parentNode.insertBefore(dataNode, videoElement.nextSibling);
 		addClickListener(videoElement, clientData, serverData);
 	}
@@ -209,6 +213,7 @@
 		$('#main-video video').attr("src", videoElement.src);
 		$('#main-video p.nickName').html(userData.nickName);
 		$('#main-video p.userName').html(userData.userName);
+		$('#main-video video').prop('muted', true);
 	}
 
 	function initMainVideoThumbnail() {

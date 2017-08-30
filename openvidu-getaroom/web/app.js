@@ -42,7 +42,7 @@ function joinRoom(sessionId) {
 	OV = new OpenVidu();
 
 	// We will join the video-call "sessionId". This parameter must start with the URL of OpenVidu Server, with secure WebSocket protocol ('wss://')
-	session = OV.initSession("wss://" + location.hostname + ":8443/" + sessionId);
+	session = OV.initSession("wss://" + location.hostname + ":8443/" + sessionId + '?secret=MY_SECRET');
 
 
 	// --- 2) Specify the actions when events take place ---
@@ -84,6 +84,7 @@ function joinRoom(sessionId) {
 			publisher.on('videoElementCreated', function (event) {
 				numOfVideos++;
 				updateLayout();
+				$(event.element).prop('muted', true);
 			});
 
 			// --- 5) Publish your stream ---

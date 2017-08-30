@@ -27,10 +27,10 @@ function joinSession() {
 			// Subscribe to the Stream to receive it
 			// HTML video will be appended to element with 'video-container' id
 			var subscriber = session.subscribe(event.stream, 'video-container');
-			
+
 			// When the HTML video has been appended to DOM...
 			subscriber.on('videoElementCreated', function (event) {
-			
+
 				// Add a new HTML element for the user's name and nickname over its video
 				appendUserData(event.element, subscriber.stream.connection);
 			});
@@ -67,9 +67,13 @@ function joinSession() {
 					// When our HTML video has been added to DOM...
 					publisher.on('videoElementCreated', function (event) {
 						// Init the main video with ours and append our data
-						var userData = {nickName: nickName, userName: userName};
+						var userData = {
+							nickName: nickName,
+							userName: userName
+						};
 						initMainVideo(event.element, userData);
 						appendUserData(event.element, userData);
+						$(event.element).prop('muted', true);
 					});
 
 
@@ -228,7 +232,7 @@ function appendUserData(videoElement, connection) {
 
 function removeUserData(connection) {
 	var userNameRemoved = $("#data-" + connection.connectionId);
-	if ($(userNameRemoved).find('p.userName').html() === $('#main-video p.userName').html()){
+	if ($(userNameRemoved).find('p.userName').html() === $('#main-video p.userName').html()) {
 		cleanMainVideo(); // The participant focused in the main video has left
 	}
 	$("#data-" + connection.connectionId).remove();
@@ -260,6 +264,7 @@ function initMainVideo(videoElement, userData) {
 	$('#main-video video').attr("src", videoElement.src);
 	$('#main-video p.nickName').html(userData.nickName);
 	$('#main-video p.userName').html(userData.userName);
+	$('#main-video video').prop('muted', true);
 }
 
 function initMainVideoThumbnail() {

@@ -47,7 +47,7 @@ export class AppComponent {
     this.OV = new OpenVidu();
 
     // We will join the video-call "sessionId". This parameter must start with the URL of OpenVidu Server
-    this.session = this.OV.initSession('wss://' + location.hostname + ':8443/' + this.sessionId);
+    this.session = this.OV.initSession('wss://' + location.hostname + ':8443/' + this.sessionId + '?secret=MY_SECRET');
 
 
     // --- 2) Specify the actions when events take place ---
