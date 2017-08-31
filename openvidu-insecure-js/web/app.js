@@ -2,6 +2,107 @@ var OV;
 var session;
 
 
+/* OPENVIDU METHODS */
+
+function joinSession() {
+
+	var sessionId = document.getElementById("sessionId").value;
+	var token = document.getElementById("participantId").value;
+
+	// --- 1) Get an OpenVidu object and init a session with a sessionId ---
+
+	// Init OpenVidu object
+	OV = new OpenVidu();
+
+	// We will join the video-call "sessionId". As there's no server, this parameter must start with the URL of 
+	// OpenVidu Server (with secure websocket protocol: "wss://") and must include the OpenVidu secret at the end
+	session = OV.initSession("wss://" + location.hostname + ":8443/" + sessionId + '?secret=MY_SECRET');
+
+
+	// --- 2) Specify the actions when events take place ---
+
+	// On every new Stream received...
+	session.on('streamCreated', function (event) {
+
+		// Subscribe to the Stream to receive it. HTML video will be appended to element with 'video-container' id
+		var subscriber = session.subscribe(event.stream, 'video-container');
+
+		// When the HTML video has been appended to DOM...
+		subscriber.on('videoElementCreated', function (event) {
+
+			// Add a new <p> element for the user's nickname just below its video
+			appendUserData(event.element, subscriber.stream.connection);
+		});
+	});
+
+	// On every Stream destroyed...
+	session.on('streamDestroyed', function (event) {
+
+		// Delete the HTML element with the user's nickname. HTML videos are automatically removed from DOM
+		removeUserData(event.stream.connection);
+	});
+
+
+	// --- 3) Connect to the session ---
+
+	// 'token' param irrelevant when using insecure version of OpenVidu. Second param will be received by every user
+	// in Stream.connection.data property, which will be appended to DOM as the user's nickname
+	session.connect(token, '{"clientData": "' + token + '"}', function (error) {
+
+		// If the connection is successful, initialize a publisher and publish to the session
+		if (!error) {
+
+			// --- 4) Get your own camera stream with the desired resolution ---
+
+			var publisher = OV.initPublisher('video-container', {
+				audio: true,
+				video: true,
+				quality: 'MEDIUM'
+			});
+
+			// When our HTML video has been added to DOM...
+			publisher.on('videoElementCreated', function (event) {
+				initMainVideo(event.element, token);
+				appendUserData(event.element, token);
+				event.element['muted']  = true;
+			});
+
+			// --- 5) Publish your stream ---
+
+			session.publish(publisher);
+
+		} else {
+			console.log('There was an error connecting to the session:', error.code, error.message);
+		}
+	});
+
+	document.getElementById('session-title').innerText = sessionId;
+	document.getElementById('join').style.display = 'none';
+	document.getElementById('session').style.display = 'block';
+
+	return false;
+}
+
+function leaveSession() {
+
+	// --- 6) Leave the session by calling 'disconnect' method over the Session object ---
+
+	session.disconnect();
+
+	// Removing all HTML elements with the user's nicknames. 
+	// HTML videos are automatically removed when leaving a Session
+	removeAllUserData();
+
+	// Back to 'Join session' page
+	document.getElementById('join').style.display = 'block';
+	document.getElementById('session').style.display = 'none';
+}
+
+/* OPENVIDU METHODS */
+
+
+
+
 /* APPLICATION SPECIFIC METHODS */
 
 window.addEventListener('load', function () {
@@ -13,8 +114,8 @@ window.onbeforeunload = function () {
 };
 
 function generateParticipantInfo() {
-	$("#sessionId").val("SessionA");
-	$("#participantId").val("Participant" + Math.floor(Math.random() * 100));
+	document.getElementById("sessionId").value = "SessionA";
+	document.getElementById("participantId").value = "Participant" + Math.floor(Math.random() * 100);
 }
 
 function appendUserData(videoElement, connection) {
@@ -61,106 +162,7 @@ function addClickListener(videoElement, userData) {
 function initMainVideo(videoElement, userData) {
 	document.querySelector('#main-video video').src = videoElement.src;
 	document.querySelector('#main-video p').innerHTML = userData;
-	$('#main-video video').prop('muted', true);
+	document.querySelector('#main-video video')['muted'] = true;
 }
 
 /* APPLICATION SPECIFIC METHODS */
-
-
-
-/* OPENVIDU METHODS */
-
-function joinSession() {
-
-	var sessionId = document.getElementById("sessionId").value;
-	var token = document.getElementById("participantId").value;
-
-	// --- 1) Get an OpenVidu object and init a session with a sessionId ---
-
-	// Init OpenVidu object
-	OV = new OpenVidu();
-
-	// We will join the video-call "sessionId". This parameter must start with the URL of OpenVidu Server
-	session = OV.initSession("wss://" + location.hostname + ":8443/" + sessionId + '?secret=MY_SECRET');
-
-
-	// --- 2) Specify the actions when events take place ---
-
-	// On every new Stream received...
-	session.on('streamCreated', function (event) {
-
-		// Subscribe to the Stream to receive it. HTML video will be appended to element with 'subscriber' id
-		var subscriber = session.subscribe(event.stream, 'video-container');
-
-		// When the HTML video has been appended to DOM...
-		subscriber.on('videoElementCreated', function (event) {
-
-			// Add a new <p> element for the user's nickname just below its video
-			appendUserData(event.element, subscriber.stream.connection);
-		});
-	});
-
-	// On every Stream destroyed...
-	session.on('streamDestroyed', function (event) {
-
-		// Delete the HTML element with the user's nickname. HTML videos are automatically removed from DOM
-		removeUserData(event.stream.connection);
-	});
-
-
-	// --- 3) Connect to the session ---
-
-	// 'token' param irrelevant when using insecure version of OpenVidu. Second param will be received by every user
-	// in Stream.connection.data property, which will be appended to DOM as the user's nickname
-	session.connect(token, '{"clientData": "' + token + '"}', function (error) {
-
-		// If the connection is successful, initialize a publisher and publish to the session
-		if (!error) {
-
-			// --- 4) Get your own camera stream with the desired resolution ---
-
-			var publisher = OV.initPublisher('video-container', {
-				audio: true,
-				video: true,
-				quality: 'MEDIUM'
-			});
-
-			// When our HTML video has been added to DOM...
-			publisher.on('videoElementCreated', function (event) {
-				initMainVideo(event.element, token);
-				appendUserData(event.element, token);
-				$(event.element).prop('muted', true);
-			});
-
-			// --- 5) Publish your stream ---
-
-			session.publish(publisher);
-
-		} else {
-			console.log('There was an error connecting to the session:', error.code, error.message);
-		}
-	});
-
-	document.getElementById('session-title').innerText = sessionId;
-	document.getElementById('join').style.display = 'none';
-	document.getElementById('session').style.display = 'block';
-
-	return false;
-}
-
-function leaveSession() {
-
-	// --- 6) Leave the session by calling 'disconnect' method over the Session object ---
-
-	session.disconnect();
-
-	// Removing all HTML elements with the user's nicknames. 
-	// HTML videos are automatically removed when leaving a Session
-	removeAllUserData();
-
-	// Back to 'Join session' page
-	document.getElementById('join').style.display = 'block';
-	document.getElementById('session').style.display = 'none';
-}
-
-/* OPENVIDU METHODS */

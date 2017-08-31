@@ -46,7 +46,8 @@ export class AppComponent {
     // Init OpenVidu object
     this.OV = new OpenVidu();
 
-    // We will join the video-call "sessionId". This parameter must start with the URL of OpenVidu Server
+    // We will join the video-call "sessionId". As there's no server, this parameter must start with the URL of
+    // OpenVidu Server (with secure websocket protocol: "wss://") and must include the OpenVidu secret at the end
     this.session = this.OV.initSession('wss://' + location.hostname + ':8443/' + this.sessionId + '?secret=MY_SECRET');
 
 
