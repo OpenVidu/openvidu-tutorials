@@ -1,21 +1,22 @@
-var OV;
-var session;
-var publisher;
-var sessionId;
-var audioEnabled = true;
-var videoEnabled = true;
-var numOfVideos = 0;
+var OV;						// OpenVidu object to initialize a session
+var session;				// Session object where the user will connect
+var publisher;				// Publisher object which the user will publish
+var sessionId;				// Unique identifier of the session
+var audioEnabled = true;	// True if the audio track of publisher is active
+var videoEnabled = true;	// True if the video track of publisher is active
+var numOfVideos = 0;		// Keeps track of the number of videos that are being shown
 
 
 // Check if the URL already has a room
 window.addEventListener('load', function () {
-	sessionId = window.location.hash;
+	sessionId = window.location.hash; // For 'https://myurl/#roomId', sessionId would be '#roomId'
 	if (sessionId) {
-		// The URL has a session id
+		// The URL has a session id. Join the room right away
 		console.log("Joining to room " + sessionId);
 		showSessionHideJoin();
 		joinRoom(sessionId);
 	} else {
+		// The URL has not a session id. Show welcome page
 		showJoinHideSession();
 	}
 });
@@ -38,11 +39,11 @@ function joinRoom(sessionId) {
 
 	// --- 1) Get an OpenVidu object and init a session with a sessionId ---
 
-	// Init OpenVidu object
 	OV = new OpenVidu();
 
-	// We will join the video-call "sessionId". This parameter must start with the URL of OpenVidu Server, with secure WebSocket protocol ('wss://')
-	session = OV.initSession("wss://" + location.hostname + ":8443/" + sessionId + '?secret=MY_SECRET');
+	// We will join the video-call "sessionId". As there's no server, this parameter must start with the URL of 
+	// OpenVidu Server (with secure websocket protocol: "wss://") and must include the OpenVidu secret at the end
+	session = OV.initSession("wss://" + location.hostname + ":8443/" + sessionId + "?secret=MY_SECRET");
 
 
 	// --- 2) Specify the actions when events take place ---
@@ -51,6 +52,7 @@ function joinRoom(sessionId) {
 	session.on('streamCreated', function (event) {
 		// Subscribe to the Stream to receive it. HTML video will be appended to element with 'subscriber' id
 		var subscriber = session.subscribe(event.stream, 'videos');
+		// When the new video is added to DOM, update the page layout to fit one more participant
 		subscriber.on('videoElementCreated', function (event) {
 			numOfVideos++;
 			updateLayout();
@@ -59,6 +61,7 @@ function joinRoom(sessionId) {
 
 	// On every new Stream destroyed...
 	session.on('streamDestroyed', function (event) {
+		// Update the page layout
 		numOfVideos--;
 		updateLayout();
 	});
@@ -66,8 +69,7 @@ function joinRoom(sessionId) {
 
 	// --- 3) Connect to the session ---
 
-	// 'token' param irrelevant when using insecure version of OpenVidu. Second param will be received by every user
-	// in Stream.connection.data property, which will be appended to DOM as the user's nickname
+	// Remember 'userId' param (usually called 'token') is irrelevant when using the insecure version of OpenVidu
 	session.connect(userId, function (error) {
 
 		// If the connection is successful, initialize a publisher and publish to the session
@@ -82,9 +84,10 @@ function joinRoom(sessionId) {
 			});
 
 			publisher.on('videoElementCreated', function (event) {
+				// When your own video is added to DOM, update the page layout to fit it
 				numOfVideos++;
 				updateLayout();
-				$(event.element).prop('muted', true);
+				$(event.element).prop('muted', true); // Mute local video
 			});
 
 			// --- 5) Publish your stream ---
@@ -96,9 +99,11 @@ function joinRoom(sessionId) {
 		}
 	});
 
+	// Update the URL shown in the browser's navigation bar to show the session id
 	var pathname = (location.pathname.slice(-1) === "/" ? location.pathname : location.pathname+"/");
 	window.history.pushState("", "", pathname + sessionId);
 
+	// Auxiliary methods to show the session's view
 	showSessionHideJoin();
 	initializeSessionView();
 
@@ -107,7 +112,7 @@ function joinRoom(sessionId) {
 
 
 function leaveRoom() {
-
+	
 	// --- 6) Leave the session by calling 'disconnect' method over the Session object ---
 	session.disconnect();
 	

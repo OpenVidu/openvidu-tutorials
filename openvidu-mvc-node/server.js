@@ -60,15 +60,17 @@ var users = [{
     role: OpenViduRole.SUBSCRIBER
 }];
 
-// Environment variables
+// Environment variable: URL where our OpenVidu server is listening
 var OPENVIDU_URL = process.argv[2];
+// Environment variable: secret shared with our OpenVidu server
 var OPENVIDU_SECRET = process.argv[3];
 
-// OpenVidu object
+// OpenVidu object to ask openvidu-server for sessionId and token
 var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
 
-// Objects for storing active sessions and users
+// Collection to pair session names and OpenVidu Session objects
 var mapSessionNameSession = {};
+// Collection to pair sessionId's (identifiers of Session objects) and tokens
 var mapSessionIdTokens = {};
 
 /* CONFIGURATION */
@@ -100,28 +102,36 @@ app.get('/dashboard', dashboardController);
 
 function dashboardController(req, res) {
 
-    if (isLogged(req.session)) {
-        user = req.session.loggedUser;
-        res.render('dashboard.ejs', {
-            user: user
-        });
-    } else {
-        var user = req.body.user;
+	// Check if the user is already logged in
+	if (isLogged(req.session)) {
+		// User is already logged. Immediately return dashboard
+		user = req.session.loggedUser;
+		res.render('dashboard.ejs', {
+			user: user
+		});
+	} else {
+		// User wasn't logged and wants to
+		
+		// Retrieve params from POST body
+		var user = req.body.user;
         var pass = req.body.pass;
         console.log("Logging in | {user, pass}={" + user + ", " + pass + "}");
-
-        if (login(user, pass)) {
+		
+		if (login(user, pass)) { // Correct user-pass
+			// Validate session and return OK 
+            // Value stored in req.session allows us to identify the user in future requests
             console.log("'" + user + "' has logged in");
-            req.session.loggedUser = user;
-            res.render('dashboard.ejs', {
-                user: user
-            });
-        } else {
+	    	req.session.loggedUser = user;
+			res.render('dashboard.ejs', {
+				user: user
+			});
+		} else { // Wrong user-pass
+            // Invalidate session and return index template
             console.log("'" + user + "' invalid credentials");
-            req.session.destroy();
-            res.redirect('/');
-        }
-    }
+			req.session.destroy();
+			res.redirect('/');
+		}
+	}
 }
 
 app.post('/session', (req, res) => {
@@ -129,23 +139,43 @@ app.post('/session', (req, res) => {
         req.session.destroy();
         res.redirect('/');
     } else {
+       	// The nickname sent by the client
         var clientData = req.body.data;
+        // The video-call to connect ("TUTORIAL")
         var sessionName = req.body.sessionname;
+
+        // Role associated to this user
         var role = users.find(u => (u.user === req.session.loggedUser)).role;
+
+        // Optional data to be passed to other users when this user connects to the video-call
+        // In this case, a JSON with the value we stored in the req.session object on login
         var serverData = '{"serverData": "' + req.session.loggedUser + '"}';
+        
         console.log("Getting sessionId and token | {sessionName}={" + sessionName + "}");
 
+        // Build tokenOptions object with the serverData and the role
         var tokenOptions = new TokenOptions.Builder()
             .data(serverData)
             .role(role)
             .build();
 
         if (mapSessionNameSession[sessionName]) {
+            // Session already exists: return existing sessionId and a new token
             console.log('Existing session ' + sessionName);
+            
+            // Get the existing Session from the collection
             var mySession = mapSessionNameSession[sessionName];
+            
+            // Generate a new token asynchronously with the recently created tokenOptions
             mySession.generateToken(tokenOptions, function (token) {
+                
+                // Get the existing sessionId
                 var sessionId = mySession.getSessionId();
+                
+                // Store the new token in the collection of tokens
                 mapSessionIdTokens[sessionId].push(token);
+                
+                // Return session template with all the needed attributes
                 console.log('SESSIONID: ' + sessionId);
                 console.log('TOKEN: ' + token);
                 res.render('session.ejs', {
@@ -156,15 +186,27 @@ app.post('/session', (req, res) => {
                     sessionName: sessionName
                 });
             });
-        } else {
+        } else { // New session: return a new sessionId and a new token
             console.log('New session ' + sessionName);
-            var mySession = OV.createSession();
-            mySession.getSessionId(function (sessionId) {
-                mapSessionNameSession[sessionName] = mySession;
-                mapSessionIdTokens[sessionId] = [];
 
+            // Create a new OpenVidu Session
+            var mySession = OV.createSession();
+            
+            // Get the sessionId asynchronously
+            mySession.getSessionId(function (sessionId) {
+                
+                // Store the new Session in the collection of Sessions
+                mapSessionNameSession[sessionName] = mySession;
+                // Store a new empty array in the collection of tokens
+                mapSessionIdTokens[sessionId] = [];
+                
+                // Generate a new token asynchronously with the recently created tokenOptions
                 mySession.generateToken(tokenOptions, function (token) {
+                    
+                    // Store the new token in the collection of tokens
                     mapSessionIdTokens[sessionId].push(token);
+                    
+                    // Return session template with all the needed attributes
                     console.log('SESSIONID: ' + sessionId);
                     console.log('TOKEN: ' + token);
                     res.render('session.ejs', {
@@ -185,16 +227,21 @@ app.post('/leave-session', (req, res) => {
         req.session.destroy();
         res.render('index.ejs');
     } else {
+        // Retrieve params from POST body
         var sessionName = req.body.sessionname;
         var token = req.body.token;
         console.log('Removing user | {sessionName, token}={' + sessionName + ', ' + token + '}');
-
+        
+        // If the session exists
         var mySession = mapSessionNameSession[sessionName];
         if (mySession) {
             var tokens = mapSessionIdTokens[mySession.getSessionId()];
             if (tokens) {
                 var index = tokens.indexOf(token);
-                if (index !== -1) { // User left the session
+                
+                // If the token exists
+                if (index !== -1) {
+                    // Token removed!
                     tokens.splice(index, 1);
                     console.log(sessionName + ': ' + mapSessionIdTokens[mySession.getSessionId()].toString());
                 } else {
@@ -202,7 +249,8 @@ app.post('/leave-session', (req, res) => {
                     console.log(msg);
                     res.redirect('/dashboard');
                 }
-                if (mapSessionIdTokens[mySession.getSessionId()].length == 0) { // Last user left the session
+                if (mapSessionIdTokens[mySession.getSessionId()].length == 0) {
+                    // Last user left: session must be removed
                     console.log(sessionName + ' empty!');
                     delete mapSessionNameSession[sessionName];
                 }

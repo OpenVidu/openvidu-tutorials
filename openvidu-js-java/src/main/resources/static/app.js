@@ -73,7 +73,7 @@ function joinSession() {
 						};
 						initMainVideo(event.element, userData);
 						appendUserData(event.element, userData);
-						$(event.element).prop('muted', true);
+						$(event.element).prop('muted', true); // Mute local video
 					});
 
 
@@ -116,16 +116,17 @@ function leaveSession() {
 
 
 
-/* APPLICATION BACKEND METHODS */
+/* APPLICATION REST METHODS */
 
 function logIn() {
-	var user = $("#user").val();
-	userName = user;
-	var pass = $("#pass").val();
-	var jsonBody = JSON.stringify({
+	var user = $("#user").val(); // Username
+	var pass = $("#pass").val(); // Password
+	var jsonBody = JSON.stringify({ // Body of POST request
 		'user': user,
 		'pass': pass
 	});
+
+	userName = user;
 
 	httpRequest('POST', 'api-login/login', jsonBody, 'Login WRONG', function successCallback(response) {
 		console.warn(userName + ' login');
@@ -147,26 +148,30 @@ function logOut() {
 }
 
 function getSessionIdAndToken(callback) {
-	nickName = $("#participantName").val();
-	sessionName = $("#sessionName").val();
-	var jsonBody = JSON.stringify({
+	sessionName = $("#sessionName").val(); // Video-call chosen by the user
+	nickName = $("#participantName").val(); // Nickname chosen by the user
+	
+	var jsonBody = JSON.stringify({ // Body of POST request
 		'session': sessionName
 	});
 
+	// Send POST request
 	httpRequest('POST', 'api-sessions/get-sessionid-token', jsonBody, 'Request of SESSIONID and TOKEN gone WRONG:', function successCallback(response) {
-		sessionId = response[0];
-		token = response[1];
+		sessionId = response[0]; // Get sessionId from response
+		token = response[1]; // Get token from response
 		console.warn('Request of SESSIONID and TOKEN gone WELL (SESSIONID:' + sessionId + ", TOKEN:" + token + ")");
-		callback();
+		callback(); // Continue the join operation
 	});
 }
 
 function removeUser() {
+	// Body of POST request with the name of the session and the token of the leaving user
 	var jsonBody = JSON.stringify({
 		'sessionName': sessionName,
 		'token': token
 	});
 
+	// Send POST request
 	httpRequest('POST', 'api-sessions/remove-user', jsonBody, 'User couldn\'t be removed from session', function successCallback(response) {
 		console.warn(userName + " correctly removed from session");
 	});
@@ -195,7 +200,7 @@ function httpRequest(method, url, body, errorMsg, callback) {
 	}
 }
 
-/* APPLICATION BACKEND METHODS */
+/* APPLICATION REST METHODS */
 
 
 

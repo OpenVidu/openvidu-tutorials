@@ -92,7 +92,7 @@
 		// When the HTML video has been appended to DOM...
 		subscriber.on('videoElementCreated', function (event) {
 		
-			// Add a new HTML element for the user's name and nickname over its video
+			// Add a new HTML element for the user's name and nickname just below its video
 			appendUserData(event.element, subscriber.stream.connection);
 		});
 	});
@@ -106,6 +106,7 @@
 
 	// --- 3) Connect to the session passing the retrieved token and some more data from
 	//         the client (in this case a JSON with the nickname chosen by the user) ---
+
 	session.connect(token, '{"clientData": "' + nickName + '"}', function (error) {
 
 		// If the connection is successful, initialize a publisher and publish to the session
@@ -118,7 +119,7 @@
 			if (isPublisher()) {
 
 				// --- 4) Get your own camera stream ---
-
+				
 				var publisher = OV.initPublisher('video-container', {
 					audio: true,
 					video: true,
@@ -134,12 +135,12 @@
 					};
 					initMainVideo(event.element, userData);
 					appendUserData(event.element, userData);
-					$(event.element).prop('muted', true);
+					$(event.element).prop('muted', true); // Mute local video
 				});
 
 
 				// --- 5) Publish your stream ---
-
+				
 				session.publish(publisher);
 
 			} else {

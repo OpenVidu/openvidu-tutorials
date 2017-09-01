@@ -51,10 +51,18 @@ public class SessionController {
 		System.out.println("Getting sessionId and token | {sessionName}=" + sessionNameParam);
 
 		JSONObject sessionJSON = (JSONObject) new JSONParser().parse(sessionNameParam);
+	
+		// The video-call to connect ("TUTORIAL")
 		String sessionName = (String) sessionJSON.get("session");
+		
+		// Role associated to this user
 		OpenViduRole role = LoginController.users.get(httpSession.getAttribute("loggedUser")).role;
+		
+		// Optional data to be passed to other users when this user connects to the video-call
+		// In this case, a JSON with the value we stored in the HttpSession object on login
 		String serverData = "{\"serverData\": \"" + httpSession.getAttribute("loggedUser") + "\"}";
 
+		// Build tokenOptions object with the serverData and the role
 		TokenOptions tokenOptions = new TokenOptions.Builder().data(serverData).role(role).build();
 
 		JSONObject responseJson = new JSONObject();
@@ -63,16 +71,25 @@ public class SessionController {
 			// Session already exists: return existing sessionId and a new token
 			System.out.println("Existing session " + sessionName);
 			try {
+			
+				// Get the existing sessionId from our collection with 
+				// the sessionName param ("TUTORIAL")
 				String sessionId = this.mapSessions.get(sessionName).getSessionId();
+				// Generate a new token with the recently created tokenOptions
 				String token = this.mapSessions.get(sessionName).generateToken(tokenOptions);
-
+				
+				// Update our collection storing the new token
 				this.mapSessionIdsTokens.get(sessionId).put(token, role);
-
+				
+				// Prepare the response with the sessionId and the token
 				responseJson.put(0, sessionId);
 				responseJson.put(1, token);
-
+				
+				// Return the response to the client
 				return new ResponseEntity<>(responseJson, HttpStatus.OK);
+				
 			} catch (Exception e) {
+				// If error generate an error message and return it to client
 				return getErrorResponse(e);
 			}
 
@@ -80,19 +97,28 @@ public class SessionController {
 			// New session: return a new sessionId and token
 			System.out.println("New session " + sessionName);
 			try {
+
+				// Create a new OpenVidu Session
 				Session session = this.openVidu.createSession();
+				// Get the sessionId
 				String sessionId = session.getSessionId();
+				// Generate a new token with the recently created tokenOptions
 				String token = session.generateToken(tokenOptions);
 
+				// Store the session and the token in our collections
 				this.mapSessions.put(sessionName, session);
 				this.mapSessionIdsTokens.put(sessionId, new ConcurrentHashMap<>());
 				this.mapSessionIdsTokens.get(sessionId).put(token, role);
 
+				// Prepare the response with the sessionId and the token
 				responseJson.put(0, sessionId);
 				responseJson.put(1, token);
 
+				// Return the response to the client
 				return new ResponseEntity<>(responseJson, HttpStatus.OK);
+				
 			} catch (Exception e) {
+				// If error generate an error message and return it to client
 				return getErrorResponse(e);
 			}
 		}
@@ -109,30 +135,36 @@ public class SessionController {
 		}
 		System.out.println("Removing user | {sessionName, token}=" + sessionNameToken);
 
+		// Retrieve the params from BODY
 		JSONObject sessionNameTokenJSON = (JSONObject) new JSONParser().parse(sessionNameToken);
 		String sessionName = (String) sessionNameTokenJSON.get("sessionName");
 		String token = (String) sessionNameTokenJSON.get("token");
 
+		// If the session exists ("TUTORIAL" in this case)
 		if (this.mapSessions.get(sessionName) != null) {
 			String sessionId = this.mapSessions.get(sessionName).getSessionId();
 
 			if (this.mapSessionIdsTokens.containsKey(sessionId)) {
+				// If the token exists
 				if (this.mapSessionIdsTokens.get(sessionId).remove(token) != null) {
 					// User left the session
 					if (this.mapSessionIdsTokens.get(sessionId).isEmpty()) {
-						// Last user left the session
+						// Last user left: session must be removed
 						this.mapSessions.remove(sessionName);
 					}
 					return new ResponseEntity<>(HttpStatus.OK);
 				} else {
+					// The TOKEN wasn't valid
 					System.out.println("Problems in the app server: the TOKEN wasn't valid");
 					return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 				}
 			} else {
+				// The SESSIONID wasn't valid
 				System.out.println("Problems in the app server: the SESSIONID wasn't valid");
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		} else {
+			// The SESSION does not exist
 			System.out.println("Problems in the app server: the SESSION does not exist");
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}

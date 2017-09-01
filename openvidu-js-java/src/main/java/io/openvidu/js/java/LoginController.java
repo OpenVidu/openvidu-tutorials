@@ -46,15 +46,18 @@ public class LoginController {
 	public ResponseEntity<Object> login(@RequestBody String userPass, HttpSession httpSession) throws ParseException {
 
 		System.out.println("Logging in | {user, pass}=" + userPass);
+		// Retrieve params from POST body
 		JSONObject userPassJson = (JSONObject) new JSONParser().parse(userPass);
 		String user = (String) userPassJson.get("user");
 		String pass = (String) userPassJson.get("pass");
 
-		if (login(user, pass)) {
-			System.out.println("'" + user + "' has logged in");
+		if (login(user, pass)) { // Correct user-pass
+			// Validate session and return OK 
+			// Value stored in HttpSession allows us to identify the user in future requests
 			httpSession.setAttribute("loggedUser", user);
 			return new ResponseEntity<>(HttpStatus.OK);
-		} else {
+		} else { // Wrong user-pass
+			// Invalidate session and return error
 			httpSession.invalidate();
 			return new ResponseEntity<>("User/Pass incorrect", HttpStatus.UNAUTHORIZED);
 		}
