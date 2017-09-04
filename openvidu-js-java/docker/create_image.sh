@@ -4,7 +4,7 @@
 cd .. && mvn clean compile package
 
 # Copy jar in docker build path
-cp target/openvidu-js-java-1.0.0-beta.1.jar docker/openvidu-sample-secure.jar
+cp target/openvidu-js-java-"$1".jar docker/openvidu-sample-secure.jar
 
 
 
@@ -18,7 +18,7 @@ rsync -ax --exclude='**/angular' ../../../openvidu/openvidu-server .
 cd openvidu-server && mvn clean compile package -DskipTests=true
 
 # Copy openvidu.server.jar in docker build path
-cp target/openvidu-server-1.0.0-beta.1.jar ../openvidu-server.jar
+cp target/openvidu-server-"$1".jar ../openvidu-server.jar
 
 
 
