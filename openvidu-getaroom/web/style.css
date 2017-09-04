@@ -45,8 +45,8 @@ nav i.fa:hover {
 }
 
 .vertical-center {
-	position: absolute;
-	top: 51%;
+	position: relative;
+	top: 30%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 }
@@ -137,8 +137,8 @@ a:hover .demo-logo {
 
 #img-div {
 	text-align: center;
-	position: absolute;
-	top: 26%;
+	position: relative;
+	top: 20%;
 	left: 50%;
 	transform: translate(-50%, -50%);
 }
@@ -229,14 +229,30 @@ video {
 
 /* xs ans md screen resolutions*/
 
-@media screen and (max-width: 991px) {
+@media screen and (max-width: 991px) and (orientation: portrait) {
 	.vertical-center {
 		width: 85%;
 		padding-top: 10px;
-		top: 57%;
+		top: 27%;
 	}
+	.container-fluid>.navbar-collapse, .container-fluid>.navbar-header, .container>.navbar-collapse, .container>.navbar-header {
+		margin-right: 0;
+		margin-left: 0;
+	}
+	.navbar-header i.fa {
+		font-size: 30px;
+	}
+	.navbar-header a.nav-icon {
+		padding: 7px 3px 7px 3px;
+	}
+}
+
+@media only screen and (max-height: 767px) and (orientation: landscape) {
 	#img-div {
-		top: 32%;
+		top: 10%;
+	}
+	.vertical-center {
+		top: 27%;
 	}
 }
 

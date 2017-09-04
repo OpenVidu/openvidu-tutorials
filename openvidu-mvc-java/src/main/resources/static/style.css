@@ -44,10 +44,23 @@ nav i.fa:hover {
 }
 
 .vertical-center {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	transform: translate(-50%, -50%);
+    width: -webkit-fit-content;
+    width: fit-content;
+    margin: auto;   
+}
+
+.vertical-center#not-logged form {
+	width: -moz-fit-content;
+	margin: auto;
+}
+
+.vertical-center#not-logged table {
+	width: -moz-fit-content;
+	margin: auto;
+}
+
+.vertical-center table {
+	margin-top: 3em !important;
 }
 
 .horizontal-center {
@@ -156,6 +169,14 @@ input.btn {
 a:hover .demo-logo {
 	-webkit-filter: brightness(0.7);
 	filter: brightness(0.7);
+}
+
+#join {
+	padding-top: 40px;
+}
+
+#not-logged {
+	padding-top: 40px;
 }
 
 #join-dialog h1 {
@@ -327,6 +348,13 @@ table i {
 /* xs ans md screen resolutions*/
 
 @media screen and (max-width: 991px) {
+	#join {
+		padding-top: inherit;
+	}
+	
+	#not-logged {
+		padding-top: inherit;
+	}
 	.container .navbar-header {
 		margin-right: 0 !important;
 		margin-left: 0 !important;
@@ -338,7 +366,6 @@ table i {
 		font-size: 32px;
 	}
 	.vertical-center {
-		width: 85%;
 		padding-top: 10px;
 	}
 	#img-div {
