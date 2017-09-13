@@ -21,7 +21,7 @@
     "@angular/platform-browser-dynamic": "^2.4.0",
     "@angular/router": "^3.4.0",
     "core-js": "^2.4.1",
-    "openvidu-browser": "1.0.3-beta.3",
+    "openvidu-browser": "1.0.4-beta.3",
     "zone.js": "^0.7.6"
   },
   "devDependencies": {

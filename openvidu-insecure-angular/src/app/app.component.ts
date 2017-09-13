@@ -18,7 +18,7 @@ export class AppComponent {
 
   // Join form
   sessionId: string;
-  token: string;
+  userName: string;
 
   // Main video of the page, will be 'localStream' or one of the 'remoteStreams',
   // updated by an Output event of StreamComponent children
@@ -77,11 +77,11 @@ export class AppComponent {
 
     // --- 3) Connect to the session ---
 
-    // 'token' param irrelevant when using insecure version of OpenVidu. Second param will be received by every user
+    // First param irrelevant if your app has no server-side. Second param will be received by every user
     // in Stream.connection.data property, which will be appended to DOM as the user's nickname
-    this.session.connect(this.token, '{"clientData": "' + this.token + '"}', (error) => {
+    this.session.connect(null, '{"clientData": "' + this.userName + '"}', (error) => {
 
-     // If connection successful, initialize a publisher and publish to the session
+      // If connection successful, initialize a publisher and publish to the session
       if (!error) {
 
         // --- 4) Get your own camera stream with the desired resolution ---
@@ -128,7 +128,7 @@ export class AppComponent {
   private generateParticipantInfo() {
     // Random user nickname and sessionId
     this.sessionId = 'SessionA';
-    this.token = 'Participant' + Math.floor(Math.random() * 100);
+    this.userName = 'Participant' + Math.floor(Math.random() * 100);
   }
 
   private deleteRemoteStream(stream: Stream): void {

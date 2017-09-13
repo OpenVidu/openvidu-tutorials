@@ -43,6 +43,7 @@ RUN set -x \
 
 EXPOSE 5000
 EXPOSE 4040
+EXPOSE 8443
 
 # Exec supervisord
 CMD ["/usr/bin/supervisord"]
