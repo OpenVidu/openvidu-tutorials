@@ -2,33 +2,28 @@
 
 <head>
 	<title>openvidu-hello-world</title>
-	<meta charset="utf-8">
 	<link rel="styleSheet" href="style.css" type="text/css" media="screen">
-	<script src="openvidu-browser-1.0.4-beta.3.js"></script>
+	<script src="openvidu-browser-1.0.4-beta.3.min.js"></script>
 	<script src="app.js"></script>
 </head>
 
 <body>
 	<div id="join">
 		<h1>Join a video session</h1>
-		<form onsubmit="return joinSession()" accept-charset="UTF-8">
-			<p>
-				<label>Participant:</label>
-				<input type="text" id="userName" required>
-			</p>
+		<form onsubmit="return joinSession()">
 			<p>
 				<label>Session:</label>
-				<input type="text" id="sessionId" required>
+				<input type="text" id="sessionId" value="SessionA" required>
 			</p>
 			<p>
-				<input type="submit" name="commit" value="JOIN">
+				<input type="submit" value="JOIN">
 			</p>
 		</form>
 	</div>
 
 	<div id="session" style="display: none;">
 		<h1 id="session-header"></h1>
-		<input type="button" id="buttonLeaveSession" onmouseup="leaveSession()" value="LEAVE">
+		<input type="button" onclick="leaveSession()" value="LEAVE">
 		<div>
 			<div id="publisher"><h3>YOU</h3></div>
 			<div id="subscriber"><h3>OTHERS</h3></div>

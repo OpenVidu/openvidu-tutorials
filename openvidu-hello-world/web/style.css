@@ -27,6 +27,7 @@ body {
 }
 
 video {
-	width: 70%;
-	margin-top: 10px;
+    width: 70%;
+    margin: 10px auto 0 auto;
+    display: block;
 }
