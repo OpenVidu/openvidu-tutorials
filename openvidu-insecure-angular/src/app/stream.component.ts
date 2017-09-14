@@ -60,11 +60,11 @@ export class StreamComponent implements DoCheck {
         }
     }
 
-    getNicknameTag() {
+    getNicknameTag() { // Gets the nickName of the user
         return JSON.parse(this.stream.connection.data).clientData;
     }
 
-    videoClicked() {
+    videoClicked() { // Triggers event for the parent component to update its view
         this.mainVideoStream.next(this.stream);
     }
 

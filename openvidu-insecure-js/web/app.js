@@ -110,7 +110,7 @@ window.addEventListener('load', function () {
 });
 
 window.onbeforeunload = function () {
-	session.disconnect()
+	session.disconnect();
 };
 
 function generateParticipantInfo() {
