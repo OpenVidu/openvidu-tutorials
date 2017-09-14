@@ -7,7 +7,7 @@ var session;
 function joinSession() {
 
 	var sessionId = document.getElementById("sessionId").value;
-	var token = document.getElementById("participantId").value;
+	var userName = document.getElementById("userName").value;
 
 	// --- 1) Get an OpenVidu object and init a session with a sessionId ---
 
@@ -47,7 +47,7 @@ function joinSession() {
 
 	// First param irrelevant if your app has no server-side. Second param will be received by every user
 	// in Stream.connection.data property, which will be appended to DOM as the user's nickname
-	session.connect(token, '{"clientData": "' + token + '"}', function (error) {
+	session.connect(null, '{"clientData": "' + userName + '"}', function (error) {
 
 		// If the connection is successful, initialize a publisher and publish to the session
 		if (!error) {
@@ -62,8 +62,8 @@ function joinSession() {
 
 			// When our HTML video has been added to DOM...
 			publisher.on('videoElementCreated', function (event) {
-				initMainVideo(event.element, token);
-				appendUserData(event.element, token);
+				initMainVideo(event.element, userName);
+				appendUserData(event.element, userName);
 				event.element['muted']  = true;
 			});
 
@@ -115,7 +115,7 @@ window.onbeforeunload = function () {
 
 function generateParticipantInfo() {
 	document.getElementById("sessionId").value = "SessionA";
-	document.getElementById("participantId").value = "Participant" + Math.floor(Math.random() * 100);
+	document.getElementById("userName").value = "Participant" + Math.floor(Math.random() * 100);
 }
 
 function appendUserData(videoElement, connection) {
