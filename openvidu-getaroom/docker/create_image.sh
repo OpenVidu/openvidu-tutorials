@@ -1,23 +1,16 @@
-# Copy openvidu-server project except angular-cli project ('frontend' folder)
-rsync -ax --exclude='**/angular' --exclude='**/static' ../../../openvidu/openvidu-server .
+# Copy compiled openvidu-server.jar
+cp ../../../openvidu/openvidu-server/target/openvidu-server-"$1".jar ./openvidu-server.jar
 
-# Comment root path Basic Authorization in SecurityConfig.java
-sed -i 's/\.antMatchers(\"\/\").authenticated()/\/\/.antMatchers(\"\/\").authenticated()/g' ./openvidu-server/src/main/java/io/openvidu/server/security/SecurityConfig.java
+# Copy openvidu-insecure-js web files
+cp -a ../web/. ./web/
 
-# Copy plainjs-demo web files into static folder of openvidu-server project
-cp -a ../web/. ./openvidu-server/src/main/resources/static/
-
-# Build and package maven project
-cd openvidu-server
-mvn clean compile package -DskipTests=true
-
-# Copy .jar in docker build path
-cp target/openvidu-server-"$1".jar ../openvidu-server.jar
+# Modify WebSocket protocol in app.js for allowing both ngrok and localhost connections
+sed -i 's/OV\.initSession("wss:\/\/"/OV\.initSession("ws:\/\/"/g' ./web/app.js
 
 # Build docker image
-cd ..
 docker build -t openvidu/getaroom-demo .
 
 # Delete unwanted files
+rm -rf ./web
 rm -rf ./openvidu-server
 rm openvidu-server.jar

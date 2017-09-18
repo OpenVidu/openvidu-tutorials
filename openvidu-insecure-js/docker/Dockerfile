@@ -11,6 +11,7 @@ RUN echo "deb http://ubuntu.kurento.org xenial kms6" | tee /etc/apt/sources.list
 
 COPY kms.sh /kms.sh
 COPY ngrok.sh /ngrok.sh
+COPY web /web/
 
 # Install Java
 RUN apt-get update && apt-get install -y openjdk-8-jdk && rm -rf /var/lib/apt/lists/*
@@ -41,7 +42,6 @@ RUN set -x \
  && chmod -R go=u,go-w /home/ngrok \
  && chmod go= /home/ngrok
 
-EXPOSE 5000
 EXPOSE 4040
 EXPOSE 8443
 
