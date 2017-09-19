@@ -42,7 +42,6 @@ var options = {
     cert: fs.readFileSync('openviducert.pem')
 };
 https.createServer(options, app).listen(5000);
-console.log("App listening on port https://localhost:5000");
 
 // Mock database
 var users = [{
@@ -59,7 +58,6 @@ var users = [{
     role: OpenViduRole.SUBSCRIBER
 }];
 
-
 // Environment variable: URL where our OpenVidu server is listening
 var OPENVIDU_URL = process.argv[2];
 // Environment variable: secret shared with our OpenVidu server
@@ -72,6 +70,8 @@ var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
 var mapSessionNameSession = {};
 // Collection to pair sessionId's (identifiers of Session objects) and tokens
 var mapSessionIdTokens = {};
+
+console.log("App listening on port 5000");
 
 /* CONFIGURATION */
 
@@ -123,6 +123,7 @@ app.post('/api-sessions/get-sessionid-token', function (req, res) {
         // Optional data to be passed to other users when this user connects to the video-call
         // In this case, a JSON with the value we stored in the req.session object on login
         var serverData = '{"serverData": "' + req.session.loggedUser + '"}';
+
         console.log("Getting sessionId and token | {sessionName}={" + sessionName + "}");
     
         // Build tokenOptions object with the serverData and the role
@@ -142,22 +143,24 @@ app.post('/api-sessions/get-sessionid-token', function (req, res) {
             mySession.generateToken(tokenOptions, function (token) {
                 
                 // Get the existing sessionId
-                var sessionId = mySession.getSessionId();
+                mySession.getSessionId(function (sessionId) {
                 
-                // Store the new token in the collection of tokens
-                mapSessionIdTokens[sessionId].push(token);
-                
-                // Return the sessionId and token to the client
-                console.log('SESSIONID: ' + sessionId);
-                console.log('TOKEN: ' + token);
-                res.status(200).send({
-                    0: sessionId,
-                    1: token
+                    // Store the new token in the collection of tokens
+                    mapSessionIdTokens[sessionId].push(token);
+                    
+                    // Return the sessionId and token to the client
+                    console.log('SESSIONID: ' + sessionId);
+                    console.log('TOKEN: ' + token);
+                    res.status(200).send({
+                        0: sessionId,
+                        1: token
+                    });
                 });
             });
         } else { // New session: return a new sessionId and a new token
-            // Create a new OpenVidu Session
             console.log('New session ' + sessionName);
+
+            // Create a new OpenVidu Session
             var mySession = OV.createSession();
             
             // Get the sessionId asynchronously
@@ -173,6 +176,7 @@ app.post('/api-sessions/get-sessionid-token', function (req, res) {
                     
                     // Store the new token in the collection of tokens
                     mapSessionIdTokens[sessionId].push(token);
+
                     console.log('SESSIONID: ' + sessionId);
                     console.log('TOKEN: ' + token);
                     
@@ -196,36 +200,38 @@ app.post('/api-sessions/remove-user', function (req, res) {
         // Retrieve params from POST body
         var sessionName = req.body.sessionName;
         var token = req.body.token;
-        console.log('Removing user | {sessionName, token}={' + sessionName + ", " + token + '}');
+        console.log('Removing user | {sessionName, token}={' + sessionName + ', ' + token + '}');
 
-        // If the session exists ("TUTORIAL" in this case)
+        // If the session exists
         var mySession = mapSessionNameSession[sessionName];
         if (mySession) {
-            var tokens = mapSessionIdTokens[mySession.getSessionId()];
-            if (tokens) {
-                var index = tokens.indexOf(token);
-                
-                // If the token exists
-                if (index !== -1) {
-                    // Token removed!
-                    tokens.splice(index, 1);
-                    console.log(sessionName + ': ' + mapSessionIdTokens[mySession.getSessionId()].toString());
+            mySession.getSessionId(function (sessionId) {
+                var tokens = mapSessionIdTokens[sessionId];
+                if (tokens) {
+                    var index = tokens.indexOf(token);
+                    
+                    // If the token exists
+                    if (index !== -1) {
+                        // Token removed!
+                        tokens.splice(index, 1);
+                        console.log(sessionName + ': ' + mapSessionIdTokens[sessionId].toString());
+                    } else {
+                        var msg = 'Problems in the app server: the TOKEN wasn\'t valid';
+                        console.log(msg);
+                        res.status(500).send(msg);
+                    }
+                    if (mapSessionIdTokens[sessionId].length == 0) {
+                        // Last user left: session must be removed
+                        console.log(sessionName + ' empty!');
+                        delete mapSessionNameSession[sessionName];
+                    }
+                    res.status(200).send();
                 } else {
-                    var msg = 'Problems in the app server: the TOKEN wasn\'t valid';
+                    var msg = 'Problems in the app server: the SESSIONID wasn\'t valid';
                     console.log(msg);
                     res.status(500).send(msg);
                 }
-                if (mapSessionIdTokens[mySession.getSessionId()].length == 0) {
-                    // Last user left: session must be removed
-                    console.log(sessionName + ' empty!');
-                    delete mapSessionNameSession[sessionName];
-                }
-                res.status(200).send();
-            } else {
-                var msg = 'Problems in the app server: the SESSIONID wasn\'t valid';
-                console.log(msg);
-                res.status(500).send(msg);
-            }
+            });
         } else {
             var msg = 'Problems in the app server: the SESSION does not exist';
             console.log(msg);

@@ -39,7 +39,7 @@
 				<div id="session-header">
 					<h1 id="session-title"><%= sessionName %></h1>
 					<form action="/leave-session" method="post">
-						<input type="hidden" name="session-name" value="<%= sessionName %>"></input>
+						<input type="hidden" name="sessionname" value="<%= sessionName %>"></input>
 						<input type="hidden" name="token" value="<%= token %>"></input>
 						<button id="buttonLeaveSession" class="btn btn-large btn-danger" type="submit" onclick="leaveSession()">
 							Leave session</button>

@@ -27,11 +27,11 @@ app.use(session({
     resave: false,
     secret: 'MY_SECRET'
 }));
-app.use(express.static(__dirname + '/public')); // set the static files location
+app.use(express.static(__dirname + '/public')); // Set the static files location
 app.use(bodyParser.urlencoded({
     'extended': 'true'
 })); // Parse application/x-www-form-urlencoded
-app.use(bodyParser.json()); // parse application/json
+app.use(bodyParser.json()); // Parse application/json
 app.use(bodyParser.json({
     type: 'application/vnd.api+json'
 })); // Parse application/vnd.api+json as json
@@ -43,7 +43,6 @@ var options = {
     cert: fs.readFileSync('openviducert.pem')
 };
 https.createServer(options, app).listen(5000);
-console.log("App listening on https://localhost:5000");
 
 // Mock database
 var users = [{
@@ -72,6 +71,8 @@ var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
 var mapSessionNameSession = {};
 // Collection to pair sessionId's (identifiers of Session objects) and tokens
 var mapSessionIdTokens = {};
+
+console.log("App listening on port 5000");
 
 /* CONFIGURATION */
 
@@ -170,20 +171,21 @@ app.post('/session', (req, res) => {
             mySession.generateToken(tokenOptions, function (token) {
                 
                 // Get the existing sessionId
-                var sessionId = mySession.getSessionId();
+                mySession.getSessionId(function (sessionId) {
                 
-                // Store the new token in the collection of tokens
-                mapSessionIdTokens[sessionId].push(token);
-                
-                // Return session template with all the needed attributes
-                console.log('SESSIONID: ' + sessionId);
-                console.log('TOKEN: ' + token);
-                res.render('session.ejs', {
-                    sessionId: sessionId,
-                    token: token,
-                    nickName: clientData,
-                    userName: req.session.loggedUser,
-                    sessionName: sessionName
+                    // Store the new token in the collection of tokens
+                    mapSessionIdTokens[sessionId].push(token);
+                    
+                    // Return session template with all the needed attributes
+                    console.log('SESSIONID: ' + sessionId);
+                    console.log('TOKEN: ' + token);
+                    res.render('session.ejs', {
+                        sessionId: sessionId,
+                        token: token,
+                        nickName: clientData,
+                        userName: req.session.loggedUser,
+                        sessionName: sessionName
+                    });
                 });
             });
         } else { // New session: return a new sessionId and a new token
@@ -206,9 +208,10 @@ app.post('/session', (req, res) => {
                     // Store the new token in the collection of tokens
                     mapSessionIdTokens[sessionId].push(token);
                     
-                    // Return session template with all the needed attributes
                     console.log('SESSIONID: ' + sessionId);
                     console.log('TOKEN: ' + token);
+
+                    // Return session template with all the needed attributes
                     res.render('session.ejs', {
                         sessionId: sessionId,
                         token: token,
@@ -235,31 +238,33 @@ app.post('/leave-session', (req, res) => {
         // If the session exists
         var mySession = mapSessionNameSession[sessionName];
         if (mySession) {
-            var tokens = mapSessionIdTokens[mySession.getSessionId()];
-            if (tokens) {
-                var index = tokens.indexOf(token);
-                
-                // If the token exists
-                if (index !== -1) {
-                    // Token removed!
-                    tokens.splice(index, 1);
-                    console.log(sessionName + ': ' + mapSessionIdTokens[mySession.getSessionId()].toString());
+            mySession.getSessionId(function (sessionId) {
+                var tokens = mapSessionIdTokens[sessionId];
+                if (tokens) {
+                    var index = tokens.indexOf(token);
+                    
+                    // If the token exists
+                    if (index !== -1) {
+                        // Token removed!
+                        tokens.splice(index, 1);
+                        console.log(sessionName + ': ' + mapSessionIdTokens[sessionId].toString());
+                    } else {
+                        var msg = 'Problems in the app server: the TOKEN wasn\'t valid';
+                        console.log(msg);
+                        res.redirect('/dashboard');
+                    }
+                    if (mapSessionIdTokens[sessionId].length == 0) {
+                        // Last user left: session must be removed
+                        console.log(sessionName + ' empty!');
+                        delete mapSessionNameSession[sessionName];
+                    }
+                    res.redirect('/dashboard');
                 } else {
-                    var msg = 'Problems in the app server: the TOKEN wasn\'t valid';
+                    var msg = 'Problems in the app server: the SESSIONID wasn\'t valid';
                     console.log(msg);
                     res.redirect('/dashboard');
                 }
-                if (mapSessionIdTokens[mySession.getSessionId()].length == 0) {
-                    // Last user left: session must be removed
-                    console.log(sessionName + ' empty!');
-                    delete mapSessionNameSession[sessionName];
-                }
-                res.redirect('/dashboard');
-            } else {
-                var msg = 'Problems in the app server: the SESSIONID wasn\'t valid';
-                console.log(msg);
-                res.redirect('/dashboard');
-            }
+            });
         } else {
             var msg = 'Problems in the app server: the SESSION does not exist';
             console.log(msg);
