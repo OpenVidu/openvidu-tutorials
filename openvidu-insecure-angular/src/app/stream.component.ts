@@ -1,5 +1,4 @@
-import { Component, Input, Output, DoCheck, EventEmitter } from '@angular/core';
-import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { Component, Input, Output, AfterViewInit, DoCheck, EventEmitter, ViewChild, ElementRef } from '@angular/core';
 
 import { Stream } from 'openvidu-browser';
 
@@ -26,12 +25,16 @@ import { Stream } from 'openvidu-browser';
         }`],
     template: `
         <div>
-          <video [src]="videoSrc" [id]="'native-video-' + this.stream.connection.connectionId + '_webcam'"
+          <video #videoElement [id]="'native-video-' + this.stream.connection.connectionId + '_webcam'"
             (click)="this.videoClicked()" autoplay="true" [muted]="this.isMuted"></video>
           <div [id]="'data-' + this.stream.connection.connectionId"><p>{{this.getNicknameTag()}}</p></div>
         </div>`
 })
-export class StreamComponent implements DoCheck {
+export class StreamComponent implements AfterViewInit, DoCheck {
+
+    @ViewChild('videoElement') elementRef: ElementRef;
+
+    videoElement: HTMLVideoElement;
 
     @Input()
     stream: Stream;
@@ -42,21 +45,15 @@ export class StreamComponent implements DoCheck {
     @Output()
     mainVideoStream = new EventEmitter();
 
-    videoSrc: SafeUrl = '';
-    videSrcUnsafe = '';
+    constructor() { }
 
-    constructor(private sanitizer: DomSanitizer) { }
+    ngAfterViewInit() { // Get HTMLVideoElement from the view
+        this.videoElement = this.elementRef.nativeElement;
+    }
 
-    ngDoCheck() { // Detect any change in 'stream' property
-
-        // If 'src' of Stream object has changed, 'videoSrc' value must be updated
-        if (!(this.videSrcUnsafe === this.stream.getVideoSrc())) {
-
-            // Angular mandatory URL sanitization
-            this.videoSrc = this.sanitizer.bypassSecurityTrustUrl(this.stream.getVideoSrc());
-
-            // Auxiliary value to store the URL as a string for upcoming comparisons
-            this.videSrcUnsafe = this.stream.getVideoSrc();
+    ngDoCheck() { // Detect any change in 'stream' property (specifically in its 'srcObject' property)
+        if (this.videoElement && (this.videoElement.srcObject !== this.stream.getVideoSrcObject())) {
+            this.videoElement.srcObject = this.stream.getVideoSrcObject();
         }
     }
 

@@ -110,7 +110,7 @@ window.addEventListener('load', function () {
 });
 
 window.onbeforeunload = function () {
-	session.disconnect();
+	if (session) session.disconnect();
 };
 
 function generateParticipantInfo() {
@@ -152,15 +152,15 @@ function addClickListener(videoElement, userData) {
 	videoElement.addEventListener('click', function () {
 		var mainVideo = document.querySelector('#main-video video');
 		var mainUserData = document.querySelector('#main-video p');
-		if (mainVideo.src !== videoElement.src) {
+		if (mainVideo.srcObject !== videoElement.srcObject) {
 			mainUserData.innerHTML = userData;
-			mainVideo.src = videoElement.src;
+			mainVideo.srcObject = videoElement.srcObject;
 		}
 	});
 }
 
 function initMainVideo(videoElement, userData) {
-	document.querySelector('#main-video video').src = videoElement.src;
+	document.querySelector('#main-video video').srcObject = videoElement.srcObject;
 	document.querySelector('#main-video p').innerHTML = userData;
 	document.querySelector('#main-video video')['muted'] = true;
 }

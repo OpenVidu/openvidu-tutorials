@@ -23,7 +23,7 @@ window.addEventListener('load', function () {
 
 // Disconnect participant on browser's window closed
 window.addEventListener('beforeunload', function () {
-	session.disconnect();
+	if (session) session.disconnect();
 });
 
 

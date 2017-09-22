@@ -38,7 +38,6 @@ function leaveSession() {
 	document.getElementById('session').style.display = 'none';
 }
 
-
 window.onbeforeunload = function () {
-	session.disconnect()
+	if (session) session.disconnect()
 };

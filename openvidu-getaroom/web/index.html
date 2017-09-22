@@ -17,7 +17,7 @@
 	<!-- Bootstrap -->
 
 	<link rel="styleSheet" href="style.css" type="text/css" media="screen">
-	<script src="openvidu-browser-1.0.4-beta.3.js"></script>
+	<script src="openvidu-browser-1.0.5-beta.3.js"></script>
 	<script src="app.js"></script>
 </head>
 
@@ -37,13 +37,16 @@
 		<div class="container">
 			<div class="navbar-header">
 				<a class="navbar-brand" href="/"><img class="demo-logo" src="resources/images/openvidu_vert_white_bg_trans_cropped.png"/> getaroom</a>
-				<button id="leave-room" type="button" class="btn btn-danger" onclick="leaveRoom()">Leave Room</button>
-				<form>
+				<button id="leave-room" type="button" class="btn btn-danger" onclick="leaveRoom()">
+					<span class="hidden-xs">Leave Room</span>
+					<span class="hidden-sm hidden-md hidden-lg">Leave</span>
+				</button>
+				<form class="hidden-xs">
 					<div class="input-group">
 						<input type="text" class="form-control" placeholder="Some path" id="copy-input">
 						<span class="input-group-btn">
-								<button class="btn btn-default" type="button" id="copy-button" data-toggle="tooltip" data-placement="button" title="Copy to Clipboard">Share the URL</button>
-							</span>
+							<button class="btn btn-default" type="button" id="copy-button" data-toggle="tooltip" data-placement="button" title="Copy to Clipboard">Share the URL</button>
+						</span>
 					</div>
 				</form>
 				<button id="mute-video" type="button" class="btn btn-primary float-right mute-button" onclick="muteVideo()">

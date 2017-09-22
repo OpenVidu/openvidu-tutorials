@@ -248,7 +248,7 @@ function removeAllUserData() {
 }
 
 function cleanMainVideo() {
-	$('#main-video video').attr('src', '');
+	$('#main-video video').get(0).srcObject = null;
 	$('#main-video p').each(function () {
 		$(this).html('');
 	});
@@ -256,17 +256,17 @@ function cleanMainVideo() {
 
 function addClickListener(videoElement, clientData, serverData) {
 	videoElement.addEventListener('click', function () {
-		var mainVideo = $('#main-video video');
-		if (mainVideo.attr('src') !== videoElement.src) {
+		var mainVideo = $('#main-video video').get(0);
+		if (mainVideo.srcObject !== videoElement.srcObject) {
 			$('#main-video p.nickName').html(clientData);
 			$('#main-video p.userName').html(serverData);
-			mainVideo.attr('src', videoElement.src);
+			mainVideo.srcObject = videoElement.srcObject;
 		}
 	});
 }
 
 function initMainVideo(videoElement, userData) {
-	$('#main-video video').attr("src", videoElement.src);
+	$('#main-video video').get(0).srcObject = videoElement.srcObject;
 	$('#main-video p.nickName').html(userData.nickName);
 	$('#main-video p.userName').html(userData.userName);
 	$('#main-video video').prop('muted', true);
