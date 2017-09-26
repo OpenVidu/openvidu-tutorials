@@ -1,33 +1,15 @@
-### openvidu-js-java ###
-
-# Build and package maven project
+# Build and package openvidu-js-java maven project
 cd .. && mvn clean compile package
 
-# Copy jar in docker build path
-cp target/openvidu-js-java-"$1".jar docker/openvidu-sample-secure.jar
+# Copy openvidu-js-java.jar in docker build path
+cp target/openvidu-js-java-"$1".jar ./docker/openvidu-js-java.jar
 
-
-
-### openvidu-server ###
-
-# Copy openvidu-server project in docker build path except angular-cli project ('frontend' folder)
-cd docker
-rsync -ax --exclude='**/angular' ../../../openvidu/openvidu-server .
-
-# Build and package maven project
-cd openvidu-server && mvn clean compile package -DskipTests=true
-
-# Copy openvidu.server.jar in docker build path
-cp target/openvidu-server-"$1".jar ../openvidu-server.jar
-
-
+# Copy compiled openvidu-server.jar
+cd ./docker && cp ../../../openvidu/openvidu-server/target/openvidu-server-"$1".jar ./openvidu-server.jar
 
 ### Build Docker container and remove unwanted files ###
-
-cd ..
-
 docker build -t openvidu/basic-webinar-demo .
 
-rm ./openvidu-sample-secure.jar
+rm ./openvidu-js-java.jar
 rm ./openvidu-server.jar
 rm -rf ./openvidu-server

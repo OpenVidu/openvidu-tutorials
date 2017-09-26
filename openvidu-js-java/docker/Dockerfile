@@ -32,7 +32,7 @@ COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 RUN apt-get update && apt-get install -y supervisor && rm -rf /var/lib/apt/lists/*
 
 COPY openvidu-server.jar openvidu-server.jar
-COPY openvidu-sample-secure.jar app.jar
+COPY openvidu-js-java.jar app.jar
 RUN sh -c 'touch /openvidu-server.jar'
 RUN sh -c 'touch /app.jar'
 
