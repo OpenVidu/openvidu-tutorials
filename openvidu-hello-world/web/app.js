@@ -9,7 +9,7 @@ function joinSession() {
 	session = OV.initSession("wss://" + location.hostname + ":8443/" + sessionId + '?secret=MY_SECRET');
 
 	session.on('streamCreated', function (event) {
-		var subscriber = session.subscribe(event.stream, 'subscriber');
+		session.subscribe(event.stream, 'subscriber');
 	});
 
 	session.connect(null, function (error) {

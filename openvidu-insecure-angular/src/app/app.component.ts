@@ -99,7 +99,6 @@ export class AppComponent {
         // Set the main video in the page to display our webcam
         this.mainVideoStream = this.localStream;
 
-
         // --- 5) Publish your stream ---
 
         this.session.publish(publisher);
@@ -114,7 +113,7 @@ export class AppComponent {
 
   leaveSession() {
     // --- 6) Leave the session by calling 'disconnect' method over the Session object ---
-    if (this.OV) { this.session.disconnect(); };
+    if (this.session) { this.session.disconnect(); };
 
     // Empty all properties...
     this.remoteStreams = [];
