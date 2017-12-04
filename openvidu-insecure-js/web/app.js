@@ -55,9 +55,12 @@ function joinSession() {
 			// --- 4) Get your own camera stream with the desired resolution ---
 
 			var publisher = OV.initPublisher('video-container', {
-				audio: true,
-				video: true,
-				quality: 'MEDIUM'
+				audio: true,        // Whether you want to transmit audio or not
+				video: true,        // Whether you want to transmit video or not
+				audioActive: true,  // Whether you want to start the publishing with your audio unmuted or muted
+				videoActive: true,  // Whether you want to start the publishing with your video enabled or disabled
+				quality: 'MEDIUM',  // The quality of your video ('LOW', 'MEDIUM', 'HIGH')
+				screen: false       // true to get your screen as video source instead of your camera
 			});
 
 			// When our HTML video has been added to DOM...
