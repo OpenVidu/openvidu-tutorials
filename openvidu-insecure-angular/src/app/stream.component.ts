@@ -52,8 +52,8 @@ export class StreamComponent implements AfterViewInit, DoCheck {
     }
 
     ngDoCheck() { // Detect any change in 'stream' property (specifically in its 'srcObject' property)
-        if (this.videoElement && (this.videoElement.srcObject !== this.stream.getVideoSrcObject())) {
-            this.videoElement.srcObject = this.stream.getVideoSrcObject();
+        if (this.videoElement && (this.videoElement.srcObject !== this.stream.getMediaStream())) {
+            this.videoElement.srcObject = this.stream.getMediaStream();
         }
     }
 
