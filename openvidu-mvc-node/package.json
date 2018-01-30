@@ -21,6 +21,6 @@
     "ejs": "^2.5.6",
     "express": "^4.15.3",
     "express-session": "^1.15.3",
-    "openvidu-node-client": "1.1.0"
+    "openvidu-node-client": "1.7.0"
   }
 }
