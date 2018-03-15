@@ -1,0 +1,99 @@
+<html>
+
+<head>
+	<title>openvidu-recording-java</title>
+
+	<meta name="viewport" content="width=device-width, initial-scale=1" charset="utf-8">
+	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon">
+
+	<!-- Bootstrap -->
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
+	    crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+	    crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
+	    crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+	<!-- Bootstrap -->
+
+	<link rel="styleSheet" href="style.css" type="text/css" media="screen">
+	<script src="openvidu-browser-1.8.0.js"></script>
+	<script src="app.js"></script>
+	<script>
+		$(document).ready(function () {
+			$('[data-toggle="tooltip"]').tooltip({
+				html: true
+			});
+		});
+	</script>
+</head>
+
+<body>
+
+	<nav class="navbar navbar-default">
+		<div class="container">
+			<div class="navbar-header">
+				<a class="navbar-brand" href="/">
+					<img class="demo-logo" src="images/openvidu_vert_white_bg_trans_cropped.png" /> Recording Java</a>
+				<a class="navbar-brand nav-icon" href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-recording-java"
+				    title="GitHub Repository" target="_blank">
+					<i class="fa fa-github" aria-hidden="true"></i>
+				</a>
+				<a class="navbar-brand nav-icon" href="http://www.openvidu.io/docs/tutorials/openvidu-js-java/" title="Documentation" target="_blank">
+					<i class="fa fa-book" aria-hidden="true"></i>
+				</a>
+			</div>
+		</div>
+	</nav>
+
+	<div id="main-container" class="container">
+		<div id="join" class="vertical-center">
+			<div id="img-div">
+				<img src="images/openvidu_grey_bg_transp_cropped.png" />
+			</div>
+			<div id="join-dialog" class="jumbotron">
+				<h1>Join a video session</h1>
+				<form class="form-group" onsubmit="return false">
+					<p>
+						<label>Session</label>
+						<input class="form-control" type="text" id="sessionName" value="SessionA" required>
+					</p>
+					<p class="text-center">
+						<button class="btn btn-lg btn-success" onclick="joinSession()">Join!</button>
+					</p>
+				</form>
+				<hr>
+			</div>
+		</div>
+
+		<div id="session" style="display: none">
+			<div id="session-header">
+				<h1 id="session-title"></h1>
+				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" onmouseup="removeUser(); leaveSession()" value="Leave session">
+			</div>
+			<div id="video-container" class="col-md-12"></div>
+			<div id="recording-btns">
+				<div id="btns">
+					<input class="btn btn-large" type="button" onmouseup="startRecording()" value="Start recording">
+					<input class="btn btn-large" type="button" onmouseup="stopRecording()" value="Stop recording">
+					<input class="btn btn-large" type="button" onmouseup="deleteRecording()" value="Delete recording">
+					<input class="btn btn-large" type="button" onmouseup="getRecording()" value="Get recording">
+					<input class="btn btn-large" type="button" onmouseup="listRecordings()" value="List recordings">
+				</div>
+				<textarea id="text-area" readonly="true" class="form-control" name="comment">HTTP responses...</textarea>
+			</div>
+		</div>
+	</div>
+
+	<footer class="footer">
+		<div class="container">
+			<div class="text-muted">OpenVidu © 2017</div>
+			<a href="http://www.openvidu.io/" target="_blank">
+				<img class="openvidu-logo" src="images/openvidu_globe_bg_transp_cropped.png" />
+			</a>
+		</div>
+	</footer>
+
+</body>
+
+</html>
