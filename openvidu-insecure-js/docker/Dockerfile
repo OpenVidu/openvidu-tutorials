@@ -43,7 +43,7 @@ RUN set -x \
  && chmod go= /home/ngrok
 
 EXPOSE 4040
-EXPOSE 8443
+EXPOSE 4443
 
 # Exec supervisord
 CMD ["/usr/bin/supervisord"]

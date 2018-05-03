@@ -42,7 +42,7 @@ RUN set -x \
  && chmod -R go=u,go-w /home/ngrok \
  && chmod go= /home/ngrok
 
-EXPOSE 8443
+EXPOSE 4443
 EXPOSE 4040
 
 # Exec supervisord

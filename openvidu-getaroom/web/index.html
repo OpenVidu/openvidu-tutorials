@@ -7,17 +7,14 @@
 	<link rel="shortcut icon" href="resources/images/favicon.ico" type="image/x-icon">
 
 	<!-- Bootstrap -->
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
-	    crossorigin="anonymous"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-	    crossorigin="anonymous">
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-	    crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<!-- Bootstrap -->
 
 	<link rel="styleSheet" href="style.css" type="text/css" media="screen">
-	<script src="openvidu-browser-1.8.0.js"></script>
+	<script src="openvidu-browser-2.0.0.js"></script>
 	<script src="app.js"></script>
 </head>
 
@@ -50,11 +47,13 @@
 					</div>
 				</form>
 				<button id="mute-video" type="button" class="btn btn-primary float-right mute-button" onclick="muteVideo()">
-						<span class="glyphicon glyphicon-facetime-video"></span> <span class="hidden-xs">Video</span>
-					</button>
+					<span class="glyphicon glyphicon-facetime-video"></span>
+					<span class="hidden-xs">Video</span>
+				</button>
 				<button id="mute-audio" type="button" class="btn btn-primary float-right mute-button" onclick="muteAudio()">
-						<span class="glyphicon glyphicon-volume-up"></span> <span class="hidden-xs">Audio</span>
-					</button>
+					<span class="glyphicon glyphicon-volume-up"></span>
+					<span class="hidden-xs">Audio</span>
+				</button>
 			</div>
 		</div>
 	</nav>
@@ -63,10 +62,10 @@
 
 		<!-- Join page template -->
 		<div id="join" class="row no-margin" hidden>
-			<div id="img-div"><img src="resources/images/openvidu_grey_bg_transp_cropped.png" /></div>
+			<div id="img-div"><img src="resources/images/openvidu_grey_bg_transp_cropped.png"/></div>
 			<div id="join-dialog" class="jumbotron vertical-center">
 				<h1 class="arciform">Get a room</h1>
-				<button type="button" class="btn btn-lg btn-success" onclick="joinRoom()">Go!</button>
+				<button type="button" class="btn btn-lg btn-success" onclick="joinRoom(); return false;">Go!</button>
 			</div>
 		</div>
 
