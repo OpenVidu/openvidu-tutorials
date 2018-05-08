@@ -1,5 +1,4 @@
 import { Component, Input, Output, AfterViewInit, DoCheck, EventEmitter, ViewChild, ElementRef } from '@angular/core';
-
 import { Stream } from 'openvidu-browser';
 
 @Component({
@@ -61,7 +60,7 @@ export class StreamComponent implements AfterViewInit, DoCheck {
         return JSON.parse(this.stream.connection.data).clientData;
     }
 
-    videoClicked() { // Triggers event for the parent component to update its view
+    videoClicked() { // Triggers event for the parent component to update its main video display
         this.mainVideoStream.next(this.stream);
     }
 

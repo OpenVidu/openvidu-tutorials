@@ -41,6 +41,9 @@
     }
   },
   "defaults": {
+    "build": {
+      "showCircularDependencies": false
+    },
     "styleExt": "css",
     "prefixInterfaces": false
   }

@@ -1,31 +1,32 @@
 var OV;
 var session;
-var sessionId;
 
 
 /* OPENVIDU METHODS */
 
 function joinSession() {
 
-	sessionId = document.getElementById("sessionId").value;
-	var userName = document.getElementById("userName").value;
+	var mySessionId = document.getElementById("sessionId").value;
+	var myUserName = document.getElementById("userName").value;
 
-	// --- 1) Get an OpenVidu object and init a session ---
+	// --- 1) Get an OpenVidu object ---
 
 	OV = new OpenVidu();
+
+	// --- 2) Init a session ---
+
 	session = OV.initSession();
 
-
-	// --- 2) Specify the actions when events take place ---
+	// --- 3) Specify the actions when events take place in the session ---
 
 	// On every new Stream received...
-	session.on('streamCreated', function (event) {
+	session.on('streamCreated', event => {
 
 		// Subscribe to the Stream to receive it. HTML video will be appended to element with 'video-container' id
 		var subscriber = session.subscribe(event.stream, 'video-container');
 
 		// When the HTML video has been appended to DOM...
-		subscriber.on('videoElementCreated', function (event) {
+		subscriber.on('videoElementCreated', event => {
 
 			// Add a new <p> element for the user's nickname just below its video
 			appendUserData(event.element, subscriber.stream.connection);
@@ -33,65 +34,70 @@ function joinSession() {
 	});
 
 	// On every Stream destroyed...
-	session.on('streamDestroyed', function (event) {
+	session.on('streamDestroyed', event => {
 
 		// Delete the HTML element with the user's nickname. HTML videos are automatically removed from DOM
 		removeUserData(event.stream.connection);
 	});
 
 
-	// --- 3) Connect to the session with a valid user token ---
+	// --- 4) Connect to the session with a valid user token ---
 
 	// 'getToken' method is simulating what your server-side should do.
 	// 'token' parameter should be retrieved and returned by your own backend
-	getToken().then(token => {
+	getToken(mySessionId).then(token => {
 
-		// First param is the token retrieved from OpenVidu Server. Second param will be received by every user
-		// in Stream.connection.data property, which will be appended to DOM as the user's nickname
-		session.connect(token, '{"clientData": "' + userName + '"}')
+		// First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
+		// 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
+		session.connect(token, { clientData: myUserName })
 			.then(() => {
 
-				// --- 4) Get your own camera stream with the desired properties ---
+				// --- 5) Set page layout for active call ---
+
+				document.getElementById('session-title').innerText = mySessionId;
+				document.getElementById('join').style.display = 'none';
+				document.getElementById('session').style.display = 'block';
+
+				// --- 6) Get your own camera stream with the desired properties ---
 
 				var publisher = OV.initPublisher('video-container', {
-					audioSource: undefined, // The source of audio. If undefined default audio input
-					videoSource: undefined, // The source of video. If undefined default video input
-					publishAudio: true,  	// Whether you want to start the publishing with your audio unmuted or muted
-					publishVideo: true,  	// Whether you want to start the publishing with your video enabled or disabled
+					audioSource: undefined, // The source of audio. If undefined default microphone
+					videoSource: undefined, // The source of video. If undefined default webcam
+					publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+					publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
 					resolution: '640x480',  // The resolution of your video
 					frameRate: 30,			// The frame rate of your video
-					insertMode: 'APPEND',	// How the video will be inserted in the target element 'video-container'	
+					insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'	
 					mirror: false       	// Whether to mirror your local video or not
 				});
 
+				// --- 7) Specify the actions when events take place in our publisher ---
+
 				// When our HTML video has been added to DOM...
 				publisher.on('videoElementCreated', function (event) {
-					initMainVideo(event.element, userName);
-					appendUserData(event.element, userName);
+					initMainVideo(event.element, myUserName);
+					appendUserData(event.element, myUserName);
 					event.element['muted'] = true;
 				});
 
-				// --- 5) Publish your stream ---
+				// --- 8) Publish your stream ---
 
 				session.publish(publisher);
+
 			})
 			.catch(error => {
 				console.log('There was an error connecting to the session:', error.code, error.message);
 			});
-
-		document.getElementById('session-title').innerText = sessionId;
-		document.getElementById('join').style.display = 'none';
-		document.getElementById('session').style.display = 'block';
 	});
 }
 
 function leaveSession() {
 
-	// --- 6) Leave the session by calling 'disconnect' method over the Session object ---
+	// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
 
 	session.disconnect();
 
-	// Removing all HTML elements with the user's nicknames. 
+	// Removing all HTML elements with user's nicknames. 
 	// HTML videos are automatically removed when leaving a Session
 	removeAllUserData();
 
@@ -173,23 +179,16 @@ function initMainVideo(videoElement, userData) {
  * These methods retrieve the mandatory user token from OpenVidu Server.
  * This behaviour MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
  * the API REST, openvidu-java-client or openvidu-node-client):
- *   1) POST /api/sessions
- *   2) POST /api/tokens
- *   3) The value returned by /api/tokens must be consumed in Session.connect() method
+ *   1) Initialize a session in OpenVidu Server	(POST /api/sessions)
+ *   2) Generate a token in OpenVidu Server		(POST /api/tokens)
+ *   3) The token must be consumed in Session.connect() method
  */
 
-function getToken() {
-	return new Promise(async function (resolve) {
-		// POST /api/sessions
-		await apiSessions();
-		// POST /api/tokens
-		let t = await apiTokens();
-		// Return the user token
-		resolve(t);
-	});
+function getToken(mySessionId) {
+	return createSession(mySessionId).then(sessionId => createToken(sessionId));
 }
 
-function apiSessions() {
+function createSession(sessionId) {
 	return new Promise((resolve, reject) => {
 		$.ajax({
 			type: "POST",
@@ -199,21 +198,13 @@ function apiSessions() {
 				"Authorization": "Basic " + btoa("OPENVIDUAPP:MY_SECRET"),
 				"Content-Type": "application/json"
 			},
-			success: (response) => {
-				resolve(response.id)
-			},
-			error: (error) => {
-				if (error.status === 409) {
-					resolve(sessionId);
-				} else {
-					reject(error)
-				}
-			}
+			success: response => resolve(response.id),
+			error: error => error.status === 409 ? resolve(sessionId) : reject(error)
 		});
 	});
 }
 
-function apiTokens() {
+function createToken(sessionId) {
 	return new Promise((resolve, reject) => {
 		$.ajax({
 			type: "POST",
@@ -223,10 +214,8 @@ function apiTokens() {
 				"Authorization": "Basic " + btoa("OPENVIDUAPP:MY_SECRET"),
 				"Content-Type": "application/json"
 			},
-			success: (response) => {
-				resolve(response.id)
-			},
-			error: (error) => { reject(error) }
+			success: response => resolve(response.token),
+			error: error => reject(error)
 		});
 	});
 }

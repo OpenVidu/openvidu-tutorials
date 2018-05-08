@@ -6,11 +6,11 @@
 			<form class="form-group" (submit)="joinSession()">
 				<p>
 					<label>Participant</label>
-					<input class="form-control" type="text" id="userName" name="userName" [(ngModel)]="userName" required>
+					<input class="form-control" type="text" id="userName" name="userName" [(ngModel)]="myUserName" required>
 				</p>
 				<p>
 					<label>Session</label>
-					<input class="form-control" type="text" id="sessionId" name="sessionId" [(ngModel)]="sessionId" required>
+					<input class="form-control" type="text" id="sessionId" name="sessionId" [(ngModel)]="mySessionId" required>
 				</p>
 				<p class="text-center">
 					<input class="btn btn-lg btn-success" type="submit" name="commit" value="Join!">
@@ -21,7 +21,7 @@
 
 	<div *ngIf="session" id="session">
 		<div id="session-header">
-			<h1 id="session-title">{{sessionId}}</h1>
+			<h1 id="session-title">{{mySessionId}}</h1>
 			<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" (click)="leaveSession()" value="Leave session">
 		</div>
 		<div *ngIf="this.mainVideoStream" id="main-video" class="col-md-6">

@@ -34,14 +34,16 @@ function joinRoom() {
 		sessionId = randomString();
 	}
 
-
-	// --- 1) Get an OpenVidu object and init a session ---
+	// --- 1) Get an OpenVidu object ---
 
 	OV = new OpenVidu();
+
+	// --- 2) Init a session ---
+
 	session = OV.initSession();
 
 
-	// --- 2) Specify the actions when events take place ---
+	// --- 3) Specify the actions when events take place in the session ---
 
 	// On every new Stream received...
 	session.on('streamCreated', function (event) {
@@ -62,58 +64,64 @@ function joinRoom() {
 	});
 
 
-	// --- 3) Connect to the session with a valid user token ---
+	// --- 4) Connect to the session with a valid user token ---
 
 	// 'getToken' method is simulating what your server-side should do.
 	// 'token' parameter should be retrieved and returned by your own backend
-	getToken().then(token => {
+	getToken(sessionId).then(token => {
 
 		// Connect with the token
 		session.connect(token)
 			.then(() => {
 
-				// --- 4) Get your own camera stream with the desired properties ---
+				// --- 5) Set page layout for active call ---
+
+				// Update the URL shown in the browser's navigation bar to show the session id
+				var path = (location.pathname.slice(-1) == "/" ? location.pathname : location.pathname + "/");
+				window.history.pushState("", "", path + '#' + sessionId);
+
+				// Auxiliary methods to show the session's view
+				showSessionHideJoin();
+				initializeSessionView();
+
+				// --- 6) Get your own camera stream with the desired properties ---
 
 				publisher = OV.initPublisher('publisher', {
 					audioSource: undefined, // The source of audio. If undefined default audio input
 					videoSource: undefined, // The source of video. If undefined default video input
-					publishAudio: true,  	// Whether you want to start the publishing with your audio unmuted or muted
-					publishVideo: true,  	// Whether you want to start the publishing with your video enabled or disabled
+					publishAudio: true,  	// Whether to start publishing with your audio unmuted or not
+					publishVideo: true,  	// Whether to start publishing with your video enabled or not
 					resolution: '640x480',  // The resolution of your video
 					frameRate: 30,			// The frame rate of your video
-					insertMode: 'APPEND',	// How the video will be inserted in the target element 'video-container'	
+					insertMode: 'APPEND',	// How the video is inserted in target element 'video-container'
 					mirror: true       		// Whether to mirror your local video or not
 				});
 
+				// --- 7) Specify the actions when events take place in our publisher ---
+
+				// When our HTML video has been added to DOM...
 				publisher.on('videoElementCreated', function (event) {
 					// When your own video is added to DOM, update the page layout to fit it
 					numOfVideos++;
 					updateLayout();
-					$(event.element).prop('muted', true); // Mute local video
+					$(event.element).prop('muted', true); // Mute local video to avoid feedback
 				});
 
-				// --- 5) Publish your stream ---
+				// --- 8) Publish your stream ---
 
 				session.publish(publisher);
 			})
 			.catch(error => {
 				console.log('There was an error connecting to the session:', error.code, error.message);
 			});
-
-		// Update the URL shown in the browser's navigation bar to show the session id
-		var pathname = (location.pathname.slice(-1) === "/" ? location.pathname : location.pathname + "/");
-		window.history.pushState("", "", pathname + '#' + sessionId);
-
-		// Auxiliary methods to show the session's view
-		showSessionHideJoin();
-		initializeSessionView();
 	});
 }
 
 
 function leaveRoom() {
 
-	// --- 6) Leave the session by calling 'disconnect' method over the Session object ---
+	// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
+
 	session.disconnect();
 
 	// Back to welcome page
@@ -253,60 +261,43 @@ function updateLayout() {
  * These methods retrieve the mandatory user token from OpenVidu Server.
  * This behaviour MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
  * the API REST, openvidu-java-client or openvidu-node-client):
- *   1) POST /api/sessions
- *   2) POST /api/tokens
- *   3) The value returned by /api/tokens must be consumed in Session.connect() method
+ *   1) Initialize a session in OpenVidu Server	(POST /api/sessions)
+ *   2) Generate a token in OpenVidu Server		(POST /api/tokens)
+ *   3) The token must be consumed in Session.connect() method
  */
 
-function getToken() {
-	return new Promise(async function (resolve) {
-		// POST /api/sessions
-		await apiSessions();
-		// POST /api/tokens
-		let t = await apiTokens();
-		// Return the user token
-		resolve(t);
-	});
+function getToken(mySessionId) {
+	return createSession(mySessionId).then(sId => createToken(sId));
 }
 
-function apiSessions() {
+function createSession(sId) {
 	return new Promise((resolve, reject) => {
 		$.ajax({
 			type: "POST",
 			url: "https://" + location.hostname + ":4443/api/sessions",
-			data: JSON.stringify({ customSessionId: sessionId }),
+			data: JSON.stringify({ customSessionId: sId }),
 			headers: {
 				"Authorization": "Basic " + btoa("OPENVIDUAPP:MY_SECRET"),
 				"Content-Type": "application/json"
 			},
-			success: (response) => {
-				resolve(response.id)
-			},
-			error: (error) => {
-				if (error.status === 409) {
-					resolve(sessionId);
-				} else {
-					reject(error)
-				}
-			}
+			success: response => resolve(response.id),
+			error: error => error.status === 409 ? resolve(sId) : reject(error)
 		});
 	});
 }
 
-function apiTokens() {
+function createToken(sId) {
 	return new Promise((resolve, reject) => {
 		$.ajax({
 			type: "POST",
 			url: "https://" + location.hostname + ":4443/api/tokens",
-			data: JSON.stringify({ session: sessionId }),
+			data: JSON.stringify({ session: sId }),
 			headers: {
 				"Authorization": "Basic " + btoa("OPENVIDUAPP:MY_SECRET"),
 				"Content-Type": "application/json"
 			},
-			success: (response) => {
-				resolve(response.id)
-			},
-			error: (error) => { reject(error) }
+			success: response => resolve(response.token),
+			error: error => reject(error)
 		});
 	});
 }
