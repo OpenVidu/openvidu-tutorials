@@ -25,10 +25,10 @@ import io.openvidu.java.client.OpenViduRole;
 @RequestMapping("/api-sessions")
 public class SessionController {
 
-	OpenVidu openVidu;
+	private OpenVidu openVidu;
 
 	private Map<String, Session> mapSessions = new ConcurrentHashMap<>();
-	private Map<String, Map<String, OpenViduRole>> mapSessionIdsTokens = new ConcurrentHashMap<>();
+	private Map<String, Map<String, OpenViduRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
 
 	private String OPENVIDU_URL;
 	private String SECRET;
@@ -39,8 +39,8 @@ public class SessionController {
 		this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
 	}
 
-	@RequestMapping(value = "/get-sessionid-token", method = RequestMethod.POST)
-	public ResponseEntity<JSONObject> getSessionIdToken(@RequestBody String sessionNameParam, HttpSession httpSession)
+	@RequestMapping(value = "/get-token", method = RequestMethod.POST)
+	public ResponseEntity<JSONObject> getToken(@RequestBody String sessionNameParam, HttpSession httpSession)
 			throws ParseException {
 
 		try {
@@ -48,12 +48,12 @@ public class SessionController {
 		} catch (Exception e) {
 			return getErrorResponse(e);
 		}
-		System.out.println("Getting sessionId and token | {sessionName}=" + sessionNameParam);
+		System.out.println("Getting a token from OpenVidu Server | {sessionName}=" + sessionNameParam);
 
 		JSONObject sessionJSON = (JSONObject) new JSONParser().parse(sessionNameParam);
 	
 		// The video-call to connect ("TUTORIAL")
-		String sessionName = (String) sessionJSON.get("session");
+		String sessionName = (String) sessionJSON.get("sessionName");
 		
 		// Role associated to this user
 		OpenViduRole role = LoginController.users.get(httpSession.getAttribute("loggedUser")).role;
@@ -68,22 +68,18 @@ public class SessionController {
 		JSONObject responseJson = new JSONObject();
 
 		if (this.mapSessions.get(sessionName) != null) {
-			// Session already exists: return existing sessionId and a new token
+			// Session already exists
 			System.out.println("Existing session " + sessionName);
 			try {
 			
-				// Get the existing sessionId from our collection with 
-				// the sessionName param ("TUTORIAL")
-				String sessionId = this.mapSessions.get(sessionName).getSessionId();
 				// Generate a new token with the recently created tokenOptions
 				String token = this.mapSessions.get(sessionName).generateToken(tokenOptions);
 				
 				// Update our collection storing the new token
-				this.mapSessionIdsTokens.get(sessionId).put(token, role);
+				this.mapSessionNamesTokens.get(sessionName).put(token, role);
 				
-				// Prepare the response with the sessionId and the token
-				responseJson.put(0, sessionId);
-				responseJson.put(1, token);
+				// Prepare the response with the token
+				responseJson.put(0, token);
 				
 				// Return the response to the client
 				return new ResponseEntity<>(responseJson, HttpStatus.OK);
@@ -94,25 +90,22 @@ public class SessionController {
 			}
 
 		} else {
-			// New session: return a new sessionId and token
+			// New session
 			System.out.println("New session " + sessionName);
 			try {
 
 				// Create a new OpenVidu Session
 				Session session = this.openVidu.createSession();
-				// Get the sessionId
-				String sessionId = session.getSessionId();
 				// Generate a new token with the recently created tokenOptions
 				String token = session.generateToken(tokenOptions);
 
 				// Store the session and the token in our collections
 				this.mapSessions.put(sessionName, session);
-				this.mapSessionIdsTokens.put(sessionId, new ConcurrentHashMap<>());
-				this.mapSessionIdsTokens.get(sessionId).put(token, role);
+				this.mapSessionNamesTokens.put(sessionName, new ConcurrentHashMap<>());
+				this.mapSessionNamesTokens.get(sessionName).put(token, role);
 
-				// Prepare the response with the sessionId and the token
-				responseJson.put(0, sessionId);
-				responseJson.put(1, token);
+				// Prepare the response with the token
+				responseJson.put(0, token);
 
 				// Return the response to the client
 				return new ResponseEntity<>(responseJson, HttpStatus.OK);
@@ -141,28 +134,22 @@ public class SessionController {
 		String token = (String) sessionNameTokenJSON.get("token");
 
 		// If the session exists ("TUTORIAL" in this case)
-		if (this.mapSessions.get(sessionName) != null) {
-			String sessionId = this.mapSessions.get(sessionName).getSessionId();
-
-			if (this.mapSessionIdsTokens.containsKey(sessionId)) {
-				// If the token exists
-				if (this.mapSessionIdsTokens.get(sessionId).remove(token) != null) {
-					// User left the session
-					if (this.mapSessionIdsTokens.get(sessionId).isEmpty()) {
-						// Last user left: session must be removed
-						this.mapSessions.remove(sessionName);
-					}
-					return new ResponseEntity<>(HttpStatus.OK);
-				} else {
-					// The TOKEN wasn't valid
-					System.out.println("Problems in the app server: the TOKEN wasn't valid");
-					return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		if (this.mapSessions.get(sessionName) != null && this.mapSessionNamesTokens.get(sessionName) != null) {
+			
+			// If the token exists
+			if (this.mapSessionNamesTokens.get(sessionName).remove(token) != null) {
+				// User left the session
+				if (this.mapSessionNamesTokens.get(sessionName).isEmpty()) {
+					// Last user left: session must be removed
+					this.mapSessions.remove(sessionName);
 				}
+				return new ResponseEntity<>(HttpStatus.OK);
 			} else {
-				// The SESSIONID wasn't valid
-				System.out.println("Problems in the app server: the SESSIONID wasn't valid");
+				// The TOKEN wasn't valid
+				System.out.println("Problems in the app server: the TOKEN wasn't valid");
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
+			
 		} else {
 			// The SESSION does not exist
 			System.out.println("Problems in the app server: the SESSION does not exist");
