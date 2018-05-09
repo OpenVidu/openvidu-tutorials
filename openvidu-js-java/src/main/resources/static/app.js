@@ -108,7 +108,7 @@ function joinSession() {
 
 function leaveSession() {
 
-	// 9) Leave the session by calling 'disconnect' method over the Session object
+	// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
 
 	session.disconnect();
 	session = null;
@@ -269,9 +269,12 @@ function addClickListener(videoElement, clientData, serverData) {
 	videoElement.addEventListener('click', function () {
 		var mainVideo = $('#main-video video').get(0);
 		if (mainVideo.srcObject !== videoElement.srcObject) {
-			$('#main-video p.nickName').html(clientData);
-			$('#main-video p.userName').html(serverData);
-			mainVideo.srcObject = videoElement.srcObject;
+			$('#main-video').fadeOut("fast", () => {
+				$('#main-video p.nickName').html(clientData);
+				$('#main-video p.userName').html(serverData);
+				mainVideo.srcObject = videoElement.srcObject;
+				$('#main-video').fadeIn("fast");
+			});
 		}
 	});
 }

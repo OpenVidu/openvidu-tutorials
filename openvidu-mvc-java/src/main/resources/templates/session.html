@@ -7,17 +7,14 @@
 	<link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon"></link>
 
 	<!-- Bootstrap -->
-	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
-	    crossorigin="anonymous"></script>
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-	    crossorigin="anonymous"></link>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-	    crossorigin="anonymous"></script>
+	<script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"></link>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"></link>
 	<!-- Bootstrap -->
 
 	<link rel="styleSheet" href="style.css" type="text/css" media="screen"></link>
-	<script src="openvidu-browser-1.8.0.js"></script>
+	<script src="openvidu-browser-2.0.0.js"></script>
 </head>
 
 <body>
@@ -25,10 +22,15 @@
 	<nav class="navbar navbar-default">
 		<div class="container">
 			<div class="navbar-header">
-				<a class="navbar-brand" href="/"><img class="demo-logo" src="images/openvidu_vert_white_bg_trans_cropped.png"/> MVC Java</a>
+				<a class="navbar-brand" href="/">
+					<img class="demo-logo" src="images/openvidu_vert_white_bg_trans_cropped.png" /> MVC Java</a>
 				<a class="navbar-brand nav-icon" href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-mvc-java" title="GitHub Repository"
-				    target="_blank"><i class="fa fa-github" aria-hidden="true"></i></a>
-				<a class="navbar-brand nav-icon" href="http://www.openvidu.io/docs/tutorials/openvidu-mvc-java/" title="Documentation" target="_blank"><i class="fa fa-book" aria-hidden="true"></i></a>
+				 target="_blank">
+					<i class="fa fa-github" aria-hidden="true"></i>
+				</a>
+				<a class="navbar-brand nav-icon" href="http://www.openvidu.io/docs/tutorials/openvidu-mvc-java/" title="Documentation" target="_blank">
+					<i class="fa fa-book" aria-hidden="true"></i>
+				</a>
 			</div>
 		</div>
 	</nav>
@@ -58,7 +60,9 @@
 	<footer class="footer">
 		<div class="container">
 			<div class="text-muted">OpenVidu © 2017</div>
-			<a href="http://www.openvidu.io/" target="_blank"><img class="openvidu-logo" src="images/openvidu_globe_bg_transp_cropped.png"/></a>
+			<a href="http://www.openvidu.io/" target="_blank">
+				<img class="openvidu-logo" src="images/openvidu_globe_bg_transp_cropped.png" />
+			</a>
 		</div>
 	</footer>
 
@@ -67,32 +71,32 @@
 <script th:inline="javascript">
 
 	// Get all the attributes from the template in Thymeleaf style
-	var sessionId = [[${sessionId}]];
-	var token = [[${token}]];
-	var nickName = [[${nickName}]];
-	var userName = [[${userName}]];
-	var sessionName = [[${sessionName}]];
+	var sessionName = [[${ sessionName }]];
+	var token = [[${ token }]];
+	var nickName = [[${ nickName }]];
+	var userName = [[${ userName }]];
 
-	console.warn('Request of SESSIONID and TOKEN gone WELL (SESSIONID:' +
-		sessionId + ", TOKEN:" + token + ")");
+	console.warn('Request of TOKEN gone WELL (TOKEN:' + token + ')');
 
-	// --- 1) Get an OpenVidu object and init a session with the retrieved sessionId ---
+	// --- 1) Get an OpenVidu object ---
 
-	var OV = new OpenVidu();
-	var session = OV.initSession(sessionId);
+	OV = new OpenVidu();
 
+	// --- 2) Init a session ---
 
-	// --- 2) Specify the actions when events take place ---
+	session = OV.initSession();
+
+	// --- 3) Specify the actions when events take place in the session ---
 
 	// On every new Stream received...
-	session.on('streamCreated', function (event) {
+	session.on('streamCreated', (event) => {
 
 		// Subscribe to the Stream to receive it
 		// HTML video will be appended to element with 'video-container' id
 		var subscriber = session.subscribe(event.stream, 'video-container');
 
 		// When the HTML video has been appended to DOM...
-		subscriber.on('videoElementCreated', function (event) {
+		subscriber.on('videoElementCreated', (event) => {
 
 			// Add a new HTML element for the user's name and nickname over its video
 			appendUserData(event.element, subscriber.stream.connection);
@@ -100,38 +104,47 @@
 	});
 
 	// On every Stream destroyed...
-	session.on('streamDestroyed', function (event) {
+	session.on('streamDestroyed', (event) => {
 		// Delete the HTML element with the user's name and nickname
 		removeUserData(event.stream.connection);
 	});
 
+	// --- 4) Connect to the session passing the retrieved token and some more data from
+	//        the client (in this case a JSON with the nickname chosen by the user) ---
 
-	// --- 3) Connect to the session passing the retrieved token and some more data from
-	//         the client (in this case a JSON with the nickname chosen by the user) ---
-	session.connect(token, '{"clientData": "' + nickName + '"}', function (error) {
+	session.connect(token, { clientData: nickName })
+		.then(() => {
 
-		// If the connection is successful, initialize a publisher and publish to the session
-		if (!error) {
+			// --- 5) Set page layout for active call ---
 
-			// Here we check somehow if the user has at least 'PUBLISHER' role before
+			$('#session-title').text(sessionName);
+			$('#join').hide();
+			$('#session').show();
+
+
+			// Here we check somehow if the user has 'PUBLISHER' role before
 			// trying to publish its stream. Even if someone modified the client's code and
 			// published the stream, it wouldn't work if the token sent in Session.connect
-			// method doesn't belong to a 'PUBLIHSER' role
+			// method is not recognized as 'PUBLIHSER' role by OpenVidu Server
 			if (isPublisher()) {
 
-				// --- 4) Get your own camera stream ---
+				// --- 6) Get your own camera stream ---
 
 				var publisher = OV.initPublisher('video-container', {
-					audio: true,        // Whether you want to transmit audio or not
-					video: true,        // Whether you want to transmit video or not
-					audioActive: true,  // Whether you want to start the publishing with your audio unmuted or muted
-					videoActive: true,  // Whether you want to start the publishing with your video enabled or disabled
-					quality: 'MEDIUM',  // The quality of your video ('LOW', 'MEDIUM', 'HIGH')
-					screen: false       // true to get your screen as video source instead of your camera
+					audioSource: undefined, // The source of audio. If undefined default microphone
+					videoSource: undefined, // The source of video. If undefined default webcam
+					publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+					publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+					resolution: '640x480',  // The resolution of your video
+					frameRate: 30,			// The frame rate of your video
+					insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+					mirror: false       	// Whether to mirror your local video or not
 				});
 
+				// --- 7) Specify the actions when events take place in our publisher ---
+
 				// When our HTML video has been added to DOM...
-				publisher.on('videoElementCreated', function (event) {
+				publisher.on('videoElementCreated', (event) => {
 					// Init the main video with ours and append our data
 					var userData = {
 						nickName: nickName,
@@ -143,7 +156,7 @@
 				});
 
 
-				// --- 5) Publish your stream ---
+				// --- 8) Publish your stream ---
 
 				session.publish(publisher);
 
@@ -151,10 +164,10 @@
 				console.warn('You don\'t have permissions to publish');
 				initMainVideoThumbnail(); // Show SUBSCRIBER message in main video
 			}
-		} else {
+		})
+		.catch(error => {
 			console.warn('There was an error connecting to the session:', error.code, error.message);
-		}
-	});
+		});
 
 
 	function leaveSession() {
@@ -207,9 +220,12 @@
 		videoElement.addEventListener('click', function () {
 			var mainVideo = $('#main-video video').get(0);
 			if (mainVideo.srcObject !== videoElement.srcObject) {
-				$('#main-video p.nickName').html(clientData);
-				$('#main-video p.userName').html(serverData);
-				mainVideo.srcObject = videoElement.srcObject;
+				$('#main-video').fadeOut("fast", () => {
+					$('#main-video p.nickName').html(clientData);
+					$('#main-video p.userName').html(serverData);
+					mainVideo.srcObject = videoElement.srcObject;
+					$('#main-video').fadeIn("fast");
+				});
 			}
 		});
 	}

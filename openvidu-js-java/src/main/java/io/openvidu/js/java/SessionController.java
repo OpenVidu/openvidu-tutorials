@@ -25,14 +25,20 @@ import io.openvidu.java.client.OpenViduRole;
 @RequestMapping("/api-sessions")
 public class SessionController {
 
+	// OpenVidu object as entrypoint of the SDK
 	private OpenVidu openVidu;
 
+	// Collection to pair session names and OpenVidu Session objects
 	private Map<String, Session> mapSessions = new ConcurrentHashMap<>();
+	// Collection to pair session names and tokens (the inner Map pairs tokens and role associated)
 	private Map<String, Map<String, OpenViduRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
 
+	// URL where our OpenVidu server is listening
 	private String OPENVIDU_URL;
+	// Secret shared with our OpenVidu server
 	private String SECRET;
 
+	
 	public SessionController(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl) {
 		this.SECRET = secret;
 		this.OPENVIDU_URL = openviduUrl;
