@@ -63,13 +63,13 @@ var OPENVIDU_URL = process.argv[2];
 // Environment variable: secret shared with our OpenVidu server
 var OPENVIDU_SECRET = process.argv[3];
 
-// OpenVidu object to ask openvidu-server for sessionId and token
+// Entrypoint to OpenVidu Node Client SDK
 var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
 
-// Collection to pair session names and OpenVidu Session objects
-var mapSessionNameSession = {};
-// Collection to pair sessionId's (identifiers of Session objects) and tokens
-var mapSessionIdTokens = {};
+// Collection to pair session names with OpenVidu Session objects
+var mapSessions = {};
+// Collection to pair session names with tokens
+var mapSessionNamesTokens = {};
 
 console.log("App listening on port 5000");
 
@@ -81,7 +81,7 @@ console.log("App listening on port 5000");
 
 // Login
 app.post('/api-login/login', function (req, res) {
-    
+
     // Retrieve params from POST body
     var user = req.body.user;
     var pass = req.body.pass;
@@ -102,91 +102,89 @@ app.post('/api-login/login', function (req, res) {
 });
 
 // Logout
-app.get('/api-login/logout', function (req, res) {
+app.post('/api-login/logout', function (req, res) {
     console.log("'" + req.session.loggedUser + "' has logged out");
     req.session.destroy();
     res.status(200).send();
 });
 
-// Get sessionId and token (add new user to session)
-app.post('/api-sessions/get-sessionid-token', function (req, res) {
+// Get token (add new user to session)
+app.post('/api-sessions/get-token', function (req, res) {
     if (!isLogged(req.session)) {
         req.session.destroy();
         res.status(401).send('User not logged');
     } else {
-        // The video-call to connect ("TUTORIAL")
-        var sessionName = req.body.session;
-    
+        // The video-call to connect
+        var sessionName = req.body.sessionName;
+
         // Role associated to this user
         var role = users.find(u => (u.user === req.session.loggedUser)).role;
-    
+
         // Optional data to be passed to other users when this user connects to the video-call
         // In this case, a JSON with the value we stored in the req.session object on login
-        var serverData = '{"serverData": "' + req.session.loggedUser + '"}';
+        var serverData = JSON.stringify({ serverData: req.session.loggedUser });
 
-        console.log("Getting sessionId and token | {sessionName}={" + sessionName + "}");
-    
+        console.log("Getting a token | {sessionName}={" + sessionName + "}");
+
         // Build tokenOptions object with the serverData and the role
-        var tokenOptions = new TokenOptions.Builder()
-            .data(serverData)
-            .role(role)
-            .build();
+        var tokenOptions = {
+            data: serverData,
+            role: role
+        };
 
-        if (mapSessionNameSession[sessionName]) {
-            // Session already exists: return existing sessionId and a new token
+        if (mapSessions[sessionName]) {
+            // Session already exists
             console.log('Existing session ' + sessionName);
-            
+
             // Get the existing Session from the collection
-            var mySession = mapSessionNameSession[sessionName];
-            
+            var mySession = mapSessions[sessionName];
+
             // Generate a new token asynchronously with the recently created tokenOptions
-            mySession.generateToken(tokenOptions, function (token) {
-                
-                // Get the existing sessionId
-                mySession.getSessionId(function (sessionId) {
-                
+            mySession.generateToken(tokenOptions)
+                .then(token => {
+
                     // Store the new token in the collection of tokens
-                    mapSessionIdTokens[sessionId].push(token);
-                    
-                    // Return the sessionId and token to the client
-                    console.log('SESSIONID: ' + sessionId);
-                    console.log('TOKEN: ' + token);
+                    mapSessionNamesTokens[sessionName].push(token);
+
+                    // Return the token to the client
                     res.status(200).send({
-                        0: sessionId,
-                        1: token
+                        0: token
                     });
+                })
+                .catch(error => {
+                    console.error(error);
                 });
-            });
-        } else { // New session: return a new sessionId and a new token
+        } else {
+            // New session
             console.log('New session ' + sessionName);
 
-            // Create a new OpenVidu Session
-            var mySession = OV.createSession();
-            
-            // Get the sessionId asynchronously
-            mySession.getSessionId(function (sessionId) {
-                
-                // Store the new Session in the collection of Sessions
-                mapSessionNameSession[sessionName] = mySession;
-                // Store a new empty array in the collection of tokens
-                mapSessionIdTokens[sessionId] = [];
-                
-                // Generate a new token asynchronously with the recently created tokenOptions
-                mySession.generateToken(tokenOptions, function (token) {
-                    
-                    // Store the new token in the collection of tokens
-                    mapSessionIdTokens[sessionId].push(token);
+            // Create a new OpenVidu Session asynchronously
+            OV.createSession()
+                .then(session => {
+                    // Store the new Session in the collection of Sessions
+                    mapSessions[sessionName] = session;
+                    // Store a new empty array in the collection of tokens
+                    mapSessionNamesTokens[sessionName] = [];
 
-                    console.log('SESSIONID: ' + sessionId);
-                    console.log('TOKEN: ' + token);
-                    
-                    // Return the sessionId and token to the client
-                    res.status(200).send({
-                        0: sessionId,
-                        1: token
-                    });
+                    // Generate a new token asynchronously with the recently created tokenOptions
+                    session.generateToken(tokenOptions)
+                        .then(token => {
+
+                            // Store the new token in the collection of tokens
+                            mapSessionNamesTokens[sessionName].push(token);
+
+                            // Return the Token to the client
+                            res.status(200).send({
+                                0: token
+                            });
+                        })
+                        .catch(error => {
+                            console.error(error);
+                        });
+                })
+                .catch(error => {
+                    console.error(error);
                 });
-            });
         }
     }
 });
@@ -203,35 +201,26 @@ app.post('/api-sessions/remove-user', function (req, res) {
         console.log('Removing user | {sessionName, token}={' + sessionName + ', ' + token + '}');
 
         // If the session exists
-        var mySession = mapSessionNameSession[sessionName];
-        if (mySession) {
-            mySession.getSessionId(function (sessionId) {
-                var tokens = mapSessionIdTokens[sessionId];
-                if (tokens) {
-                    var index = tokens.indexOf(token);
-                    
-                    // If the token exists
-                    if (index !== -1) {
-                        // Token removed!
-                        tokens.splice(index, 1);
-                        console.log(sessionName + ': ' + mapSessionIdTokens[sessionId].toString());
-                    } else {
-                        var msg = 'Problems in the app server: the TOKEN wasn\'t valid';
-                        console.log(msg);
-                        res.status(500).send(msg);
-                    }
-                    if (mapSessionIdTokens[sessionId].length == 0) {
-                        // Last user left: session must be removed
-                        console.log(sessionName + ' empty!');
-                        delete mapSessionNameSession[sessionName];
-                    }
-                    res.status(200).send();
-                } else {
-                    var msg = 'Problems in the app server: the SESSIONID wasn\'t valid';
-                    console.log(msg);
-                    res.status(500).send(msg);
-                }
-            });
+        if (mapSessions[sessionName] && mapSessionNamesTokens[sessionName]) {
+            var tokens = mapSessionNamesTokens[sessionName];
+            var index = tokens.indexOf(token);
+
+            // If the token exists
+            if (index !== -1) {
+                // Token removed
+                tokens.splice(index, 1);
+                console.log(sessionName + ': ' + tokens.toString());
+            } else {
+                var msg = 'Problems in the app server: the TOKEN wasn\'t valid';
+                console.log(msg);
+                res.status(500).send(msg);
+            }
+            if (tokens.length == 0) {
+                // Last user left: session must be removed
+                console.log(sessionName + ' empty!');
+                delete mapSessions[sessionName];
+            }
+            res.status(200).send();
         } else {
             var msg = 'Problems in the app server: the SESSION does not exist';
             console.log(msg);
