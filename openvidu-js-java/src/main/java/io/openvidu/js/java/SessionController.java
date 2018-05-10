@@ -58,7 +58,7 @@ public class SessionController {
 
 		JSONObject sessionJSON = (JSONObject) new JSONParser().parse(sessionNameParam);
 	
-		// The video-call to connect ("TUTORIAL")
+		// The video-call to connect
 		String sessionName = (String) sessionJSON.get("sessionName");
 		
 		// Role associated to this user
@@ -139,7 +139,7 @@ public class SessionController {
 		String sessionName = (String) sessionNameTokenJSON.get("sessionName");
 		String token = (String) sessionNameTokenJSON.get("token");
 
-		// If the session exists ("TUTORIAL" in this case)
+		// If the session exists
 		if (this.mapSessions.get(sessionName) != null && this.mapSessionNamesTokens.get(sessionName) != null) {
 			
 			// If the token exists

@@ -44,6 +44,7 @@ function joinSession() {
 		// --- 4) Connect to the session passing the retrieved token and some more data from
 		//        the client (in this case a JSON with the nickname chosen by the user) ---
 
+		var nickName = $("#nickName").val();
 		session.connect(token, { clientData: nickName })
 			.then(() => {
 
@@ -130,8 +131,7 @@ function logIn() {
 	var user = $("#user").val(); // Username
 	var pass = $("#pass").val(); // Password
 
-	httpRequest(
-		'POST',
+	httpPostRequest(
 		'api-login/login',
 		{user: user, pass: pass},
 		'Login WRONG',
@@ -147,10 +147,9 @@ function logIn() {
 }
 
 function logOut() {
-	httpRequest(
-		'GET',
+	httpPostRequest(
 		'api-login/logout',
-		null,
+		{},
 		'Logout WRONG',
 		(response) => {
 			$("#not-logged").show();
@@ -161,10 +160,8 @@ function logOut() {
 
 function getToken(callback) {
 	sessionName = $("#sessionName").val(); // Video-call chosen by the user
-	nickName = $("#nickName").val(); // Nickname chosen by the user
 
-	httpRequest(
-		'POST',
+	httpPostRequest(
 		'api-sessions/get-token',
 		{sessionName: sessionName},
 		'Request of TOKEN gone WRONG:',
@@ -177,8 +174,7 @@ function getToken(callback) {
 }
 
 function removeUser() {
-	httpRequest(
-		'POST',
+	httpPostRequest(
 		'api-sessions/remove-user',
 		{sessionName: sessionName, token: token},
 		'User couldn\'t be removed from session', 
@@ -188,9 +184,9 @@ function removeUser() {
 	);
 }
 
-function httpRequest(method, url, body, errorMsg, callback) {
+function httpPostRequest(url, body, errorMsg, callback) {
 	var http = new XMLHttpRequest();
-	http.open(method, url, true);
+	http.open('POST', url, true);
 	http.setRequestHeader('Content-type', 'application/json');
 	http.addEventListener('readystatechange', processRequest, false);
 	http.send(JSON.stringify(body));
