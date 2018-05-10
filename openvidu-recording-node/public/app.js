@@ -1,88 +1,94 @@
 var OV;
 var session;
 
-var sessionId;
-var token;
 var sessionName;
+var token;
 var numVideos = 0;
 
 
 /* OPENVIDU METHODS */
 
 function joinSession() {
-	getSessionIdAndToken(function () {
+	getToken(function () {
 
-		// --- 1) Get an OpenVidu object and init a session with the retrieved sessionId ---
+		// --- 1) Get an OpenVidu object ---
 
 		OV = new OpenVidu();
-		session = OV.initSession(sessionId);
 
+		// --- 2) Init a session ---
 
-		// --- 2) Specify the actions when events take place ---
+		session = OV.initSession();
+
+		// --- 3) Specify the actions when events take place in the session ---
 
 		// On every new Stream received...
-		session.on('streamCreated', function (event) {
+		session.on('streamCreated', (event) => {
 
 			// Subscribe to the Stream to receive it
 			// HTML video will be appended to element with 'video-container' id
 			var subscriber = session.subscribe(event.stream, 'video-container');
 
 			// When the HTML video has been appended to DOM...
-			subscriber.on('videoElementCreated', function (event) {
+			subscriber.on('videoElementCreated', (event) => {
 				// Add a new HTML element for the user's name and nickname over its video
 				updateNumVideos(1);
 			});
 
 			// When the HTML video has been appended to DOM...
-			subscriber.on('videoElementDestroyed', function (event) {
+			subscriber.on('videoElementDestroyed', (event) => {
 				// Add a new HTML element for the user's name and nickname over its video
 				updateNumVideos(-1);
 			});
 		});
 
-		// --- 3) Connect to the session passing the retrieved token ---
+		// --- 4) Connect to the session passing the retrieved token and some more data from
+		//        the client (in this case a JSON with the nickname chosen by the user) ---
 
-		session.connect(token, null, function (error) {
+		session.connect(token)
+			.then(() => {
 
-			// If the connection is successful, initialize a publisher and publish to the session
-			if (!error) {
+				// --- 5) Set page layout for active call ---
 
-				// --- 4) Get your own camera stream ---
+				$('#session-title').text(sessionName);
+				$('#join').hide();
+				$('#session').show();
+
+				// --- 6) Get your own camera stream ---
 
 				var publisher = OV.initPublisher('video-container', {
-					audio: true, // Whether you want to transmit audio or not
-					video: true, // Whether you want to transmit video or not
-					audioActive: true, // Whether you want to start the publishing with your audio unmuted or muted
-					videoActive: true, // Whether you want to start the publishing with your video enabled or disabled
-					quality: 'MEDIUM', // The quality of your video ('LOW', 'MEDIUM', 'HIGH')
-					screen: false // true to get your screen as video source instead of your camera
+					audioSource: undefined, // The source of audio. If undefined default microphone
+					videoSource: undefined, // The source of video. If undefined default webcam
+					publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+					publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+					resolution: '640x480',  // The resolution of your video
+					frameRate: 30,			// The frame rate of your video
+					insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+					mirror: false       	// Whether to mirror your local video or not
 				});
 
+				// --- 7) Specify the actions when events take place in our publisher ---
+
 				// When our HTML video has been added to DOM...
-				publisher.on('videoElementCreated', function (event) {
+				publisher.on('videoElementCreated', (event) => {
 					updateNumVideos(1);
 					$(event.element).prop('muted', true); // Mute local video
 				});
 
 				// When the HTML video has been appended to DOM...
-				publisher.on('videoElementDestroyed', function (event) {
+				publisher.on('videoElementDestroyed', (event) => {
 					// Add a new HTML element for the user's name and nickname over its video
 					updateNumVideos(-1);
 				});
 
 
-				// --- 5) Publish your stream ---
+				// --- 8) Publish your stream ---
 
 				session.publish(publisher);
 
-			} else {
+			})
+			.catch(error => {
 				console.warn('There was an error connecting to the session:', error.code, error.message);
-			}
-		});
-
-		$('#session-title').text(sessionName);
-		$('#join').hide();
-		$('#session').show();
+			});
 
 		return false;
 	});
@@ -90,12 +96,12 @@ function joinSession() {
 
 function leaveSession() {
 
-	// 6) Leave the session by calling 'disconnect' method over the Session object
+	// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
 
 	session.disconnect();
 	session = null;
 	numVideos = 0;
-
+	
 	$('#join').show();
 	$('#session').hide();
 }
@@ -106,33 +112,32 @@ function leaveSession() {
 
 /* APPLICATION REST METHODS */
 
-function getSessionIdAndToken(callback) {
+function getToken(callback) {
 	sessionName = $("#sessionName").val(); // Video-call chosen by the user
 
-	var jsonBody = JSON.stringify({ // Body of POST request
-		'session': sessionName
-	});
-
-	// Send POST request
-	httpRequest('POST', 'api/get-sessionid-token', jsonBody, 'Request of SESSIONID and TOKEN gone WRONG:', function successCallback(response) {
-		sessionId = response[0]; // Get sessionId from response
-		token = response[1]; // Get token from response
-		console.warn('Request of SESSIONID and TOKEN gone WELL (SESSIONID:' + sessionId + ", TOKEN:" + token + ")");
-		callback(); // Continue the join operation
-	});
+	httpRequest(
+		'POST',
+		'api/get-token',
+		{sessionName: sessionName},
+		'Request of TOKEN gone WRONG:',
+		(response) => {
+			token = response[0]; // Get token from response
+			console.warn('Request of TOKEN gone WELL (TOKEN:' + token + ')');
+			callback(token); // Continue the join operation
+		}
+	);
 }
 
 function removeUser() {
-	// Body of POST request with the name of the session and the token of the leaving user
-	var jsonBody = JSON.stringify({
-		'sessionName': sessionName,
-		'token': token
-	});
-
-	// Send POST request
-	httpRequest('POST', 'api/remove-user', jsonBody, 'User couldn\'t be removed from session', function successCallback(response) {
-		console.warn("User correctly removed from session");
-	});
+	httpRequest(
+		'POST',
+		'api/remove-user',
+		{sessionName: sessionName, token: token},
+		'User couldn\'t be removed from session', 
+		(response) => {
+			console.warn("You have been removed from session " + sessionName);
+		}
+	);
 }
 
 function httpRequest(method, url, body, errorMsg, callback) {
@@ -141,7 +146,7 @@ function httpRequest(method, url, body, errorMsg, callback) {
 	http.open(method, url, true);
 	http.setRequestHeader('Content-type', 'application/json');
 	http.addEventListener('readystatechange', processRequest, false);
-	http.send(body);
+	http.send(JSON.stringify(body));
 
 	function processRequest() {
 		if (http.readyState == 4) {
@@ -163,48 +168,69 @@ function httpRequest(method, url, body, errorMsg, callback) {
 var recordingId;
 
 function startRecording() {
-	var jsonBody = JSON.stringify({
-		'session': session.sessionId
-	});
-	httpRequest('POST', 'api/recording/start', jsonBody, 'Start recording WRONG', function successCallback(response) {
-		console.log(response);
-		recordingId = response.id;
-		$('#text-area').text(JSON.stringify(response, null, "\t"));
-	});
+	httpRequest(
+		'POST',
+		'api/recording/start',
+		{session: session.sessionId},
+		'Start recording WRONG', 
+		(response) => {
+			console.log(response);
+			recordingId = response.id;
+			$('#text-area').text(JSON.stringify(response, null, "\t"));
+		}
+	);
 }
 
 function stopRecording() {
-	var jsonBody = JSON.stringify({
-		'recording': recordingId
-	});
-	httpRequest('POST', 'api/recording/stop', jsonBody, 'Stop recording WRONG', function successCallback(response) {
-		console.log(response);
-		$('#text-area').text(JSON.stringify(response, null, "\t"));
-	});
+	httpRequest(
+		'POST',
+		'api/recording/stop',
+		{recording: recordingId},
+		'Stop recording WRONG', 
+		(response) => {
+			console.log(response);
+			$('#text-area').text(JSON.stringify(response, null, "\t"));
+		}
+	);
 }
 
 function deleteRecording() {
-	var jsonBody = JSON.stringify({
-		'recording': recordingId
-	});
-	httpRequest('DELETE', 'api/recording/delete', jsonBody, 'Delete recording WRONG', function successCallback() {
-		console.log("DELETE ok");
-		$('#text-area').text("DELETE ok");
-	});
+	httpRequest(
+		'DELETE',
+		'api/recording/delete',
+		{recording: recordingId},
+		'Delete recording WRONG',
+		() => {
+			console.log("DELETE ok");
+			$('#text-area').text("DELETE ok");
+		}
+	);
 }
 
 function getRecording() {
-	httpRequest('GET', 'api/recording/get/' + recordingId, '', 'Get recording WRONG', function successCallback(response) {
-		console.log(response);
-		$('#text-area').text(JSON.stringify(response, null, "\t"));
-	});
+	httpRequest(
+		'GET',
+		'api/recording/get/' + recordingId,
+		{},
+		'Get recording WRONG',
+		(response) => {
+			console.log(response);
+			$('#text-area').text(JSON.stringify(response, null, "\t"));
+		}
+	);
 }
 
 function listRecordings() {
-	httpRequest('GET', 'api/recording/list', '', 'List recordings WRONG', function successCallback(response) {
-		console.log(response);
-		$('#text-area').text(JSON.stringify(response, null, "\t"));
-	});
+	httpRequest(
+		'GET',
+		'api/recording/list',
+		{},
+		'List recordings WRONG',
+		(response) => {
+			console.log(response);
+			$('#text-area').text(JSON.stringify(response, null, "\t"));
+		}
+	);
 }
 
 /* APPLICATION REST METHODS */
