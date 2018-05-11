@@ -1,12 +1,13 @@
-import { OpenVidu, Session, Stream } from 'openvidu-browser';
-import { Component, HostListener, Input } from '@angular/core';
+import { Component, HostListener, Input, OnDestroy } from '@angular/core';
+import { OpenVidu, Session, Stream, StreamEvent } from 'openvidu-browser';
+import { OpenVidu as OpenViduAPI } from 'openvidu-node-client';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })
-export class AppComponent {
+export class AppComponent implements OnDestroy {
 
   // OpenVidu objects
   OV: OpenVidu;
@@ -17,8 +18,8 @@ export class AppComponent {
   localStream: Stream;
 
   // Join form
-  sessionId: string;
-  userName: string;
+  mySessionId: string;
+  myUserName: string;
 
   // Main video of the page, will be 'localStream' or one of the 'remoteStreams',
   // updated by an Output event of StreamComponent children
@@ -41,81 +42,81 @@ export class AppComponent {
 
   joinSession() {
 
-    // --- 1) Get an OpenVidu object and init a session with a sessionId ---
+    // --- 1) Get an OpenVidu object ---
 
-    // Init OpenVidu object
     this.OV = new OpenVidu();
 
-    // We will join the video-call "sessionId". As there's no server, this parameter must start with the URL of
-    // OpenVidu Server (with secure websocket protocol: "wss://") and must include the OpenVidu secret at the end
-    this.session = this.OV.initSession('wss://' + location.hostname + ':8443/' + this.sessionId + '?secret=MY_SECRET');
+    // --- 2) Init a session ---
+
+    this.session = this.OV.initSession();
 
 
-    // --- 2) Specify the actions when events take place ---
+    // --- 3) Specify the actions when events take place in the session ---
 
     // On every new Stream received...
-    this.session.on('streamCreated', (event) => {
+    this.session.on('streamCreated', (event: StreamEvent) => {
 
       // Add the new stream to 'remoteStreams' array
       this.remoteStreams.push(event.stream);
 
-      // Subscribe to the Stream to receive it. Second parameter is an empty string
+      // Subscribe to the Stream to receive it. Second parameter is undefined
       // so OpenVidu doesn't create an HTML video by its own
-      this.session.subscribe(event.stream, '');
+      this.session.subscribe(event.stream, undefined);
     });
 
     // On every Stream destroyed...
-    this.session.on('streamDestroyed', (event) => {
-
-      // Avoid OpenVidu trying to remove the HTML video element
-      event.preventDefault();
+    this.session.on('streamDestroyed', (event: StreamEvent) => {
 
       // Remove the stream from 'remoteStreams' array
       this.deleteRemoteStream(event.stream);
     });
 
 
-    // --- 3) Connect to the session ---
+    // --- 4) Connect to the session with a valid user token ---
 
-    // First param irrelevant if your app has no server-side. Second param will be received by every user
-    // in Stream.connection.data property, which will be appended to DOM as the user's nickname
-    this.session.connect(null, '{"clientData": "' + this.userName + '"}', (error) => {
+    // 'getToken' method is simulating what your server-side should do.
+    // 'token' parameter should be retrieved and returned by your own backend
+    this.getToken().then(token => {
 
-      // If connection successful, initialize a publisher and publish to the session
-      if (!error) {
+      // First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
+      // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
+      this.session.connect(token, { clientData: this.myUserName })
+        .then(() => {
 
-        // --- 4) Get your own camera stream with the desired resolution ---
+          // --- 5) Get your own camera stream ---
 
-        // Both audio and video will be active. Second parameter is an empty string
-        // so OpenVidu doesn't create an HTML video by its own
-        let publisher = this.OV.initPublisher('', {
-          audio: true,        // Whether you want to transmit audio or not
-          video: true,        // Whether you want to transmit video or not
-          audioActive: true,  // Whether you want to start the publishing with your audio unmuted or muted
-          videoActive: true,  // Whether you want to start the publishing with your video enabled or disabled
-          quality: 'MEDIUM',  // The quality of your video ('LOW', 'MEDIUM', 'HIGH')
-          screen: false       // true to get your screen as video source instead of your camera
+          // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
+          // element: we will manage it ourselves) and with the desired properties
+          let publisher = this.OV.initPublisher(undefined, {
+            audioSource: undefined, // The source of audio. If undefined default microphone
+            videoSource: undefined, // The source of video. If undefined default webcam
+            publishAudio: true,     // Whether you want to start publishing with your audio unmuted or not
+            publishVideo: true,     // Whether you want to start publishing with your video enabled or not
+            resolution: '640x480',  // The resolution of your video
+            frameRate: 30,          // The frame rate of your video
+            insertMode: 'APPEND',   // How the video is inserted in the target element 'video-container'
+            mirror: false           // Whether to mirror your local video or not
+          });
+
+          // Store your webcam stream in 'localStream' object
+          this.localStream = publisher.stream;
+          // Set the main video in the page to display our webcam
+          this.mainVideoStream = this.localStream;
+
+          // --- 6) Publish your stream ---
+
+          this.session.publish(publisher);
+        })
+        .catch(error => {
+          console.log('There was an error connecting to the session:', error.code, error.message);
         });
-
-        // Store your webcam stream in 'localStream' object
-        this.localStream = publisher.stream;
-        // Set the main video in the page to display our webcam
-        this.mainVideoStream = this.localStream;
-
-        // --- 5) Publish your stream ---
-
-        this.session.publish(publisher);
-
-      } else {
-        console.log('There was an error connecting to the session:', error.code, error.message);
-      }
     });
-
-    return false;
   }
 
   leaveSession() {
-    // --- 6) Leave the session by calling 'disconnect' method over the Session object ---
+
+    // --- 7) Leave the session by calling 'disconnect' method over the Session object ---
+
     if (this.session) { this.session.disconnect(); };
 
     // Empty all properties...
@@ -129,8 +130,8 @@ export class AppComponent {
 
   private generateParticipantInfo() {
     // Random user nickname and sessionId
-    this.sessionId = 'SessionA';
-    this.userName = 'Participant' + Math.floor(Math.random() * 100);
+    this.mySessionId = 'SessionA';
+    this.myUserName = 'Participant' + Math.floor(Math.random() * 100);
   }
 
   private deleteRemoteStream(stream: Stream): void {
@@ -142,6 +143,28 @@ export class AppComponent {
 
   private getMainVideoStream(stream: Stream) {
     this.mainVideoStream = stream;
+  }
+
+
+
+  /**
+   * --------------------------
+   * SERVER-SIDE RESPONSABILITY
+   * --------------------------
+   * This method retrieve the mandatory user token from OpenVidu Server,
+   * in this case making use of OpenVidu Node Client.
+   * This behaviour MUST BE IN YOUR SERVER-SIDE IN PRODUCTION. In this case:
+   *   1) Initialize a session in OpenVidu Server (OpenVidu.createSession with OpenVidu Node Client)
+   *   2) Generate a token in OpenVidu Server		  (Session.generateToken with OpenVidu Node Client)
+   *   3) The token must be consumed in Session.connect() method of OpenVidu Browser
+   */
+
+  getToken(): Promise<string> {
+    let OV_NodeClient = new OpenViduAPI('https://' + location.hostname + ':4443', 'MY_SECRET');
+    return OV_NodeClient.createSession({ customSessionId: this.mySessionId })
+      .then(session_NodeClient => {
+        return session_NodeClient.generateToken();
+      });
   }
 
 }

@@ -1,46 +1,29 @@
 {
   "name": "openvidu-insecure-angular",
   "version": "0.0.0",
-  "license": "MIT",
-  "angular-cli": {},
+  "license": "Apache-2.0",
   "scripts": {
-    "start": "ng serve",
-    "lint": "tslint \"src/**/*.ts\"",
-    "test": "ng test",
-    "pree2e": "webdriver-manager update",
-    "e2e": "protractor"
+    "start": "ng serve"
   },
-  "private": true,
   "dependencies": {
-    "@angular/common": "^2.4.0",
-    "@angular/compiler": "^2.4.0",
-    "@angular/core": "^2.4.0",
-    "@angular/forms": "^2.4.0",
-    "@angular/http": "^2.4.0",
-    "@angular/platform-browser": "^2.4.0",
-    "@angular/platform-browser-dynamic": "^2.4.0",
-    "@angular/router": "^3.4.0",
-    "core-js": "^2.4.1",
-    "openvidu-browser": "1.5.0",
-    "zone.js": "^0.7.6"
+    "@angular/common": "5.2.10",
+    "@angular/compiler": "5.2.10",
+    "@angular/core": "5.2.10",
+    "@angular/forms": "5.2.10",
+    "@angular/platform-browser": "5.2.10",
+    "@angular/platform-browser-dynamic": "5.2.10",
+    "core-js": "2.5.6",
+    "openvidu-browser": "1.9.0",
+    "openvidu-node-client": "1.9.0",
+    "zone.js": "0.8.26"
   },
   "devDependencies": {
-    "@types/jasmine": "2.5.38",
-    "@types/node": "~6.0.60",
-    "@angular/cli": "1.0.0",
-    "@angular/compiler-cli": "^2.4.0",
-    "codelyzer": "~2.0.0",
-    "jasmine-core": "~2.5.2",
-    "jasmine-spec-reporter": "~3.2.0",
-    "karma": "~1.4.1",
-    "karma-chrome-launcher": "~2.0.0",
-    "karma-cli": "~1.0.1",
-    "karma-jasmine": "~1.1.0",
-    "karma-jasmine-html-reporter": "^0.2.2",
-    "karma-coverage-istanbul-reporter": "^0.2.0",
-    "protractor": "~5.1.0",
-    "ts-node": "~2.0.0",
-    "tslint": "~4.4.2",
-    "typescript": "2.5.3"
+    "@types/node": "10.0.4",
+    "@angular/cli": "1.7.4",
+    "@angular/compiler-cli": "5.2.10",
+    "codelyzer": "4.3.0",
+    "ts-node": "6.0.3",
+    "tslint": "5.10.0",
+    "typescript": "2.7.2"
   }
 }

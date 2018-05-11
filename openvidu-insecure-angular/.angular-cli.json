@@ -7,7 +7,10 @@
     {
       "root": "src",
       "outDir": "dist",
-      "assets": "assets",
+      "assets": [
+        "assets",
+        "assets/images"
+      ],
       "index": "index.html",
       "main": "main.ts",
       "test": "test.ts",
@@ -38,6 +41,9 @@
     }
   },
   "defaults": {
+    "build": {
+      "showCircularDependencies": false
+    },
     "styleExt": "css",
     "prefixInterfaces": false
   }
