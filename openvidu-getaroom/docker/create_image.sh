@@ -4,8 +4,8 @@ cp ../../../openvidu/openvidu-server/target/openvidu-server-"$1".jar ./openvidu-
 # Copy openvidu-insecure-js web files
 cp -a ../web/. ./web/
 
-# Modify WebSocket protocol in app.js for allowing both ngrok and localhost connections
-sed -i 's/OV\.initSession("wss:\/\/"/OV\.initSession("ws:\/\/"/g' ./web/app.js
+# Modify OpenVidu Server URL
+sed -i 's/url: "https:\/\/" + location\.hostname + ":4443/url: "https:\/\/" + location\.hostname + "/g' ./web/app.js
 
 # Build docker image
 docker build -t openvidu/getaroom-demo .
