@@ -1,6 +1,8 @@
 import { Component, HostListener, Input, OnDestroy } from '@angular/core';
+import { Http, Headers, RequestOptions } from '@angular/http';
+import { throwError as observableThrowError, Observable } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { OpenVidu, Session, Stream, StreamEvent } from 'openvidu-browser';
-import { OpenVidu as OpenViduAPI } from 'openvidu-node-client';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +27,7 @@ export class AppComponent implements OnDestroy {
   // updated by an Output event of StreamComponent children
   @Input() mainVideoStream: Stream;
 
-  constructor() {
+  constructor(private http: Http) {
     this.generateParticipantInfo();
   }
 
@@ -160,11 +162,56 @@ export class AppComponent implements OnDestroy {
    */
 
   getToken(): Promise<string> {
-    let OV_NodeClient = new OpenViduAPI('https://' + location.hostname + ':4443', 'MY_SECRET');
-    return OV_NodeClient.createSession({ customSessionId: this.mySessionId })
-      .then(session_NodeClient => {
-        return session_NodeClient.generateToken();
+    return this.createSession(this.mySessionId).then(
+      sessionId => {
+        return this.createToken(sessionId);
+      })
+  }
+
+  createSession(sessionId) {
+    return new Promise((resolve, reject) => {
+
+      const body = JSON.stringify({ customSessionId: sessionId });
+      const headers = new Headers({
+        'Authorization': 'Basic ' + btoa('OPENVIDUAPP:MY_SECRET'),
+        'Content-Type': 'application/json',
       });
+      const options = new RequestOptions({ headers });
+      return this.http.post('https://' + location.hostname + ':4443/api/sessions', body, options)
+        .pipe(
+          catchError(error => {
+            error.status === 409 ? resolve(sessionId) : reject(error);
+            return observableThrowError(error);
+          })
+        )
+        .subscribe(response => {
+          console.log(response);
+          resolve(response.json().id);
+        });
+    });
+  }
+
+  createToken(sessionId): Promise<string> {
+    return new Promise((resolve, reject) => {
+
+      const body = JSON.stringify({ session: sessionId });
+      const headers = new Headers({
+        'Authorization': 'Basic ' + btoa('OPENVIDUAPP:MY_SECRET'),
+        'Content-Type': 'application/json',
+      });
+      const options = new RequestOptions({ headers });
+      return this.http.post('https://' + location.hostname + ':4443/api/tokens', body, options)
+        .pipe(
+          catchError(error => {
+            reject(error);
+            return observableThrowError(error);
+          })
+        )
+        .subscribe(response => {
+          console.log(response);
+          resolve(response.json().token);
+        });
+    });
   }
 
 }
