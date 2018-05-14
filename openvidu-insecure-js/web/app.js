@@ -155,11 +155,13 @@ function removeAllUserData() {
 
 function addClickListener(videoElement, userData) {
 	videoElement.addEventListener('click', function () {
-		var mainVideo = document.querySelector('#main-video video');
-		var mainUserData = document.querySelector('#main-video p');
+		var mainVideo = $('#main-video video').get(0);
 		if (mainVideo.srcObject !== videoElement.srcObject) {
-			mainUserData.innerHTML = userData;
-			mainVideo.srcObject = videoElement.srcObject;
+			$('#main-video').fadeOut("fast", () => {
+				$('#main-video p').html(userData);
+				mainVideo.srcObject = videoElement.srcObject;
+				$('#main-video').fadeIn("fast");
+			});
 		}
 	});
 }
