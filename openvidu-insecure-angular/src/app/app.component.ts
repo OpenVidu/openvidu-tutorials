@@ -1,5 +1,5 @@
 import { Component, HostListener, Input, OnDestroy } from '@angular/core';
-import { Http, Headers, RequestOptions } from '@angular/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { throwError as observableThrowError, Observable } from 'rxjs';
 import { map, catchError } from 'rxjs/operators';
 
@@ -28,7 +28,7 @@ export class AppComponent implements OnDestroy {
   // updated by an Output event of StreamComponent children
   @Input() mainVideoStream: Stream;
 
-  constructor(private http: Http) {
+  constructor(private httpClient: HttpClient) {
     this.generateParticipantInfo();
   }
 
@@ -173,12 +173,13 @@ export class AppComponent implements OnDestroy {
     return new Promise((resolve, reject) => {
 
       const body = JSON.stringify({ customSessionId: sessionId });
-      const headers = new Headers({
-        'Authorization': 'Basic ' + btoa('OPENVIDUAPP:MY_SECRET'),
-        'Content-Type': 'application/json',
-      });
-      const options = new RequestOptions({ headers });
-      return this.http.post('https://' + location.hostname + ':4443/api/sessions', body, options)
+      const options = {
+        headers: new HttpHeaders({
+          'Authorization': 'Basic ' + btoa('OPENVIDUAPP:MY_SECRET'),
+          'Content-Type': 'application/json'
+        })
+      };
+      return this.httpClient.post('https://' + location.hostname + ':4443/api/sessions', body, options)
         .pipe(
           catchError(error => {
             error.status === 409 ? resolve(sessionId) : reject(error);
@@ -187,7 +188,7 @@ export class AppComponent implements OnDestroy {
         )
         .subscribe(response => {
           console.log(response);
-          resolve(response.json().id);
+          resolve(response['id']);
         });
     });
   }
@@ -196,12 +197,13 @@ export class AppComponent implements OnDestroy {
     return new Promise((resolve, reject) => {
 
       const body = JSON.stringify({ session: sessionId });
-      const headers = new Headers({
-        'Authorization': 'Basic ' + btoa('OPENVIDUAPP:MY_SECRET'),
-        'Content-Type': 'application/json',
-      });
-      const options = new RequestOptions({ headers });
-      return this.http.post('https://' + location.hostname + ':4443/api/tokens', body, options)
+      const options = {
+        headers: new HttpHeaders({
+          'Authorization': 'Basic ' + btoa('OPENVIDUAPP:MY_SECRET'),
+          'Content-Type': 'application/json'
+        })
+      };
+      return this.httpClient.post('https://' + location.hostname + ':4443/api/tokens', body, options)
         .pipe(
           catchError(error => {
             reject(error);
@@ -210,7 +212,7 @@ export class AppComponent implements OnDestroy {
         )
         .subscribe(response => {
           console.log(response);
-          resolve(response.json().token);
+          resolve(response['token']);
         });
     });
   }
