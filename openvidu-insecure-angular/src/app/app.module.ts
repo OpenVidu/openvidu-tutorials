@@ -4,11 +4,14 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 
 import { AppComponent } from './app.component';
-import { StreamComponent } from './stream.component';
+import { UserVideoComponent } from './user-video.component';
+import { OpenViduVideoComponent } from './ov-video.component';
 
 @NgModule({
   declarations: [
-    AppComponent, StreamComponent
+    AppComponent,
+    UserVideoComponent,
+    OpenViduVideoComponent
   ],
   imports: [
     BrowserModule,

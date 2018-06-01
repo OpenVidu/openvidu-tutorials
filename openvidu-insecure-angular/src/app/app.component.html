@@ -24,15 +24,15 @@
 			<h1 id="session-title">{{mySessionId}}</h1>
 			<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" (click)="leaveSession()" value="Leave session">
 		</div>
-		<div *ngIf="this.mainVideoStream" id="main-video" class="col-md-6">
-			<stream-component [stream]="this.mainVideoStream" [isMuted]="true"></stream-component>
+		<div *ngIf="mainStreamManager" id="main-video" class="col-md-6">
+			<user-video [streamManager]="mainStreamManager"></user-video>
 		</div>
 		<div id="video-container" class="col-md-6">
-			<div *ngIf="this.localStream" class="stream-container col-md-6 col-xs-6">
-				<stream-component [stream]="this.localStream" [isMuted]="true" (mainVideoStream)="getMainVideoStream($event)"></stream-component>
+			<div *ngIf="publisher" class="stream-container col-md-6 col-xs-6">
+				<user-video [streamManager]="publisher" (clicked)="updateMainStreamManager(publisher)"></user-video>
 			</div>
-			<div *ngFor="let s of this.remoteStreams" class="stream-container col-md-6 col-xs-6">
-				<stream-component [stream]="s" [isMuted]="false" (mainVideoStream)="getMainVideoStream($event)"></stream-component>
+			<div *ngFor="let sub of subscribers" class="stream-container col-md-6 col-xs-6">
+				<user-video [streamManager]="sub" (clicked)="updateMainStreamManager(sub)"></user-video>
 			</div>
 		</div>
 	</div>
