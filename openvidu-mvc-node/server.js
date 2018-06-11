@@ -1,9 +1,7 @@
 /* CONFIGURATION */
 
 var OpenVidu = require('openvidu-node-client').OpenVidu;
-var Session = require('openvidu-node-client').Session;
 var OpenViduRole = require('openvidu-node-client').OpenViduRole;
-var TokenOptions = require('openvidu-node-client').TokenOptions;
 
 // Check launch arguments: must receive openvidu-server URL and the secret
 if (process.argv.length != 4) {
