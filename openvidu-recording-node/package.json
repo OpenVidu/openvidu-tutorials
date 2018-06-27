@@ -1,6 +1,6 @@
 {
-  "name": "openvidu-js-node",
-  "version": "1.0.0",
+  "name": "openvidu-recording-node",
+  "version": "2.2.0",
   "description": "",
   "main": "server.js",
   "scripts": {
@@ -19,6 +19,6 @@
   "dependencies": {
     "body-parser": "1.18.2",
     "express": "4.16.3",
-    "openvidu-node-client": "2.0.0"
+    "openvidu-node-client": "2.2.0"
   }
 }

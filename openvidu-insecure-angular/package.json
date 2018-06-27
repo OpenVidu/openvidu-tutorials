@@ -1,6 +1,6 @@
 {
   "name": "openvidu-insecure-angular",
-  "version": "0.0.0",
+  "version": "2.2.0",
   "license": "Apache-2.0",
   "scripts": {
     "start": "ng serve"
@@ -14,7 +14,7 @@
     "@angular/platform-browser": "6.0.2",
     "@angular/platform-browser-dynamic": "6.0.2",
     "core-js": "2.5.6",
-    "openvidu-browser": "2.1.0",
+    "openvidu-browser": "2.2.0",
     "zone.js": "0.8.26"
   },
   "devDependencies": {
