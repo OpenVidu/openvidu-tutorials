@@ -8,6 +8,6 @@
 openvidu-getaroom
 ===
 
-Visit [openvidu.io/docs/tutorials/openvidu-getaroom/](http://openvidu.io/docs/tutorials/openvidu-getaroom/)
+Visit [openvidu.io/demos](https://openvidu.io/demos#2)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
