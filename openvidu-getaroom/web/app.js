@@ -256,7 +256,7 @@ function updateLayout() {
 
 /**
  * --------------------------
- * SERVER-SIDE RESPONSABILITY
+ * SERVER-SIDE RESPONSIBILITY
  * --------------------------
  * These methods retrieve the mandatory user token from OpenVidu Server.
  * This behaviour MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using

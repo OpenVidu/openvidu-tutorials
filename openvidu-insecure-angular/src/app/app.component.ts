@@ -147,7 +147,7 @@ export class AppComponent implements OnDestroy {
 
   /**
    * --------------------------
-   * SERVER-SIDE RESPONSABILITY
+   * SERVER-SIDE RESPONSIBILITY
    * --------------------------
    * This method retrieve the mandatory user token from OpenVidu Server,
    * in this case making use Angular http API.
