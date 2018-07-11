@@ -7,24 +7,20 @@
     <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
         crossorigin="anonymous"></script>
 
-
-    <!-- OpenVidu WebComponent -->
-    <link rel="stylesheet" href="openvidu-webcomponent.css">
-    <script type='application/javascript' src='openvidu-webcomponent.js'></script>
-    <!-- OpenVidu WebComponent -->
-
     <script src="app.js"></script>
-
-
+    <script src='openvidu-webcomponent.js'></script>
+    <link rel="stylesheet" href="openvidu-webcomponent.css">
 </head>
 
 <body>
+
+    <!-- Form to connect to a video-session -->
     <div id="main" style="text-align: center;">
         <h1>Join a video session</h1>
         <form onsubmit="joinSession(); return false" style="padding: 80px; margin: auto">
             <p>
                 <label>Session:</label>
-                <input type="text" id="sessionId" value="SessionA" required>
+                <input type="text" id="sessionName" value="SessionA" required>
             </p>
             <p>
                 <label>User:</label>
@@ -36,7 +32,8 @@
         </form>
     </div>
 
-    <openvidu-webcomponent id="session" style="display: none;"></openvidu-webcomponent>
+    <!-- OpenVidu Web Component -->
+    <openvidu-webcomponent style="display: none;"></openvidu-webcomponent>
 
 </body>
 

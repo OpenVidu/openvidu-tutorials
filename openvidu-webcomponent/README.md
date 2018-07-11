@@ -5,9 +5,9 @@
 
 [![][OpenViduLogo]](http://openvidu.io)
 
-openvidu-starter
+openvidu-webcomponent
 ===
 
-Visit [openvidu.io/docs/tutorials/openvidu-starter/](http://openvidu.io/docs/tutorials/openvidu-webcomponent/)
+Visit [openvidu.io/docs/tutorials/openvidu-webcomponent/](http://openvidu.io/docs/tutorials/openvidu-webcomponent/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
