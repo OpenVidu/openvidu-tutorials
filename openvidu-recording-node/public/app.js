@@ -41,6 +41,18 @@ function joinSession() {
 			});
 		});
 
+		session.on('sessionDisconnected', (event) => {
+			if (event.reason !== 'disconnect') {
+				removeUser();
+			}
+			if (event.reason !== 'sessionClosedByServer') {
+				session = null;
+				numVideos = 0;
+				$('#join').show();
+				$('#session').hide();
+			}
+		});
+
 		// --- 4) Connect to the session passing the retrieved token and some more data from
 		//        the client (in this case a JSON with the nickname chosen by the user) ---
 
@@ -97,13 +109,8 @@ function joinSession() {
 function leaveSession() {
 
 	// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
-
 	session.disconnect();
-	session = null;
-	numVideos = 0;
-	
-	$('#join').show();
-	$('#session').hide();
+
 }
 
 /* OPENVIDU METHODS */
@@ -118,7 +125,7 @@ function getToken(callback) {
 	httpRequest(
 		'POST',
 		'api/get-token',
-		{sessionName: sessionName},
+		{ sessionName: sessionName },
 		'Request of TOKEN gone WRONG:',
 		(response) => {
 			token = response[0]; // Get token from response
@@ -132,10 +139,72 @@ function removeUser() {
 	httpRequest(
 		'POST',
 		'api/remove-user',
-		{sessionName: sessionName, token: token},
-		'User couldn\'t be removed from session', 
+		{ sessionName: sessionName, token: token },
+		'User couldn\'t be removed from session',
 		(response) => {
 			console.warn("You have been removed from session " + sessionName);
+		}
+	);
+}
+
+function closeSession() {
+	httpRequest(
+		'DELETE',
+		'api/close-session',
+		{ sessionName: sessionName },
+		'Session couldn\'t be closed',
+		(response) => {
+			console.warn("Session " + sessionName + " has been closed");
+		}
+	);
+}
+
+function fetchInfo() {
+	httpRequest(
+		'POST',
+		'api/fetch-info',
+		{ sessionName: sessionName },
+		'Session couldn\'t be fetched',
+		(response) => {
+			console.warn("Session info has been fetched");
+			$('#text-area').text(JSON.stringify(response, null, "\t"));
+		}
+	);
+}
+
+function fetchAll() {
+	httpRequest(
+		'GET',
+		'api/fetch-all',
+		{},
+		'All session info couldn\'t be fetched',
+		(response) => {
+			console.warn("All session info has been fetched");
+			$('#text-area').text(JSON.stringify(response, null, "\t"));
+		}
+	);
+}
+
+function forceDisconnect() {
+	httpRequest(
+		'DELETE',
+		'api/force-disconnect',
+		{ sessionName: sessionName, connectionId: document.getElementById('forceValue').value },
+		'Connection couldn\'t be closed',
+		(response) => {
+			console.warn("Connection has been closed");
+		}
+	);
+}
+
+function forceUnpublish() {
+	httpRequest(
+		'DELETE',
+		'api/force-unpublish',
+		{ sessionName: sessionName, streamId: document.getElementById('forceValue').value },
+		'Stream couldn\'t be closed',
+		(response) => {
+			console.warn("Stream has been closed");
 		}
 	);
 }
@@ -154,7 +223,7 @@ function httpRequest(method, url, body, errorMsg, callback) {
 				try {
 					callback(JSON.parse(http.responseText));
 				} catch (e) {
-					callback();
+					callback(e);
 				}
 			} else {
 				console.warn(errorMsg + ' (' + http.status + ')');
@@ -165,28 +234,28 @@ function httpRequest(method, url, body, errorMsg, callback) {
 	}
 }
 
-var recordingId;
-
 function startRecording() {
 	httpRequest(
 		'POST',
 		'api/recording/start',
-		{session: session.sessionId},
-		'Start recording WRONG', 
+		{ session: session.sessionId },
+		'Start recording WRONG',
 		(response) => {
 			console.log(response);
-			recordingId = response.id;
+			document.getElementById('forceRecordingId').value = response.id;
+			checkBtnsRecordings();
 			$('#text-area').text(JSON.stringify(response, null, "\t"));
 		}
 	);
 }
 
 function stopRecording() {
+	var forceRecordingId = document.getElementById('forceRecordingId').value;
 	httpRequest(
 		'POST',
 		'api/recording/stop',
-		{recording: recordingId},
-		'Stop recording WRONG', 
+		{ recording: forceRecordingId },
+		'Stop recording WRONG',
 		(response) => {
 			console.log(response);
 			$('#text-area').text(JSON.stringify(response, null, "\t"));
@@ -195,10 +264,11 @@ function stopRecording() {
 }
 
 function deleteRecording() {
+	var forceRecordingId = document.getElementById('forceRecordingId').value;
 	httpRequest(
 		'DELETE',
 		'api/recording/delete',
-		{recording: recordingId},
+		{ recording: forceRecordingId },
 		'Delete recording WRONG',
 		() => {
 			console.log("DELETE ok");
@@ -208,9 +278,10 @@ function deleteRecording() {
 }
 
 function getRecording() {
+	var forceRecordingId = document.getElementById('forceRecordingId').value;
 	httpRequest(
 		'GET',
-		'api/recording/get/' + recordingId,
+		'api/recording/get/' + forceRecordingId,
 		{},
 		'Get recording WRONG',
 		(response) => {
@@ -262,6 +333,28 @@ function updateNumVideos(i) {
 		case 4:
 			$('video').addClass('four');
 			break;
+	}
+}
+
+function checkBtnsForce() {
+	if (document.getElementById("forceValue").value === "") {
+		document.getElementById('buttonForceUnpublish').disabled = true;
+		document.getElementById('buttonForceDisconnect').disabled = true;
+	} else {
+		document.getElementById('buttonForceUnpublish').disabled = false;
+		document.getElementById('buttonForceDisconnect').disabled = false;
+	}
+}
+
+function checkBtnsRecordings() {
+	if (document.getElementById("forceRecordingId").value === "") {
+		document.getElementById('buttonGetRecording').disabled = true;
+		document.getElementById('buttonStopRecording').disabled = true;
+		document.getElementById('buttonDeleteRecording').disabled = true;
+	} else {
+		document.getElementById('buttonGetRecording').disabled = false;
+		document.getElementById('buttonStopRecording').disabled = false;
+		document.getElementById('buttonDeleteRecording').disabled = false;
 	}
 }
 

@@ -8,11 +8,11 @@
 
 	<!-- Bootstrap -->
 	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha256-k2WSCIexGzOj3Euiig+TlR8gA0EmPjuc79OEeY5L45g="
-	    crossorigin="anonymous"></script>
+	 crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
-	    crossorigin="anonymous">
+	 crossorigin="anonymous">
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa"
-	    crossorigin="anonymous"></script>
+	 crossorigin="anonymous"></script>
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 	<!-- Bootstrap -->
 
@@ -36,7 +36,7 @@
 				<a class="navbar-brand" href="/">
 					<img class="demo-logo" src="images/openvidu_vert_white_bg_trans_cropped.png" /> Recording Node</a>
 				<a class="navbar-brand nav-icon" href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-recording-node"
-				    title="GitHub Repository" target="_blank">
+				 title="GitHub Repository" target="_blank">
 					<i class="fa fa-github" aria-hidden="true"></i>
 				</a>
 				<a class="navbar-brand nav-icon" href="http://www.openvidu.io/docs/tutorials/openvidu-js-node/" title="Documentation" target="_blank">
@@ -69,16 +69,25 @@
 		<div id="session" style="display: none">
 			<div id="session-header">
 				<h1 id="session-title"></h1>
-				<input class="btn btn-large btn-danger" type="button" id="buttonLeaveSession" onmouseup="removeUser(); leaveSession()" value="Leave session">
+				<input class="btn btn-sm btn-danger" type="button" id="buttonCloseSession" onmouseup="closeSession()" value="Close session">
+				<input class="btn btn-sm btn-danger" type="button" id="buttonLeaveSession" onmouseup="removeUser(); leaveSession()" value="Leave session">
+				<input class="btn btn-sm" type="button" id="buttonForceUnpublish" onmouseup="forceUnpublish()" value="Force unpublish" disabled>
+				<input class="btn btn-sm" type="button" id="buttonForceDisconnect" onmouseup="forceDisconnect()" value="Force disconnect"
+				 disabled>
+				<input class="form-control" id="forceValue" type="text" onkeyup="checkBtnsForce()">
+				<input class="btn btn-sm" type="button" id="buttonFetchInfo" onmouseup="fetchInfo()" value="Fetch info">
+				<input class="btn btn-sm" type="button" id="buttonFetchAll" onmouseup="fetchAll()" value="Fetch all">
 			</div>
 			<div id="video-container" class="col-md-12"></div>
 			<div id="recording-btns">
 				<div id="btns">
-					<input class="btn btn-large" type="button" onmouseup="startRecording()" value="Start recording">
-					<input class="btn btn-large" type="button" onmouseup="stopRecording()" value="Stop recording">
-					<input class="btn btn-large" type="button" onmouseup="deleteRecording()" value="Delete recording">
-					<input class="btn btn-large" type="button" onmouseup="getRecording()" value="Get recording">
-					<input class="btn btn-large" type="button" onmouseup="listRecordings()" value="List recordings">
+					<input class="btn btn-md" type="button" id="buttonStartRecording" onmouseup="startRecording()" value="Start recording">
+					<input class="btn btn-md" type="button" id="buttonListRecording" onmouseup="listRecordings()" value="List recordings">
+					<input class="form-control" id="forceRecordingId" type="text" onkeyup="checkBtnsRecordings()">
+					<input class="btn btn-md" type="button" id="buttonGetRecording" onmouseup="getRecording()" value="Get recording" disabled>
+					<input class="btn btn-md" type="button" id="buttonStopRecording" onmouseup="stopRecording()" value="Stop recording" disabled>
+					<input class="btn btn-md" type="button" id="buttonDeleteRecording" onmouseup="deleteRecording()" value="Delete recording"
+					 disabled>
 				</div>
 				<textarea id="text-area" readonly="true" class="form-control" name="comment">HTTP responses...</textarea>
 			</div>

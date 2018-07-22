@@ -67,7 +67,7 @@ app.post('/api/get-token', function (req, res) {
 
     console.log("Getting a token | {sessionName}={" + sessionName + "}");
 
-    // Build tokenOptions object with PUBLIHSER role
+    // Build tokenOptions object with PUBLISHER role
     var tokenOptions = { role: role }
 
     if (mapSessions[sessionName]) {
@@ -133,8 +133,8 @@ app.post('/api/remove-user', function (req, res) {
     var token = req.body.token;
     console.log('Removing user | {sessionName, token}={' + sessionName + ', ' + token + '}');
 
-   // If the session exists
-   if (mapSessions[sessionName] && mapSessionNamesTokens[sessionName]) {
+    // If the session exists
+    if (mapSessions[sessionName] && mapSessionNamesTokens[sessionName]) {
         var tokens = mapSessionNamesTokens[sessionName];
         var index = tokens.indexOf(token);
 
@@ -161,6 +161,96 @@ app.post('/api/remove-user', function (req, res) {
     }
 });
 
+// Close session
+app.delete('/api/close-session', function (req, res) {
+    // Retrieve params from POST body
+    var sessionName = req.body.sessionName;
+    console.log("Closing session | {sessionName}=" + sessionName);
+
+    // If the session exists
+    if (mapSessions[sessionName]) {
+        var session = mapSessions[sessionName];
+        session.close();
+        delete mapSessions[sessionName];
+        delete mapSessionNamesTokens[sessionName];
+        res.status(200).send();
+    } else {
+        var msg = 'Problems in the app server: the SESSION does not exist';
+        console.log(msg);
+        res.status(500).send(msg);
+    }
+});
+
+// Fetch session info
+app.post('/api/fetch-info', function (req, res) {
+    // Retrieve params from POST body
+    var sessionName = req.body.sessionName;
+    console.log("Fetching session info | {sessionName}=" + sessionName);
+
+    // If the session exists
+    if (mapSessions[sessionName]) {
+        mapSessions[sessionName].fetch()
+            .then(changed => {
+                console.log("Any change: " + changed);
+                res.status(200).send(sessionToJson(mapSessions[sessionName]));
+            })
+            .catch(error => res.status(400).send(error.message));
+    } else {
+        var msg = 'Problems in the app server: the SESSION does not exist';
+        console.log(msg);
+        res.status(500).send(msg);
+    }
+});
+
+// Fetch all session info
+app.get('/api/fetch-all', function (req, res) {
+    console.log("Fetching all session info");
+    OV.fetch()
+        .then(changed => {
+            var sessions = [];
+            OV.activeSessions.forEach(s => {
+                sessions.push(sessionToJson(s));
+            });
+            console.log("Any change: " + changed);
+            res.status(200).send(sessions);
+        })
+        .catch(error => res.status(400).send(error.message));
+});
+
+// Force disconnect
+app.delete('/api/force-disconnect', function (req, res) {
+    // Retrieve params from POST body
+    var sessionName = req.body.sessionName;
+    var connectionId = req.body.connectionId;
+    // If the session exists
+    if (mapSessions[sessionName]) {
+        mapSessions[sessionName].forceDisconnect(connectionId)
+            .then(() => res.status(200).send())
+            .catch(error => res.status(400).send(error.message));
+    } else {
+        var msg = 'Problems in the app server: the SESSION does not exist';
+        console.log(msg);
+        res.status(500).send(msg);
+    }
+});
+
+// Force unpublish
+app.delete('/api/force-unpublish', function (req, res) {
+    // Retrieve params from POST body
+    var sessionName = req.body.sessionName;
+    var streamId = req.body.streamId;
+    // If the session exists
+    if (mapSessions[sessionName]) {
+        mapSessions[sessionName].forceUnpublish(streamId)
+            .then(() => res.status(200).send())
+            .catch(error => res.status(400).send(error.message));
+    } else {
+        var msg = 'Problems in the app server: the SESSION does not exist';
+        console.log(msg);
+        res.status(500).send(msg);
+    }
+});
+
 
 
 /* Recording API */
@@ -180,7 +270,7 @@ app.post('/api/recording/start', function (req, res) {
 app.post('/api/recording/stop', function (req, res) {
     // Retrieve params from POST body
     var recordingId = req.body.recording;
-    console.log("Stoping recording | {recordingId}=" + recordingId);
+    console.log("Stopping recording | {recordingId}=" + recordingId);
 
     OV.stopRecording(recordingId)
         .then(recording => res.status(200).send(getJsonFromRecording(recording)))
@@ -240,4 +330,49 @@ function getJsonArrayFromRecordingList(recordings) {
         jsonArray.push(getJsonFromRecording(recording));
     })
     return jsonArray;
+}
+
+function sessionToJson(session) {
+    var json = {};
+    json.sessionId = session.sessionId;
+    json.customSessionId = !!session.properties.customSessionId ? session.properties.customSessionId : "";
+    json.recording = session.recording;
+    json.mediaMode = session.properties.mediaMode;
+    json.recordingMode = session.properties.recordingMode;
+    json.defaultRecordingLayout = session.properties.defaultRecordingLayout;
+    json.defaultCustomLayout = !!session.properties.defaultCustomLayout ? session.properties.defaultCustomLayout : "";
+    var connections = {};
+    connections.numberOfElements = session.activeConnections.length;
+    var jsonArrayConnections = [];
+    session.activeConnections.forEach(con => {
+        var c = {};
+        c.connectionId = con.connectionId;
+        c.role = con.role;
+        c.token = con.token;
+        c.clientData = con.clientData;
+        c.serverData = con.serverData;
+        var pubs = [];
+        con.publishers.forEach(p => {
+            jsonP = {};
+            jsonP.streamId = p.streamId
+            jsonP.hasAudio = p.hasAudio;
+            jsonP.hasVideo = p.hasVideo;
+            jsonP.audioActive = p.audioActive;
+            jsonP.videoActive = p.videoActive;
+            jsonP.frameRate = p.frameRate;
+            jsonP.typeOfVideo = p.typeOfVideo;
+            jsonP.videoDimensions = p.videoDimensions;
+            pubs.push(jsonP);
+        });
+        var subs = [];
+        con.subscribers.forEach(s => {
+            subs.push(s);
+        });
+        c.publishers = pubs;
+        c.subscribers = subs;
+        jsonArrayConnections.push(c);
+    });
+    connections.content = jsonArrayConnections;
+    json.connections = connections;
+    return json;
 }
