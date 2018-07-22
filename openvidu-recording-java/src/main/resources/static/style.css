@@ -46,7 +46,7 @@ nav i.fa:hover {
 #main-container {
 	padding-bottom: 80px;
 	height: 100%;
-    margin-top: -70px;
+	margin-top: -70px;
 }
 
 .vertical-center {
@@ -225,20 +225,27 @@ a:hover .demo-logo {
 #session-header {
 	margin-bottom: 20px;
 	height: 8%;
-    margin-top: 70px;
+	margin-top: 70px;
 }
 
 #session-header form {
 	display: inline;
 }
 
+#session-header input.btn {
+	float: right;
+	margin-top: 20px;
+	margin-left: 5px;
+}
+
 #session-title {
 	display: inline-block;
 }
 
-#buttonLeaveSession {
+#session-header .form-control {
+	width: initial;
 	float: right;
-	margin-top: 20px;
+	margin: 18px 0px 0px 5px;
 }
 
 #video-container {
@@ -248,15 +255,15 @@ a:hover .demo-logo {
 	overflow: hidden;
 }
 
-#video-container video.two{
+#video-container video.two {
 	width: 50%;
 }
 
-#video-container video.three{
+#video-container video.three {
 	width: 33.33%;
 }
 
-#video-container video.four{
+#video-container video.four {
 	width: 25%;
 }
 
@@ -295,7 +302,7 @@ video {
 
 #session {
 	height: 100%;
-    padding-bottom: 80px;
+	padding-bottom: 80px;
 }
 
 #session img {
@@ -353,19 +360,20 @@ table i {
 	height: 40%;
 }
 
-#recording-btns input {
-	margin-top: 5px;
+#recording-btns #btns {
+	margin-top: 10px;
 }
 
-#recording-btns #btns {
-	margin-top: 5px;
+#recording-btns #btns .form-control {
+	width: initial;
+	display: inline-block;
 }
 
 #recording-btns #text-area {
 	display: inline-block;
-    width: 100%;
-    height: 80%;
-    margin-top: 20px;
+	width: 100%;
+	height: 80%;
+	margin-top: 20px;
 }
 
 /* xs ans md screen resolutions*/

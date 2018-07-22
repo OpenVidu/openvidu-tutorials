@@ -1,4 +1,4 @@
-package io.openvidu.js.java;
+package io.openvidu.recording.java;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
