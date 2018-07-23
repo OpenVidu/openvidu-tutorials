@@ -13,6 +13,7 @@ import { OpenVidu, Session, StreamManager, Publisher, Subscriber, StreamEvent } 
 export class AppComponent implements OnDestroy {
 
   OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443';
+  OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
   // OpenVidu objects
   OV: OpenVidu;
@@ -170,7 +171,7 @@ export class AppComponent implements OnDestroy {
       const body = JSON.stringify({ customSessionId: sessionId });
       const options = {
         headers: new HttpHeaders({
-          'Authorization': 'Basic ' + btoa('OPENVIDUAPP:MY_SECRET'),
+          'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
           'Content-Type': 'application/json'
         })
       };
@@ -203,7 +204,7 @@ export class AppComponent implements OnDestroy {
       const body = JSON.stringify({ session: sessionId });
       const options = {
         headers: new HttpHeaders({
-          'Authorization': 'Basic ' + btoa('OPENVIDUAPP:MY_SECRET'),
+          'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
           'Content-Type': 'application/json'
         })
       };

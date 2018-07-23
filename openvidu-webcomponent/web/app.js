@@ -38,6 +38,7 @@ function joinSession() {
  */
 
 var OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443';
+var OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 function getToken(sessionName) {
     return createSession(sessionName).then((sessionId) => createToken(sessionId));
@@ -50,7 +51,7 @@ function createSession(sessionName) {
             url: OPENVIDU_SERVER_URL + '/api/sessions',
             data: JSON.stringify({ customSessionId: sessionName }),
             headers: {
-                Authorization: 'Basic ' + btoa('OPENVIDUAPP:MY_SECRET'),
+                Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
                 'Content-Type': 'application/json',
             },
             success: (response) => resolve(response.id),
@@ -84,7 +85,7 @@ function createToken(sessionId) {
             url: OPENVIDU_SERVER_URL + '/api/tokens',
             data: JSON.stringify({ session: sessionId }),
             headers: {
-                Authorization: 'Basic ' + btoa('OPENVIDUAPP:MY_SECRET'),
+                Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
                 'Content-Type': 'application/json',
             },
             success: (response) => resolve(response.token),
