@@ -1,12 +1,10 @@
 import React, { Component } from 'react';
-import './UserVideo.css';
 import OpenViduVideoComponent from './OvVideo';
+import './UserVideo.css';
 
 export default class UserVideoComponent extends Component {
     constructor(props) {
         super(props);
-
-        this.handleVideoClicked = this.handleVideoClicked.bind(this);
     }
 
     getNicknameTag() {
@@ -14,22 +12,13 @@ export default class UserVideoComponent extends Component {
         return JSON.parse(this.props.streamManager.stream.connection.data).clientData;
     }
 
-    handleVideoClicked(event) {
-        // Triggers event for the parent component to update its main video display (other UserVideoComponent)
-        if (this.props.mainVideoStream) {
-            this.props.mainVideoStream(this.props.streamManager);
-        }
-    }
-
     render() {
         return (
             <div>
                 {this.props.streamManager !== undefined ? (
-                    <div className="streamcomponent" onClick={this.handleVideoClicked}>
+                    <div className="streamcomponent">
                         <OpenViduVideoComponent streamManager={this.props.streamManager} />
-                        <div>
-                            <p>{this.getNicknameTag()}</p>
-                        </div>
+                        <div><p>{this.getNicknameTag()}</p></div>
                     </div>
                 ) : null}
             </div>

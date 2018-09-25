@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
 import axios from 'axios';
+import { OpenVidu } from 'openvidu-browser';
+import React, { Component } from 'react';
 import './App.css';
-import {OpenVidu} from 'openvidu-browser';
 import UserVideoComponent from './UserVideoComponent';
 
 const OPENVIDU_SERVER_URL = 'https://' + window.location.hostname + ':4443';
@@ -20,7 +20,7 @@ class App extends Component {
             publisher: undefined,
             subscribers: [],
         };
-       
+
         this.joinSession = this.joinSession.bind(this);
         this.leaveSession = this.leaveSession.bind(this);
         this.handleChangeSessionId = this.handleChangeSessionId.bind(this);
@@ -54,9 +54,11 @@ class App extends Component {
     }
 
     handleMainVideoStream(stream) {
-        this.setState({
-            mainStreamManager: stream,
-        });
+        if (this.state.mainStreamManager !== stream) {
+            this.setState({
+                mainStreamManager: stream
+            });
+        }
     }
 
     deleteSubscriber(streamManager) {
@@ -240,16 +242,14 @@ class App extends Component {
                         ) : null}
                         <div id="video-container" className="col-md-6">
                             {this.state.publisher !== undefined ? (
-                                <div className="stream-container col-md-6 col-xs-6">
+                                <div className="stream-container col-md-6 col-xs-6" onClick={() => this.handleMainVideoStream(this.state.publisher)}>
                                     <UserVideoComponent
-                                        streamManager={this.state.publisher}
-                                        mainVideoStream={this.handleMainVideoStream}
-                                    />
+                                        streamManager={this.state.publisher} />
                                 </div>
                             ) : null}
                             {this.state.subscribers.map((sub, i) => (
-                                <div key={i} className="stream-container col-md-6 col-xs-6">
-                                    <UserVideoComponent streamManager={sub} mainVideoStream={this.handleMainVideoStream} />
+                                <div key={i} className="stream-container col-md-6 col-xs-6" onClick={() => this.handleMainVideoStream(sub)}>
+                                    <UserVideoComponent streamManager={sub} />
                                 </div>
                             ))}
                         </div>
@@ -297,16 +297,16 @@ class App extends Component {
                         console.log(error);
                         console.warn(
                             'No connection to OpenVidu Server. This may be a certificate error at ' +
-                                OPENVIDU_SERVER_URL,
+                            OPENVIDU_SERVER_URL,
                         );
                         if (
                             window.confirm(
                                 'No connection to OpenVidu Server. This may be a certificate error at "' +
-                                    OPENVIDU_SERVER_URL +
-                                    '"\n\nClick OK to navigate and accept it. ' +
-                                    'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' +
-                                    OPENVIDU_SERVER_URL +
-                                    '"',
+                                OPENVIDU_SERVER_URL +
+                                '"\n\nClick OK to navigate and accept it. ' +
+                                'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' +
+                                OPENVIDU_SERVER_URL +
+                                '"',
                             )
                         ) {
                             window.location.assign(OPENVIDU_SERVER_URL + '/accept-certificate');
