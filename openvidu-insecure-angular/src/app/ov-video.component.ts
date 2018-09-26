@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { StreamManager } from 'openvidu-browser';
 
 @Component({

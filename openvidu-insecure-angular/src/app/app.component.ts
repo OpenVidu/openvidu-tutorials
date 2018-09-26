@@ -1,9 +1,9 @@
-import { Component, HostListener, Input, OnDestroy } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { throwError as observableThrowError, Observable } from 'rxjs';
+import { Component, HostListener, OnDestroy } from '@angular/core';
+import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from 'openvidu-browser';
+import { throwError as observableThrowError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { OpenVidu, Session, StreamManager, Publisher, Subscriber, StreamEvent } from 'openvidu-browser';
 
 @Component({
   selector: 'app-root',
@@ -26,8 +26,8 @@ export class AppComponent implements OnDestroy {
   myUserName: string;
 
   // Main video of the page, will be 'publisher' or one of the 'subscribers',
-  // updated by an Output event of UserVideoComponent children
-  @Input() mainStreamManager: StreamManager;
+  // updated by click event in UserVideoComponent children
+  mainStreamManager: StreamManager;
 
   constructor(private httpClient: HttpClient) {
     this.generateParticipantInfo();
@@ -140,7 +140,7 @@ export class AppComponent implements OnDestroy {
     }
   }
 
-  private updateMainStreamManager(streamManager: StreamManager) {
+  updateMainStreamManager(streamManager: StreamManager) {
     this.mainStreamManager = streamManager;
   }
 
@@ -152,7 +152,7 @@ export class AppComponent implements OnDestroy {
    * --------------------------
    * This method retrieve the mandatory user token from OpenVidu Server,
    * in this case making use Angular http API.
-   * This behaviour MUST BE IN YOUR SERVER-SIDE IN PRODUCTION. In this case:
+   * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION. In this case:
    *   1) Initialize a session in OpenVidu Server	 (POST /api/sessions)
    *   2) Generate a token in OpenVidu Server		   (POST /api/tokens)
    *   3) The token must be consumed in Session.connect() method of OpenVidu Browser

@@ -29,10 +29,10 @@
 		</div>
 		<div id="video-container" class="col-md-6">
 			<div *ngIf="publisher" class="stream-container col-md-6 col-xs-6">
-				<user-video [streamManager]="publisher" (clicked)="updateMainStreamManager(publisher)"></user-video>
+				<user-video [streamManager]="publisher" (click)="updateMainStreamManager(publisher)"></user-video>
 			</div>
 			<div *ngFor="let sub of subscribers" class="stream-container col-md-6 col-xs-6">
-				<user-video [streamManager]="sub" (clicked)="updateMainStreamManager(sub)"></user-video>
+				<user-video [streamManager]="sub" (click)="updateMainStreamManager(sub)"></user-video>
 			</div>
 		</div>
 	</div>
