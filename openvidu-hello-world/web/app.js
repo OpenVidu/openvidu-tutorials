@@ -46,7 +46,7 @@ window.onbeforeunload = function () {
  * SERVER-SIDE RESPONSIBILITY
  * --------------------------
  * These methods retrieve the mandatory user token from OpenVidu Server.
- * This behaviour MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
+ * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
  * the API REST, openvidu-java-client or openvidu-node-client):
  *   1) Initialize a session in OpenVidu Server	(POST /api/sessions)
  *   2) Generate a token in OpenVidu Server		(POST /api/tokens)
