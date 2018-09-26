@@ -288,6 +288,7 @@ function removeAllUserData() {
 function addClickListener(videoElement, streamManager) {
 	videoElement.addEventListener('click', function () {
 		var mainVideo = $('#main-video video').get(0);
+		// Only apply all these changes if not clicked on the same video again
 		if (!streamManager.videos.map(v => v.video).includes(mainVideo)) {
 			selectedStreamManager = streamManager;
 			$('#main-video').fadeOut("fast", () => {
