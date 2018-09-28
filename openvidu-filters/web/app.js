@@ -202,7 +202,7 @@ function applyFilter() {
 			filter.type = 'GStreamerFilter';
 			filter.options = { "command": "videobox fill=black top=-30 bottom=-30 left=-30 right=-30" };
 			break;
-		case 'Text':
+		/*case 'Text':
 			filter.type = 'GStreamerFilter';
 			filter.options = { "command": 'textoverlay text="Embedded text!" valignment=top halignment=right font-desc="Cantarell 25" draw-shadow=false' };
 			break;
@@ -213,7 +213,7 @@ function applyFilter() {
 		case 'Clock':
 			filter.type = 'GStreamerFilter';
 			filter.options = { "command": 'clockoverlay valignment=bottom halignment=right shaded-background=true font-desc="Sans, 20"' };
-			break;
+			break;*/
 	}
 	selectedStreamManager.stream.applyFilter(filter.type, filter.options)
 		.then(f => {
