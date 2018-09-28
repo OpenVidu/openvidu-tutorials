@@ -44,7 +44,7 @@ function getToken(sessionName) {
     return createSession(sessionName).then((sessionId) => createToken(sessionId));
 }
 
-function createSession(sessionName) {
+function createSession(sessionName) { // See https://openvidu.io/docs/reference-docs/REST-API/#post-apisessions
     return new Promise((resolve, reject) => {
         $.ajax({
             type: 'POST',
@@ -78,7 +78,7 @@ function createSession(sessionName) {
     });
 }
 
-function createToken(sessionId) {
+function createToken(sessionId) { // See https://openvidu.io/docs/reference-docs/REST-API/#post-apitokens
     return new Promise((resolve, reject) => {
         $.ajax({
             type: 'POST',

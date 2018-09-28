@@ -369,7 +369,6 @@ function initMainVideo(streamManager, userData) {
 var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 var OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
-
 function getToken(mySessionId, role) {
 	return createSession(mySessionId).then(sessionId => createToken(sessionId, role));
 }
