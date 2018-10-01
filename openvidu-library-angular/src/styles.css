@@ -1,0 +1,70 @@
+/* You can add global styles to this file, and also import other style files */
+@import '~@angular/material/prebuilt-themes/indigo-pink.css';
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+  height: 100%;
+  margin: 0;
+}
+
+nav {
+  height: 50px;
+  width: 100%;
+  z-index: 1;
+  background-color: #4d4d4d !important;
+  border-color: #4d4d4d !important;
+  border-top-right-radius: 0 !important;
+  border-top-left-radius: 0 !important;
+}
+
+.navbar-header {
+  width: 100%;
+}
+
+.nav-icon {
+  padding: 5px 15px 5px 15px;
+  float: right;
+}
+
+nav a {
+  color: #ccc !important;
+}
+
+nav i.fa {
+  font-size: 40px;
+  color: #ccc;
+}
+
+nav a:hover {
+  color: #a9a9a9 !important;
+}
+
+nav i.fa:hover {
+  color: #a9a9a9;
+}
+
+.demo-logo {
+  margin-top: 10px;
+  height: 26px;
+  float: left;
+  padding-left: 8px;
+}
+
+#angularLogo {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+
+.mainLogo {
+  width: 450px;
+}
+
+#title {
+  text-align: center;
+  height: 100%;
+}

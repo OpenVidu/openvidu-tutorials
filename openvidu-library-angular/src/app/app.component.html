@@ -1,0 +1,27 @@
+
+
+
+<div *ngIf="!session" id="join">
+  <div id="join-dialog">
+    <h1>Join a video session</h1>
+    <form (submit)="joinSession()">
+      <p>
+        <label>Participant </label>
+        <input type="text" id="userName" name="userName" [(ngModel)]="myUserName" required>
+      </p>
+      <p>
+        <label>Session </label>
+        <input type="text" id="sessionId" name="sessionId" [(ngModel)]="mySessionId" required>
+      </p>
+      <p class="text-center">
+        <input type="submit" name="commit" value="Join!">
+      </p>
+    </form>
+  </div>
+</div>
+
+<div *ngIf="session" id="session">
+  <opv-session [sessionName]="mySessionId" [user]="myUserName" [token]="token" (leaveSession)="handlerLeaveSessionEvent($event)"
+    (joinSession)="handlerJoinSessionEvent($event)" (error)="handlerErrorEvent($event)">
+  </opv-session>
+</div>
