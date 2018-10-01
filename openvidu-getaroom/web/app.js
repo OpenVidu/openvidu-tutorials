@@ -273,7 +273,7 @@ function getToken(mySessionId) {
 	return createSession(mySessionId).then(sId => createToken(sId));
 }
 
-function createSession(sId) {
+function createSession(sId) { // See https://openvidu.io/docs/reference-docs/REST-API/#post-apisessions
 	return new Promise((resolve, reject) => {
 		$.ajax({
 			type: "POST",
@@ -299,7 +299,7 @@ function createSession(sId) {
 	});
 }
 
-function createToken(sId) {
+function createToken(sId) { // See https://openvidu.io/docs/reference-docs/REST-API/#post-apitokens
 	return new Promise((resolve, reject) => {
 		$.ajax({
 			type: "POST",

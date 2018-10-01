@@ -192,12 +192,28 @@ function applyFilter() {
 			break;
 		case 'Audioecho':
 			filter.type = 'GStreamerFilter';
-			filter.options = { "command": "audioecho delay=50000000 intensity=0.6 feedback=0.4" };
+			filter.options = { "command": "audioecho delay=40000000 intensity=0.7 feedback=0.4" };
+			break;
+		case 'Amplify':
+			filter.type = 'GStreamerFilter';
+			filter.options = { "command": "audioamplify amplification=1.7" };
 			break;
 		case 'Videobox':
 			filter.type = 'GStreamerFilter';
 			filter.options = { "command": "videobox fill=black top=-30 bottom=-30 left=-30 right=-30" };
 			break;
+		/*case 'Text':
+			filter.type = 'GStreamerFilter';
+			filter.options = { "command": 'textoverlay text="Embedded text!" valignment=top halignment=right font-desc="Cantarell 25" draw-shadow=false' };
+			break;
+		case 'Time':
+			filter.type = 'GStreamerFilter';
+			filter.options = { "command": 'timeoverlay valignment=bottom halignment=right font-desc="Sans, 20"' };
+			break;
+		case 'Clock':
+			filter.type = 'GStreamerFilter';
+			filter.options = { "command": 'clockoverlay valignment=bottom halignment=right shaded-background=true font-desc="Sans, 20"' };
+			break;*/
 	}
 	selectedStreamManager.stream.applyFilter(filter.type, filter.options)
 		.then(f => {
@@ -352,7 +368,6 @@ function initMainVideo(streamManager, userData) {
 
 var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 var OPENVIDU_SERVER_SECRET = "MY_SECRET";
-
 
 function getToken(mySessionId, role) {
 	return createSession(mySessionId).then(sessionId => createToken(sessionId, role));
