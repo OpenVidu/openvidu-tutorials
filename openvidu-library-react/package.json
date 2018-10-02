@@ -1,12 +1,12 @@
 {
   "name": "openvidu-library-react",
-  "version": "0.0.1",
+  "version": "2.5.0",
   "private": true,
   "dependencies": {
-    "axios": "^0.18.0",
-    "openvidu-react": "file:openvidu-react-0.1.0.tgz",
-    "react": "^16.4.2",
-    "react-dom": "^16.4.2",
+    "axios": "0.18.0",
+    "openvidu-react": "2.5.0",
+    "react": "16.5.2",
+    "react-dom": "16.5.2",
     "react-scripts": "1.1.5"
   },
   "scripts": {
