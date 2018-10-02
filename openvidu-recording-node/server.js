@@ -335,6 +335,7 @@ function getJsonArrayFromRecordingList(recordings) {
 function sessionToJson(session) {
     var json = {};
     json.sessionId = session.sessionId;
+    json.createdAt = session.createdAt;
     json.customSessionId = !!session.properties.customSessionId ? session.properties.customSessionId : "";
     json.recording = session.recording;
     json.mediaMode = session.properties.mediaMode;
@@ -347,6 +348,7 @@ function sessionToJson(session) {
     session.activeConnections.forEach(con => {
         var c = {};
         c.connectionId = con.connectionId;
+        c.createdAt = con.createdAt;
         c.role = con.role;
         c.token = con.token;
         c.clientData = con.clientData;
@@ -354,7 +356,8 @@ function sessionToJson(session) {
         var pubs = [];
         con.publishers.forEach(p => {
             jsonP = {};
-            jsonP.streamId = p.streamId
+            jsonP.streamId = p.streamId;
+            jsonP.createdAt = p.createdAt
             jsonP.hasAudio = p.hasAudio;
             jsonP.hasVideo = p.hasVideo;
             jsonP.audioActive = p.audioActive;
