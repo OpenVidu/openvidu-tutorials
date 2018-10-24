@@ -1,0 +1,81 @@
+<ion-app>
+
+  <ion-header>
+    <ion-toolbar color="dark">
+      <img class="demo-logo" src="assets/images/openvidu_vert_white_bg_trans_cropped.png" />
+      <ion-buttons slot="primary">
+        <ion-button color="light">
+          <ion-icon slot="icon-only" name="logo-github"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </ion-toolbar>
+  </ion-header>
+
+  <ion-content padding *ngIf="!session">
+
+    <div id="img-div"><img src="assets/images/openvidu_grey_bg_transp_cropped.png" /></div>
+    <h1 align="center" id="title">Join a video session</h1>
+    <ion-item>
+      <ion-label position="floating">Participant</ion-label>
+      <ion-input [(ngModel)]="myUserName"></ion-input>
+    </ion-item>
+    <ion-item>
+      <ion-label position="floating">Session</ion-label>
+      <ion-input [(ngModel)]="mySessionId"></ion-input>
+    </ion-item>
+
+    <ion-button id="join-button" [disabled]="!mySessionId && !myUserName" (click)="joinSession()" expand="block" shape="round"
+      color="primary">
+      <ion-icon slot="start" name="videocam"></ion-icon>
+      Join
+    </ion-button>
+  </ion-content>
+
+
+  <ion-content *ngIf="session">
+    <div id="session-header">
+      <h1 id="session-title">{{mySessionId}}</h1>
+    </div>
+
+
+    <ion-grid>
+
+      <!-- Main Stream -->
+      <ion-row>
+        <ion-col>
+
+          <div *ngIf="mainStreamManager" id="main-video">
+            <user-video [streamManager]="mainStreamManager"></user-video>
+          </div>
+
+        </ion-col>
+      </ion-row>
+
+      <!--Subscribers and Publishers-->
+      <ion-row>
+        <ion-col size="6">
+          <div *ngIf="publisher" class="stream-container">
+            <user-video [streamManager]="publisher" (click)="updateMainStreamManager(publisher)"></user-video>
+          </div>
+        </ion-col>
+
+        <ion-col size="6" *ngFor="let sub of subscribers">
+          <div class="stream-container">
+            <user-video [streamManager]="sub" (click)="updateMainStreamManager(sub)"></user-video>
+          </div>
+        </ion-col>
+
+      </ion-row>
+
+
+    </ion-grid>
+
+
+    <ion-fab vertical="bottom" horizontal="center" slot="fixed">
+      <ion-fab-button mini color="danger" (click)="leaveSession()">
+        <ion-icon name="power"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </ion-content>
+
+</ion-app>
