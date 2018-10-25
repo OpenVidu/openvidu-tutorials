@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "axios": "0.18.0",
-    "openvidu-react": "2.5.0",
+    "openvidu-react": "2.6.0",
     "react": "16.6.0",
     "react-dom": "16.6.0",
     "react-scripts": "2.0.5"
@@ -15,5 +15,11 @@
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
 }
