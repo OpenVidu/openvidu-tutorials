@@ -23,9 +23,7 @@ www/
 node_modules/
 tmp/
 temp/
-platforms/android/.gradle
-platforms/android/app/build
-platforms/android/CordovaLib
+platforms/
 plugins/
 plugins/android.json
 plugins/ios.json
