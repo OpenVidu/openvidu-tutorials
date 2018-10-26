@@ -35,7 +35,8 @@ export class AppComponent implements OnDestroy {
     mySessionId: string;
     myUserName: string;
 
-    // Main video of the page, will be 'publisher' or one of the 'subscribers',
+    // Main video of the page, will be 'publisher' or one of the 'subscribers'
+    // Updated by click event
     mainStreamManager: StreamManager;
 
     constructor(
@@ -81,7 +82,7 @@ export class AppComponent implements OnDestroy {
         // On every new Stream received...
         this.session.on('streamCreated', (event: StreamEvent) => {
             // Subscribe to the Stream to receive it. Second parameter is undefined
-            // so OpenVidu doesn't create an HTML video by its own
+            // so OpenVidu doesn't create an HTML video on its own
             const subscriber: Subscriber = this.session.subscribe(event.stream, undefined);
             this.subscribers.push(subscriber);
         });
@@ -100,18 +101,12 @@ export class AppComponent implements OnDestroy {
             // First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
             // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
             this.session
-                .connect(
-                    token,
-                    { clientData: this.myUserName },
-                )
+                .connect(token, { clientData: this.myUserName })
                 .then(() => {
                     // --- 5) Requesting and Checking Android Permissions
-
                     if (this.platform.is('cordova')) {
                         this.checkAndroidPermissions()
-                            .then(() => {
-                                this.initPublisher();
-                            })
+                            .then(() => this.initPublisher())
                             .catch((err) => console.error(err));
                     } else {
                         this.initPublisher();
@@ -124,7 +119,6 @@ export class AppComponent implements OnDestroy {
     }
 
     initPublisher() {
-        console.log('INITIALIZING PUBLISHER');
         // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
         // element: we will manage it on our own) and with the desired properties
         const publisher: Publisher = this.OV.initPublisher(undefined, {
