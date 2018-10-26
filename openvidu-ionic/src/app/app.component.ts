@@ -16,7 +16,7 @@ import { catchError } from 'rxjs/operators';
 })
 export class AppComponent implements OnDestroy {
 
-    OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443';
+    OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443/';
     OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
     ANDROID_PERMISSIONS = [
