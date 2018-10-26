@@ -1,18 +1,16 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
-import { RouterModule, RouteReuseStrategy, Routes } from '@angular/router';
-
-import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
+import { RouteReuseStrategy } from '@angular/router';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-
+import { IonicModule, IonicRouteStrategy } from '@ionic/angular';
 import { AppComponent } from './app.component';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { UserVideoComponent } from './user-video.component';
 import { OpenViduVideoComponent } from './ov-video.component';
+import { UserVideoComponent } from './user-video.component';
 
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
 @NgModule({
     declarations: [AppComponent, UserVideoComponent, OpenViduVideoComponent],
@@ -26,4 +24,4 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
     ],
     bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

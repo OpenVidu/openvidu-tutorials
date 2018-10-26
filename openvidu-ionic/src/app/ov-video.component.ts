@@ -1,5 +1,6 @@
-import { Component, Input, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
 import { StreamManager } from 'openvidu-browser';
+
 
 @Component({
     selector: 'ov-video',
@@ -13,9 +14,8 @@ import { StreamManager } from 'openvidu-browser';
     ],
 })
 export class OpenViduVideoComponent implements AfterViewInit {
-    @ViewChild('videoElement')
-    elementRef: ElementRef;
 
+    @ViewChild('videoElement') elementRef: ElementRef;
     _streamManager: StreamManager;
 
     ngAfterViewInit() {

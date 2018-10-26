@@ -1,15 +1,13 @@
-import { Component, OnDestroy, Input, HostListener } from '@angular/core';
-import { Platform } from '@ionic/angular';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, HostListener, OnDestroy } from '@angular/core';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Platform } from '@ionic/angular';
+import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from 'openvidu-browser';
 import { throwError as observableThrowError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
-import { OpenVidu, Session, StreamManager, Publisher, Subscriber, StreamEvent } from 'openvidu-browser';
-
-import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 
 @Component({
     selector: 'app-root',
@@ -17,6 +15,7 @@ import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
     styleUrls: ['app.component.css'],
 })
 export class AppComponent implements OnDestroy {
+
     OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443';
     OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
@@ -188,15 +187,15 @@ export class AppComponent implements OnDestroy {
                                                     reject(
                                                         new Error(
                                                             'Permissions denied: ' +
-                                                                '\n' +
-                                                                ' CAMERA = ' +
-                                                                camera.hasPermission +
-                                                                '\n' +
-                                                                ' AUDIO = ' +
-                                                                audio.hasPermission +
-                                                                '\n' +
-                                                                ' AUDIO_SETTINGS = ' +
-                                                                modifyAudio.hasPermission,
+                                                            '\n' +
+                                                            ' CAMERA = ' +
+                                                            camera.hasPermission +
+                                                            '\n' +
+                                                            ' AUDIO = ' +
+                                                            audio.hasPermission +
+                                                            '\n' +
+                                                            ' AUDIO_SETTINGS = ' +
+                                                            modifyAudio.hasPermission,
                                                         ),
                                                     );
                                                 }
@@ -204,8 +203,8 @@ export class AppComponent implements OnDestroy {
                                             .catch((err) => {
                                                 console.error(
                                                     'Checking permission ' +
-                                                        this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS +
-                                                        ' failed',
+                                                    this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS +
+                                                    ' failed',
                                                 );
                                                 reject(err);
                                             });
@@ -276,17 +275,17 @@ export class AppComponent implements OnDestroy {
                         } else {
                             console.warn(
                                 'No connection to OpenVidu Server. This may be a certificate error at ' +
-                                    this.OPENVIDU_SERVER_URL,
+                                this.OPENVIDU_SERVER_URL,
                             );
                             if (
                                 window.confirm(
                                     'No connection to OpenVidu Server. This may be a certificate error at "' +
-                                        this.OPENVIDU_SERVER_URL +
-                                        // tslint:disable-next-line:max-line-length
-                                        '"\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server' +
-                                        'is up and running at "' +
-                                        this.OPENVIDU_SERVER_URL +
-                                        '"',
+                                    this.OPENVIDU_SERVER_URL +
+                                    // tslint:disable-next-line:max-line-length
+                                    '"\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server' +
+                                    'is up and running at "' +
+                                    this.OPENVIDU_SERVER_URL +
+                                    '"',
                                 )
                             ) {
                                 location.assign(this.OPENVIDU_SERVER_URL + '/accept-certificate');

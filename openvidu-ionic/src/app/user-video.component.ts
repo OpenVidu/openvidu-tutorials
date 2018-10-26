@@ -1,5 +1,6 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { StreamManager } from 'openvidu-browser';
+
 
 @Component({
     selector: 'user-video',
@@ -32,15 +33,15 @@ import { StreamManager } from 'openvidu-browser';
         </div>`,
 })
 export class UserVideoComponent {
+
     @Input()
     streamManager: StreamManager;
 
     getNicknameTag() {
-        // Gets the nickName of the user
         try {
             return JSON.parse(this.streamManager.stream.connection.data).clientData;
         } catch (err) {
-           console.error('ClientData does not exist');
+            console.error('ClientData is not JSON formatted');
         }
     }
 }
