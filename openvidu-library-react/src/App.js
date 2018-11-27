@@ -52,7 +52,6 @@ class App extends Component {
     joinSession(event) {
         if (this.state.mySessionId && this.state.myUserName) {
             this.getToken().then((token) => {
-                console.log('TOKEN CONSEGUIDO', token);
                 this.setState({
                     token: token,
                     session: true,
