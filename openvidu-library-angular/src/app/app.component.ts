@@ -1,8 +1,8 @@
-import { Component } from '@angular/core';
-
+import { Component, ViewChild } from '@angular/core';
 import { throwError as observableThrowError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import {OpenviduSessionComponent, StreamEvent, Session, UserModel, OpenViduLayout, OpenViduLayoutOptions} from 'openvidu-angular';
 
 @Component({
   selector: 'app-root',
@@ -19,7 +19,16 @@ export class AppComponent {
   token: string;
   session = false;
 
-  constructor(private httpClient: HttpClient) {}
+  ovSession: Session;
+  ovRemotesArray: UserModel[];
+  ovLocalUser: UserModel;
+  ovLayout: OpenViduLayout;
+  ovLayoutOptions: OpenViduLayoutOptions;
+
+  @ViewChild('ovSessionComponent')
+  public ovSessionComponent: OpenviduSessionComponent;
+
+  constructor(private httpClient: HttpClient) { }
 
   joinSession() {
     this.getToken().then((token) => {
@@ -29,7 +38,7 @@ export class AppComponent {
   }
 
   handlerJoinSessionEvent(event): void {
-    // Do something
+    this.myMethod();
   }
 
   handlerLeaveSessionEvent(event): void {
@@ -38,6 +47,23 @@ export class AppComponent {
 
   handlerErrorEvent(event): void {
     // Do something
+  }
+
+  myMethod() {
+
+    this.ovSession = this.ovSessionComponent.getSession();
+    this.ovRemotesArray = this.ovSessionComponent.getRemotesArray();
+    this.ovLocalUser = this.ovSessionComponent.getLocalUser();
+    this.ovLayout = this.ovSessionComponent.getOpenviduLayout();
+    this.ovLayoutOptions = this.ovSessionComponent.getOpenviduLayputOptions();
+
+    this.ovSession.on('streamCreated', (event: StreamEvent) => {
+      // Do something
+    });
+
+    this.ovSession.on('streamDestroyed', (event: StreamEvent) => {
+      // Do something
+    });
   }
 
   /**

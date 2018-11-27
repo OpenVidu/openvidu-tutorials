@@ -21,7 +21,7 @@
 </div>
 
 <div *ngIf="session" id="session">
-  <opv-session [sessionName]="mySessionId" [user]="myUserName" [token]="token" (leaveSession)="handlerLeaveSessionEvent($event)"
+  <opv-session #ovSessionComponent [sessionName]="mySessionId" [user]="myUserName" [token]="token" (leaveSession)="handlerLeaveSessionEvent($event)"
     (joinSession)="handlerJoinSessionEvent($event)" (error)="handlerErrorEvent($event)">
   </opv-session>
 </div>
