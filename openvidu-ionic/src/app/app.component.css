@@ -24,3 +24,7 @@
 ion-col {
     padding: 1px;
 }
+
+.no-scroll .scroll-content{
+    overflow: hidden;
+}

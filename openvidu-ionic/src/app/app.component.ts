@@ -35,10 +35,6 @@ export class AppComponent implements OnDestroy {
     mySessionId: string;
     myUserName: string;
 
-    // Main video of the page, will be 'publisher' or one of the 'subscribers'
-    // Updated by click event
-    mainStreamManager: StreamManager;
-
     constructor(
         private platform: Platform,
         private splashScreen: SplashScreen,
@@ -175,13 +171,8 @@ export class AppComponent implements OnDestroy {
 
         this.session.publish(publisher);
 
-        // Set the main video in the page to display our webcam and store our Publisher
-        this.mainStreamManager = publisher;
+        // Store our Publisher
         this.publisher = publisher;
-    }
-
-    updateMainStreamManager(streamManager: StreamManager) {
-        this.mainStreamManager = streamManager;
     }
 
     leaveSession() {
