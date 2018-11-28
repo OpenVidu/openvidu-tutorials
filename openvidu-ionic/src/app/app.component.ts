@@ -55,12 +55,12 @@ export class AppComponent implements OnDestroy {
             this.statusBar.styleDefault();
             this.splashScreen.hide();
             if (this.platform.is('ios') && this.platform.is('cordova')) {
-                this.initializeAdapteriosRtc();
+                this.initializeAdapterIosRtc();
             }
         });
     }
 
-    initializeAdapteriosRtc() {
+    initializeAdapterIosRtc() {
         console.log('Initializing iosrct');
         cordova.plugins.iosrtc.registerGlobals();
         // load adapter.js (vesion 4.0.1)
