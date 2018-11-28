@@ -9,7 +9,8 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e"
+    "e2e": "ng e2e",
+    "ios": "rm -rf platform/ios & npm link openvidu-browser & ionic cordova prepare ios"
   },
   "private": true,
   "dependencies": {
@@ -26,17 +27,20 @@
     "@ionic-native/status-bar": "5.0.0-beta.21",
     "@ionic/angular": "4.0.0-beta.13",
     "cordova-android": "7.1.1",
+    "cordova-browser": "5.0.4",
     "cordova-ios": "4.5.5",
     "cordova-plugin-android-permissions": "1.0.0",
     "cordova-plugin-device": "2.0.2",
     "cordova-plugin-ionic-keyboard": "2.1.3",
-    "cordova-plugin-ionic-webview": "2.2.0",
+    "cordova-plugin-ionic-webview": "2.2.5",
+    "cordova-plugin-iosrtc": "4.0.2",
     "cordova-plugin-splashscreen": "5.0.2",
     "cordova-plugin-statusbar": "2.4.2",
     "cordova-plugin-whitelist": "1.3.3",
     "core-js": "2.5.7",
-    "openvidu-browser": "2.6.0",
+    "ios-deploy": "1.9.4",
     "rxjs": "6.3.3",
+    "xcode": "1.0.0",
     "zone.js": "0.8.26"
   },
   "devDependencies": {
@@ -77,10 +81,13 @@
         "ANDROID_SUPPORT_ANNOTATIONS_VERSION": "27.+"
       },
       "cordova-plugin-ionic-keyboard": {},
-      "cordova-plugin-android-permissions": {}
+      "cordova-plugin-android-permissions": {},
+      "cordova-plugin-iosrtc": {}
     },
     "platforms": [
-      "android"
+      "android",
+      "ios",
+      "browser"
     ]
   }
 }
