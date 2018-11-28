@@ -54,21 +54,21 @@ export class AppComponent implements OnDestroy {
         this.platform.ready().then(() => {
             this.statusBar.styleDefault();
             this.splashScreen.hide();
-            this.initializeAdapteriosRtc();
+            if (this.platform.is('ios') && this.platform.is('cordova')) {
+                this.initializeAdapteriosRtc();
+            }
         });
     }
 
-    initializeAdapteriosRtc(){
-        if (this.platform.is('ios')) {
-            console.warn("Initializing iosrct");
-            cordova.plugins.iosrtc.registerGlobals();
-            // load adapter.js (vesion 4.0.1)
-            const script2 = document.createElement('script');
-            script2.type = 'text/javascript';
-            script2.src = 'assets/libs/adapter-4.0.1.js';
-            script2.async = false;
-            document.getElementsByTagName('head')[0].appendChild(script2);
-        }
+    initializeAdapteriosRtc() {
+        console.log('Initializing iosrct');
+        cordova.plugins.iosrtc.registerGlobals();
+        // load adapter.js (vesion 4.0.1)
+        const script2 = document.createElement('script');
+        script2.type = 'text/javascript';
+        script2.src = 'assets/libs/adapter-4.0.1.js';
+        script2.async = false;
+        document.getElementsByTagName('head')[0].appendChild(script2);
     }
 
     @HostListener('window:beforeunload')
@@ -118,14 +118,17 @@ export class AppComponent implements OnDestroy {
                 .connect(token, { clientData: this.myUserName })
                 .then(() => {
                     // --- 5) Requesting and Checking Android Permissions
-                    if (this.platform.is('android')) {
-                        console.log("Android platform");
-                        this.checkAndroidPermissions()
-                            .then(() => this.initPublisher())
-                            .catch((err) => console.error(err));
-                    } else if (this.platform.is('ios')){
-                        console.log("iOS platform");
-                        this.initPublisher();
+                    if (this.platform.is('cordova')) {
+                        // Ionic platform
+                        if (this.platform.is('android')) {
+                            console.log('Android platform');
+                            this.checkAndroidPermissions()
+                                .then(() => this.initPublisher())
+                                .catch((err) => console.error(err));
+                        } else if (this.platform.is('ios')) {
+                            console.log('iOS platform');
+                            this.initPublisher();
+                        }
                     } else {
                         this.initPublisher();
                     }
@@ -151,7 +154,7 @@ export class AppComponent implements OnDestroy {
             if (this.platform.is('ios')) {
                 cordova.plugins.iosrtc.observeVideo(this.pVideo);
             }
-        }); 
+        });
     }*/
 
     initPublisher() {
