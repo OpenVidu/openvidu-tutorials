@@ -9,8 +9,7 @@
     "build": "ng build",
     "test": "ng test",
     "lint": "ng lint",
-    "e2e": "ng e2e",
-    "ios": "rm -rf platform/ios & npm link openvidu-browser & ionic cordova prepare ios"
+    "e2e": "ng e2e"
   },
   "private": true,
   "dependencies": {
