@@ -11,8 +11,8 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-content padding *ngIf="!session" class="no-scroll">
-
+  <ion-content [forceOverscroll]="false" padding *ngIf="!session">
+    
     <div id="img-div"><img src="assets/images/openvidu_grey_bg_transp_cropped.png" /></div>
     <h1 align="center" id="title">Join a video session</h1>
     <ion-item>
@@ -29,9 +29,10 @@
       <ion-icon slot="start" name="videocam"></ion-icon>
       Join
     </ion-button>
+
   </ion-content>
 
-  <ion-content *ngIf="session">
+  <ion-content [forceOverscroll]="false" *ngIf="session">
     <div id="session-header">
       <h1 id="session-title">{{mySessionId}}</h1>
     </div>

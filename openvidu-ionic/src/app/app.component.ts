@@ -169,10 +169,10 @@ export class AppComponent implements OnDestroy {
 
         // --- 6) Publish your stream ---
 
-        this.session.publish(publisher);
-
-        // Store our Publisher
-        this.publisher = publisher;
+        this.session.publish(publisher).then(() => {
+           // Store our Publisher
+            this.publisher = publisher; 
+        });
     }
 
     leaveSession() {
