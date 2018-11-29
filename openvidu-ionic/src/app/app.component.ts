@@ -135,24 +135,6 @@ export class AppComponent implements OnDestroy {
         });
     }
 
-
-    /*buildPVideo() {
-        this.pVideo = document.createElement('video');
-        this.pVideo.style.width = '400px';
-        this.pVideo.style.height = 400 - 56 + 'px';
-        this.pVideo.style.position = 'absolute';
-        this.pVideo.style.top = '0';
-        this.pVideo.srcObject = null;
-        this.pVideo.style.zIndex = '997';
-        this.pVideo.setAttribute('autoplay', '');
-        this.pVideo.setAttribute('playsinline', '');
-        this.platform.ready().then(() => {
-            if (this.platform.is('ios')) {
-                cordova.plugins.iosrtc.observeVideo(this.pVideo);
-            }
-        });
-    }*/
-
     initPublisher() {
         // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
         // element: we will manage it on our own) and with the desired properties
@@ -188,6 +170,12 @@ export class AppComponent implements OnDestroy {
         delete this.session;
         delete this.OV;
         this.generateParticipantInfo();
+    }
+
+    refreshVideos() {
+        if (this.platform.is('ios') && this.platform.is('cordova')) {
+            cordova.plugins.iosrtc.refreshVideos();
+        }
     }
 
     private checkAndroidPermissions(): Promise<any> {
