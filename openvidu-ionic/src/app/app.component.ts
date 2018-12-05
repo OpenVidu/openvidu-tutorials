@@ -64,7 +64,7 @@ export class AppComponent implements OnDestroy {
         script2.type = 'text/javascript';
         script2.src = 'assets/libs/adapter-4.0.1.js';
         script2.async = false;
-        document.getElementsByTagName('head')[0].appendChild(script2);
+        document.head.appendChild(script2);
     }
 
     @HostListener('window:beforeunload')
@@ -120,7 +120,7 @@ export class AppComponent implements OnDestroy {
                             console.log('Android platform');
                             this.checkAndroidPermissions()
                                 .then(() => this.initPublisher())
-                                .catch((err) => console.error(err));
+                                .catch(err => console.error(err));
                         } else if (this.platform.is('ios')) {
                             console.log('iOS platform');
                             this.initPublisher();
@@ -129,7 +129,7 @@ export class AppComponent implements OnDestroy {
                         this.initPublisher();
                     }
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.log('There was an error connecting to the session:', error.code, error.message);
                 });
         });
@@ -146,14 +146,14 @@ export class AppComponent implements OnDestroy {
             resolution: '640x480', // The resolution of your video
             frameRate: 30, // The frame rate of your video
             insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
-            mirror: true, // Whether to mirror your local video or not
+            mirror: true // Whether to mirror your local video or not
         });
 
         // --- 6) Publish your stream ---
 
         this.session.publish(publisher).then(() => {
            // Store our Publisher
-            this.publisher = publisher; 
+            this.publisher = publisher;
         });
     }
 

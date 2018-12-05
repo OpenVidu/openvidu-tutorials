@@ -58,14 +58,11 @@ export class OpenViduVideoComponent implements AfterViewInit, OnDestroy {
     }
 
     private updateVideoView() {
+        this._streamManager.addVideoElement(this.elementRef.nativeElement);
         if (this.isIos()) {
             (<HTMLVideoElement>this.elementRef.nativeElement).onloadedmetadata = () => {
                 this.applyIosIonicVideoAttributes();
             };
-        }
-        this._streamManager.addVideoElement(this.elementRef.nativeElement);
-        if (this.isIos()) {
-            cordova.plugins.iosrtc.refreshVideos();
         }
     }
 
@@ -80,6 +77,7 @@ export class OpenViduVideoComponent implements AfterViewInit, OnDestroy {
             // It is a Publisher video. Custom iosrtc plugin mirror video
             this.elementRef.nativeElement.style.transform = 'scaleX(-1)';
         }
+        cordova.plugins.iosrtc.refreshVideos();
     }
 
     private isIos(): boolean {
