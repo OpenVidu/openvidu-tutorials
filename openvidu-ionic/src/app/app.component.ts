@@ -16,7 +16,7 @@ declare var cordova;
 })
 export class AppComponent implements OnDestroy {
 
-    OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443/';
+    OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443';
     OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
     ANDROID_PERMISSIONS = [
@@ -264,6 +264,9 @@ export class AppComponent implements OnDestroy {
      */
 
     getToken(): Promise<string> {
+        if (this.platform.is('ios') && this.platform.is('cordova') && this.OPENVIDU_SERVER_URL === 'https://localhost:4443') {
+            this.OPENVIDU_SERVER_URL = 'https://demos.openvidu.io:4443';
+        }
         return this.createSession(this.mySessionId).then((sessionId) => {
             return this.createToken(sessionId);
         });
