@@ -20,8 +20,8 @@ import { UserVideoComponent } from './user-video.component';
         StatusBar,
         SplashScreen,
         { provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
-        AndroidPermissions,
+        AndroidPermissions
     ],
-    bootstrap: [AppComponent],
+    bootstrap: [AppComponent]
 })
 export class AppModule { }

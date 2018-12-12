@@ -22,7 +22,7 @@ export class AppComponent implements OnDestroy {
     ANDROID_PERMISSIONS = [
         this.androidPermissions.PERMISSION.CAMERA,
         this.androidPermissions.PERMISSION.RECORD_AUDIO,
-        this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS,
+        this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS
     ];
 
     // OpenVidu objects
@@ -59,7 +59,7 @@ export class AppComponent implements OnDestroy {
     initializeAdapterIosRtc() {
         console.log('Initializing iosrct');
         cordova.plugins.iosrtc.registerGlobals();
-        // load adapter.js (vesion 4.0.1)
+        // load adapter.js (version 4.0.1)
         const script2 = document.createElement('script');
         script2.type = 'text/javascript';
         script2.src = 'assets/libs/adapter-4.0.1.js';
@@ -108,7 +108,7 @@ export class AppComponent implements OnDestroy {
         // 'getToken' method is simulating what your server-side should do.
         // 'token' parameter should be retrieved and returned by your own backend
         this.getToken().then((token) => {
-            // First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
+            // First param is the token got from OpenVidu Server. Second param will be used by every user on event
             // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
             this.session
                 .connect(token, { clientData: this.myUserName })
@@ -186,13 +186,13 @@ export class AppComponent implements OnDestroy {
                     .then(() => {
                         this.androidPermissions
                             .checkPermission(this.androidPermissions.PERMISSION.CAMERA)
-                            .then((camera) => {
+                            .then(camera => {
                                 this.androidPermissions
                                     .checkPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO)
-                                    .then((audio) => {
+                                    .then(audio => {
                                         this.androidPermissions
                                             .checkPermission(this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS)
-                                            .then((modifyAudio) => {
+                                            .then(modifyAudio => {
                                                 if (camera.hasPermission && audio.hasPermission && modifyAudio.hasPermission) {
                                                     resolve();
                                                 } else {
@@ -212,7 +212,7 @@ export class AppComponent implements OnDestroy {
                                                     );
                                                 }
                                             })
-                                            .catch((err) => {
+                                            .catch(err => {
                                                 console.error(
                                                     'Checking permission ' +
                                                     this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS +
@@ -221,19 +221,19 @@ export class AppComponent implements OnDestroy {
                                                 reject(err);
                                             });
                                     })
-                                    .catch((err) => {
+                                    .catch(err => {
                                         console.error(
                                             'Checking permission ' + this.androidPermissions.PERMISSION.RECORD_AUDIO + ' failed',
                                         );
                                         reject(err);
                                     });
                             })
-                            .catch((err) => {
+                            .catch(err => {
                                 console.error('Checking permission ' + this.androidPermissions.PERMISSION.CAMERA + ' failed');
                                 reject(err);
                             });
                     })
-                    .catch((err) => console.error('Error requesting permissions: ', err));
+                    .catch(err => console.error('Error requesting permissions: ', err));
             });
         });
     }

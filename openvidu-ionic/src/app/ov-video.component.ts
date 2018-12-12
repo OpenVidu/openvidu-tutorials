@@ -5,14 +5,7 @@ declare var cordova;
 
 @Component({
     selector: 'ov-video',
-    template: '<video #videoElement></video>',
-    styles: [
-        `
-            video {
-                width: inherit;
-            }
-        `
-    ]
+    template: '<video #videoElement></video>'
 })
 export class OpenViduVideoComponent implements AfterViewInit, OnDestroy {
 
@@ -23,7 +16,7 @@ export class OpenViduVideoComponent implements AfterViewInit, OnDestroy {
 
     constructor(private platform: Platform) {}
 
-    ngAfterViewInit() {window.addEventListener
+    ngAfterViewInit() {
         if (this.isIos() && this._streamManager.remote) {
             this.rotationFunction = () => {
                 // Give the remote video some time to update its dimensions when rotating the device
@@ -48,8 +41,7 @@ export class OpenViduVideoComponent implements AfterViewInit, OnDestroy {
         this._streamManager = streamManager;
         if (this.isIos()) {
             this._streamManager.on('streamPropertyChanged', event => {
-                let e: StreamPropertyChangedEvent = <StreamPropertyChangedEvent>event;
-                if (e.changedProperty === 'videoDimensions') {
+                if ((<StreamPropertyChangedEvent>event).changedProperty === 'videoDimensions') {
                     this.applyIosIonicVideoAttributes();
                     cordova.plugins.iosrtc.refreshVideos();
                 }
@@ -67,7 +59,7 @@ export class OpenViduVideoComponent implements AfterViewInit, OnDestroy {
     }
 
     private applyIosIonicVideoAttributes() {
-        let ratio = this._streamManager.stream.videoDimensions.height / this._streamManager.stream.videoDimensions.width;
+        const ratio = this._streamManager.stream.videoDimensions.height / this._streamManager.stream.videoDimensions.width;
         this.elementRef.nativeElement.style.width = '100% !important';
         this.elementRef.nativeElement.style.objectFit = 'fill';
         this.elementRef.nativeElement.style.zIndex = '-1';
