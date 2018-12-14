@@ -5,7 +5,7 @@ echo "## Updating openvidu-tutorials"
 find -type f -name 'package-lock.json' -exec rm {} \;
 find -type d -name 'node_modules' -exec rm -rf {} \;
 
-# Updating openvidu-browser dependencies in package.json files [openvidu-insecure-angular, openvidu-insecure-react, openvidu-library-angular, openvidu-ionic]
+# Updating openvidu-browser dependencies in package.json files [openvidu-insecure-angular, openvidu-insecure-react, openvidu-ionic]
 find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/\"openvidu-browser\": \"$FROM_VERSION\"/\"openvidu-browser\": \"$TO_VERSION\"/" {} \;
 
 # Updating openvidu-react dependencies in package.json files [openvidu-library-react]
@@ -15,7 +15,7 @@ find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*
 find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/\"openvidu-angular\": \"$FROM_VERSION\"/\"openvidu-angular\": \"$TO_VERSION\"/" {} \;
 
 # Updating openvidu-node-client dependencies in package.json files [openvidu-js-node, openvidu-mvc-node, openvidu-recording-node]
-find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/\"openvidu-node-client\": \"$FROM_VERSION\"/\"openvidu-node-client\": \"$TO_VERSION\"/' {} \;
+find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/\"openvidu-node-client\": \"$FROM_VERSION\"/\"openvidu-node-client\": \"$TO_VERSION\"/" {} \;
 
 # Updating openvidu-java-client dependencies in pom.xml files [openvidu-js-java, openvidu-mvc-java, openvidu-recording-java]
 for tutorial in openvidu-js-java openvidu-mvc-java openvidu-recording-java; do
@@ -33,7 +33,7 @@ for file in *.html *.ejs; do
 done
 
 # Update every openvidu-browser-VERSION.js file (10 files changed)
-wget https://github.com/OpenVidu/openvidu/releases/download/v$TO_VERSION/openvidu-browser-$TO_VERSION.js .
+curl https://github.com/OpenVidu/openvidu/releases/download/v$TO_VERSION/openvidu-browser-$TO_VERSION.js --output ./openvidu-browser-$TO_VERSION.js
 readarray array < <(find -name "openvidu-browser-$FROM_VERSION.js" -printf "%h\n" | sort -u)
 for directory in ${array[@]}; do
     rm $directory/openvidu-browser-$FROM_VERSION.js
@@ -42,7 +42,7 @@ done
 rm openvidu-browser-$TO_VERSION.js
 
 # Update openvidu-webcomponent tutorial files: static web component files and import in index.html
-wget https://github.com/OpenVidu/openvidu/releases/download/v$TO_VERSION/openvidu-webcomponent-$TO_VERSION.zip .
+curl https://github.com/OpenVidu/openvidu/releases/download/v$TO_VERSION/openvidu-webcomponent-$TO_VERSION.zip --output ./openvidu-webcomponent-$TO_VERSION.zip
 unzip openvidu-webcomponent-$TO_VERSION.zip
 rm openvidu-webcomponent/web/openvidu-webcomponent-$FROM_VERSION.js
 rm openvidu-webcomponent/web/openvidu-webcomponent-$FROM_VERSION.css
