@@ -2,10 +2,7 @@ $(document).ready(() => {
     var webComponent = document.querySelector('openvidu-webcomponent');
     var form = document.getElementById('main');
 
-    webComponent.addEventListener('joinSession', (event) => {
-        form.style.display = 'none';
-        webComponent.style.display = 'block';
-    });
+    webComponent.addEventListener('joinSession', (event) => {});
     webComponent.addEventListener('leaveSession', (event) => {
         form.style.display = 'block';
         webComponent.style.display = 'none';
@@ -18,9 +15,13 @@ $(document).ready(() => {
 function joinSession() {
     var sessionName = document.getElementById('sessionName').value;
     var user = document.getElementById('user').value;
+    var form = document.getElementById('main');
+    var webComponent = document.querySelector('openvidu-webcomponent');
+
+    form.style.display = 'none';
+    webComponent.style.display = 'block';
 
     getToken(sessionName).then((token) => {
-        var webComponent = document.querySelector('openvidu-webcomponent');
         webComponent.sessionConfig = { sessionName, user, token };
     });
 }
@@ -38,7 +39,7 @@ function joinSession() {
  */
 
 var OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443';
-var OPENVIDU_SERVER_SECRET = "MY_SECRET";
+var OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 function getToken(sessionName) {
     return createSession(sessionName).then((sessionId) => createToken(sessionId));
@@ -78,7 +79,8 @@ function createSession(sessionName) { // See https://openvidu.io/docs/reference-
     });
 }
 
-function createToken(sessionId) { // See https://openvidu.io/docs/reference-docs/REST-API/#post-apitokens
+function createToken(sessionId) {
+    // See https://openvidu.io/docs/reference-docs/REST-API/#post-apitokens
     return new Promise((resolve, reject) => {
         $.ajax({
             type: 'POST',
