@@ -53,7 +53,7 @@ export class AppComponent {
     this.ovSession = this.ovSessionComponent.getSession();
     this.ovLocalUser = this.ovSessionComponent.getLocalUser();
     this.ovLayout = this.ovSessionComponent.getOpenviduLayout();
-    this.ovLayoutOptions = this.ovSessionComponent.getOpenviduLayputOptions();
+    this.ovLayoutOptions = this.ovSessionComponent.getOpenviduLayoutOptions();
 
     this.ovSession.on('streamCreated', (event: StreamEvent) => {
       // Do something
