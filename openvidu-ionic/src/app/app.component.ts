@@ -7,7 +7,7 @@ import { Platform } from '@ionic/angular';
 import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from 'openvidu-browser';
 import { throwError as observableThrowError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-
+declare var cordova;
 
 @Component({
     selector: 'app-root',
@@ -16,13 +16,13 @@ import { catchError } from 'rxjs/operators';
 })
 export class AppComponent implements OnDestroy {
 
-    OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443/';
+    OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443';
     OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
     ANDROID_PERMISSIONS = [
         this.androidPermissions.PERMISSION.CAMERA,
         this.androidPermissions.PERMISSION.RECORD_AUDIO,
-        this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS,
+        this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS
     ];
 
     // OpenVidu objects
@@ -34,10 +34,6 @@ export class AppComponent implements OnDestroy {
     // Join form
     mySessionId: string;
     myUserName: string;
-
-    // Main video of the page, will be 'publisher' or one of the 'subscribers'
-    // Updated by click event
-    mainStreamManager: StreamManager;
 
     constructor(
         private platform: Platform,
@@ -54,7 +50,21 @@ export class AppComponent implements OnDestroy {
         this.platform.ready().then(() => {
             this.statusBar.styleDefault();
             this.splashScreen.hide();
+            if (this.platform.is('ios') && this.platform.is('cordova')) {
+                this.initializeAdapterIosRtc();
+            }
         });
+    }
+
+    initializeAdapterIosRtc() {
+        console.log('Initializing iosrct');
+        cordova.plugins.iosrtc.registerGlobals();
+        // load adapter.js (version 4.0.1)
+        const script2 = document.createElement('script');
+        script2.type = 'text/javascript';
+        script2.src = 'assets/libs/adapter-4.0.1.js';
+        script2.async = false;
+        document.head.appendChild(script2);
     }
 
     @HostListener('window:beforeunload')
@@ -98,21 +108,28 @@ export class AppComponent implements OnDestroy {
         // 'getToken' method is simulating what your server-side should do.
         // 'token' parameter should be retrieved and returned by your own backend
         this.getToken().then((token) => {
-            // First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
+            // First param is the token got from OpenVidu Server. Second param will be used by every user on event
             // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
             this.session
                 .connect(token, { clientData: this.myUserName })
                 .then(() => {
                     // --- 5) Requesting and Checking Android Permissions
                     if (this.platform.is('cordova')) {
-                        this.checkAndroidPermissions()
-                            .then(() => this.initPublisher())
-                            .catch((err) => console.error(err));
+                        // Ionic platform
+                        if (this.platform.is('android')) {
+                            console.log('Android platform');
+                            this.checkAndroidPermissions()
+                                .then(() => this.initPublisher())
+                                .catch(err => console.error(err));
+                        } else if (this.platform.is('ios')) {
+                            console.log('iOS platform');
+                            this.initPublisher();
+                        }
                     } else {
                         this.initPublisher();
                     }
                 })
-                .catch((error) => {
+                .catch(error => {
                     console.log('There was an error connecting to the session:', error.code, error.message);
                 });
         });
@@ -129,20 +146,15 @@ export class AppComponent implements OnDestroy {
             resolution: '640x480', // The resolution of your video
             frameRate: 30, // The frame rate of your video
             insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
-            mirror: true, // Whether to mirror your local video or not
+            mirror: true // Whether to mirror your local video or not
         });
 
         // --- 6) Publish your stream ---
 
-        this.session.publish(publisher);
-
-        // Set the main video in the page to display our webcam and store our Publisher
-        this.mainStreamManager = publisher;
-        this.publisher = publisher;
-    }
-
-    updateMainStreamManager(streamManager: StreamManager) {
-        this.mainStreamManager = streamManager;
+        this.session.publish(publisher).then(() => {
+           // Store our Publisher
+            this.publisher = publisher;
+        });
     }
 
     leaveSession() {
@@ -160,6 +172,12 @@ export class AppComponent implements OnDestroy {
         this.generateParticipantInfo();
     }
 
+    refreshVideos() {
+        if (this.platform.is('ios') && this.platform.is('cordova')) {
+            cordova.plugins.iosrtc.refreshVideos();
+        }
+    }
+
     private checkAndroidPermissions(): Promise<any> {
         return new Promise((resolve, reject) => {
             this.platform.ready().then(() => {
@@ -168,13 +186,13 @@ export class AppComponent implements OnDestroy {
                     .then(() => {
                         this.androidPermissions
                             .checkPermission(this.androidPermissions.PERMISSION.CAMERA)
-                            .then((camera) => {
+                            .then(camera => {
                                 this.androidPermissions
                                     .checkPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO)
-                                    .then((audio) => {
+                                    .then(audio => {
                                         this.androidPermissions
                                             .checkPermission(this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS)
-                                            .then((modifyAudio) => {
+                                            .then(modifyAudio => {
                                                 if (camera.hasPermission && audio.hasPermission && modifyAudio.hasPermission) {
                                                     resolve();
                                                 } else {
@@ -194,7 +212,7 @@ export class AppComponent implements OnDestroy {
                                                     );
                                                 }
                                             })
-                                            .catch((err) => {
+                                            .catch(err => {
                                                 console.error(
                                                     'Checking permission ' +
                                                     this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS +
@@ -203,19 +221,19 @@ export class AppComponent implements OnDestroy {
                                                 reject(err);
                                             });
                                     })
-                                    .catch((err) => {
+                                    .catch(err => {
                                         console.error(
                                             'Checking permission ' + this.androidPermissions.PERMISSION.RECORD_AUDIO + ' failed',
                                         );
                                         reject(err);
                                     });
                             })
-                            .catch((err) => {
+                            .catch(err => {
                                 console.error('Checking permission ' + this.androidPermissions.PERMISSION.CAMERA + ' failed');
                                 reject(err);
                             });
                     })
-                    .catch((err) => console.error('Error requesting permissions: ', err));
+                    .catch(err => console.error('Error requesting permissions: ', err));
             });
         });
     }
@@ -246,6 +264,10 @@ export class AppComponent implements OnDestroy {
      */
 
     getToken(): Promise<string> {
+        if (this.platform.is('ios') && this.platform.is('cordova') && this.OPENVIDU_SERVER_URL === 'https://localhost:4443') {
+            // To make easier first steps with iOS apps, use demos OpenVidu Sever if no custom valid server is configured
+            this.OPENVIDU_SERVER_URL = 'https://demos.openvidu.io:4443';
+        }
         return this.createSession(this.mySessionId).then((sessionId) => {
             return this.createToken(sessionId);
         });
