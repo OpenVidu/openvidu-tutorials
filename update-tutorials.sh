@@ -38,9 +38,9 @@ wget --no-check-certificate --content-disposition https://github.com/OpenVidu/op
 unzip openvidu-webcomponent-$TO_VERSION.zip
 rm openvidu-webcomponent/web/openvidu-webcomponent-$FROM_VERSION.js
 rm openvidu-webcomponent/web/openvidu-webcomponent-$FROM_VERSION.css
-cp openvidu-webcomponent-$TO_VERSION.js openvidu-webcomponent/web/openvidu-webcomponent-$TO_VERSION.js
-cp openvidu-webcomponent-$TO_VERSION.css openvidu-webcomponent/web/openvidu-webcomponent-$TO_VERSION.css
-rm openvidu-webcomponent-*
+mv openvidu-webcomponent-$TO_VERSION/openvidu-webcomponent-$TO_VERSION.js openvidu-webcomponent/web/.
+mv openvidu-webcomponent-$TO_VERSION/openvidu-webcomponent-$TO_VERSION.css openvidu-webcomponent/web/.
+rm -rf openvidu-webcomponent-$TO_VERSION
 sed -i "s/<script src=\"openvidu-webcomponent-$FROM_VERSION.js\"><\/script>/<script src=\"openvidu-webcomponent-$TO_VERSION.js\"><\/script>/" openvidu-webcomponent/web/index.html
 sed -i "s/<link rel=\"stylesheet\" href=\"openvidu-webcomponent-$FROM_VERSION.css\">/<link rel=\"stylesheet\" href=\"openvidu-webcomponent-$TO_VERSION.css\">/" openvidu-webcomponent/web/index.html
 
