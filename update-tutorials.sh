@@ -25,7 +25,7 @@ for file in *.html *.ejs; do
 done
 
 # Update every openvidu-browser-VERSION.js file (10 files changed)
-wget --no-check-certificate --content-disposition https://github.com/OpenVidu/openvidu/releases/download/v$TO_VERSION/openvidu-browser-$TO_VERSION.js .
+wget https://github.com/OpenVidu/openvidu/releases/download/v$TO_VERSION/openvidu-browser-$TO_VERSION.js
 readarray array < <(find -name "openvidu-browser-$FROM_VERSION.js" -printf "%h\n" | sort -u)
 for directory in ${array[@]}; do
     rm $directory/openvidu-browser-$FROM_VERSION.js
@@ -34,7 +34,7 @@ done
 rm openvidu-browser-$TO_VERSION.js
 
 # Update openvidu-webcomponent tutorial files: static web component files and import in index.html
-wget --no-check-certificate --content-disposition https://github.com/OpenVidu/openvidu/releases/download/v$TO_VERSION/openvidu-webcomponent-$TO_VERSION.zip .
+wget https://github.com/OpenVidu/openvidu/releases/download/v$TO_VERSION/openvidu-webcomponent-$TO_VERSION.zip
 unzip openvidu-webcomponent-$TO_VERSION.zip
 rm openvidu-webcomponent/web/openvidu-webcomponent-$FROM_VERSION.js
 rm openvidu-webcomponent/web/openvidu-webcomponent-$FROM_VERSION.css
