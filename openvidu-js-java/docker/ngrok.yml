@@ -1,8 +1,0 @@
-web_addr: 0.0.0.0:4040
-tunnels:
-  app:
-    addr: 3000
-    proto: http
-  server:
-    addr: 5000
-    proto: http
