@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.openvidu.java.client.OpenVidu;
+import io.openvidu.java.client.OpenViduHttpException;
+import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.TokenOptions;
@@ -90,37 +92,42 @@ public class SessionController {
 
 				// Return the response to the client
 				return new ResponseEntity<>(responseJson, HttpStatus.OK);
-
-			} catch (Exception e) {
-				// If error generate an error message and return it to client
-				return getErrorResponse(e);
+			} catch (OpenViduJavaClientException e1) {
+				// If internal error generate an error message and return it to client
+				return getErrorResponse(e1);
+			} catch (OpenViduHttpException e2) {
+				if (404 == e2.getStatus()) {
+					// Invalid sessionId (user left unexpectedly). Session object is not valid
+					// anymore. Clean collections and continue as new session
+					this.mapSessions.remove(sessionName);
+					this.mapSessionNamesTokens.remove(sessionName);
+				}
 			}
+		}
 
-		} else {
-			// New session
-			System.out.println("New session " + sessionName);
-			try {
+		// New session
+		System.out.println("New session " + sessionName);
+		try {
 
-				// Create a new OpenVidu Session
-				Session session = this.openVidu.createSession();
-				// Generate a new token with the recently created tokenOptions
-				String token = session.generateToken(tokenOptions);
+			// Create a new OpenVidu Session
+			Session session = this.openVidu.createSession();
+			// Generate a new token with the recently created tokenOptions
+			String token = session.generateToken(tokenOptions);
 
-				// Store the session and the token in our collections
-				this.mapSessions.put(sessionName, session);
-				this.mapSessionNamesTokens.put(sessionName, new ConcurrentHashMap<>());
-				this.mapSessionNamesTokens.get(sessionName).put(token, role);
+			// Store the session and the token in our collections
+			this.mapSessions.put(sessionName, session);
+			this.mapSessionNamesTokens.put(sessionName, new ConcurrentHashMap<>());
+			this.mapSessionNamesTokens.get(sessionName).put(token, role);
 
-				// Prepare the response with the token
-				responseJson.put(0, token);
+			// Prepare the response with the token
+			responseJson.put(0, token);
 
-				// Return the response to the client
-				return new ResponseEntity<>(responseJson, HttpStatus.OK);
+			// Return the response to the client
+			return new ResponseEntity<>(responseJson, HttpStatus.OK);
 
-			} catch (Exception e) {
-				// If error generate an error message and return it to client
-				return getErrorResponse(e);
-			}
+		} catch (Exception e) {
+			// If error generate an error message and return it to client
+			return getErrorResponse(e);
 		}
 	}
 
