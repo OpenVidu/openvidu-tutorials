@@ -12,7 +12,7 @@
   </ion-header>
 
   <ion-content padding *ngIf="!session">
-    
+
     <div id="img-div"><img src="assets/images/openvidu_grey_bg_transp_cropped.png" /></div>
     <h1 align="center" id="title">Join a video session</h1>
     <ion-item>
@@ -29,6 +29,13 @@
       <ion-icon slot="start" name="videocam"></ion-icon>
       Join
     </ion-button>
+
+    <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+      <ion-fab-button id="settings-button" [disabled]="!mySessionId && !myUserName" (click)="presentSettingsAlert()"
+        mini color="dark">
+        <ion-icon name="settings"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
 
   </ion-content>
 

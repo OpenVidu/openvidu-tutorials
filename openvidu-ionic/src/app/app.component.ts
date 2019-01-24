@@ -3,7 +3,7 @@ import { Component, HostListener, OnDestroy } from '@angular/core';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
 import { StatusBar } from '@ionic-native/status-bar/ngx';
-import { Platform } from '@ionic/angular';
+import { Platform, AlertController } from '@ionic/angular';
 import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from 'openvidu-browser';
 import { throwError as observableThrowError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
@@ -41,6 +41,7 @@ export class AppComponent implements OnDestroy {
         private statusBar: StatusBar,
         private httpClient: HttpClient,
         private androidPermissions: AndroidPermissions,
+        public alertController: AlertController
     ) {
         this.initializeApp();
         this.generateParticipantInfo();
@@ -152,7 +153,7 @@ export class AppComponent implements OnDestroy {
         // --- 6) Publish your stream ---
 
         this.session.publish(publisher).then(() => {
-           // Store our Publisher
+            // Store our Publisher
             this.publisher = publisher;
         });
     }
@@ -249,6 +250,41 @@ export class AppComponent implements OnDestroy {
         if (index > -1) {
             this.subscribers.splice(index, 1);
         }
+    }
+
+    async presentSettingsAlert() {
+        const alert = await this.alertController.create({
+            header: 'OpenVidu Server config',
+            inputs: [
+                {
+                    name: 'url',
+                    type: 'text',
+                    value: 'https://demos.openvidu.io:4443/',
+                    placeholder: 'URL'
+                },
+                {
+                    name: 'secret',
+                    type: 'text',
+                    value: 'MY_SECRET',
+                    placeholder: 'Secret'
+                }
+            ],
+            buttons: [
+                {
+                    text: 'Cancel',
+                    role: 'cancel',
+                    cssClass: 'secondary'
+                }, {
+                    text: 'Ok',
+                    handler: data => {
+                        this.OPENVIDU_SERVER_URL = data.url;
+                        this.OPENVIDU_SERVER_SECRET = data.secret;
+                    }
+                }
+            ]
+        });
+
+        await alert.present();
     }
 
     /*
