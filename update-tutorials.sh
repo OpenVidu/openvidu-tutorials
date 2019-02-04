@@ -35,7 +35,9 @@ rm openvidu-browser-$TO_VERSION.js
 
 # Update openvidu-webcomponent tutorial files: static web component files and import in index.html
 wget https://github.com/OpenVidu/openvidu/releases/download/v$TO_VERSION/openvidu-webcomponent-$TO_VERSION.zip
-unzip openvidu-webcomponent-$TO_VERSION.zip
+mkdir openvidu-webcomponent-$TO_VERSION
+mv openvidu-webcomponent-$TO_VERSION.zip openvidu-webcomponent-$TO_VERSION/openvidu-webcomponent-$TO_VERSION.zip
+unzip openvidu-webcomponent-$TO_VERSION/openvidu-webcomponent-$TO_VERSION.zip -d openvidu-webcomponent-$TO_VERSION/.
 rm openvidu-webcomponent/web/openvidu-webcomponent-$FROM_VERSION.js
 rm openvidu-webcomponent/web/openvidu-webcomponent-$FROM_VERSION.css
 mv openvidu-webcomponent-$TO_VERSION/openvidu-webcomponent-$TO_VERSION.js openvidu-webcomponent/web/.

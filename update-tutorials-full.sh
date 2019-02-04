@@ -15,7 +15,7 @@ find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*
 find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/\"openvidu-angular\": \"$FROM_VERSION\"/\"openvidu-angular\": \"$TO_VERSION\"/" {} \;
 
 # Updating openvidu-node-client dependencies in package.json files [openvidu-js-node, openvidu-mvc-node, openvidu-recording-node]
-find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/\"openvidu-node-client\": \"$FROM_VERSION\"/\"openvidu-node-client\": \"$TO_VERSION\"/" {} \;
+find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/\"openvidu-node-client\": \"$FROM_VERSION_SDK\"/\"openvidu-node-client\": \"$TO_VERSION_SDK\"/" {} \;
 
 # Updating openvidu-java-client dependencies in pom.xml files [openvidu-js-java, openvidu-mvc-java, openvidu-recording-java]
 for tutorial in openvidu-js-java openvidu-mvc-java openvidu-recording-java; do
@@ -43,7 +43,9 @@ rm openvidu-browser-$TO_VERSION.js
 
 # Update openvidu-webcomponent tutorial files: static web component files and import in index.html
 wget https://github.com/OpenVidu/openvidu/releases/download/v$TO_VERSION/openvidu-webcomponent-$TO_VERSION.zip
-unzip openvidu-webcomponent-$TO_VERSION.zip
+mkdir openvidu-webcomponent-$TO_VERSION
+mv openvidu-webcomponent-$TO_VERSION.zip openvidu-webcomponent-$TO_VERSION/openvidu-webcomponent-$TO_VERSION.zip
+unzip openvidu-webcomponent-$TO_VERSION/openvidu-webcomponent-$TO_VERSION.zip -d openvidu-webcomponent-$TO_VERSION/.
 rm openvidu-webcomponent/web/openvidu-webcomponent-$FROM_VERSION.js
 rm openvidu-webcomponent/web/openvidu-webcomponent-$FROM_VERSION.css
 mv openvidu-webcomponent-$TO_VERSION/openvidu-webcomponent-$TO_VERSION.js openvidu-webcomponent/web/.
