@@ -68,7 +68,9 @@ app.post('/api/get-token', function (req, res) {
     console.log("Getting a token | {sessionName}={" + sessionName + "}");
 
     // Build tokenOptions object with PUBLISHER role
-    var tokenOptions = { role: role }
+    var tokenOptions = {
+        role: role
+    }
 
     if (mapSessions[sessionName]) {
         // Session already exists
@@ -258,11 +260,16 @@ app.delete('/api/force-unpublish', function (req, res) {
 // Start recording
 app.post('/api/recording/start', function (req, res) {
     // Retrieve params from POST body
+    var recordingProperties = {
+        outputMode: req.body.outputMode,
+        hasAudio: req.body.hasAudio,
+        hasVideo: req.body.hasVideo,
+    }
     var sessionId = req.body.session;
     console.log("Starting recording | {sessionId}=" + sessionId);
 
-    OV.startRecording(sessionId)
-        .then(recording => res.status(200).send(getJsonFromRecording(recording)))
+    OV.startRecording(sessionId, recordingProperties)
+        .then(recording => res.status(200).send(recording))
         .catch(error => res.status(400).send(error.message));
 });
 
@@ -273,7 +280,7 @@ app.post('/api/recording/stop', function (req, res) {
     console.log("Stopping recording | {recordingId}=" + recordingId);
 
     OV.stopRecording(recordingId)
-        .then(recording => res.status(200).send(getJsonFromRecording(recording)))
+        .then(recording => res.status(200).send(recording))
         .catch(error => res.status(400).send(error.message));
 });
 
@@ -295,7 +302,7 @@ app.get('/api/recording/get/:recordingId', function (req, res) {
     console.log("Getting recording | {recordingId}=" + recordingId);
 
     OV.getRecording(recordingId)
-        .then(recording => res.status(200).send(getJsonFromRecording(recording)))
+        .then(recording => res.status(200).send(recording))
         .catch(error => res.status(400).send(error.message));
 });
 
@@ -304,33 +311,9 @@ app.get('/api/recording/list', function (req, res) {
     console.log("Listing recordings");
 
     OV.listRecordings()
-        .then(recordings => res.status(200).send(getJsonArrayFromRecordingList(recordings)))
+        .then(recordings => res.status(200).send(recordings))
         .catch(error => res.status(400).send(error.message));
 });
-
-function getJsonFromRecording(recording) {
-    return {
-        "createdAt": recording.createdAt,
-        "duration": recording.duration,
-        "hasAudio": recording.hasAudio,
-        "hasVideo": recording.hasVideo,
-        "id": recording.id,
-        "name": recording.name,
-        "recordingLayout": recording.recordingLayout,
-        "sessionId": recording.sessionId,
-        "size": recording.size,
-        "status": recording.status,
-        "url": recording.url
-    }
-}
-
-function getJsonArrayFromRecordingList(recordings) {
-    var jsonArray = [];
-    recordings.forEach(recording => {
-        jsonArray.push(getJsonFromRecording(recording));
-    })
-    return jsonArray;
-}
 
 function sessionToJson(session) {
     var json = {};

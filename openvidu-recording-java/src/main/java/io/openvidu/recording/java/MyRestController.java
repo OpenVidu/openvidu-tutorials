@@ -23,6 +23,7 @@ import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
 import io.openvidu.java.client.Recording;
+import io.openvidu.java.client.RecordingProperties;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.TokenOptions;
 
@@ -279,14 +280,22 @@ public class MyRestController {
 	@RequestMapping(value = "/recording/start", method = RequestMethod.POST)
 	public ResponseEntity<?> startRecording(@RequestBody String param) throws ParseException {
 		JSONObject json = (JSONObject) new JSONParser().parse(param);
-		String sessionId = (String) json.get("session");
 
-		System.out.println("Starting recording | {sessionId}=" + sessionId);
+		String sessionId = (String) json.get("session");
+		Recording.OutputMode outputMode = Recording.OutputMode.valueOf((String) json.get("outputMode"));
+		boolean hasAudio = (boolean) json.get("hasAudio");
+		boolean hasVideo = (boolean) json.get("hasVideo");
+
+		RecordingProperties properties = new RecordingProperties.Builder().outputMode(outputMode).hasAudio(hasAudio)
+				.hasVideo(hasVideo).build();
+
+		System.out.println("Starting recording for session " + sessionId + " with properties {outputMode=" + outputMode
+				+ ", hasAudio=" + hasAudio + ", hasVideo=" + hasVideo + "}");
 
 		try {
-			Recording recording = this.openVidu.startRecording(sessionId);
+			Recording recording = this.openVidu.startRecording(sessionId, properties);
 			this.sessionRecordings.put(sessionId, true);
-			return new ResponseEntity<>(getJsonFromRecording(recording), HttpStatus.OK);
+			return new ResponseEntity<>(recording, HttpStatus.OK);
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -302,7 +311,7 @@ public class MyRestController {
 		try {
 			Recording recording = this.openVidu.stopRecording(recordingId);
 			this.sessionRecordings.remove(recording.getSessionId());
-			return new ResponseEntity<>(getJsonFromRecording(recording), HttpStatus.OK);
+			return new ResponseEntity<>(recording, HttpStatus.OK);
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -330,7 +339,7 @@ public class MyRestController {
 
 		try {
 			Recording recording = this.openVidu.getRecording(recordingId);
-			return new ResponseEntity<>(getJsonFromRecording(recording), HttpStatus.OK);
+			return new ResponseEntity<>(recording, HttpStatus.OK);
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -344,7 +353,7 @@ public class MyRestController {
 		try {
 			List<Recording> recordings = this.openVidu.listRecordings();
 
-			return new ResponseEntity<>(getJsonArrayFromRecordingList(recordings), HttpStatus.OK);
+			return new ResponseEntity<>(recordings, HttpStatus.OK);
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
 			return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
 		}
@@ -359,32 +368,6 @@ public class MyRestController {
 		return new ResponseEntity<>(json, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@SuppressWarnings("unchecked")
-	private JSONObject getJsonFromRecording(Recording recording) {
-		JSONObject json = new JSONObject();
-		json.put("createdAt", recording.getCreatedAt());
-		json.put("duration", recording.getDuration());
-		json.put("hasAudio", recording.hasAudio());
-		json.put("hasVideo", recording.hasVideo());
-		json.put("id", recording.getId());
-		json.put("recordingLayout", recording.getRecordingLayout());
-		json.put("name", recording.getName());
-		json.put("sessionId", recording.getSessionId());
-		json.put("size", recording.getSize());
-		json.put("status", recording.getStatus());
-		json.put("url", recording.getUrl());
-		return json;
-	}
-
-	@SuppressWarnings("unchecked")
-	private JSONArray getJsonArrayFromRecordingList(Collection<Recording> recordings) {
-		JSONArray array = new JSONArray();
-		for (Recording recording : recordings) {
-			array.add(getJsonFromRecording(recording));
-		}
-		return array;
-	}
-	
 	@SuppressWarnings("unchecked")
 	protected JSONObject sessionToJson(Session session) {
 		JSONObject json = new JSONObject();

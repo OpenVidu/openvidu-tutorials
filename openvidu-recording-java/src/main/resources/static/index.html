@@ -39,7 +39,8 @@
 				 title="GitHub Repository" target="_blank">
 					<i class="fa fa-github" aria-hidden="true"></i>
 				</a>
-				<a class="navbar-brand nav-icon" href="http://www.openvidu.io/docs/tutorials/openvidu-js-java/" title="Documentation" target="_blank">
+				<a class="navbar-brand nav-icon" href="http://www.openvidu.io/docs/tutorials/openvidu-js-java/" title="Documentation"
+				 target="_blank">
 					<i class="fa fa-book" aria-hidden="true"></i>
 				</a>
 			</div>
@@ -70,24 +71,49 @@
 			<div id="session-header">
 				<h1 id="session-title"></h1>
 				<input class="btn btn-sm btn-danger" type="button" id="buttonCloseSession" onmouseup="closeSession()" value="Close session">
-				<input class="btn btn-sm btn-danger" type="button" id="buttonLeaveSession" onmouseup="removeUser(); leaveSession()" value="Leave session">
-				<input class="btn btn-sm" type="button" id="buttonForceUnpublish" onmouseup="forceUnpublish()" value="Force unpublish" disabled>
+				<input class="btn btn-sm btn-danger" type="button" id="buttonLeaveSession" onmouseup="removeUser(); leaveSession()"
+				 value="Leave session">
+				<div class="vertical-separator-top"></div>
+				<input class="form-control" id="forceValue" type="text" onkeyup="checkBtnsForce()">
+				<input class="btn btn-sm" type="button" id="buttonForceUnpublish" onmouseup="forceUnpublish()" value="Force unpublish"
+				 disabled>
 				<input class="btn btn-sm" type="button" id="buttonForceDisconnect" onmouseup="forceDisconnect()" value="Force disconnect"
 				 disabled>
-				<input class="form-control" id="forceValue" type="text" onkeyup="checkBtnsForce()">
+				<div class="vertical-separator-top"></div>
 				<input class="btn btn-sm" type="button" id="buttonFetchInfo" onmouseup="fetchInfo()" value="Fetch info">
 				<input class="btn btn-sm" type="button" id="buttonFetchAll" onmouseup="fetchAll()" value="Fetch all">
 			</div>
 			<div id="video-container" class="col-md-12"></div>
 			<div id="recording-btns">
-				<div id="btns">
+				<div class="btns">
 					<input class="btn btn-md" type="button" id="buttonStartRecording" onmouseup="startRecording()" value="Start recording">
+					<form>
+						<label class="radio-inline">
+							<input type="radio" name="outputMode" value="COMPOSED" checked>COMPOSED
+						</label>
+						<label class="radio-inline">
+							<input type="radio" name="outputMode" value="INDIVIDUAL">INDIVIDUAL
+						</label>
+					</form>
+					<form>
+						<label class="checkbox-inline">
+							<input type="checkbox" id="has-audio-checkbox" checked>Has audio
+						</label>
+						<label class="checkbox-inline">
+							<input type="checkbox" id="has-video-checkbox" checked>Has video
+						</label>
+					</form>
+				</div>
+				<div class="btns">
 					<input class="btn btn-md" type="button" id="buttonListRecording" onmouseup="listRecordings()" value="List recordings">
-					<input class="form-control" id="forceRecordingId" type="text" onkeyup="checkBtnsRecordings()">
-					<input class="btn btn-md" type="button" id="buttonGetRecording" onmouseup="getRecording()" value="Get recording" disabled>
-					<input class="btn btn-md" type="button" id="buttonStopRecording" onmouseup="stopRecording()" value="Stop recording" disabled>
+					<div class="vertical-separator-bottom"></div>
+					<input class="btn btn-md" type="button" id="buttonGetRecording" onmouseup="getRecording()" value="Get recording"
+					 disabled>
+					<input class="btn btn-md" type="button" id="buttonStopRecording" onmouseup="stopRecording()" value="Stop recording"
+					 disabled>
 					<input class="btn btn-md" type="button" id="buttonDeleteRecording" onmouseup="deleteRecording()" value="Delete recording"
 					 disabled>
+					<input class="form-control" id="forceRecordingId" type="text" onkeyup="checkBtnsRecordings()">
 				</div>
 				<textarea id="text-area" readonly="true" class="form-control" name="comment">HTTP responses...</textarea>
 			</div>

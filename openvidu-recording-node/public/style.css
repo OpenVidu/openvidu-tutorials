@@ -229,7 +229,7 @@ a:hover .demo-logo {
 }
 
 #session-header form {
-	display: inline;
+	display: inline-block;
 }
 
 #session-header input.btn {
@@ -360,20 +360,41 @@ table i {
 	height: 40%;
 }
 
-#recording-btns #btns {
+#recording-btns .btns {
 	margin-top: 10px;
 }
 
-#recording-btns #btns .form-control {
+#recording-btns .btns .form-control {
 	width: initial;
-	display: inline-block;
+	display: inline;
+}
+
+#recording-btns .btns form {
+	display: inline;
 }
 
 #recording-btns #text-area {
-	display: inline-block;
+	display: inline;
 	width: 100%;
-	height: 80%;
+	height: 74%;
 	margin-top: 20px;
+}
+
+.vertical-separator-bottom {
+	width: 2px;
+	height: 34px;
+	display: inline;
+	background-color: #cbcbcb;
+	margin: 0 8px 0 8px;
+	margin-bottom: -12px;
+}
+
+.vertical-separator-top {
+	width: 2px;
+	height: 30px;
+	background-color: #cbcbcb;
+	margin: 20px 8px 0 15px;
+	float: right;
 }
 
 /* xs ans md screen resolutions*/
@@ -382,25 +403,32 @@ table i {
 	#join {
 		padding-top: inherit;
 	}
+
 	#not-logged {
 		padding-top: inherit;
 	}
+
 	.container .navbar-header {
 		margin-right: 0 !important;
 		margin-left: 0 !important;
 	}
+
 	.nav-icon {
 		padding: 9px 8px 9px 8px;
 	}
+
 	nav i.fa {
 		font-size: 32px;
 	}
+
 	.vertical-center {
 		padding-top: 10px;
 	}
+
 	#img-div {
 		padding-bottom: 1em;
 	}
+
 	#img-div img {
 		height: 10%;
 	}

@@ -124,8 +124,9 @@ function getToken(callback) {
 
 	httpRequest(
 		'POST',
-		'api/get-token',
-		{ sessionName: sessionName },
+		'api/get-token', {
+			sessionName: sessionName
+		},
 		'Request of TOKEN gone WRONG:',
 		(response) => {
 			token = response[0]; // Get token from response
@@ -138,8 +139,10 @@ function getToken(callback) {
 function removeUser() {
 	httpRequest(
 		'POST',
-		'api/remove-user',
-		{ sessionName: sessionName, token: token },
+		'api/remove-user', {
+			sessionName: sessionName,
+			token: token
+		},
 		'User couldn\'t be removed from session',
 		(response) => {
 			console.warn("You have been removed from session " + sessionName);
@@ -150,8 +153,9 @@ function removeUser() {
 function closeSession() {
 	httpRequest(
 		'DELETE',
-		'api/close-session',
-		{ sessionName: sessionName },
+		'api/close-session', {
+			sessionName: sessionName
+		},
 		'Session couldn\'t be closed',
 		(response) => {
 			console.warn("Session " + sessionName + " has been closed");
@@ -162,8 +166,9 @@ function closeSession() {
 function fetchInfo() {
 	httpRequest(
 		'POST',
-		'api/fetch-info',
-		{ sessionName: sessionName },
+		'api/fetch-info', {
+			sessionName: sessionName
+		},
 		'Session couldn\'t be fetched',
 		(response) => {
 			console.warn("Session info has been fetched");
@@ -175,8 +180,7 @@ function fetchInfo() {
 function fetchAll() {
 	httpRequest(
 		'GET',
-		'api/fetch-all',
-		{},
+		'api/fetch-all', {},
 		'All session info couldn\'t be fetched',
 		(response) => {
 			console.warn("All session info has been fetched");
@@ -188,8 +192,10 @@ function fetchAll() {
 function forceDisconnect() {
 	httpRequest(
 		'DELETE',
-		'api/force-disconnect',
-		{ sessionName: sessionName, connectionId: document.getElementById('forceValue').value },
+		'api/force-disconnect', {
+			sessionName: sessionName,
+			connectionId: document.getElementById('forceValue').value
+		},
 		'Connection couldn\'t be closed',
 		(response) => {
 			console.warn("Connection has been closed");
@@ -200,8 +206,10 @@ function forceDisconnect() {
 function forceUnpublish() {
 	httpRequest(
 		'DELETE',
-		'api/force-unpublish',
-		{ sessionName: sessionName, streamId: document.getElementById('forceValue').value },
+		'api/force-unpublish', {
+			sessionName: sessionName,
+			streamId: document.getElementById('forceValue').value
+		},
 		'Stream couldn\'t be closed',
 		(response) => {
 			console.warn("Stream has been closed");
@@ -235,10 +243,17 @@ function httpRequest(method, url, body, errorMsg, callback) {
 }
 
 function startRecording() {
+	var outputMode = document.querySelector('input[name="outputMode"]:checked').value;
+	var hasAudio = !!document.querySelector("#has-audio-checkbox:checked");
+	var hasVideo = !!document.querySelector("#has-video-checkbox:checked");
 	httpRequest(
 		'POST',
-		'api/recording/start',
-		{ session: session.sessionId },
+		'api/recording/start', {
+			session: session.sessionId,
+			outputMode: outputMode,
+			hasAudio: hasAudio,
+			hasVideo: hasVideo
+		},
 		'Start recording WRONG',
 		(response) => {
 			console.log(response);
@@ -253,8 +268,9 @@ function stopRecording() {
 	var forceRecordingId = document.getElementById('forceRecordingId').value;
 	httpRequest(
 		'POST',
-		'api/recording/stop',
-		{ recording: forceRecordingId },
+		'api/recording/stop', {
+			recording: forceRecordingId
+		},
 		'Stop recording WRONG',
 		(response) => {
 			console.log(response);
@@ -267,8 +283,9 @@ function deleteRecording() {
 	var forceRecordingId = document.getElementById('forceRecordingId').value;
 	httpRequest(
 		'DELETE',
-		'api/recording/delete',
-		{ recording: forceRecordingId },
+		'api/recording/delete', {
+			recording: forceRecordingId
+		},
 		'Delete recording WRONG',
 		() => {
 			console.log("DELETE ok");
@@ -281,8 +298,7 @@ function getRecording() {
 	var forceRecordingId = document.getElementById('forceRecordingId').value;
 	httpRequest(
 		'GET',
-		'api/recording/get/' + forceRecordingId,
-		{},
+		'api/recording/get/' + forceRecordingId, {},
 		'Get recording WRONG',
 		(response) => {
 			console.log(response);
@@ -294,8 +310,7 @@ function getRecording() {
 function listRecordings() {
 	httpRequest(
 		'GET',
-		'api/recording/list',
-		{},
+		'api/recording/list', {},
 		'List recordings WRONG',
 		(response) => {
 			console.log(response);
