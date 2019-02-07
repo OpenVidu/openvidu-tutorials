@@ -83,6 +83,8 @@ public class AppTestE2e {
 	static int RECORDING_DURATION = 5; // seconds
 	static double DURATION_THRESHOLD = 10.0; // seconds
 
+	static String RECORDING_PATH = "/opt/openvidu/recordings/";
+
 	protected WebDriver driver;
 	protected WebDriverWait waiter;
 	private static OpenVidu OV;
@@ -130,9 +132,16 @@ public class AppTestE2e {
 		}
 		log.info("Duration threshold: {} s", DURATION_THRESHOLD);
 
+		String recordingPath = System.getProperty("RECORDING_PATH");
+		if (recordingPath != null) {
+			recordingPath = recordingPath.endsWith("/") ? recordingPath : recordingPath + "/";
+			RECORDING_PATH = recordingPath;
+		}
+		log.info("Using recording path {} to search for recordings", RECORDING_PATH);
+
 		try {
-			log.info("Cleaning folder /opt/openvidu/recordings");
-			FileUtils.cleanDirectory(new File("/opt/openvidu/recordings"));
+			log.info("Cleaning folder {}", RECORDING_PATH);
+			FileUtils.cleanDirectory(new File(RECORDING_PATH));
 		} catch (IOException e) {
 			log.error(e.getMessage());
 		}
@@ -245,7 +254,7 @@ public class AppTestE2e {
 
 			String extension = rec.getOutputMode().equals(OutputMode.COMPOSED) && rec.hasVideo() ? ".mp4" : ".webm";
 
-			videoFile = "/opt/openvidu/recordings/" + rec.getId() + "/" + rec.getName() + extension;
+			videoFile = RECORDING_PATH + rec.getId() + "/" + rec.getName() + extension;
 			realTimeDuration = getRealTimeDuration(videoFile);
 			entityDuration = rec.getDuration();
 
