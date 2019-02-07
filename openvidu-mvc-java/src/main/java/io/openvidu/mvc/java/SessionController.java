@@ -32,7 +32,6 @@ public class SessionController {
 	private String OPENVIDU_URL;
 	// Secret shared with our OpenVidu server
 	private String SECRET;
-	
 
 	public SessionController(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl) {
 		this.SECRET = secret;
@@ -53,7 +52,7 @@ public class SessionController {
 
 		// Role associated to this user
 		OpenViduRole role = LoginController.users.get(httpSession.getAttribute("loggedUser")).role;
-		
+
 		// Optional data to be passed to other users when this user connects to the video-call
 		// In this case, a JSON with the value we stored in the HttpSession object on login
 		String serverData = "{\"serverData\": \"" + httpSession.getAttribute("loggedUser") + "\"}";
@@ -65,10 +64,10 @@ public class SessionController {
 			// Session already exists
 			System.out.println("Existing session " + sessionName);
 			try {
-			
+
 				// Generate a new token with the recently created tokenOptions
 				String token = this.mapSessions.get(sessionName).generateToken(tokenOptions);
-				
+
 				// Update our collection storing the new token
 				this.mapSessionNamesTokens.get(sessionName).put(token, role);
 
@@ -80,7 +79,7 @@ public class SessionController {
 
 				// Return session.html template
 				return "session";
-				
+
 			} catch (Exception e) {
 				// If error just return dashboard.html template
 				model.addAttribute("username", httpSession.getAttribute("loggedUser"));
@@ -90,7 +89,7 @@ public class SessionController {
 			// New session
 			System.out.println("New session " + sessionName);
 			try {
-			
+
 				// Create a new OpenVidu Session
 				Session session = this.openVidu.createSession();
 				// Generate a new token with the recently created tokenOptions
@@ -109,7 +108,7 @@ public class SessionController {
 
 				// Return session.html template
 				return "session";
-				
+
 			} catch (Exception e) {
 				// If error just return dashboard.html template
 				model.addAttribute("username", httpSession.getAttribute("loggedUser"));
@@ -131,7 +130,7 @@ public class SessionController {
 
 		// If the session exists ("TUTORIAL" in this case)
 		if (this.mapSessions.get(sessionName) != null && this.mapSessionNamesTokens.get(sessionName) != null) {
-			
+
 			// If the token exists
 			if (this.mapSessionNamesTokens.get(sessionName).remove(token) != null) {
 				// User left the session
@@ -140,13 +139,13 @@ public class SessionController {
 					this.mapSessions.remove(sessionName);
 				}
 				return "redirect:/dashboard";
-				
+
 			} else {
 				// The TOKEN wasn't valid
 				System.out.println("Problems in the app server: the TOKEN wasn't valid");
 				return "redirect:/dashboard";
 			}
-			
+
 		} else {
 			// The SESSION does not exist
 			System.out.println("Problems in the app server: the SESSION does not exist");

@@ -49,28 +49,27 @@ public class LoginController {
 
 	@RequestMapping(value = "/dashboard", method = { RequestMethod.GET, RequestMethod.POST })
 	public String login(@RequestParam(name = "user", required = false) String user,
-				@RequestParam(name = "pass", required = false) String pass,
-				Model model, HttpSession httpSession) {
+			@RequestParam(name = "pass", required = false) String pass, Model model, HttpSession httpSession) {
 
 		// Check if the user is already logged in
 		String userName = (String) httpSession.getAttribute("loggedUser");
-		if (userName != null) { 
+		if (userName != null) {
 			// User is already logged. Immediately return dashboard
 			model.addAttribute("username", userName);
 			return "dashboard";
 		}
-		
+
 		// User wasn't logged and wants to
 		if (login(user, pass)) { // Correct user-pass
-			
-			// Validate session and return OK 
+
+			// Validate session and return OK
 			// Value stored in HttpSession allows us to identify the user in future requests
 			httpSession.setAttribute("loggedUser", user);
 			model.addAttribute("username", user);
-			
+
 			// Return dashboard.html template
 			return "dashboard";
-			
+
 		} else { // Wrong user-pass
 			// Invalidate session and redirect to index.html
 			httpSession.invalidate();
