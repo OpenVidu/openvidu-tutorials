@@ -21,27 +21,48 @@ function joinSession() {
 
 		// --- 3) Specify the actions when events take place in the session ---
 
+		session.on('connectionCreated', event => {
+			pushEvent(event);
+		});
+
+		session.on('connectionDestroyed', event => {
+			pushEvent(event);
+		});
+
 		// On every new Stream received...
-		session.on('streamCreated', (event) => {
+		session.on('streamCreated', event => {
+			pushEvent(event);
 
 			// Subscribe to the Stream to receive it
 			// HTML video will be appended to element with 'video-container' id
 			var subscriber = session.subscribe(event.stream, 'video-container');
 
 			// When the HTML video has been appended to DOM...
-			subscriber.on('videoElementCreated', (event) => {
+			subscriber.on('videoElementCreated', event => {
+				pushEvent(event);
 				// Add a new HTML element for the user's name and nickname over its video
 				updateNumVideos(1);
 			});
 
 			// When the HTML video has been appended to DOM...
-			subscriber.on('videoElementDestroyed', (event) => {
+			subscriber.on('videoElementDestroyed', event => {
+				pushEvent(event);
 				// Add a new HTML element for the user's name and nickname over its video
 				updateNumVideos(-1);
 			});
+
+			// When the subscriber stream has started playing media...
+			subscriber.on('streamPlaying', event => {
+				pushEvent(event);
+			});
 		});
 
-		session.on('sessionDisconnected', (event) => {
+		session.on('streamDestroyed', event => {
+			pushEvent(event);
+		});
+
+		session.on('sessionDisconnected', event => {
+			pushEvent(event);
 			if (event.reason !== 'disconnect') {
 				removeUser();
 			}
@@ -51,6 +72,14 @@ function joinSession() {
 				$('#join').show();
 				$('#session').hide();
 			}
+		});
+
+		session.on('recordingStarted', event => {
+			pushEvent(event);
+		});
+
+		session.on('recordingStopped', event => {
+			pushEvent(event);
 		});
 
 		// --- 4) Connect to the session passing the retrieved token and some more data from
@@ -70,28 +99,62 @@ function joinSession() {
 				var publisher = OV.initPublisher('video-container', {
 					audioSource: undefined, // The source of audio. If undefined default microphone
 					videoSource: undefined, // The source of video. If undefined default webcam
-					publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
-					publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
-					resolution: '640x480',  // The resolution of your video
-					frameRate: 30,			// The frame rate of your video
-					insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
-					mirror: false       	// Whether to mirror your local video or not
+					publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+					publishVideo: true, // Whether you want to start publishing with your video enabled or not
+					resolution: '640x480', // The resolution of your video
+					frameRate: 30, // The frame rate of your video
+					insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
+					mirror: false // Whether to mirror your local video or not
 				});
 
 				// --- 7) Specify the actions when events take place in our publisher ---
 
+				// When the publisher stream has started playing media...
+				publisher.on('accessAllowed', event => {
+					pushEvent({
+						type: 'accessAllowed'
+					});
+				});
+
+				publisher.on('accessDenied', event => {
+					pushEvent(event);
+				});
+
+				publisher.on('accessDialogOpened', event => {
+					pushEvent({
+						type: 'accessDialogOpened'
+					});
+				});
+
+				publisher.on('accessDialogClosed', event => {
+					pushEvent({
+						type: 'accessDialogClosed'
+					});
+				});
+
+				// When the publisher stream has started playing media...
+				publisher.on('streamCreated', event => {
+					pushEvent(event);
+				});
+
 				// When our HTML video has been added to DOM...
-				publisher.on('videoElementCreated', (event) => {
+				publisher.on('videoElementCreated', event => {
+					pushEvent(event);
 					updateNumVideos(1);
 					$(event.element).prop('muted', true); // Mute local video
 				});
 
 				// When the HTML video has been appended to DOM...
-				publisher.on('videoElementDestroyed', (event) => {
+				publisher.on('videoElementDestroyed', event => {
+					pushEvent(event);
 					// Add a new HTML element for the user's name and nickname over its video
 					updateNumVideos(-1);
 				});
 
+				// When the publisher stream has started playing media...
+				publisher.on('streamPlaying', event => {
+					pushEvent(event);
+				});
 
 				// --- 8) Publish your stream ---
 
@@ -128,8 +191,8 @@ function getToken(callback) {
 			sessionName: sessionName
 		},
 		'Request of TOKEN gone WRONG:',
-		(response) => {
-			token = response[0]; // Get token from response
+		res => {
+			token = res[0]; // Get token from response
 			console.warn('Request of TOKEN gone WELL (TOKEN:' + token + ')');
 			callback(token); // Continue the join operation
 		}
@@ -144,7 +207,7 @@ function removeUser() {
 			token: token
 		},
 		'User couldn\'t be removed from session',
-		(response) => {
+		res => {
 			console.warn("You have been removed from session " + sessionName);
 		}
 	);
@@ -157,7 +220,7 @@ function closeSession() {
 			sessionName: sessionName
 		},
 		'Session couldn\'t be closed',
-		(response) => {
+		res => {
 			console.warn("Session " + sessionName + " has been closed");
 		}
 	);
@@ -170,9 +233,9 @@ function fetchInfo() {
 			sessionName: sessionName
 		},
 		'Session couldn\'t be fetched',
-		(response) => {
+		res => {
 			console.warn("Session info has been fetched");
-			$('#text-area').text(JSON.stringify(response, null, "\t"));
+			$('#textarea-http').text(JSON.stringify(res, null, "\t"));
 		}
 	);
 }
@@ -182,9 +245,9 @@ function fetchAll() {
 		'GET',
 		'api/fetch-all', {},
 		'All session info couldn\'t be fetched',
-		(response) => {
+		res => {
 			console.warn("All session info has been fetched");
-			$('#text-area').text(JSON.stringify(response, null, "\t"));
+			$('#textarea-http').text(JSON.stringify(res, null, "\t"));
 		}
 	);
 }
@@ -197,7 +260,7 @@ function forceDisconnect() {
 			connectionId: document.getElementById('forceValue').value
 		},
 		'Connection couldn\'t be closed',
-		(response) => {
+		res => {
 			console.warn("Connection has been closed");
 		}
 	);
@@ -211,14 +274,14 @@ function forceUnpublish() {
 			streamId: document.getElementById('forceValue').value
 		},
 		'Stream couldn\'t be closed',
-		(response) => {
+		res => {
 			console.warn("Stream has been closed");
 		}
 	);
 }
 
 function httpRequest(method, url, body, errorMsg, callback) {
-	$('#text-area').text('');
+	$('#textarea-http').text('');
 	var http = new XMLHttpRequest();
 	http.open(method, url, true);
 	http.setRequestHeader('Content-type', 'application/json');
@@ -236,16 +299,16 @@ function httpRequest(method, url, body, errorMsg, callback) {
 			} else {
 				console.warn(errorMsg + ' (' + http.status + ')');
 				console.warn(http.responseText);
-				$('#text-area').text(errorMsg + ": HTTP " + http.status + " (" + http.responseText + ")");
+				$('#textarea-http').text(errorMsg + ": HTTP " + http.status + " (" + http.responseText + ")");
 			}
 		}
 	}
 }
 
 function startRecording() {
-	var outputMode = document.querySelector('input[name="outputMode"]:checked').value;
-	var hasAudio = !!document.querySelector("#has-audio-checkbox:checked");
-	var hasVideo = !!document.querySelector("#has-video-checkbox:checked");
+	var outputMode = $('input[name=outputMode]:checked').val();
+	var hasAudio = $('#has-audio-checkbox').prop('checked');
+	var hasVideo = $('#has-video-checkbox').prop('checked');
 	httpRequest(
 		'POST',
 		'api/recording/start', {
@@ -255,11 +318,11 @@ function startRecording() {
 			hasVideo: hasVideo
 		},
 		'Start recording WRONG',
-		(response) => {
-			console.log(response);
-			document.getElementById('forceRecordingId').value = response.id;
+		res => {
+			console.log(res);
+			document.getElementById('forceRecordingId').value = res.id;
 			checkBtnsRecordings();
-			$('#text-area').text(JSON.stringify(response, null, "\t"));
+			$('#textarea-http').text(JSON.stringify(res, null, "\t"));
 		}
 	);
 }
@@ -272,9 +335,9 @@ function stopRecording() {
 			recording: forceRecordingId
 		},
 		'Stop recording WRONG',
-		(response) => {
-			console.log(response);
-			$('#text-area').text(JSON.stringify(response, null, "\t"));
+		res => {
+			console.log(res);
+			$('#textarea-http').text(JSON.stringify(res, null, "\t"));
 		}
 	);
 }
@@ -287,9 +350,9 @@ function deleteRecording() {
 			recording: forceRecordingId
 		},
 		'Delete recording WRONG',
-		() => {
+		res => {
 			console.log("DELETE ok");
-			$('#text-area').text("DELETE ok");
+			$('#textarea-http').text("DELETE ok");
 		}
 	);
 }
@@ -300,9 +363,9 @@ function getRecording() {
 		'GET',
 		'api/recording/get/' + forceRecordingId, {},
 		'Get recording WRONG',
-		(response) => {
-			console.log(response);
-			$('#text-area').text(JSON.stringify(response, null, "\t"));
+		res => {
+			console.log(res);
+			$('#textarea-http').text(JSON.stringify(res, null, "\t"));
 		}
 	);
 }
@@ -312,9 +375,9 @@ function listRecordings() {
 		'GET',
 		'api/recording/list', {},
 		'List recordings WRONG',
-		(response) => {
-			console.log(response);
-			$('#text-area').text(JSON.stringify(response, null, "\t"));
+		res => {
+			console.log(res);
+			$('#textarea-http').text(JSON.stringify(res, null, "\t"));
 		}
 	);
 }
@@ -324,6 +387,8 @@ function listRecordings() {
 
 
 /* APPLICATION BROWSER METHODS */
+
+events = '';
 
 window.onbeforeunload = function () { // Gracefully leave session
 	if (session) {
@@ -371,6 +436,20 @@ function checkBtnsRecordings() {
 		document.getElementById('buttonStopRecording').disabled = false;
 		document.getElementById('buttonDeleteRecording').disabled = false;
 	}
+}
+
+function pushEvent(event) {
+	events += (!events ? '' : '\n') + event.type;
+	$('#textarea-events').text(events);
+}
+
+function clearHttpTextarea() {
+	$('#textarea-http').text('');
+}
+
+function clearEventsTextarea() {
+	$('#textarea-events').text('');
+	events = '';
 }
 
 /* APPLICATION BROWSER METHODS */

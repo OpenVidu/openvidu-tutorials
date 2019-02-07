@@ -60,7 +60,7 @@
 						<input class="form-control" type="text" id="sessionName" value="SessionA" required>
 					</p>
 					<p class="text-center">
-						<button class="btn btn-lg btn-success" onclick="joinSession()">Join!</button>
+						<button class="btn btn-lg btn-success" id="join-btn" onclick="joinSession()">Join!</button>
 					</p>
 				</form>
 				<hr>
@@ -89,10 +89,10 @@
 					<input class="btn btn-md" type="button" id="buttonStartRecording" onmouseup="startRecording()" value="Start recording">
 					<form>
 						<label class="radio-inline">
-							<input type="radio" name="outputMode" value="COMPOSED" checked>COMPOSED
+							<input type="radio" name="outputMode" value="COMPOSED" id="radio-composed" checked>COMPOSED
 						</label>
 						<label class="radio-inline">
-							<input type="radio" name="outputMode" value="INDIVIDUAL">INDIVIDUAL
+							<input type="radio" name="outputMode" value="INDIVIDUAL" id="radio-individual">INDIVIDUAL
 						</label>
 					</form>
 					<form>
@@ -115,7 +115,16 @@
 					 disabled>
 					<input class="form-control" id="forceRecordingId" type="text" onkeyup="checkBtnsRecordings()">
 				</div>
-				<textarea id="text-area" readonly="true" class="form-control" name="comment">HTTP responses...</textarea>
+				<div class="textarea-container" id="textarea-http-container">
+					<button type="button" class="btn btn-outline-secondary" id="clear-http-btn" onclick="clearHttpTextarea()">Clear</button>
+					<span>HTTP responses</span>
+					<textarea id="textarea-http" readonly="true" class="form-control" name="textarea-http"></textarea>
+				</div>
+				<div class="textarea-container" id="textarea-events-container">
+					<button type="button" class="btn btn-outline-secondary" id="clear-events-btn" onclick="clearEventsTextarea()">Clear</button>
+					<span>OpenVidu events</span>
+					<textarea id="textarea-events" readonly="true" class="form-control" name="textarea-events"></textarea>
+				</div>
 			</div>
 		</div>
 	</div>

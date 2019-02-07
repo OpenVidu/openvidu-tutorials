@@ -1,9 +1,7 @@
 /* CONFIGURATION */
 
 var OpenVidu = require('openvidu-node-client').OpenVidu;
-var Session = require('openvidu-node-client').Session;
 var OpenViduRole = require('openvidu-node-client').OpenViduRole;
-var TokenOptions = require('openvidu-node-client').TokenOptions;
 
 // Check launch arguments: must receive openvidu-server URL and the secret
 if (process.argv.length != 4) {
@@ -93,40 +91,49 @@ app.post('/api/get-token', function (req, res) {
             })
             .catch(error => {
                 console.error(error);
+                if (error.message === "404") {
+                    delete mapSessions[sessionName];
+                    delete mapSessionNamesTokens[sessionName];
+                    newSession(sessionName, tokenOptions, res);
+                }
             });
     } else {
-        // New session
-        console.log('New session ' + sessionName);
-
-        // Create a new OpenVidu Session asynchronously
-        OV.createSession()
-            .then(session => {
-                // Store the new Session in the collection of Sessions
-                mapSessions[sessionName] = session;
-                // Store a new empty array in the collection of tokens
-                mapSessionNamesTokens[sessionName] = [];
-
-                // Generate a new token asynchronously with the recently created tokenOptions
-                session.generateToken(tokenOptions)
-                    .then(token => {
-
-                        // Store the new token in the collection of tokens
-                        mapSessionNamesTokens[sessionName].push(token);
-
-                        // Return the Token to the client
-                        res.status(200).send({
-                            0: token
-                        });
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        newSession(sessionName, tokenOptions, res);
     }
 });
+
+function newSession(sessionName, tokenOptions, res) {
+    // New session
+    console.log('New session ' + sessionName);
+
+    // Create a new OpenVidu Session asynchronously
+    OV.createSession()
+        .then(session => {
+            // Store the new Session in the collection of Sessions
+            mapSessions[sessionName] = session;
+            // Store a new empty array in the collection of tokens
+            mapSessionNamesTokens[sessionName] = [];
+
+            // Generate a new token asynchronously with the recently created tokenOptions
+            session.generateToken(tokenOptions)
+                .then(token => {
+
+                    // Store the new token in the collection of tokens
+                    mapSessionNamesTokens[sessionName].push(token);
+
+                    // Return the Token to the client
+                    res.status(200).send({
+                        0: token
+                    });
+                })
+                .catch(error => {
+                    console.error(error);
+                });
+        })
+        .catch(error => {
+            console.error(error);
+        });
+}
 
 // Remove user from session
 app.post('/api/remove-user', function (req, res) {
