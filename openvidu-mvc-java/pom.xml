@@ -6,15 +6,15 @@
 	<artifactId>openvidu-mvc-java</artifactId>
 	<version>2.5.0</version>
 	<packaging>jar</packaging>
-	
+
+	<name>openvidu-mvc-java</name>
+	<url>https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-mvc-java</url>
+
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.4.1.RELEASE</version>
+		<version>2.1.2.RELEASE</version>
 	</parent>
-
-	<name>openvidu-mvc-java</name>
-	<url>http://maven.apache.org</url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -28,6 +28,10 @@
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
