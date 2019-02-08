@@ -30,6 +30,7 @@ fi
 if nc -z localhost 5000; then
   echo "ERROR launching openvidu-recording-java. Port 5000 is already occupied"
   echo "You may kill all openvidu processes before running the script with this command: $ sudo kill -9 \$(ps aux | grep openvidu-recording-java | awk '{print \$2}')"
+  exit 1
 fi
 
 
