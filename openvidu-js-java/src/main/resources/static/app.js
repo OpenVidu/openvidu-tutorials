@@ -218,7 +218,6 @@ window.onbeforeunload = () => { // Gracefully leave session
 		removeUser();
 		leaveSession();
 	}
-	logOut();
 }
 
 function appendUserData(videoElement, connection) {
