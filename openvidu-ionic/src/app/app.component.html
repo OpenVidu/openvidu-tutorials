@@ -32,7 +32,7 @@
 
     <ion-fab vertical="bottom" horizontal="end" slot="fixed">
       <ion-fab-button id="settings-button" [disabled]="!mySessionId && !myUserName" (click)="presentSettingsAlert()"
-        mini color="dark">
+        size="small" color="dark">
         <ion-icon name="settings"></ion-icon>
       </ion-fab-button>
     </ion-fab>
@@ -63,7 +63,7 @@
     </ion-grid>
 
     <ion-fab vertical="bottom" horizontal="center" slot="fixed">
-      <ion-fab-button mini color="danger" (click)="leaveSession()">
+      <ion-fab-button size="small" color="danger" (click)="leaveSession()">
         <ion-icon name="power"></ion-icon>
       </ion-fab-button>
     </ion-fab>
