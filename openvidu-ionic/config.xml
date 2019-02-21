@@ -99,7 +99,7 @@
     <plugin name="cordova-plugin-ionic-keyboard" spec="^2.0.5" />
     <plugin name="cordova-plugin-android-permissions" spec="^1.0.0" />
     <plugin name="cordova-plugin-iosrtc" spec="4.0.2" />
-    <engine name="android" spec="7.1.1" />
+    <engine name="android" spec="8.0.0" />
     <engine name="ios" spec="4.5.5" />
-    <engine name="browser" spec="5.0.4" />
+    <engine name="browser" spec="6.0.0" />
 </widget>
