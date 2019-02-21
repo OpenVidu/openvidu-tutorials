@@ -40,7 +40,7 @@
     "ios-deploy": "1.9.4",
     "openvidu-browser": "2.8.0",
     "rxjs": "6.4.0",
-    "xcode": "2.0.0",
+    "xcode": "1.0.0",
     "zone.js": "0.8.29"
   },
   "optionalDependencies": {
