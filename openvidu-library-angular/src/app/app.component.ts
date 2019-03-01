@@ -20,7 +20,7 @@ export class AppComponent {
   session = false;
 
   ovSession: Session;
-  ovLocalUser: UserModel;
+  ovLocalUsers: UserModel[];
   ovLayout: OpenViduLayout;
   ovLayoutOptions: OpenViduLayoutOptions;
 
@@ -51,7 +51,7 @@ export class AppComponent {
   myMethod() {
 
     this.ovSession = this.ovSessionComponent.getSession();
-    this.ovLocalUser = this.ovSessionComponent.getLocalUser();
+    this.ovLocalUsers = this.ovSessionComponent.getLocalUsers();
     this.ovLayout = this.ovSessionComponent.getOpenviduLayout();
     this.ovLayoutOptions = this.ovSessionComponent.getOpenviduLayoutOptions();
 
