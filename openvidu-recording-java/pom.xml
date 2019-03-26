@@ -92,6 +92,12 @@
 			<version>2.4.6</version>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.openvidu</groupId>
+			<artifactId>openvidu-test-browsers</artifactId>
+			<version>1.0.0</version>
+			<scope>test</scope>
+		</dependency>
 
 	</dependencies>
 </project>
