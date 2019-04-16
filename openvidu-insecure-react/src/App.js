@@ -67,7 +67,7 @@ class App extends Component {
         if (index > -1) {
             subscribers.splice(index, 1);
             this.setState({
-                subscriber: subscribers,
+                subscribers: subscribers,
             });
         }
     }
