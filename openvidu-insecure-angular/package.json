@@ -14,7 +14,7 @@
     "@angular/platform-browser": "7.2.10",
     "@angular/platform-browser-dynamic": "7.2.10",
     "core-js": "2.6.5",
-    "openvidu-browser": "2.8.0",
+    "openvidu-browser": "2.9.0",
     "zone.js": "0.9.0"
   },
   "devDependencies": {
