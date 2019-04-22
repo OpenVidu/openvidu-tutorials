@@ -16,7 +16,7 @@ Visit [openvidu.io/docs/advanced-features/filters](http://openvidu.io/docs/advan
 
 ```bash
 # Launch OpenVidu Server
-docker run --rm -d -p 4443:4443 -e openvidu.secret=MY_SECRET openvidu/openvidu-server-kms:2.5.0
+docker run --rm -d -p 4443:4443 -e openvidu.secret=MY_SECRET openvidu/openvidu-server-kms:2.8.0
 
 # Clone and serve openvidu-filters application
 git clone https://github.com/OpenVidu/openvidu-tutorials.git

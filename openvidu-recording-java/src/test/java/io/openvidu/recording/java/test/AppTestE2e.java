@@ -19,8 +19,6 @@ package io.openvidu.recording.java.test;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -39,13 +37,8 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
-import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,6 +49,8 @@ import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.Recording;
 import io.openvidu.java.client.Recording.OutputMode;
+import io.openvidu.test.browsers.BrowserUser;
+import io.openvidu.test.browsers.ChromeUser;
 import ws.schild.jave.EncoderException;
 import ws.schild.jave.MultimediaInfo;
 import ws.schild.jave.MultimediaObject;
@@ -85,8 +80,7 @@ public class AppTestE2e {
 
 	static String RECORDING_PATH = "/opt/openvidu/recordings/";
 
-	protected WebDriver driver;
-	protected WebDriverWait waiter;
+	private BrowserUser user;
 	private static OpenVidu OV;
 
 	boolean deleteRecordings = true;
@@ -185,35 +179,13 @@ public class AppTestE2e {
 				log.error("Error listing recordings: {}", e2.getMessage());
 			}
 		}
-		driver.quit();
+		this.user.dispose();
 	}
 
-	void setupBrowser(String browser) {
-		DesiredCapabilities capabilities = DesiredCapabilities.chrome();
-		capabilities.setAcceptInsecureCerts(true);
-
-		ChromeOptions options = new ChromeOptions();
-		options.addArguments("--use-fake-ui-for-media-stream");
-		options.addArguments("--use-fake-device-for-media-stream");
-		options.addArguments("--ignore-certificate-errors");
-		options.addArguments("--autoplay-policy=no-user-gesture-required");
-		capabilities.setCapability(ChromeOptions.CAPABILITY, options);
-
-		String REMOTE_URL = System.getProperty("REMOTE_URL_CHROME");
-		if (REMOTE_URL != null) {
-			log.info("Using URL {} to connect to remote web driver", REMOTE_URL);
-			try {
-				this.driver = new RemoteWebDriver(new URL(REMOTE_URL), capabilities);
-			} catch (MalformedURLException e) {
-				e.printStackTrace();
-			}
-		} else {
-			log.info("Using local web driver");
-			this.driver = new ChromeDriver(options);
-		}
-		this.driver.manage().timeouts().setScriptTimeout(20, TimeUnit.SECONDS);
-		this.waiter = new WebDriverWait(this.driver, 10);
-		this.driver.manage().window().setSize(new Dimension(1920, 1080));
+	void setupBrowser() {
+		user = new ChromeUser("TestUser", 20, false);
+		user.getDriver().manage().timeouts().setScriptTimeout(20, TimeUnit.SECONDS);
+		user.getDriver().manage().window().setSize(new Dimension(1920, 1080));
 	}
 
 	@Test
@@ -227,13 +199,13 @@ public class AppTestE2e {
 		double entityDuration = 0;
 		String videoFile = "";
 
-		setupBrowser("chrome");
-		driver.get(APP_URL);
+		setupBrowser();
+		user.getDriver().get(APP_URL);
 
-		driver.findElement(By.id("join-btn")).click();
+		user.getDriver().findElement(By.id("join-btn")).click();
 		waitUntilEvents("connectionCreated", "videoElementCreated", "accessAllowed", "streamCreated", "streamPlaying");
 
-		driver.findElement(By.id("has-video-checkbox")).click();
+		user.getDriver().findElement(By.id("has-video-checkbox")).click();
 
 		while (durationDifferenceAcceptable && (i < NUMBER_OF_ATTEMPTS)) {
 
@@ -241,13 +213,13 @@ public class AppTestE2e {
 			log.info("Attempt {}", i + 1);
 			log.info("----------");
 
-			driver.findElement(By.id("buttonStartRecording")).click();
+			user.getDriver().findElement(By.id("buttonStartRecording")).click();
 
 			waitUntilEvents("recordingStarted");
 
 			Thread.sleep(RECORDING_DURATION * 1000);
 
-			driver.findElement(By.id("buttonStopRecording")).click();
+			user.getDriver().findElement(By.id("buttonStopRecording")).click();
 			waitUntilEvents("recordingStopped");
 
 			Recording rec = OV.listRecordings().get(0);
@@ -292,9 +264,9 @@ public class AppTestE2e {
 	}
 
 	private void waitUntilEvents(String... events) {
-		waiter.until(eventsToBe(events));
-		driver.findElement(By.id("clear-events-btn")).click();
-		waiter.until(ExpectedConditions.textToBePresentInElementLocated(By.id("textarea-events"), ""));
+		user.getWaiter().until(eventsToBe(events));
+		user.getDriver().findElement(By.id("clear-events-btn")).click();
+		user.getWaiter().until(ExpectedConditions.textToBePresentInElementLocated(By.id("textarea-events"), ""));
 	}
 
 	private ExpectedCondition<Boolean> eventsToBe(String... events) {

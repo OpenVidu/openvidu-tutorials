@@ -4,10 +4,10 @@
   "private": true,
   "dependencies": {
     "axios": "0.18.0",
-    "openvidu-browser": "2.8.0",
-    "react": "16.6.3",
-    "react-dom": "16.6.3",
-    "react-scripts": "2.1.1"
+    "openvidu-browser": "2.9.0",
+    "react": "16.8.5",
+    "react-dom": "16.8.5",
+    "react-scripts": "2.1.8"
   },
   "scripts": {
     "start": "react-scripts start",

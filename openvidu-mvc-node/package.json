@@ -17,10 +17,10 @@
   },
   "homepage": "https://github.com/OpenVidu/openvidu-tutorials#readme",
   "dependencies": {
-    "body-parser": "1.18.2",
+    "body-parser": "1.18.3",
     "ejs": "2.6.1",
-    "express": "4.16.3",
+    "express": "4.16.4",
     "express-session": "1.15.6",
-    "openvidu-node-client": "2.8.0"
+    "openvidu-node-client": "2.9.0"
   }
 }
