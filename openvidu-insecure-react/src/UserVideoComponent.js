@@ -3,9 +3,6 @@ import OpenViduVideoComponent from './OvVideo';
 import './UserVideo.css';
 
 export default class UserVideoComponent extends Component {
-    constructor(props) {
-        super(props);
-    }
 
     getNicknameTag() {
         // Gets the nickName of the user
