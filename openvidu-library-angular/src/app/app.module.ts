@@ -1,10 +1,10 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 
+import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-
-import { OpenviduSessionModule } from 'openvidu-angular';
 import { FormsModule } from '@angular/forms';
+import { OpenviduSessionModule } from 'openvidu-angular';
 
 @NgModule({
   declarations: [
@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
   ],
   imports: [
     BrowserModule,
+    AppRoutingModule,
     FormsModule,
     OpenviduSessionModule
   ],
