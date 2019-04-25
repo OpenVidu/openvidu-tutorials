@@ -17,12 +17,19 @@ function joinSession() {
     var user = document.getElementById('user').value;
     var form = document.getElementById('main');
     var webComponent = document.querySelector('openvidu-webcomponent');
+    var tokens = [];
 
     form.style.display = 'none';
     webComponent.style.display = 'block';
 
-    getToken(sessionName).then((token) => {
-        webComponent.sessionConfig = { sessionName, user, token };
+    getToken(sessionName).then((token1) => {
+        tokens.push(token1);
+        getToken(sessionName).then((token2) => {
+            tokens.push(token2);
+            webComponent.sessionConfig = { sessionName, user, tokens };
+        });
+
+        
     });
 }
 
