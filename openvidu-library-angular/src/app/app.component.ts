@@ -16,7 +16,7 @@ export class AppComponent {
   // Join form
   mySessionId = 'SessionA';
   myUserName = 'Participant' + Math.floor(Math.random() * 100);
-  token: string;
+  tokens: string[] = [];
   session = false;
 
   ovSession: Session;
@@ -31,8 +31,11 @@ export class AppComponent {
 
   joinSession() {
     this.getToken().then((token) => {
-      this.token = token;
-      this.session = true;
+      this.tokens.push(token);
+      this.getToken().then((token2) => {
+        this.tokens.push(token2);
+        this.session = true;
+      });
     });
   }
 
@@ -42,6 +45,7 @@ export class AppComponent {
 
   handlerLeaveSessionEvent(event): void {
     this.session = false;
+    this.tokens = [];
   }
 
   handlerErrorEvent(event): void {
