@@ -7,10 +7,11 @@
  */
 
 import React, { Component } from 'react';
-import { ScrollView, Button, Alert, Linking, StyleSheet, Text, View, PermissionsAndroid } from 'react-native';
+import { Platform, ScrollView, Button, Alert, Linking, StyleSheet, Text, View, PermissionsAndroid } from 'react-native';
 
 import { OpenVidu } from 'openvidu-browser';
 import { RTCView } from './node_modules/openvidu-browser/node_modules/react-native-webrtc';
+import axios from 'axios';
 
 const OPENVIDU_SERVER_URL = 'https://demos.openvidu.io:4443';
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
@@ -21,18 +22,16 @@ export default class App extends Component<Props> {
         super(props);
 
         this.state = {
-            mySessionId: '5552200',
+            mySessionId: 'SessionA',
             myUserName: 'Participant' + Math.floor(Math.random() * 100),
             session: undefined,
             mainStreamManager: undefined,
-            publisher: undefined,
             subscribers: [],
             role: 'PUBLISHER',
         };
     }
 
     componentDidMount() {
-        this.requestCameraPermission();
         this.joinSession();
     }
 
@@ -40,7 +39,7 @@ export default class App extends Component<Props> {
         this.leaveSession();
     }
 
-    async requestCameraPermission() {
+    async checkAndroidPermissions() {
         try {
             const camera = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.CAMERA, {
                 title: 'Camera Permission',
@@ -85,7 +84,7 @@ export default class App extends Component<Props> {
 
     joinSession() {
         // --- 1) Get an OpenVidu object ---
-
+        
         this.OV = new OpenVidu();
 
         // --- 2) Init a session ---
@@ -103,8 +102,9 @@ export default class App extends Component<Props> {
                     // Subscribe to the Stream to receive it. Second parameter is undefined
                     // so OpenVidu doesn't create an HTML video by its own
                     const subscriber = mySession.subscribe(event.stream, undefined);
-                    console.log('streamCreated EVENT', event.stream);
+
                     var subscribers = this.state.subscribers;
+
                     subscribers.push(subscriber);
                     // Update the state with the new subscribers
                     this.setState({
@@ -114,6 +114,7 @@ export default class App extends Component<Props> {
 
                 // On every Stream destroyed...
                 mySession.on('streamDestroyed', (event) => {
+                    event.preventDefault();
                     // Remove the stream from 'subscribers' array
                     this.deleteSubscriber(event.stream.streamManager);
                 });
@@ -128,7 +129,11 @@ export default class App extends Component<Props> {
                         mySession
                             .connect(token, { clientData: this.state.myUserName })
                             .then(() => {
-                                console.log('SESSION CONECTADA');
+                                console.log('SESSION CONNECTED');
+                                if (Platform.OS === 'android'); {
+                                    this.checkAndroidPermissions();
+                                }
+                                
                                 // --- 5) Get your own camera stream ---
                                 if (this.state.role !== 'SUBSCRIBER') {
                                     // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
@@ -141,17 +146,13 @@ export default class App extends Component<Props> {
                                         resolution: '640x480', // The resolution of your video
                                         frameRate: 30, // The frame rate of your video
                                         insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
-                                        mirror: false, // Whether to mirror your local video or not
                                     });
-
-                                    console.log('init publisher OK ', publisher);
 
                                     // --- 6) Publish your stream ---
 
                                     // Set the main video in the page to display our webcam and store our Publisher
                                     this.setState({
-                                        mainStreamManager: publisher,
-                                        publisher: publisher,
+                                        mainStreamManager: publisher
                                     });
                                     mySession.publish(publisher);
                                 }
@@ -164,6 +165,14 @@ export default class App extends Component<Props> {
                     .catch((error) => console.log('Error', error));
             },
         );
+    }
+
+    getNicknameTag(stream) {
+        // Gets the nickName of the user
+        if(JSON.parse(stream.connection.data) && JSON.parse(stream.connection.data).clientData) {
+            return JSON.parse(stream.connection.data).clientData;
+        }
+        return '';
     }
 
     deleteSubscriber(streamManager) {
@@ -193,15 +202,11 @@ export default class App extends Component<Props> {
         this.setState({
             session: undefined,
             subscribers: [],
-            mySessionId: '5552200',
+            mySessionId: 'SessionA',
             myUserName: 'Participant' + Math.floor(Math.random() * 100),
             mainStreamManager: undefined,
             publisher: undefined,
         });
-    }
-
-    addVideoElement(video) {
-        this.state.mainStreamManager.addVideoElement(video);
     }
 
     toggleCamera(){
@@ -214,15 +219,18 @@ export default class App extends Component<Props> {
             <ScrollView>
                 {this.state.mainStreamManager ? (
                     <View>
+                    <View style={styles.container}>
                         <Text>Local Stream</Text>
                         <RTCView zOrder={0}  objectFit="cover"
                             ref={(rtcVideo) => {
                                 if (!!rtcVideo) {
-                                    this.addVideoElement(rtcVideo);
+                                    this.state.mainStreamManager.addVideoElement(rtcVideo);
                                 }
                             }}
                             style={styles.selfView}
                         />
+                    </View>
+                    <View>
                         <Button
                             onLongPress={() => this.toggleCamera()}
                             onPress={() => this.toggleCamera()} 
@@ -230,21 +238,25 @@ export default class App extends Component<Props> {
                             color="#841584"
                             />
                     </View>
+                    </View>
                 ) : (
                     <View >
                         <Text>No video local</Text>
                     </View>
                 )}
 
-                <View style={styles.contentContainer}>
+                <View style={[styles.container, {flexDirection: 'row', flexWrap: 'wrap'}] }>
                     {this.state.subscribers.map((item, index) => {
                         if(!!item){
                             return (
-                                <RTCView zOrder={0} key={index} objectFit="cover" style={styles.selfView}  ref={(rtcVideo) => {
-                                    if (!!rtcVideo){
-                                        item.addVideoElement(rtcVideo);
-                                    }
-                                }} />
+                                <View key={index}>
+                                    <Text>{this.getNicknameTag(item.stream)}</Text>
+                                    <RTCView zOrder={0}  objectFit="cover" style={styles.remoteView}  ref={(rtcVideo) => {
+                                        if (!!rtcVideo){
+                                            item.addVideoElement(rtcVideo);
+                                        }
+                                    }} />
+                                </View>
                             )
                         }
                     })}
@@ -273,33 +285,28 @@ export default class App extends Component<Props> {
 
     createSession(sessionId) {
         return new Promise((resolve) => {
-            var body = JSON.stringify({ customSessionId: sessionId, role: this.state.role });
-            var data = {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
-                    'Content-Type': 'application/json',
-                },
-                body: body,
-            };
 
-            fetch(OPENVIDU_SERVER_URL + '/api/sessions', data)
+            var data = JSON.stringify({ customSessionId: sessionId });
+            axios
+                .post(OPENVIDU_SERVER_URL + '/api/sessions', data, {
+                    headers: {
+                        Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                })
                 .then((response) => {
                     console.log('CREATE SESION', response);
-                    resolve(sessionId);
-                })
-                .catch((error) => {
-                    console.log('EEEEERROR');
-                    console.log(error);
-                    if (error.status === 409) {
+                    resolve(response.data.id);
+                })     
+                .catch((response) => {
+                    console.log(response);
+                    var error = Object.assign({}, response);
+                    if (error.response.status === 409) {
                         console.log('RESOLVING WITH SESSIONID, 409');
                         resolve(sessionId);
                     } else {
-                       
-                        console.warn(
-                            'No connection to OpenVidu Server. This may be a certificate error at ' + OPENVIDU_SERVER_URL,
-                        );
+                        console.warn('No connection to OpenVidu Server. This may be a certificate error at ' + OPENVIDU_SERVER_URL);
 
                         Alert.alert(
                             'No connection to OpenVidu Server.',
@@ -331,43 +338,36 @@ export default class App extends Component<Props> {
     }
 
     createToken(sessionId) {
-        console.log('CREATE TOKEN');
         return new Promise((resolve, reject) => {
-            var body = JSON.stringify({ session: sessionId, role: this.state.role });
-            var data = {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
-                    'Content-Type': 'application/json',
-                },
-                body: body,
-            };
-            fetch(OPENVIDU_SERVER_URL + '/api/tokens', data)
+            var data = JSON.stringify({ session: sessionId });
+            axios
+                .post(OPENVIDU_SERVER_URL + '/api/tokens', data, {
+                    headers: {
+                        Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
+                        'Content-Type': 'application/json',
+                    },
+                })
                 .then((response) => {
                     console.log('TOKEN', response);
-                    return response.json();
+                    resolve(response.data.token);
                 })
-                .then((resp) => resolve(resp.token))
-                .catch((error) => console.error(error));
+                .catch((error) => reject(error));
         });
     }
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
         justifyContent: 'center',
+        alignItems: 'center',
+        flex: 1
     },
     selfView: {
         width: 200,
         height: 200,
     },
-    contentContainer: {
-        flex: 1,
-        backgroundColor: 'transparent',
-       
+    remoteView: { 
+        width: 150,
+        height: 150,
     },
 });
