@@ -7,7 +7,7 @@
  */
 
 import React, { Component } from 'react';
-import { Platform, ScrollView, Button, Alert, Linking, StyleSheet, Text, View, PermissionsAndroid } from 'react-native';
+import { Platform,TextInput, ScrollView, Button, Alert, Linking, StyleSheet, Text, View, PermissionsAndroid } from 'react-native';
 
 import { OpenVidu } from 'openvidu-browser';
 import { RTCView } from './node_modules/openvidu-browser/node_modules/react-native-webrtc';
@@ -32,7 +32,6 @@ export default class App extends Component<Props> {
     }
 
     componentDidMount() {
-        this.joinSession();
     }
 
     componentWillUnmount() {
@@ -169,7 +168,7 @@ export default class App extends Component<Props> {
 
     getNicknameTag(stream) {
         // Gets the nickName of the user
-        if(JSON.parse(stream.connection.data) && JSON.parse(stream.connection.data).clientData) {
+        if(stream.connection && JSON.parse(stream.connection.data) && JSON.parse(stream.connection.data).clientData) {
             return JSON.parse(stream.connection.data).clientData;
         }
         return '';
@@ -220,7 +219,8 @@ export default class App extends Component<Props> {
                 {this.state.mainStreamManager ? (
                     <View>
                     <View style={styles.container}>
-                        <Text>Local Stream</Text>
+                        <Text>Session: {this.state.mySessionId}</Text>
+                        <Text>{this.getNicknameTag(this.state.mainStreamManager.stream)}</Text>
                         <RTCView zOrder={0}  objectFit="cover"
                             ref={(rtcVideo) => {
                                 if (!!rtcVideo) {
@@ -240,8 +240,26 @@ export default class App extends Component<Props> {
                     </View>
                     </View>
                 ) : (
-                    <View >
-                        <Text>No video local</Text>
+                    <View style={{
+                        flex: 1,
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'stretch',
+                        height: '100%',
+                        paddingTop: 100
+                      }}>
+                        <TextInput
+                            style={{height: 40, borderColor: 'gray', borderWidth: 1}}
+                            onChangeText={(mySessionId) => this.setState({mySessionId})}
+                            value={this.state.mySessionId}
+                        />
+                        <Button
+                            onLongPress={() => this.joinSession()}
+                            onPress={() => this.joinSession()} 
+                            title="Join"
+                            color="#841584"
+                            style={{width: '100%'}}
+                            />
                     </View>
                 )}
 
