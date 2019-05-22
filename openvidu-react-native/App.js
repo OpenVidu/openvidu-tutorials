@@ -128,8 +128,8 @@ export default class App extends Component<Props> {
                         mySession
                             .connect(token, { clientData: this.state.myUserName })
                             .then(() => {
-                                console.log('SESSION CONNECTED');
-                                if (Platform.OS === 'android'); {
+                                console.log('SESSION CONNECTED', Platform);
+                                if (Platform.OS == 'android') {
                                     this.checkAndroidPermissions();
                                 }
                                 
@@ -197,15 +197,18 @@ export default class App extends Component<Props> {
         }
 
         // Empty all properties...
-        this.OV = null;
-        this.setState({
-            session: undefined,
-            subscribers: [],
-            mySessionId: 'SessionA',
-            myUserName: 'Participant' + Math.floor(Math.random() * 100),
-            mainStreamManager: undefined,
-            publisher: undefined,
-        });
+        setTimeout(() => {
+            this.OV = null;
+            this.setState({
+                session: undefined,
+                subscribers: [],
+                mySessionId: 'SessionA',
+                myUserName: 'Participant' + Math.floor(Math.random() * 100),
+                mainStreamManager: undefined,
+                publisher: undefined,
+            });
+        })
+        
     }
 
     toggleCamera(){
@@ -236,6 +239,12 @@ export default class App extends Component<Props> {
                             onPress={() => this.toggleCamera()} 
                             title="Toggle Camera"
                             color="#841584"
+                            />
+                            <Button
+                            onLongPress={() => this.leaveSession()}
+                            onPress={() => this.leaveSession()} 
+                            title="Leave Session"
+                            color="#ff0000"
                             />
                     </View>
                     </View>
@@ -378,7 +387,8 @@ const styles = StyleSheet.create({
     container: {
         justifyContent: 'center',
         alignItems: 'center',
-        flex: 1
+        flex: 1,
+        paddingTop: Platform.OS == 'ios' ? 20 : 0
     },
     selfView: {
         width: 200,
