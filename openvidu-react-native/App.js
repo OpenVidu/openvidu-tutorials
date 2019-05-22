@@ -128,7 +128,7 @@ export default class App extends Component<Props> {
                         mySession
                             .connect(token, { clientData: this.state.myUserName })
                             .then(() => {
-                                console.log('SESSION CONNECTED', Platform);
+                                
                                 if (Platform.OS == 'android') {
                                     this.checkAndroidPermissions();
                                 }
