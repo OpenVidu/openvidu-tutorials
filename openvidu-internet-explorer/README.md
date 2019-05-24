@@ -14,4 +14,35 @@ This is an adaptation of [openvidu-insecure-js](https://github.com/OpenVidu/open
 
 <!-- Visit [openvidu.io/docs/tutorials/openvidu-insecure-js/](http://openvidu.io/docs/tutorials/openvidu-insecure-js/) -->
 
+
+OpenVidu Team has been able to bring complete, standards-compliant WebRTC funcionality to Microsoft Internet Explorer desktop browser (v 11). This feature has been released thanks to [Temasys WebRTC Plugin](https://temasys.io/products/plugin/). 
+
+To use this tutorial you should follow the next steps:
+
+1) Clone the repo 
+```bash
+git clone https://github.com/OpenVidu/openvidu-tutorials.git
+```
+
+2) You will need an http web server installed in your development computer to execute the tutorial. If you have node.js installed, you can use [http-server](https://github.com/indexzero/http-server) to serve application files. It can be installed with:
+```bash
+sudo npm install -g http-server
+```
+3) Run openvidu-server as it says [here](https://openvidu.io/docs/troubleshooting/#3-i-am-using-windows-to-run-the-tutorials-develop-my-app-anything-i-should-know)
+
+4) Start the tutorial 
+```bash
+http-server openvidu-tutorials/openvidu-internet-explorer/web
+```
+
+5) Go to `localhost:8080` to test the app once the server is running. The first time you use the docker container, an alert message will suggest you accept the self-signed certificate of openvidu-server when you first try to join a video-call.
+If you have problems acceppting the cerficitate you can connect through `127.0.0.1` instead of `localhost`.
+
+Opening and using Internet Explorer with **openvidu-internet-explorer**, openvidu-brower will present an alert which will allow you install the Temasys WebTTC plugin. Once the plugin has been intalled, your browser is ready to works with OpenVidu.
+
+
+Internet Explorer (IE) is a highly restrictive browser so we have had several stones on the way. Once of these stones have been to get our user media. Trying to test openvidu-internet-explorer, opening tabs to connect our session, we have realized IE does not allow to access our webcam more than once. 
+Another restriction we have found is the ECMAScript version. IE does not support fully a ECMAScript version upper than 5 so this tutorial has been developed with ECMAScript 5.
+
+
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
