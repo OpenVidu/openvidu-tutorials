@@ -38,11 +38,11 @@ http-server openvidu-tutorials/openvidu-internet-explorer/web
 5) Go to `localhost:8080` to test the app once the server is running. The first time you use the docker container, an alert message will suggest you accept the self-signed certificate of openvidu-server when you first try to join a video-call.
 If you have problems acceppting the cerficitate you can connect through `127.0.0.1` instead of `localhost`.
 
-Opening and using Internet Explorer with **openvidu-internet-explorer**, openvidu-brower will present an alert which will allow you install the Temasys WebTTC plugin. Once the plugin has been intalled, your browser is ready to works with OpenVidu.
+First time you use this application **openvidu-internet-explorer** with Internet Explorer, openvidu-brower will present an alert which will allow you to install the Temasys WebTTC plugin. Once the plugin has been intalled, your browser is ready to work with OpenVidu.
 
+Internet Explorer (IE) is a highly restrictive browser so we have had several stones on the way. One of these stones has been to get access to client's media devices. **IE does not allow to access our webcam more than once**, so you won't be able to test the app between two different IE tabs. And, of course, you cannot access the same camera with two different browsers.
 
-Internet Explorer (IE) is a highly restrictive browser so we have had several stones on the way. Once of these stones have been to get our user media. Trying to test openvidu-internet-explorer, opening tabs to connect our session, we have realized IE does not allow to access our webcam more than once. 
-Another restriction we have found is the ECMAScript version. IE does not support fully a ECMAScript version upper than 5 so this tutorial has been developed with ECMAScript 5.
+Another restriction is the ECMAScript version. IE does not fully support a ECMAScript version upper than 5 so this tutorial has been developed with ECMAScript 5. This means that JavaScript code won't have promises and other modern JavaScript features.
 
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
