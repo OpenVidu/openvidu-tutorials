@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>OpenVidu Electron</title>
+  <link rel="styleSheet" href="style.css" type="text/css" media="screen">
+  <script src="openvidu-browser-2.9.0.js"></script>
+  <script src="axios.min.js"></script>
+</head>
+
+<body>
+  <h1>OpenVidu Electron</h1>
+  <!-- All of the Node.js APIs are available in this renderer process. -->
+  We are using Node.js <script>
+    document.write(process.versions.node)
+  </script>,
+  Chromium <script>
+    document.write(process.versions.chrome)
+  </script>,
+  and Electron <script>
+    document.write(process.versions.electron)
+  </script>
+
+  <script>
+    // You can also require other files to run in this process
+    require('./renderer.js')
+  </script>
+
+  <script src="app.js"></script>
+
+  <div id="join">
+    <h1>Join a video session</h1>
+    <form onsubmit="joinSession(); return false">
+      <p>
+        <label>Session:</label>
+        <input type="text" id="sessionId" value="SessionA" required>
+      </p>
+      <p>
+        <input id="screen-sharing" type="checkbox" name="screenshare"> Share screen?<br>
+      </p>
+      <p>
+        <input type="submit" value="JOIN">
+      </p>
+    </form>
+  </div>
+
+  <div id="session" style="display: none;">
+    <h1 id="session-header"></h1>
+    <input type="button" onclick="leaveSession()" value="LEAVE">
+    <div>
+      <div id="publisher">
+        <h3>YOU</h3>
+      </div>
+      <div id="subscriber">
+        <h3>OTHERS</h3>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>

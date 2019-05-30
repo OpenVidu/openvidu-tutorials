@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>OpenVidu Electron</title>
+
+    <style>
+        #list-of-screens {
+            margin-bottom: 60px;
+        }
+
+        #footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            height: 25px;
+            background: white;
+            text-align: right;
+            padding: 10px 0px 10px 0px;
+        }
+
+        #share-btn {
+            margin-right: 20px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h1>Share your screen</h1>
+    <div id="list-of-screens"></div>
+    <div id="footer">
+        <button id="cancel-btn" onclick="closeWindow()">Cancel</button>
+        <button id="share-btn" onclick="sendScreenSelection()" disabled>Share</button>
+    </div>
+</body>
+
+<script>
+    var availableScreens = [];
+    var htmlElements = [];
+    var selectedElement;
+
+    const {
+        desktopCapturer
+    } = require('electron')
+
+    const ipcRenderer = require('electron').ipcRenderer;
+
+    desktopCapturer.getSources({
+        types: ['window', 'screen']
+    }).then(async sources => {
+        const list = document.getElementById("list-of-screens");
+        sources.forEach(source => {
+            var el = document.createElement("div");
+            el.onclick = () => {
+                htmlElements.forEach(e => {
+                    e.style.border = "none";
+                    e.style.background = "none";
+                })
+                el.style.border = "2px solid #0088aa";
+                el.style.background = "rgba(0, 0, 0, 0.06)";
+                selectedElement = el;
+                document.getElementById("share-btn").disabled = false;
+            }
+            availableScreens.push(source);
+            htmlElements.push(el);
+            var img = document.createElement("img");
+            var name = document.createElement("span");
+            img.src = source.thumbnail.toDataURL();
+            name.innerHTML = source.name;
+            el.appendChild(img);
+            el.appendChild(name);
+            list.appendChild(el);
+        });
+    });
+
+    function sendScreenSelection() {
+        ipcRenderer.send('screen-share-selected', availableScreens[htmlElements.indexOf(selectedElement)].id);
+        closeWindow();
+    }
+
+    function closeWindow() {
+        require('electron').remote.getCurrentWindow().close();
+    }
+</script>
