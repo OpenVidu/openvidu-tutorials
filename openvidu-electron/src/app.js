@@ -78,18 +78,9 @@ function openScreenShareModal() {
     // win.webContents.openDevTools();
     win.on('close', async () => {
         if (!!screenId) {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                audio: false,
-                video: {
-                    mandatory: {
-                        chromeMediaSource: 'desktop',
-                        chromeMediaSourceId: screenId
-                    }
-                }
-            });
             showSession();
             publisher = openvidu.initPublisher("publisher", {
-                videoSource: stream.getVideoTracks()[0]
+                videoSource: "screen:" + screenId
             });
             joinSession();
         }
