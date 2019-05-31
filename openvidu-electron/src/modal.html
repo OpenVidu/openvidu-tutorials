@@ -31,7 +31,7 @@
     <h1>Share your screen</h1>
     <div id="list-of-screens"></div>
     <div id="footer">
-        <button id="cancel-btn" onclick="closeWindow()">Cancel</button>
+        <button id="cancel-btn" onclick="cancelSelection()">Cancel</button>
         <button id="share-btn" onclick="sendScreenSelection()" disabled>Share</button>
     </div>
 </body>
@@ -77,6 +77,11 @@
 
     function sendScreenSelection() {
         ipcRenderer.send('screen-share-selected', availableScreens[htmlElements.indexOf(selectedElement)].id);
+        closeWindow();
+    }
+
+    function cancelSelection() {
+        ipcRenderer.send('screen-share-selected', undefined);
         closeWindow();
     }
 

@@ -1,8 +1,9 @@
 const ipcRenderer = require('electron').ipcRenderer;
 const BrowserWindow = require('electron').remote.BrowserWindow;
 
-var OV;
+var openvidu;
 var session;
+var publisher;
 var screenId;
 var mySessionId;
 
@@ -10,13 +11,24 @@ ipcRenderer.on('screen-share-ready', (event, message) => {
     screenId = message;
 });
 
+function initPublisher() {
+
+    openvidu = new OpenVidu();
+
+    const shareScreen = document.getElementById("screen-sharing").checked;
+    if (shareScreen) {
+        openScreenShareModal();
+    } else {
+        publisher = openvidu.initPublisher("publisher");
+        joinSession();
+    }
+}
+
 function joinSession() {
 
     mySessionId = document.getElementById("sessionId").value;
 
-    OV = new OpenVidu();
-    session = OV.initSession();
-
+    session = openvidu.initSession();
     session.on("streamCreated", function (event) {
         session.subscribe(event.stream, "subscriber");
     });
@@ -24,12 +36,8 @@ function joinSession() {
     getToken(mySessionId).then(token => {
         session.connect(token)
             .then(() => {
-                const shareScreen = document.getElementById("screen-sharing").checked;
-                if (shareScreen) {
-                    openScreenShareModal();
-                } else {
-                    showSession();
-                    var publisher = OV.initPublisher("publisher");
+                showSession();
+                if (!!publisher) {
                     session.publish(publisher);
                 }
             })
@@ -69,20 +77,22 @@ function openScreenShareModal() {
     win.setMenu(null);
     // win.webContents.openDevTools();
     win.on('close', async () => {
-        const stream = await navigator.mediaDevices.getUserMedia({
-            audio: false,
-            video: {
-                mandatory: {
-                    chromeMediaSource: 'desktop',
-                    chromeMediaSourceId: screenId
+        if (!!screenId) {
+            const stream = await navigator.mediaDevices.getUserMedia({
+                audio: false,
+                video: {
+                    mandatory: {
+                        chromeMediaSource: 'desktop',
+                        chromeMediaSourceId: screenId
+                    }
                 }
-            }
-        });
-        showSession();
-        var publisher = OV.initPublisher("publisher", {
-            videoSource: stream.getVideoTracks()[0]
-        });
-        session.publish(publisher);
+            });
+            showSession();
+            publisher = openvidu.initPublisher("publisher", {
+                videoSource: stream.getVideoTracks()[0]
+            });
+            joinSession();
+        }
     });
 
     var theUrl = 'file://' + __dirname + '/modal.html'
