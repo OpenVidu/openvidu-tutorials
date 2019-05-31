@@ -5,8 +5,8 @@
   <meta charset="UTF-8">
   <title>OpenVidu Electron</title>
   <link rel="styleSheet" href="style.css" type="text/css" media="screen">
-  <script src="openvidu-browser-2.9.0.js"></script>
-  <script src="axios.min.js"></script>
+  <script src="libraries/openvidu-browser-2.9.0.min.js"></script>
+  <script src="libraries/axios.min.js"></script>
 </head>
 
 <body>
@@ -20,11 +20,6 @@
   </script>,
   and Electron <script>
     document.write(process.versions.electron)
-  </script>
-
-  <script>
-    // You can also require other files to run in this process
-    require('./renderer.js')
   </script>
 
   <script src="app.js"></script>
