@@ -4,11 +4,15 @@ const BrowserWindow = require('electron').remote.BrowserWindow;
 var openvidu;
 var session;
 var publisher;
-var screenId;
 var mySessionId;
 
 ipcRenderer.on('screen-share-ready', (event, message) => {
-    screenId = message;
+    // User has chosen a screen to share. screenId is message parameter
+    showSession();
+    publisher = openvidu.initPublisher("publisher", {
+        videoSource: "screen:" + message
+    });
+    joinSession();
 });
 
 function initPublisher() {
@@ -76,15 +80,6 @@ function openScreenShareModal() {
     })
     win.setMenu(null);
     // win.webContents.openDevTools();
-    win.on('close', async () => {
-        if (!!screenId) {
-            showSession();
-            publisher = openvidu.initPublisher("publisher", {
-                videoSource: "screen:" + screenId
-            });
-            joinSession();
-        }
-    });
 
     var theUrl = 'file://' + __dirname + '/modal.html'
     win.loadURL(theUrl);
