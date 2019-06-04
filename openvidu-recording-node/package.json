@@ -19,6 +19,6 @@
   "dependencies": {
     "body-parser": "1.18.3",
     "express": "4.16.4",
-    "openvidu-node-client": "2.9.0"
+    "openvidu-node-client": "2.10.0"
   }
 }
