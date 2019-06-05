@@ -14,12 +14,11 @@ This is an adaptation of [openvidu-insecure-js](https://github.com/OpenVidu/open
 
 <!-- Visit [openvidu.io/docs/tutorials/openvidu-insecure-js/](http://openvidu.io/docs/tutorials/openvidu-insecure-js/) -->
 
-
-OpenVidu Team has been able to bring complete, standards-compliant WebRTC funcionality to Microsoft Internet Explorer desktop browser (v 11). This feature has been released thanks to [Temasys WebRTC Plugin](https://temasys.io/products/plugin/). 
+OpenVidu Team has been able to bring complete, standards-compliant WebRTC funcionality to Microsoft Internet Explorer desktop browser (v 11). This feature has been released thanks to [Temasys WebRTC Plugin](https://temasys.io/products/plugin/).
 
 To use this tutorial you should follow the next steps:
 
-1) Clone the repo 
+1) Clone the repo
 ```bash
 git clone https://github.com/OpenVidu/openvidu-tutorials.git
 ```
@@ -30,15 +29,15 @@ sudo npm install -g http-server
 ```
 3) Run openvidu-server as it says [here](https://openvidu.io/docs/troubleshooting/#3-i-am-using-windows-to-run-the-tutorials-develop-my-app-anything-i-should-know)
 
-4) Start the tutorial 
+4) Start the tutorial
 ```bash
 http-server openvidu-tutorials/openvidu-internet-explorer/web
 ```
 
 5) Go to `localhost:8080` to test the app once the server is running. The first time you use the docker container, an alert message will suggest you accept the self-signed certificate of openvidu-server when you first try to join a video-call.
-If you have problems acceppting the cerficitate you can connect through `127.0.0.1` instead of `localhost`.
+If you have problems accepting the certificate you can connect through `127.0.0.1` instead of `localhost`.
 
-First time you use this application **openvidu-internet-explorer** with Internet Explorer, openvidu-brower will present an alert which will allow you to install the Temasys WebTTC plugin. Once the plugin has been intalled, your browser is ready to work with OpenVidu.
+First time you use this application **openvidu-internet-explorer** with Internet Explorer, openvidu-browser will present an alert which will allow you to install the Temasys WebTTC plugin. Once the plugin has been installed, your browser is ready to work with OpenVidu.
 
 Internet Explorer (IE) is a highly restrictive browser so we have had several stones on the way. One of these stones has been to get access to client's media devices. **IE does not allow to access our webcam more than once**, so you won't be able to test the app between two different IE tabs. And, of course, you cannot access the same camera with two different browsers.
 
