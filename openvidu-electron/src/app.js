@@ -30,20 +30,18 @@ function initPublisher() {
 
 function joinSession() {
 
-    mySessionId = document.getElementById("sessionId").value;
-
     session = openvidu.initSession();
     session.on("streamCreated", function (event) {
         session.subscribe(event.stream, "subscriber");
     });
 
+    mySessionId = document.getElementById("sessionId").value;
+
     getToken(mySessionId).then(token => {
         session.connect(token)
             .then(() => {
                 showSession();
-                if (!!publisher) {
-                    session.publish(publisher);
-                }
+                session.publish(publisher);
             })
             .catch(error => {
                 console.log("There was an error connecting to the session:", error.code, error.message);

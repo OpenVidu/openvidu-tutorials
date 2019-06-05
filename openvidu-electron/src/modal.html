@@ -47,13 +47,16 @@
 
     const ipcRenderer = require('electron').ipcRenderer;
 
+    // Call Electron API to list all available screens
     desktopCapturer.getSources({
         types: ['window', 'screen']
     }).then(async sources => {
         const list = document.getElementById("list-of-screens");
         sources.forEach(source => {
+            // Add new element to the list with the thumbnail of the screen
             var el = document.createElement("div");
             el.onclick = () => {
+                // Style the new selected screen and store it as the current selection
                 htmlElements.forEach(e => {
                     e.style.border = "none";
                     e.style.background = "none";
@@ -63,12 +66,14 @@
                 selectedElement = el;
                 document.getElementById("share-btn").disabled = false;
             }
+            // Store the new source and the new created HTML element
             availableScreens.push(source);
             htmlElements.push(el);
             var img = document.createElement("img");
             var name = document.createElement("span");
             img.src = source.thumbnail.toDataURL();
             name.innerHTML = source.name;
+            // Append new elements to the template
             el.appendChild(img);
             el.appendChild(name);
             list.appendChild(el);

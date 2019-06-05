@@ -3,7 +3,7 @@
   "productName": "openvidu-electron",
   "version": "1.0.0",
   "description": "OpenVidu Electron Tutorial",
-  "main": "src/index.js",
+  "main": "src/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
