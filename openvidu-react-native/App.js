@@ -28,6 +28,7 @@ export default class App extends Component<Props> {
             mainStreamManager: undefined,
             subscribers: [],
             role: 'PUBLISHER',
+            mirror: false
         };
     }
 
@@ -135,22 +136,25 @@ export default class App extends Component<Props> {
                                 
                                 // --- 5) Get your own camera stream ---
                                 if (this.state.role !== 'SUBSCRIBER') {
-                                    // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
-                                    // element: we will manage it on our own) and with the desired properties
-                                    let publisher = this.OV.initPublisher(undefined, {
+
+                                    const properties = {
                                         audioSource: undefined, // The source of audio. If undefined default microphone
-                                        videoSource: undefined, // The source of video. If undefined default webcam
+                                        videoSource: 'user', // The source of video. If undefined default webcam
                                         publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
                                         publishVideo: true, // Whether you want to start publishing with your video enabled or not
                                         resolution: '640x480', // The resolution of your video
                                         frameRate: 30, // The frame rate of your video
                                         insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
-                                    });
+                                    }
+                                    // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
+                                    // element: we will manage it on our own) and with the desired properties
+                                    let publisher = this.OV.initPublisher(undefined, properties);
 
                                     // --- 6) Publish your stream ---
 
                                     // Set the main video in the page to display our webcam and store our Publisher
                                     this.setState({
+                                        mirror: properties.videoSource === 'user',
                                         mainStreamManager: publisher
                                     });
                                     mySession.publish(publisher);
@@ -208,11 +212,11 @@ export default class App extends Component<Props> {
                 publisher: undefined,
             });
         })
-        
     }
 
     toggleCamera(){
         this.state.mainStreamManager.stream.getMediaStream().getVideoTracks()[0]._switchCamera();
+        this.setState({mirror: !this.state.mirror});
     }
 
     render() {
@@ -224,7 +228,7 @@ export default class App extends Component<Props> {
                     <View style={styles.container}>
                         <Text>Session: {this.state.mySessionId}</Text>
                         <Text>{this.getNicknameTag(this.state.mainStreamManager.stream)}</Text>
-                        <RTCView zOrder={0}  objectFit="cover"
+                        <RTCView zOrder={0}  objectFit="cover" mirror={this.state.mirror}
                             ref={(rtcVideo) => {
                                 if (!!rtcVideo) {
                                     this.state.mainStreamManager.addVideoElement(rtcVideo);
