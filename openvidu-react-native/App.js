@@ -28,7 +28,8 @@ export default class App extends Component<Props> {
             mainStreamManager: undefined,
             subscribers: [],
             role: 'PUBLISHER',
-            mirror: false
+            mirror: false,
+            videoSource: "user",
         };
     }
 
@@ -139,7 +140,7 @@ export default class App extends Component<Props> {
 
                                     const properties = {
                                         audioSource: undefined, // The source of audio. If undefined default microphone
-                                        videoSource: 'user', // The source of video. If undefined default webcam
+                                        videoSource: this.state.videoSource, // The source of video. If undefined default webcam
                                         publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
                                         publishVideo: true, // Whether you want to start publishing with your video enabled or not
                                         resolution: '640x480', // The resolution of your video
@@ -154,7 +155,7 @@ export default class App extends Component<Props> {
 
                                     // Set the main video in the page to display our webcam and store our Publisher
                                     this.setState({
-                                        mirror: properties.videoSource === 'user',
+                                        mirror: this.state.videoSource === 'user',
                                         mainStreamManager: publisher
                                     });
                                     mySession.publish(publisher);
@@ -215,8 +216,41 @@ export default class App extends Component<Props> {
     }
 
     toggleCamera(){
+        /**
+         * _switchCamera() Method provided by react-native-webrtc:
+         * This function allows to switch the front / back cameras in a video track on the fly, without the need for adding / removing tracks or renegotiating
+         */
+    
         this.state.mainStreamManager.stream.getMediaStream().getVideoTracks()[0]._switchCamera();
         this.setState({mirror: !this.state.mirror});
+        /**
+         * Traditional way:
+         * Renegotiating stream and init new publisher to change the camera
+         */
+        /*
+        let video = this.state.videoSource === "environment" ? "user" : "environment";        
+        const properties = {
+            audioSource: undefined,
+            videoSource: video,
+            publishAudio: true,
+            publishVideo: true,
+            resolution: '640x480',
+            frameRate: 30,
+            insertMode: 'APPEND',
+        }
+        
+        let publisher = this.OV.initPublisher(undefined, properties);
+
+        this.state.session.unpublish(this.state.mainStreamManager);
+
+        this.setState({
+            videoSource : video,
+            mainStreamManager: publisher,
+            mirror: !this.state.mirror
+        });
+        this.state.session.publish(publisher);
+        */
+       
     }
 
     render() {
