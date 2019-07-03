@@ -28,8 +28,8 @@ export default class App extends Component<Props> {
             mainStreamManager: undefined,
             subscribers: [],
             role: 'PUBLISHER',
-            mirror: false,
-            videoSource: "user",
+            mirror: true,
+            videoSource: undefined,
         };
     }
 
@@ -140,7 +140,7 @@ export default class App extends Component<Props> {
 
                                     const properties = {
                                         audioSource: undefined, // The source of audio. If undefined default microphone
-                                        videoSource: this.state.videoSource, // The source of video. If undefined default webcam
+                                        videoSource: undefined, // The source of video. If undefined default webcam
                                         publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
                                         publishVideo: true, // Whether you want to start publishing with your video enabled or not
                                         resolution: '640x480', // The resolution of your video
@@ -155,8 +155,8 @@ export default class App extends Component<Props> {
 
                                     // Set the main video in the page to display our webcam and store our Publisher
                                     this.setState({
-                                        mirror: this.state.videoSource === 'user',
-                                        mainStreamManager: publisher
+                                        mainStreamManager: publisher,
+                                        videoSource: !properties.videoSource ? '1' : properties.videoSource // 0: back camera | 1: user camera | 
                                     });
                                     mySession.publish(publisher);
                                 }
@@ -216,6 +216,7 @@ export default class App extends Component<Props> {
     }
 
     toggleCamera(){
+
         /**
          * _switchCamera() Method provided by react-native-webrtc:
          * This function allows to switch the front / back cameras in a video track on the fly, without the need for adding / removing tracks or renegotiating
@@ -223,34 +224,37 @@ export default class App extends Component<Props> {
     
         this.state.mainStreamManager.stream.getMediaStream().getVideoTracks()[0]._switchCamera();
         this.setState({mirror: !this.state.mirror});
+
         /**
          * Traditional way:
          * Renegotiating stream and init new publisher to change the camera
          */
         /*
-        let video = this.state.videoSource === "environment" ? "user" : "environment";        
-        const properties = {
-            audioSource: undefined,
-            videoSource: video,
-            publishAudio: true,
-            publishVideo: true,
-            resolution: '640x480',
-            frameRate: 30,
-            insertMode: 'APPEND',
-        }
-        
-        let publisher = this.OV.initPublisher(undefined, properties);
+        this.OV.getDevices().then(devices => {
+            console.log("DEVICES => ", devices);
+            let device = devices.filter(device => device.kind === 'videoinput' && device.deviceId !== this.state.videoSource)[0]
+            const properties = {
+                audioSource: undefined,
+                videoSource: device.deviceId,
+                publishAudio: true,
+                publishVideo: true,
+                resolution: '640x480',
+                frameRate: 30,
+                insertMode: 'APPEND',
+            }
+            
+            let publisher = this.OV.initPublisher(undefined, properties);
 
-        this.state.session.unpublish(this.state.mainStreamManager);
+            this.state.session.unpublish(this.state.mainStreamManager);
 
-        this.setState({
-            videoSource : video,
-            mainStreamManager: publisher,
-            mirror: !this.state.mirror
+            this.setState({
+                videoSource : device.deviceId,
+                mainStreamManager: publisher,
+                mirror: !this.state.mirror
+            });
+            this.state.session.publish(publisher);
         });
-        this.state.session.publish(publisher);
         */
-       
     }
 
     render() {
