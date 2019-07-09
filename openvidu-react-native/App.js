@@ -7,7 +7,19 @@
  */
 
 import React, { Component } from 'react';
-import { Platform,TextInput, ScrollView, Button, Alert, Linking, StyleSheet, Text, View, PermissionsAndroid } from 'react-native';
+import {
+    Platform,
+    TextInput,
+    ScrollView,
+    Button,
+    Alert,
+    Linking,
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    PermissionsAndroid,
+} from 'react-native';
 
 import { OpenVidu } from 'openvidu-browser';
 import { RTCView } from './node_modules/openvidu-browser/node_modules/react-native-webrtc';
@@ -15,6 +27,7 @@ import axios from 'axios';
 
 const OPENVIDU_SERVER_URL = 'https://demos.openvidu.io:4443';
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
+
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -30,11 +43,11 @@ export default class App extends Component<Props> {
             role: 'PUBLISHER',
             mirror: true,
             videoSource: undefined,
+            camera: true,
         };
     }
 
-    componentDidMount() {
-    }
+    componentDidMount() {}
 
     componentWillUnmount() {
         this.leaveSession();
@@ -85,7 +98,7 @@ export default class App extends Component<Props> {
 
     joinSession() {
         // --- 1) Get an OpenVidu object ---
-        
+
         this.OV = new OpenVidu();
 
         // --- 2) Init a session ---
@@ -130,14 +143,12 @@ export default class App extends Component<Props> {
                         mySession
                             .connect(token, { clientData: this.state.myUserName })
                             .then(() => {
-                                
                                 if (Platform.OS == 'android') {
                                     this.checkAndroidPermissions();
                                 }
-                                
+
                                 // --- 5) Get your own camera stream ---
                                 if (this.state.role !== 'SUBSCRIBER') {
-
                                     const properties = {
                                         audioSource: undefined, // The source of audio. If undefined default microphone
                                         videoSource: undefined, // The source of video. If undefined default webcam
@@ -146,7 +157,7 @@ export default class App extends Component<Props> {
                                         resolution: '640x480', // The resolution of your video
                                         frameRate: 30, // The frame rate of your video
                                         insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
-                                    }
+                                    };
                                     // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
                                     // element: we will manage it on our own) and with the desired properties
                                     let publisher = this.OV.initPublisher(undefined, properties);
@@ -156,11 +167,10 @@ export default class App extends Component<Props> {
                                     // Set the main video in the page to display our webcam and store our Publisher
                                     this.setState({
                                         mainStreamManager: publisher,
-                                        videoSource: !properties.videoSource ? '1' : properties.videoSource // 0: back camera | 1: user camera | 
+                                        videoSource: !properties.videoSource ? '1' : properties.videoSource, // 0: back camera | 1: user camera |
                                     });
                                     mySession.publish(publisher);
                                 }
-                                
                             })
                             .catch((error) => {
                                 console.log('There was an error connecting to the session:', error.code, error.message);
@@ -173,7 +183,7 @@ export default class App extends Component<Props> {
 
     getNicknameTag(stream) {
         // Gets the nickName of the user
-        if(stream.connection && JSON.parse(stream.connection.data) && JSON.parse(stream.connection.data).clientData) {
+        if (stream.connection && JSON.parse(stream.connection.data) && JSON.parse(stream.connection.data).clientData) {
             return JSON.parse(stream.connection.data).clientData;
         }
         return '';
@@ -212,18 +222,20 @@ export default class App extends Component<Props> {
                 mainStreamManager: undefined,
                 publisher: undefined,
             });
-        })
+        });
     }
 
-    toggleCamera(){
-
+    toggleCamera() {
         /**
          * _switchCamera() Method provided by react-native-webrtc:
          * This function allows to switch the front / back cameras in a video track on the fly, without the need for adding / removing tracks or renegotiating
          */
-    
-        this.state.mainStreamManager.stream.getMediaStream().getVideoTracks()[0]._switchCamera();
-        this.setState({mirror: !this.state.mirror});
+
+        this.state.mainStreamManager.stream
+            .getMediaStream()
+            .getVideoTracks()[0]
+            ._switchCamera();
+        this.setState({ mirror: !this.state.mirror });
 
         /**
          * Traditional way:
@@ -257,76 +269,105 @@ export default class App extends Component<Props> {
         */
     }
 
-    render() {
+    muteUnmuteCamera() {
+        this.state.mainStreamManager.publishVideo(!this.state.camera);
+        this.setState({ camera: !this.state.camera });
+    }
 
+    render() {
         return (
             <ScrollView>
                 {this.state.mainStreamManager ? (
                     <View>
-                    <View style={styles.container}>
-                        <Text>Session: {this.state.mySessionId}</Text>
-                        <Text>{this.getNicknameTag(this.state.mainStreamManager.stream)}</Text>
-                        <RTCView zOrder={0}  objectFit="cover" mirror={this.state.mirror}
-                            ref={(rtcVideo) => {
-                                if (!!rtcVideo) {
-                                    this.state.mainStreamManager.addVideoElement(rtcVideo);
-                                }
-                            }}
-                            style={styles.selfView}
-                        />
-                    </View>
-                    <View>
-                        <Button
-                            onLongPress={() => this.toggleCamera()}
-                            onPress={() => this.toggleCamera()} 
-                            title="Toggle Camera"
-                            color="#841584"
+                        <View style={styles.container}>
+                            <Text>Session: {this.state.mySessionId}</Text>
+                            <Text>{this.getNicknameTag(this.state.mainStreamManager.stream)}</Text>
+                            <RTCView
+                                zOrder={0}
+                                objectFit="cover"
+                                mirror={this.state.mirror}
+                                ref={(rtcVideo) => {
+                                    if (!!rtcVideo) {
+                                        this.state.mainStreamManager.addVideoElement(rtcVideo);
+                                    }
+                                }}
+                                style={styles.selfView}
                             />
-                            <Button
-                            onLongPress={() => this.leaveSession()}
-                            onPress={() => this.leaveSession()} 
-                            title="Leave Session"
-                            color="#ff0000"
-                            />
-                    </View>
+                        </View>
+                        <View>
+                            <View style={styles.button}>
+                                <Button
+                                    onLongPress={() => this.toggleCamera()}
+                                    onPress={() => this.toggleCamera()}
+                                    title="Toggle Camera"
+                                    color="#841584"
+                                />
+                            </View>
+                            <View style={styles.button}>
+                                <Button
+                                    onLongPress={() => this.muteUnmuteCamera()}
+                                    onPress={() => this.muteUnmuteCamera()}
+                                    title={this.state.camera ? 'Mute Camera' : 'Unmute Camera'}
+                                    color="#00cbff"
+                                />
+                            </View>
+
+                            <View style={styles.button}>
+                                <Button
+                                    onLongPress={() => this.leaveSession()}
+                                    onPress={() => this.leaveSession()}
+                                    title="Leave Session"
+                                    color="#ff0000"
+                                />
+                            </View>
+                        </View>
                     </View>
                 ) : (
-                    <View style={{
-                        flex: 1,
-                        flexDirection: 'column',
-                        justifyContent: 'center',
-                        alignItems: 'stretch',
-                        height: '100%',
-                        paddingTop: 100
-                      }}>
-                        <TextInput
-                            style={{height: 40, borderColor: 'gray', borderWidth: 1}}
-                            onChangeText={(mySessionId) => this.setState({mySessionId})}
-                            value={this.state.mySessionId}
-                        />
-                        <Button
-                            onLongPress={() => this.joinSession()}
-                            onPress={() => this.joinSession()} 
-                            title="Join"
-                            color="#841584"
-                            style={{width: '100%'}}
+                    <View>
+                        <View style={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            padding: 20}}>
+                                
+                            <Image style={styles.img} source={require('./resources/images/openvidu_grey_bg_transp_cropped.png')} />
+                        </View>
+                        <View style={{ justifyContent: 'center', alignItems: 'center'}}>
+                            <TextInput
+                                style={{  width: '90%', height: 40, borderColor: 'gray', borderWidth: 1 }}
+                                onChangeText={(mySessionId) => this.setState({ mySessionId })}
+                                value={this.state.mySessionId}
                             />
+                        </View>
+
+                        <View style={styles.button}>
+                            <Button
+                                onLongPress={() => this.joinSession()}
+                                onPress={() => this.joinSession()}
+                                title="Join"
+                                color="#841584"
+                            />
+                        </View>
                     </View>
                 )}
 
-                <View style={[styles.container, {flexDirection: 'row', flexWrap: 'wrap'}] }>
+                <View style={[styles.container, { flexDirection: 'row', flexWrap: 'wrap' }]}>
                     {this.state.subscribers.map((item, index) => {
-                        if(!!item){
+                        if (!!item) {
                             return (
                                 <View key={index}>
                                     <Text>{this.getNicknameTag(item.stream)}</Text>
-                                    <RTCView zOrder={0}  objectFit="cover" style={styles.remoteView}  ref={(rtcVideo) => {
-                                        if (!!rtcVideo){
-                                            item.addVideoElement(rtcVideo);
-                                        }
-                                    }} />
+                                    <RTCView
+                                        zOrder={0}
+                                        objectFit="cover"
+                                        style={styles.remoteView}
+                                        ref={(rtcVideo) => {
+                                            if (!!rtcVideo) {
+                                                item.addVideoElement(rtcVideo);
+                                            }
+                                        }}
+                                    />
                                 </View>
-                            )
+                            );
                         }
                     })}
                 </View>
@@ -354,20 +395,19 @@ export default class App extends Component<Props> {
 
     createSession(sessionId) {
         return new Promise((resolve) => {
-
             var data = JSON.stringify({ customSessionId: sessionId });
             axios
                 .post(OPENVIDU_SERVER_URL + '/api/sessions', data, {
                     headers: {
                         Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
                         'Content-Type': 'application/json',
-                        'Accept': 'application/json'
+                        Accept: 'application/json',
                     },
                 })
                 .then((response) => {
                     console.log('CREATE SESION', response);
                     resolve(response.data.id);
-                })     
+                })
                 .catch((response) => {
                     console.log(response);
                     var error = Object.assign({}, response);
@@ -375,7 +415,9 @@ export default class App extends Component<Props> {
                         console.log('RESOLVING WITH SESSIONID, 409');
                         resolve(sessionId);
                     } else {
-                        console.warn('No connection to OpenVidu Server. This may be a certificate error at ' + OPENVIDU_SERVER_URL);
+                        console.warn(
+                            'No connection to OpenVidu Server. This may be a certificate error at ' + OPENVIDU_SERVER_URL,
+                        );
 
                         Alert.alert(
                             'No connection to OpenVidu Server.',
@@ -430,14 +472,22 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         flex: 1,
-        paddingTop: Platform.OS == 'ios' ? 20 : 0
+        paddingTop: Platform.OS == 'ios' ? 20 : 0,
     },
     selfView: {
-        width: 200,
-        height: 200,
+        width: '100%',
+        height: 300,
     },
-    remoteView: { 
+    remoteView: {
         width: 150,
         height: 150,
     },
+    button: {
+        padding: 10,
+    },
+    img: {
+        flex: 1,
+        width: 400,
+        height: 200, 
+    }
 });
