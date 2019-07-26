@@ -9,7 +9,7 @@ declare var cordova;
 })
 export class OpenViduVideoComponent implements AfterViewInit, OnDestroy {
 
-    @ViewChild('videoElement') elementRef: ElementRef;
+    @ViewChild('videoElement', {static: false}) elementRef: ElementRef;
     _streamManager: StreamManager;
 
     rotationFunction;
