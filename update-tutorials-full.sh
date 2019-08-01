@@ -22,8 +22,8 @@ for tutorial in openvidu-js-java openvidu-mvc-java openvidu-recording-java; do
     cd $tutorial && mvn versions:use-latest-releases -Dincludes=io.openvidu:openvidu-java-client && cd ..
 done
 
-# Run "npm install" in every npm project [openvidu-insecure-angular, openvidu-insecure-react, openvidu-library-angular, openvidu-library-react, openvidu-ionic, openvidu-js-node, openvidu-mvc-node, openvidu-recording-node]
-for tutorial in openvidu-insecure-angular openvidu-insecure-react openvidu-library-angular openvidu-library-react openvidu-ionic openvidu-js-node openvidu-mvc-node openvidu-recording-node; do
+# Run "npm install" in every npm project [openvidu-insecure-angular, openvidu-insecure-react, openvidu-library-angular, openvidu-library-react, openvidu-ionic, openvidu-js-node, openvidu-mvc-node, openvidu-recording-node, openvidu-react-native, openvidu-electron]
+for tutorial in openvidu-insecure-angular openvidu-insecure-react openvidu-library-angular openvidu-library-react openvidu-ionic openvidu-js-node openvidu-mvc-node openvidu-recording-node openvidu-react-native openvidu-electron; do
     cd $tutorial && npm install && cd ..
 done
 

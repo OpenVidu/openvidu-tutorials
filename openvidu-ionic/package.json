@@ -1,6 +1,6 @@
 {
   "name": "openvidu-ionic",
-  "version": "2.10.0",
+  "version": "2.11.0",
   "author": "OpenVidu",
   "homepage": "https://openvidu.io/",
   "scripts": {
@@ -38,7 +38,7 @@
     "cordova-plugin-whitelist": "1.3.4",
     "core-js": "3.1.4",
     "ios-deploy": "1.9.4",
-    "openvidu-browser": "2.10.0",
+    "openvidu-browser": "2.11.0",
     "rxjs": "6.5.2",
     "xcode": "2.0.0",
     "zone.js": "0.9.1"
