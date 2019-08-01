@@ -411,7 +411,13 @@ export default class App extends Component<Props> {
                 .catch((response) => {
                     console.log(response);
                     var error = Object.assign({}, response);
-                    if (error.response.status === 409) {
+                    if (!error.response) {
+                        console.error("Network error: ", error);
+                        if( error.request && error.request._response){
+                            console.error("Response of the request: ", error.request._response);
+                        }
+                    }
+                    else if (error.response && error.response.status && error.response.status === 409) {
                         console.log('RESOLVING WITH SESSIONID, 409');
                         resolve(sessionId);
                     } else {
