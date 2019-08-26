@@ -50,7 +50,7 @@ export default class App extends Component<Props> {
     componentDidMount() {}
 
     componentWillUnmount() {
-        this.leaveSession();
+        //this.leaveSession();
     }
 
     async checkAndroidPermissions() {
