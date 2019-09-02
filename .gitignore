@@ -31,3 +31,5 @@ openvidu-react-native-androidx/node_modules/
 openvidu-react-native-androidx/ios/build/
 
 .DS_Store
+
+*.tgz
