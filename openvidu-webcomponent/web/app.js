@@ -2,6 +2,11 @@ $(document).ready(() => {
     var webComponent = document.querySelector('openvidu-webcomponent');
     var form = document.getElementById('main');
 
+    if(webComponent.getAttribute("openvidu-secret") != undefined && webComponent.getAttribute("openvidu-server-url") != undefined ){
+        form.style.display = 'none';
+        webComponent.style.display = 'block';
+    }
+
     webComponent.addEventListener('joinSession', (event) => {});
     webComponent.addEventListener('leaveSession', (event) => {
         form.style.display = 'block';
@@ -22,15 +27,17 @@ function joinSession() {
     form.style.display = 'none';
     webComponent.style.display = 'block';
 
-    getToken(sessionName).then((token1) => {
-        tokens.push(token1);
-        getToken(sessionName).then((token2) => {
-            tokens.push(token2);
-            webComponent.sessionConfig = { sessionName, user, tokens };
+    if(webComponent.getAttribute("openvidu-secret") != undefined && webComponent.getAttribute("openvidu-server-url") != undefined ){
+        location.reload();
+    }else {
+        getToken(sessionName).then((token1) => {
+            tokens.push(token1);
+            getToken(sessionName).then((token2) => {
+                tokens.push(token2);
+                webComponent.sessionConfig = { sessionName, user, tokens };
+            });    
         });
-
-        
-    });
+    }
 }
 
 /**
@@ -45,7 +52,7 @@ function joinSession() {
  *   3) Configure OpenVidu Web Component in your client side with the token
  */
 
-var OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443';
+var OPENVIDU_SERVER_URL = 'https://demos.openvidu.io'  + ':4443';
 var OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 function getToken(sessionName) {
