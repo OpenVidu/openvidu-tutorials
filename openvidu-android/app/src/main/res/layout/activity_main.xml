@@ -74,7 +74,7 @@
             android:layout_centerVertical="true"
             android:layout_margin="5dp"
             android:layout_marginStart="30dp"
-            android:onClick="joinSession"
+            android:onClick="buttonPressed"
             android:text="@string/start_button" />
 
         <LinearLayout

@@ -112,7 +112,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
 
         } else if (rpcId == this.ID_JOINROOM.get()) {
             // Response to joinRoom
-            activity.enableLeaveButton();
+            activity.viewToConnectedState();
 
             final LocalParticipant localParticipant = this.session.getLocalParticipant();
             final String localConnectionId = result.getString(JsonConstants.ID);

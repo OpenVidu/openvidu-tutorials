@@ -8,8 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 
-import com.example.openviduandroid.activities.SessionActivity;
 import com.example.openviduandroid.R;
+import com.example.openviduandroid.activities.SessionActivity;
 
 public class PermissionsDialogFragment extends DialogFragment {
 

@@ -5,7 +5,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.example.openviduandroid.activities.SessionActivity;
-import com.example.openviduandroid.constants.JsonConstants;
 import com.example.openviduandroid.observers.CustomPeerConnectionObserver;
 import com.example.openviduandroid.observers.CustomSdpObserver;
 import com.example.openviduandroid.websocket.CustomWebSocket;

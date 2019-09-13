@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -88,10 +89,6 @@ public class SessionActivity extends AppCompatActivity {
         Random random = new Random();
         int randomIndex = random.nextInt(100);
         participant_name.setText(participant_name.getText().append(String.valueOf(randomIndex)));
-
-        OPENVIDU_URL = openvidu_url.getText().toString();
-        OPENVIDU_SECRET = openvidu_secret.getText().toString();
-        httpClient = new CustomHttpClient(OPENVIDU_URL, "Basic " + android.util.Base64.encodeToString(("OPENVIDUAPP:" + OPENVIDU_SECRET).getBytes(), android.util.Base64.DEFAULT).trim());
     }
 
     public void askForPermissions() {
@@ -115,24 +112,19 @@ public class SessionActivity extends AppCompatActivity {
         }
     }
 
-    public void joinSession(View view) {
+    public void buttonPressed(View view) {
+        if (start_finish_call.getText().equals(getResources().getString(R.string.hang_up))) {
+            // Already connected to a session
+            leaveSession();
+            return;
+        }
         if (arePermissionGranted()) {
-            if (start_finish_call.getText().equals(getResources().getString(R.string.hang_up))) {
-                // Already in a call
-                leaveSession();
-                return;
-            }
             initViews();
-            start_finish_call.setText(getResources().getString(R.string.hang_up));
-            start_finish_call.setEnabled(false);
-            openvidu_url.setEnabled(false);
-            openvidu_url.setFocusable(false);
-            openvidu_secret.setEnabled(false);
-            openvidu_secret.setFocusable(false);
-            session_name.setEnabled(false);
-            session_name.setFocusable(false);
-            participant_name.setEnabled(false);
-            participant_name.setFocusable(false);
+            viewToConnectingState();
+
+            OPENVIDU_URL = openvidu_url.getText().toString();
+            OPENVIDU_SECRET = openvidu_secret.getText().toString();
+            httpClient = new CustomHttpClient(OPENVIDU_URL, "Basic " + android.util.Base64.encodeToString(("OPENVIDUAPP:" + OPENVIDU_SECRET).getBytes(), android.util.Base64.DEFAULT).trim());
 
             String sessionId = session_name.getText().toString();
             getToken(sessionId);
@@ -187,6 +179,7 @@ public class SessionActivity extends AppCompatActivity {
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
                             Log.e(TAG, "Error POST /api/tokens", e);
+                            connectionError();
                         }
                     });
                 }
@@ -194,12 +187,23 @@ public class SessionActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     Log.e(TAG, "Error POST /api/sessions", e);
+                    connectionError();
                 }
             });
         } catch (IOException e) {
             Log.e("Error getting token", e.getMessage());
             e.printStackTrace();
+            connectionError();
         }
+    }
+
+    private void connectionError() {
+        Runnable myRunnable = () -> {
+            Toast toast = Toast.makeText(this, "Error connecting to " + OPENVIDU_URL, Toast.LENGTH_LONG);
+            toast.show();
+            viewToDisconnectedState();
+        };
+        new Handler(this.getMainLooper()).post(myRunnable);
     }
 
     private void initViews() {
@@ -208,6 +212,46 @@ public class SessionActivity extends AppCompatActivity {
         localVideoView.setMirror(true);
         localVideoView.setEnableHardwareScaler(true);
         localVideoView.setZOrderMediaOverlay(true);
+    }
+
+    public void viewToDisconnectedState() {
+        runOnUiThread(() -> {
+            localVideoView.clearImage();
+            localVideoView.release();
+            start_finish_call.setText(getResources().getString(R.string.start_button));
+            start_finish_call.setEnabled(true);
+            openvidu_url.setEnabled(true);
+            openvidu_url.setFocusableInTouchMode(true);
+            openvidu_secret.setEnabled(true);
+            openvidu_secret.setFocusableInTouchMode(true);
+            session_name.setEnabled(true);
+            session_name.setFocusableInTouchMode(true);
+            participant_name.setEnabled(true);
+            participant_name.setFocusableInTouchMode(true);
+            main_participant.setText(null);
+            main_participant.setPadding(0, 0, 0, 0);
+        });
+    }
+
+    public void viewToConnectingState() {
+        runOnUiThread(() -> {
+            start_finish_call.setEnabled(false);
+            openvidu_url.setEnabled(false);
+            openvidu_url.setFocusable(false);
+            openvidu_secret.setEnabled(false);
+            openvidu_secret.setFocusable(false);
+            session_name.setEnabled(false);
+            session_name.setFocusable(false);
+            participant_name.setEnabled(false);
+            participant_name.setFocusable(false);
+        });
+    }
+
+    public void viewToConnectedState() {
+        runOnUiThread(() -> {
+            start_finish_call.setText(getResources().getString(R.string.hang_up));
+            start_finish_call.setEnabled(true);
+        });
     }
 
     public void createRemoteParticipantVideo(final RemoteParticipant remoteParticipant) {
@@ -250,27 +294,10 @@ public class SessionActivity extends AppCompatActivity {
         });
     }
 
-    public void enableLeaveButton() {
-        runOnUiThread(() -> {
-            start_finish_call.setEnabled(true);
-        });
-    }
-
     public void leaveSession() {
         this.session.leaveSession();
-        localVideoView.clearImage();
-        localVideoView.release();
-        start_finish_call.setText(getResources().getString(R.string.start_button));
-        openvidu_url.setEnabled(true);
-        openvidu_url.setFocusableInTouchMode(true);
-        openvidu_secret.setEnabled(true);
-        openvidu_secret.setFocusableInTouchMode(true);
-        session_name.setEnabled(true);
-        session_name.setFocusableInTouchMode(true);
-        participant_name.setEnabled(true);
-        participant_name.setFocusableInTouchMode(true);
-        main_participant.setText(null);
-        main_participant.setPadding(0, 0, 0, 0);
+        this.httpClient.dispose();
+        viewToDisconnectedState();
     }
 
     private boolean arePermissionGranted() {
