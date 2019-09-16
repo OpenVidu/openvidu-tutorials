@@ -84,7 +84,7 @@ public abstract class Participant {
     public void dispose() {
         if (this.peerConnection != null) {
             try {
-                this.peerConnection.dispose();
+                this.peerConnection.close();
             } catch (IllegalStateException e) {
                 Log.e("Dispose PeerConnection", e.getMessage());
             }

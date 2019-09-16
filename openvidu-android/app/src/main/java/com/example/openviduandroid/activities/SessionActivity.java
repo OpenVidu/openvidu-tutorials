@@ -282,15 +282,9 @@ public class SessionActivity extends AppCompatActivity {
 
     public void setRemoteMediaStream(MediaStream stream, final RemoteParticipant remoteParticipant) {
         final VideoTrack videoTrack = stream.videoTracks.get(0);
+        videoTrack.addSink(remoteParticipant.getVideoView());
         runOnUiThread(() -> {
             remoteParticipant.getVideoView().setVisibility(View.VISIBLE);
-            videoTrack.addSink(remoteParticipant.getVideoView());
-            MediaStream mediaStream = session.getPeerConnectionFactory().createLocalMediaStream("105");
-            remoteParticipant.setMediaStream(mediaStream);
-            mediaStream.addTrack(session.getLocalParticipant().getAudioTrack());
-            mediaStream.addTrack(session.getLocalParticipant().getVideoTrack());
-            remoteParticipant.getPeerConnection().removeStream(mediaStream);
-            remoteParticipant.getPeerConnection().addStream(mediaStream);
         });
     }
 

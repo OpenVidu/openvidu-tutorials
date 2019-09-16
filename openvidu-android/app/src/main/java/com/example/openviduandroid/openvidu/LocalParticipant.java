@@ -1,9 +1,12 @@
 package com.example.openviduandroid.openvidu;
 
 import android.content.Context;
+import android.os.Build;
 
 import org.webrtc.AudioSource;
 import org.webrtc.Camera1Enumerator;
+import org.webrtc.Camera2Enumerator;
+import org.webrtc.CameraEnumerator;
 import org.webrtc.EglBase;
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
@@ -60,7 +63,12 @@ public class LocalParticipant extends Participant {
     }
 
     private VideoCapturer createCameraCapturer() {
-        Camera1Enumerator enumerator = new Camera1Enumerator(false);
+        CameraEnumerator enumerator;
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.LOLLIPOP) {
+            enumerator = new Camera2Enumerator(this.context);
+        } else {
+            enumerator = new Camera1Enumerator(false);
+        }
         final String[] deviceNames = enumerator.getDeviceNames();
 
         // Try to find front facing camera
