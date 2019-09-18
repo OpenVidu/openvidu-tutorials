@@ -21,14 +21,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
-import io.openvidu.openvidu_android.R;
-import io.openvidu.openvidu_android.fragments.PermissionsDialogFragment;
-import io.openvidu.openvidu_android.openvidu.LocalParticipant;
-import io.openvidu.openvidu_android.openvidu.RemoteParticipant;
-import io.openvidu.openvidu_android.openvidu.Session;
-import io.openvidu.openvidu_android.utils.CustomHttpClient;
-import io.openvidu.openvidu_android.websocket.CustomWebSocket;
-
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,6 +34,13 @@ import java.util.Random;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import io.openvidu.openvidu_android.R;
+import io.openvidu.openvidu_android.fragments.PermissionsDialogFragment;
+import io.openvidu.openvidu_android.openvidu.LocalParticipant;
+import io.openvidu.openvidu_android.openvidu.RemoteParticipant;
+import io.openvidu.openvidu_android.openvidu.Session;
+import io.openvidu.openvidu_android.utils.CustomHttpClient;
+import io.openvidu.openvidu_android.websocket.CustomWebSocket;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.MediaType;
@@ -135,7 +134,6 @@ public class SessionActivity extends AppCompatActivity {
     }
 
     private void getToken(String sessionId) {
-        final SessionActivity thisActivity = this;
         try {
             // Session Request
             RequestBody sessionBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{\"customSessionId\": \"" + sessionId + "\"}");
@@ -150,8 +148,13 @@ public class SessionActivity extends AppCompatActivity {
                     httpClient.httpCall("/api/tokens", "POST", "application/json", tokenBody, new Callback() {
 
                         @Override
-                        public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                            final String responseString = response.body().string();
+                        public void onResponse(@NotNull Call call, @NotNull Response response) {
+                            String responseString = null;
+                            try {
+                                responseString = response.body().string();
+                            } catch (IOException e) {
+                                Log.e(TAG, "Error getting body", e);
+                            }
                             Log.d(TAG, "responseString2: " + responseString);
                             JSONObject tokenJsonObject = null;
                             String token = null;
@@ -161,19 +164,7 @@ public class SessionActivity extends AppCompatActivity {
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
-                            String participantName = participant_name.getText().toString();
-                            session = new Session(sessionId, token, views_container, thisActivity);
-                            LocalParticipant localParticipant = new LocalParticipant(participantName, session, thisActivity.getApplicationContext(), localVideoView);
-                            localParticipant.startCamera();
-
-                            runOnUiThread(() -> {
-                                main_participant.setText(participant_name.getText().toString());
-                                main_participant.setPadding(20, 3, 20, 3);
-                            });
-
-                            CustomWebSocket webSocket = new CustomWebSocket(session, OPENVIDU_URL, thisActivity);
-                            webSocket.execute();
-                            session.setWebSocket(webSocket);
+                            getTokenSuccess(token, sessionId);
                         }
 
                         @Override
@@ -191,10 +182,34 @@ public class SessionActivity extends AppCompatActivity {
                 }
             });
         } catch (IOException e) {
-            Log.e("Error getting token", e.getMessage());
+            Log.e(TAG, "Error getting token", e);
             e.printStackTrace();
             connectionError();
         }
+    }
+
+    private void getTokenSuccess(String token, String sessionId) {
+        // Initialize our session
+        session = new Session(sessionId, token, views_container, this);
+
+        // Initialize our local participant and start local camera
+        String participantName = participant_name.getText().toString();
+        LocalParticipant localParticipant = new LocalParticipant(participantName, session, this.getApplicationContext(), localVideoView);
+        localParticipant.startCamera();
+        runOnUiThread(() -> {
+            // Update local participant view
+            main_participant.setText(participant_name.getText().toString());
+            main_participant.setPadding(20, 3, 20, 3);
+        });
+
+        // Initialize and connect the websocket to OpenVidu Server
+        startWebSocket();
+    }
+
+    private void startWebSocket() {
+        CustomWebSocket webSocket = new CustomWebSocket(session, OPENVIDU_URL, this);
+        webSocket.execute();
+        session.setWebSocket(webSocket);
     }
 
     private void connectionError() {
