@@ -1,13 +1,13 @@
-package com.example.openviduandroid.openvidu;
+package io.openvidu.openvidu_android.openvidu;
 
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
-import com.example.openviduandroid.activities.SessionActivity;
-import com.example.openviduandroid.observers.CustomPeerConnectionObserver;
-import com.example.openviduandroid.observers.CustomSdpObserver;
-import com.example.openviduandroid.websocket.CustomWebSocket;
+import io.openvidu.openvidu_android.activities.SessionActivity;
+import io.openvidu.openvidu_android.observers.CustomPeerConnectionObserver;
+import io.openvidu.openvidu_android.observers.CustomSdpObserver;
+import io.openvidu.openvidu_android.websocket.CustomWebSocket;
 
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;

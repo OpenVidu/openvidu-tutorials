@@ -1,4 +1,4 @@
-package com.example.openviduandroid.openvidu;
+package io.openvidu.openvidu_android.openvidu;
 
 import android.util.Log;
 

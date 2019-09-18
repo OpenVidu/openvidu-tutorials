@@ -1,4 +1,4 @@
-package com.example.openviduandroid.constants;
+package io.openvidu.openvidu_android.constants;
 
 public final class JsonConstants {
 

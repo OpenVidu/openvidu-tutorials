@@ -1,4 +1,4 @@
-package com.example.openviduandroid;
+package io.openvidu.openvidu_android;
 
 import android.content.Context;
 
@@ -22,6 +22,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
 
-        assertEquals("com.example.openviduandroid", appContext.getPackageName());
+        assertEquals("io.openvidu.openvidu_android", appContext.getPackageName());
     }
 }
