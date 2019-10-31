@@ -29,7 +29,9 @@ import org.slf4j.LoggerFactory;
 /**
  * Simple HTTP client able to send REST API requests to insecure servers
  * (self-signed certificates are accepted). It only implements a single method
- * to publish an IP camera to an OpenVidu Server session
+ * to publish an IP camera to an OpenVidu Server session. This is only necessary
+ * because openvidu-java-client SDK does not implement the publish method for IP
+ * cameras yet
  * 
  * @author Pablo Fuente (pablofuenteperez@gmail.com)
  */
