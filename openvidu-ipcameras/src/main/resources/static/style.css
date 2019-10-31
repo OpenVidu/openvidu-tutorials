@@ -1,0 +1,44 @@
+form {
+    display: inline-block;
+}
+
+.cameras {
+    margin-top: 50px;
+}
+
+.camera-name {
+    text-align: center;
+    margin-top: 30px;
+    margin-bottom: 10px;
+}
+
+.video-container {
+    position: relative;
+    text-align: center;
+}
+
+video {
+    width: 50%;
+}
+
+.loader {
+    border: 16px solid #f3f3f3;
+    border-top: 16px solid #0088aa;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    animation: spin 2s linear infinite;
+    position: absolute;
+    left: calc(50% - 66px);
+    top: calc(50% - 66px);
+}
+
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
