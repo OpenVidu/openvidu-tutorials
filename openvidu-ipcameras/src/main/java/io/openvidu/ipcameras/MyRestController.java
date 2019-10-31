@@ -46,6 +46,9 @@ public class MyRestController {
 	@RequestMapping(value = "/")
 	public String subscribe(@RequestParam(name = "credentials", required = false) String credentials, Model model) {
 
+		if (credentials == null) {
+			return "index";
+		}
 		try {
 			checkCredentials(credentials);
 		} catch (Exception e) {
