@@ -44,7 +44,8 @@ public class MyRestController {
 	private final SimpleHttpClient httpClient = new SimpleHttpClient();
 
 	@RequestMapping(value = "/")
-	public String subscribe(@RequestParam(name = "credentials", required = false) String credentials, Model model) {
+	public String subscribe(@RequestParam(name = "credentials", required = false) String credentials, Model model)
+			throws OpenViduJavaClientException, OpenViduHttpException {
 
 		if (credentials == null) {
 			return "index";
@@ -70,7 +71,17 @@ public class MyRestController {
 		String token = null;
 		try {
 			token = this.session.generateToken();
-		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
+		} catch (OpenViduHttpException e) {
+			if (e.getStatus() == 404) {
+				// Session was closed in openvidu-server. Create it again
+				createOpenViduSession();
+				publishCameras();
+				token = this.session.generateToken();
+			} else {
+				return generateError(model,
+						"Error creating OpenVidu token for session " + SESSION_ID + ": " + e.getMessage());
+			}
+		} catch (OpenViduJavaClientException e) {
 			return generateError(model,
 					"Error creating OpenVidu token for session " + SESSION_ID + ": " + e.getMessage());
 		}

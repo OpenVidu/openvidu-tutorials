@@ -22,9 +22,10 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.ssl.SSLContextBuilder;
 import org.apache.http.ssl.TrustStrategy;
 import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.gson.JsonObject;
 
 /**
  * Simple HTTP client able to send REST API requests to insecure servers
@@ -71,11 +72,11 @@ public class SimpleHttpClient {
 
 		HttpPost request = new HttpPost(App.OPENVIDU_URL + "api/sessions/" + sessionId + "/connection");
 
-		JSONObject json = new JSONObject();
-		json.put("rtspUri", rtspUri);
-		json.put("data", cameraName);
-		json.put("adaptativeBitrate", adaptativeBitrate);
-		json.put("onlyPlayWithSubscribers", onlyPlayWhenSubscribers);
+		JsonObject json = new JsonObject();
+		json.addProperty("rtspUri", rtspUri);
+		json.addProperty("data", cameraName);
+		json.addProperty("adaptativeBitrate", adaptativeBitrate);
+		json.addProperty("onlyPlayWithSubscribers", onlyPlayWhenSubscribers);
 		StringEntity params = new StringEntity(json.toString());
 
 		request.setHeader(HttpHeaders.CONTENT_TYPE, "application/json");
