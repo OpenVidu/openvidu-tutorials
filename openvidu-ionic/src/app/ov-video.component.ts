@@ -20,11 +20,10 @@ export class OpenViduVideoComponent implements AfterViewInit, OnDestroy {
         if (this.isIos() && this._streamManager.remote) {
             this.rotationFunction = () => {
                 // Give the remote video some time to update its dimensions when rotating the device
-                setTimeout(() => {
-                    this.applyIosIonicVideoAttributes();
-                }, 250);
+                this.applyIosAttributes();
             };
             (<any>window).addEventListener('orientationchange', this.rotationFunction);
+            this.applyIosAttributes();
         }
         this.updateVideoView();
     }
@@ -72,5 +71,11 @@ export class OpenViduVideoComponent implements AfterViewInit, OnDestroy {
 
     private isIos(): boolean {
         return this.platform.is('ios') && this.platform.is('cordova');
+    }
+
+    private applyIosAttributes(){
+        setTimeout(() => {
+            this.applyIosIonicVideoAttributes();
+        }, 250);
     }
 }

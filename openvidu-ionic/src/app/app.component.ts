@@ -52,20 +52,9 @@ export class AppComponent implements OnDestroy {
             this.statusBar.styleDefault();
             this.splashScreen.hide();
             if (this.platform.is('ios') && this.platform.is('cordova')) {
-                this.initializeAdapterIosRtc();
+                cordova.plugins.iosrtc.registerGlobals();
             }
         });
-    }
-
-    initializeAdapterIosRtc() {
-        console.log('Initializing iosrct');
-        cordova.plugins.iosrtc.registerGlobals();
-        // load adapter.js (version 4.0.1)
-        const script2 = document.createElement('script');
-        script2.type = 'text/javascript';
-        script2.src = 'assets/libs/adapter-4.0.1.js';
-        script2.async = false;
-        document.head.appendChild(script2);
     }
 
     @HostListener('window:beforeunload')
