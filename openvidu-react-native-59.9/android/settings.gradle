@@ -1,4 +1,0 @@
-rootProject.name = 'openvidu_react_native'
-
-include ':WebRTCModule', ':app'
-project(':WebRTCModule').projectDir = new File(rootProject.projectDir, '../node_modules/openvidu-browser/node_modules/react-native-webrtc/android')
