@@ -198,6 +198,10 @@ function applyFilter() {
 			filter.type = 'GStreamerFilter';
 			filter.options = { "command": "audioamplify amplification=1.7" };
 			break;
+		case 'Pitch':
+			filter.type = 'GStreamerFilter';
+			filter.options = { "command": "pitch pitch=1.2" };
+			break;
 		case 'Videobox':
 			filter.type = 'GStreamerFilter';
 			filter.options = { "command": "videobox fill=black top=-30 bottom=-30 left=-30 right=-30" };
@@ -214,6 +218,10 @@ function applyFilter() {
 			filter.type = 'GStreamerFilter';
 			filter.options = { "command": 'clockoverlay valignment=bottom halignment=right shaded-background=true font-desc="Sans, 20"' };
 			break;
+		case 'Chroma':
+			filter.type = 'GStreamerFilter';
+			filter.options = { "command": 'chromahold target-r=0 target-g=0 target-b=255 tolerance=90' };
+			break;
 	}
 	selectedStreamManager.stream.applyFilter(filter.type, filter.options)
 		.then(f => {
@@ -221,10 +229,10 @@ function applyFilter() {
 				f.execMethod(
 					"setOverlayedImage",
 					{
-						"uri": "https://cdn.pixabay.com/photo/2013/07/12/14/14/derby-148046_960_720.png",
-						"offsetXPercent": "-0.2F",
+						"uri": "https://cdn.pixabay.com/photo/2017/09/30/09/29/cowboy-hat-2801582_960_720.png",
+						"offsetXPercent": "-0.1F",
 						"offsetYPercent": "-0.8F",
-						"widthPercent": "1.3F",
+						"widthPercent": "1.5F",
 						"heightPercent": "1.0F"
 					});
 			}
