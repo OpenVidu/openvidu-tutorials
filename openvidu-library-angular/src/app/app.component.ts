@@ -24,7 +24,7 @@ export class AppComponent {
   ovLayout: OpenViduLayout;
   ovLayoutOptions: OpenViduLayoutOptions;
 
-  @ViewChild('ovSessionComponent', { static: false })
+  @ViewChild('ovSessionComponent')
   public ovSessionComponent: OpenviduSessionComponent;
 
   constructor(private httpClient: HttpClient) { }
