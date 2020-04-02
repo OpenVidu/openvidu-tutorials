@@ -13,7 +13,7 @@ Visit [openvidu.io/docs/tutorials/openvidu-webcomponent/](http://openvidu.io/doc
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
 
 
-### How to build a webcomponent
+### How to build it
 
 First of all, the webcomponent is built from openvidu-call so you must to clone this repository first:
 
