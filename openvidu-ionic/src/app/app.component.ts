@@ -248,7 +248,7 @@ export class AppComponent implements OnDestroy {
                 {
                     name: 'url',
                     type: 'text',
-                    value: 'https://demos.openvidu.io:4443/',
+                    value: 'https://demos.openvidu.io:4443',
                     placeholder: 'URL'
                 },
                 {
