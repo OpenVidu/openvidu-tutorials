@@ -17,7 +17,7 @@ $(document).ready(() => {
     });
 });
 
-function joinSession() {
+async function joinSession() {
     var sessionName = document.getElementById('sessionName').value;
     var user = document.getElementById('user').value;
     var form = document.getElementById('main');
@@ -28,15 +28,12 @@ function joinSession() {
     webComponent.style.display = 'block';
 
     if(webComponent.getAttribute("openvidu-secret") != undefined && webComponent.getAttribute("openvidu-server-url") != undefined ){
-        location.reload();
+       location.reload();
     }else {
-        getToken(sessionName).then((token1) => {
-            tokens.push(token1);
-            getToken(sessionName).then((token2) => {
-                tokens.push(token2);
-                webComponent.sessionConfig = { sessionName, user, tokens };
-            });    
-        });
+        var token1 = await getToken(sessionName)
+        var token2 = await getToken(sessionName);
+        tokens.push(token1, token2);
+        webComponent.sessionConfig = { sessionName, user, tokens };
     }
 }
 
