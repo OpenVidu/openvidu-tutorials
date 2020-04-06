@@ -37,7 +37,7 @@ Install npm dependencies with:
 $ npm install
 ```
 
-After that the following command will generate and copy the webcomponent files into a openvidu-webcomponent project:
+After that, the following command will generate the necessary artefacts and it'll copy them automatically into the openvidu-webcomponent tutorial:
 
 ```bash
 $ npm run build:openvidu-webcomponent
