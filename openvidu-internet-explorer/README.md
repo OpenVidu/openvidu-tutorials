@@ -12,7 +12,7 @@ openvidu-internet-explorer
 
 This is an adaptation of [openvidu-insecure-js](https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-insecure-js) application with all necessary changes to work fine on IE 11.
 
-<!-- Visit [openvidu.io/docs/tutorials/openvidu-insecure-js/](http://openvidu.io/docs/tutorials/openvidu-insecure-js/) -->
+<!-- Visit [docs.openvidu.io/en/stable/tutorials/openvidu-insecure-js/](http://docs.openvidu.io/en/stable/tutorials/openvidu-insecure-js/) -->
 
 OpenVidu Team has been able to bring complete, standards-compliant WebRTC funcionality to Microsoft Internet Explorer desktop browser (v 11). This feature has been released thanks to [Temasys WebRTC Plugin](https://temasys.io/products/plugin/).
 
@@ -27,7 +27,7 @@ git clone https://github.com/OpenVidu/openvidu-tutorials.git
 ```bash
 sudo npm install -g http-server
 ```
-3) Run openvidu-server as it says [here](https://openvidu.io/docs/troubleshooting/#3-i-am-using-windows-to-run-the-tutorials-develop-my-app-anything-i-should-know)
+3) Run openvidu-server as it says [here](https://docs.openvidu.io/en/stable/troubleshooting/#3-i-am-using-windows-to-run-the-tutorials-develop-my-app-anything-i-should-know)
 
 4) Start the tutorial
 ```bash

@@ -8,6 +8,6 @@
 openvidu-insecure-js
 ===
 
-Visit [openvidu.io/docs/tutorials/openvidu-insecure-js/](http://openvidu.io/docs/tutorials/openvidu-insecure-js/)
+Visit [docs.openvidu.io/en/stable/tutorials/openvidu-insecure-js/](http://docs.openvidu.io/en/stable/tutorials/openvidu-insecure-js/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120

@@ -8,7 +8,7 @@
 openvidu-filters
 ===
 
-Visit [openvidu.io/docs/advanced-features/filters](http://openvidu.io/docs/advanced-features/filters/)
+Visit [docs.openvidu.io/en/stable/advanced-features/filters](http://docs.openvidu.io/en/stable/advanced-features/filters/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
 

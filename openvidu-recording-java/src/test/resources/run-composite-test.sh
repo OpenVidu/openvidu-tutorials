@@ -5,7 +5,7 @@
 #
 #   Prerequisites:
 #   - Have maven installed in the host machine (sudo apt-get install maven)
-#   - Have KMS installed in the host machine (https://openvidu.io/docs/deployment/deploying-ubuntu/#1-install-kms)
+#   - Have KMS installed in the host machine (https://docs.openvidu.io/en/stable/deployment/deploying-ubuntu/#1-install-kms)
 #   - Run this command to configure KMS with current user (sudo sed -i "s/DAEMON_USER=\"kurento\"/DAEMON_USER=\"${USER}\"/g" /etc/default/kurento-media-server)
 #   - Store and run this script inside a folder with write and execute permissions for the current user
 ##################################################################################################

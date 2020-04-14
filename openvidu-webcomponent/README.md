@@ -8,7 +8,7 @@
 openvidu-webcomponent
 ===
 
-Visit [openvidu.io/docs/tutorials/openvidu-webcomponent/](http://openvidu.io/docs/tutorials/openvidu-webcomponent/)
+Visit [docs.openvidu.io/en/stable/tutorials/openvidu-webcomponent/](http://docs.openvidu.io/en/stable/tutorials/openvidu-webcomponent/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
 

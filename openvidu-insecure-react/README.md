@@ -8,6 +8,6 @@
 openvidu-insecure-react
 ===
 
-Visit [openvidu.io/docs/tutorials/openvidu-insecure-react/](http://openvidu.io/docs/tutorials/openvidu-insecure-react/)
+Visit [docs.openvidu.io/en/stable/tutorials/openvidu-insecure-react/](http://docs.openvidu.io/en/stable/tutorials/openvidu-insecure-react/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
