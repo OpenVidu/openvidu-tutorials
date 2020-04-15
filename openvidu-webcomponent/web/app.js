@@ -14,8 +14,7 @@ $(document).ready(() => {
         // https://docs.openvidu.io/en/stable/api/openvidu-browser/classes/session.html
 
         session.on('connectionCreated', (e) => {
-            form.style.display = 'none';
-            webComponent.style.display = 'block';
+            console.log("connectionCreated", e);
         });
 
         session.on('streamDestroyed', (e) => {
@@ -36,6 +35,12 @@ $(document).ready(() => {
         publisher.on('streamCreated', (e) => {
              console.log("Publisher streamCreated", e);
         });
+
+        publisher.on('streamPlaying', (e) => {
+            document.body.style.backgroundColor = "gray";
+            form.style.display = 'none';
+            webComponent.style.display = 'block';
+        });
     });
 
     webComponent.addEventListener('sessionDisconnected', (event) => {
@@ -54,8 +59,6 @@ async function joinSession() {
     var user = document.getElementById('user').value;
     var webComponent = document.querySelector('openvidu-webcomponent');
     var tokens = [];
-
-
 
     if(webComponent.getAttribute("openvidu-secret") != undefined && webComponent.getAttribute("openvidu-server-url") != undefined ){
        location.reload();
