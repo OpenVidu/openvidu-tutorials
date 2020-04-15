@@ -7,11 +7,43 @@ $(document).ready(() => {
         webComponent.style.display = 'block';
     }
 
-    webComponent.addEventListener('joinSession', (event) => {});
-    webComponent.addEventListener('leaveSession', (event) => {
+    webComponent.addEventListener('sessionCreated', (event) => {
+        var session = event.detail;
+
+        // You can see the session documentation here
+        // https://docs.openvidu.io/en/stable/api/openvidu-browser/classes/session.html
+
+        session.on('connectionCreated', (e) => {
+            form.style.display = 'none';
+            webComponent.style.display = 'block';
+        });
+
+        session.on('streamDestroyed', (e) => {
+            console.log("streamDestroyed", e);
+        });
+
+        session.on('streamCreated', (e) => {
+            console.log("streamCreated", e);
+        });
+    });
+
+    webComponent.addEventListener('publisherCreated', (event) => {
+        var publisher = event.detail;
+
+        // You can see the publisher documentation here
+        // https://docs.openvidu.io/en/stable/api/openvidu-browser/classes/publisher.html
+
+        publisher.on('streamCreated', (e) => {
+             console.log("Publisher streamCreated", e);
+        });
+    });
+
+    webComponent.addEventListener('sessionDisconnected', (event) => {
+        console.warn("sessionDisconnected event");
         form.style.display = 'block';
         webComponent.style.display = 'none';
     });
+
     webComponent.addEventListener('error', (event) => {
         console.log('Error event', event.detail);
     });
@@ -20,12 +52,10 @@ $(document).ready(() => {
 async function joinSession() {
     var sessionName = document.getElementById('sessionName').value;
     var user = document.getElementById('user').value;
-    var form = document.getElementById('main');
     var webComponent = document.querySelector('openvidu-webcomponent');
     var tokens = [];
 
-    form.style.display = 'none';
-    webComponent.style.display = 'block';
+
 
     if(webComponent.getAttribute("openvidu-secret") != undefined && webComponent.getAttribute("openvidu-server-url") != undefined ){
        location.reload();
@@ -49,7 +79,7 @@ async function joinSession() {
  *   3) Configure OpenVidu Web Component in your client side with the token
  */
 
-var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
+var OPENVIDU_SERVER_URL = "https://demos.openvidu.io:4443" ;
 var OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 function getToken(sessionName) {
