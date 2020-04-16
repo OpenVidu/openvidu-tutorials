@@ -24,6 +24,13 @@ $(document).ready(() => {
         session.on('streamCreated', (e) => {
             console.log("streamCreated", e);
         });
+
+        session.on('sessionDisconnected', (event) => {
+            console.warn("sessionDisconnected event");
+            document.body.style.backgroundColor = "white";
+            form.style.display = 'block';
+            webComponent.style.display = 'none';
+        });
     });
 
     webComponent.addEventListener('publisherCreated', (event) => {
@@ -33,7 +40,7 @@ $(document).ready(() => {
         // https://docs.openvidu.io/en/stable/api/openvidu-browser/classes/publisher.html
 
         publisher.on('streamCreated', (e) => {
-             console.log("Publisher streamCreated", e);
+             console.warn("Publisher streamCreated", e);
         });
 
         publisher.on('streamPlaying', (e) => {
@@ -43,11 +50,6 @@ $(document).ready(() => {
         });
     });
 
-    webComponent.addEventListener('sessionDisconnected', (event) => {
-        console.warn("sessionDisconnected event");
-        form.style.display = 'block';
-        webComponent.style.display = 'none';
-    });
 
     webComponent.addEventListener('error', (event) => {
         console.log('Error event', event.detail);
@@ -82,7 +84,7 @@ async function joinSession() {
  *   3) Configure OpenVidu Web Component in your client side with the token
  */
 
-var OPENVIDU_SERVER_URL = "https://demos.openvidu.io:4443" ;
+var OPENVIDU_SERVER_URL = "https://localhost:4443" ;
 var OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 function getToken(sessionName) {
