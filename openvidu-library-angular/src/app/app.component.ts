@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { throwError as observableThrowError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {OpenviduSessionComponent, StreamEvent, Session, UserModel, OpenViduLayout, OvSettingsModel, OpenViduLayoutOptions, SessionDisconnectedEvent, Publisher} from 'openvidu-angular';
+import {OpenviduSessionComponent, StreamEvent, Session, UserModel, OpenViduLayout, OvSettings, OpenViduLayoutOptions, SessionDisconnectedEvent, Publisher} from 'openvidu-angular';
 
 @Component({
   selector: 'app-root',
@@ -24,21 +24,16 @@ export class AppComponent {
   ovLayout: OpenViduLayout;
   ovLayoutOptions: OpenViduLayoutOptions;
 
-  ovSettings: OvSettingsModel = new OvSettingsModel();
-
   @ViewChild('ovSessionComponent')
   public ovSessionComponent: OpenviduSessionComponent;
 
   constructor(private httpClient: HttpClient) { }
 
-  joinSession() {
-    this.getToken().then((token) => {
-      this.tokens.push(token);
-      this.getToken().then((token2) => {
-        this.tokens.push(token2);
-        this.session = true;
-      });
-    });
+  async joinSession() {
+    const token1 = await this.getToken();
+    const token2 = await this.getToken();
+    this.tokens.push(token1, token2);
+    this.session = true;
   }
 
   handlerSessionCreatedEvent(session: Session): void {
@@ -60,7 +55,6 @@ export class AppComponent {
       this.session = false;
       this.tokens = [];
     });
-
 
     this.myMethod();
 
