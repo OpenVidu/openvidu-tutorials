@@ -17,8 +17,8 @@ find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*
 # Updating openvidu-node-client dependencies in package.json files [openvidu-js-node, openvidu-mvc-node, openvidu-recording-node]
 find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/\"openvidu-node-client\": \"$FROM_VERSION_SDK\"/\"openvidu-node-client\": \"$TO_VERSION_SDK\"/" {} \;
 
-# Updating openvidu-java-client dependencies in pom.xml files [openvidu-js-java, openvidu-mvc-java, openvidu-recording-java]
-for tutorial in openvidu-js-java openvidu-mvc-java openvidu-recording-java; do
+# Updating openvidu-java-client dependencies in pom.xml files [openvidu-js-java, openvidu-mvc-java, openvidu-recording-java, openvidu-ipcameras]
+for tutorial in openvidu-js-java openvidu-mvc-java openvidu-recording-java openvidu-ipcameras; do
     cd $tutorial && mvn versions:use-latest-releases -Dincludes=io.openvidu:openvidu-java-client && cd ..
 done
 
@@ -36,6 +36,7 @@ done
 wget https://github.com/OpenVidu/openvidu/releases/download/v$TO_VERSION/openvidu-browser-$TO_VERSION.js
 readarray array < <(find -name "openvidu-browser-$FROM_VERSION.js" -printf "%h\n" | sort -u)
 for directory in ${array[@]}; do
+    echo "Updating $directory/openvidu-browser-$FROM_VERSION.js to openvidu-browser-$TO_VERSION.js"
     rm $directory/openvidu-browser-$FROM_VERSION.js
     cp openvidu-browser-$TO_VERSION.js $directory/openvidu-browser-$TO_VERSION.js
 done
