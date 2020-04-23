@@ -27,7 +27,7 @@ for tutorial in openvidu-insecure-angular openvidu-insecure-react openvidu-libra
     cd $tutorial && npm install && cd ..
 done
 
-# Update every <script src="openvidu-browser-VERSION.js"></script> import in every *.html or *.ejs file (13 files changed)
+# Update every <script src="openvidu-browser-VERSION.js"></script> import in every *.html or *.ejs file (14 files changed)
 for file in *.html *.ejs; do
     find . -type f -name $file -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/<script src=\"openvidu-browser-$FROM_VERSION.js\"><\/script>/<script src=\"openvidu-browser-$TO_VERSION.js\"><\/script>/" {} \;
 done
