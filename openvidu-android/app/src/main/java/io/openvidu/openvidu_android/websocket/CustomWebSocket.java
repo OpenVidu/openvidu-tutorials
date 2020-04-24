@@ -316,7 +316,19 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
 
     private RemoteParticipant newRemoteParticipantAux(JSONObject participantJson) throws JSONException {
         final String connectionId = participantJson.getString(JsonConstants.ID);
-        final String participantName = new JSONObject(participantJson.getString(JsonConstants.METADATA)).getString("clientData");
+        String participantName = "";
+        if (participantJson.getString(JsonConstants.METADATA) != null) {
+            String jsonStringified = participantJson.getString(JsonConstants.METADATA);
+            try {
+                JSONObject json = new JSONObject(jsonStringified);
+                String clientData = json.getString("clientData");
+                if (clientData != null) {
+                    participantName = clientData;
+                }
+            } catch(JSONException e) {
+                participantName = jsonStringified;
+            }
+        }
         final RemoteParticipant remoteParticipant = new RemoteParticipant(connectionId, participantName, this.session);
         this.activity.createRemoteParticipantVideo(remoteParticipant);
         this.session.createRemotePeerConnection(remoteParticipant.getConnectionId());
