@@ -7,68 +7,36 @@ $(document).ready(() => {
         webComponent.style.display = 'block';
     }
 
-    webComponent.addEventListener('sessionCreated', (event) => {
-        var session = event.detail;
-
-        // You can see the session documentation here
-        // https://docs.openvidu.io/en/stable/api/openvidu-browser/classes/session.html
-
-        session.on('connectionCreated', (e) => {
-            console.log("connectionCreated", e);
-        });
-
-        session.on('streamDestroyed', (e) => {
-            console.log("streamDestroyed", e);
-        });
-
-        session.on('streamCreated', (e) => {
-            console.log("streamCreated", e);
-        });
-
-        session.on('sessionDisconnected', (event) => {
-            console.warn("sessionDisconnected event");
-            document.body.style.backgroundColor = "white";
-            form.style.display = 'block';
-            webComponent.style.display = 'none';
-        });
+    webComponent.addEventListener('joinSession', (event) => {});
+    webComponent.addEventListener('leaveSession', (event) => {
+        form.style.display = 'block';
+        webComponent.style.display = 'none';
     });
-
-    webComponent.addEventListener('publisherCreated', (event) => {
-        var publisher = event.detail;
-
-        // You can see the publisher documentation here
-        // https://docs.openvidu.io/en/stable/api/openvidu-browser/classes/publisher.html
-
-        publisher.on('streamCreated', (e) => {
-             console.warn("Publisher streamCreated", e);
-        });
-
-        publisher.on('streamPlaying', (e) => {
-            document.body.style.backgroundColor = "gray";
-            form.style.display = 'none';
-            webComponent.style.display = 'block';
-        });
-    });
-
-
     webComponent.addEventListener('error', (event) => {
         console.log('Error event', event.detail);
     });
 });
 
-async function joinSession() {
+function joinSession() {
     var sessionName = document.getElementById('sessionName').value;
     var user = document.getElementById('user').value;
+    var form = document.getElementById('main');
     var webComponent = document.querySelector('openvidu-webcomponent');
     var tokens = [];
 
+    form.style.display = 'none';
+    webComponent.style.display = 'block';
+
     if(webComponent.getAttribute("openvidu-secret") != undefined && webComponent.getAttribute("openvidu-server-url") != undefined ){
-       location.reload();
+        location.reload();
     }else {
-        var token1 = await getToken(sessionName)
-        var token2 = await getToken(sessionName);
-        tokens.push(token1, token2);
-        webComponent.sessionConfig = { sessionName, user, tokens };
+        getToken(sessionName).then((token1) => {
+            tokens.push(token1);
+            getToken(sessionName).then((token2) => {
+                tokens.push(token2);
+                webComponent.sessionConfig = { sessionName, user, tokens };
+            });    
+        });
     }
 }
 
@@ -84,14 +52,14 @@ async function joinSession() {
  *   3) Configure OpenVidu Web Component in your client side with the token
  */
 
-var OPENVIDU_SERVER_URL = "https://localhost:4443" ;
+var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443;
 var OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 function getToken(sessionName) {
     return createSession(sessionName).then((sessionId) => createToken(sessionId));
 }
 
-function createSession(sessionName) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-apisessions
+function createSession(sessionName) { // See https://openvidu.io/docs/reference-docs/REST-API/#post-apisessions
     return new Promise((resolve, reject) => {
         $.ajax({
             type: 'POST',
@@ -126,7 +94,7 @@ function createSession(sessionName) { // See https://docs.openvidu.io/en/stable/
 }
 
 function createToken(sessionId) {
-    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-apitokens
+    // See https://openvidu.io/docs/reference-docs/REST-API/#post-apitokens
     return new Promise((resolve, reject) => {
         $.ajax({
             type: 'POST',
