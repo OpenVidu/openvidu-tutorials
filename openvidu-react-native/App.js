@@ -25,7 +25,7 @@ import { OpenVidu } from 'openvidu-browser';
 import { RTCView } from './node_modules/openvidu-browser/node_modules/react-native-webrtc';
 import axios from 'axios';
 
-const OPENVIDU_SERVER_URL = 'https://demos.openvidu.io:4443';
+const OPENVIDU_SERVER_URL = 'https://demos.openvidu.io';
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 
