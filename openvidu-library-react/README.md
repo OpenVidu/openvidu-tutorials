@@ -8,6 +8,6 @@
 openvidu-library-react
 ===
 
-Visit [openvidu.io/docs/tutorials/openvidu-library-react/](http://openvidu.io/docs/tutorials/openvidu-library-react/)
+Visit [docs.openvidu.io/en/stable/tutorials/openvidu-library-react/](http://docs.openvidu.io/en/stable/tutorials/openvidu-library-react/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120

@@ -19,7 +19,9 @@
 </div>
 
 <div *ngIf="session" id="session">
-  <opv-session #ovSessionComponent [sessionName]="mySessionId" [user]="myUserName" [tokens]="tokens" (leaveSession)="handlerLeaveSessionEvent($event)"
-    (joinSession)="handlerJoinSessionEvent($event)" (error)="handlerErrorEvent($event)">
+  <opv-session #ovSessionComponent [sessionName]="mySessionId" [user]="myUserName" [tokens]="tokens"
+    (sessionCreated)="handlerSessionCreatedEvent($event)" (participantCreated)="handlerPublisherCreatedEvent($event)" (error)="handlerErrorEvent($event)">
   </opv-session>
+
+  <!-- <opv-session [sessionName]="mySessionId" [user]="myUserName" [openviduServerUrl]="'https://localhost:4443'" [openviduSecret]="'MY_SECRET'"></opv-session> -->
 </div>

@@ -8,6 +8,6 @@
 openvidu-electron
 ===
 
-Visit [openvidu.io/docs/tutorials/openvidu-electron/](http://openvidu.io/docs/tutorials/openvidu-electron/)
+Visit [docs.openvidu.io/en/stable/tutorials/openvidu-electron/](http://docs.openvidu.io/en/stable/tutorials/openvidu-electron/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120

@@ -8,6 +8,6 @@
 openvidu-mvc-node
 ===
 
-Visit [openvidu.io/docs/tutorials/openvidu-mvc-node/](http://openvidu.io/docs/tutorials/openvidu-mvc-node/)
+Visit [docs.openvidu.io/en/stable/tutorials/openvidu-mvc-node/](http://docs.openvidu.io/en/stable/tutorials/openvidu-mvc-node/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120

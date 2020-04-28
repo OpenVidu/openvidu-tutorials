@@ -2,7 +2,7 @@ import { Component, ViewChild } from '@angular/core';
 import { throwError as observableThrowError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import {OpenviduSessionComponent, StreamEvent, Session, UserModel, OpenViduLayout, OpenViduLayoutOptions} from 'openvidu-angular';
+import {OpenviduSessionComponent, StreamEvent, Session, UserModel, OpenViduLayout, OvSettings, OpenViduLayoutOptions, SessionDisconnectedEvent, Publisher} from 'openvidu-angular';
 
 @Component({
   selector: 'app-root',
@@ -29,23 +29,46 @@ export class AppComponent {
 
   constructor(private httpClient: HttpClient) { }
 
-  joinSession() {
-    this.getToken().then((token) => {
-      this.tokens.push(token);
-      this.getToken().then((token2) => {
-        this.tokens.push(token2);
-        this.session = true;
-      });
+  async joinSession() {
+    const token1 = await this.getToken();
+    const token2 = await this.getToken();
+    this.tokens.push(token1, token2);
+    this.session = true;
+  }
+
+  handlerSessionCreatedEvent(session: Session): void {
+
+    // You can see the session documentation here
+    // https://docs.openvidu.io/en/stable/api/openvidu-browser/classes/session.html
+
+    console.log('SESSION CREATED EVENT', session);
+
+    session.on('streamCreated', (event: StreamEvent) => {
+      // Do something
     });
-  }
 
-  handlerJoinSessionEvent(event): void {
+    session.on('streamDestroyed', (event: StreamEvent) => {
+      // Do something
+    });
+
+    session.on('sessionDisconnected', (event: SessionDisconnectedEvent) => {
+      this.session = false;
+      this.tokens = [];
+    });
+
     this.myMethod();
+
   }
 
-  handlerLeaveSessionEvent(event): void {
-    this.session = false;
-    this.tokens = [];
+  handlerPublisherCreatedEvent(publisher: Publisher) {
+
+    // You can see the publisher documentation here
+    // https://docs.openvidu.io/en/stable/api/openvidu-browser/classes/publisher.html
+
+    publisher.on('streamCreated', (e) => {
+      console.log('Publisher streamCreated', e);
+    });
+
   }
 
   handlerErrorEvent(event): void {
@@ -53,19 +76,9 @@ export class AppComponent {
   }
 
   myMethod() {
-
-    this.ovSession = this.ovSessionComponent.getSession();
     this.ovLocalUsers = this.ovSessionComponent.getLocalUsers();
     this.ovLayout = this.ovSessionComponent.getOpenviduLayout();
     this.ovLayoutOptions = this.ovSessionComponent.getOpenviduLayoutOptions();
-
-    this.ovSession.on('streamCreated', (event: StreamEvent) => {
-      // Do something
-    });
-
-    this.ovSession.on('streamDestroyed', (event: StreamEvent) => {
-      // Do something
-    });
   }
 
   /**

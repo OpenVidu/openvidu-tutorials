@@ -8,6 +8,6 @@
 openvidu-hello-world
 ===
 
-Visit [openvidu.io/docs/tutorials/openvidu-hello-world/](http://openvidu.io/docs/tutorials/openvidu-hello-world/)
+Visit [docs.openvidu.io/en/stable/tutorials/openvidu-hello-world/](http://docs.openvidu.io/en/stable/tutorials/openvidu-hello-world/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
