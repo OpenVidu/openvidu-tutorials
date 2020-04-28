@@ -38,7 +38,7 @@ function joinSession() {
     mySessionId = document.getElementById("sessionId").value;
 
     getToken(mySessionId).then(token => {
-        session.connect(token)
+        session.connect(token, {clientData: 'OpenVidu Electron'})
             .then(() => {
                 showSession();
                 session.publish(publisher);
