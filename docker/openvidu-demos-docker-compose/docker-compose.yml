@@ -3,42 +3,42 @@ version: '3.1'
 services:
 
     openvidu-basic-videoconference:
-        image: openvidu/openvidu-basic-videoconference
+        image: openvidu/openvidu-basic-videoconference:2.13.0
         restart: on-failure
         environment: 
             - OPENVIDU_URL=https://${OPENVIDU_DOMAIN_OR_PUBLIC_IP:-}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
     
     openvidu-basic-webinar:
-        image: openvidu/openvidu-basic-webinar
+        image: openvidu/openvidu-basic-webinar:2.13.0
         restart: on-failure
         environment: 
             - OPENVIDU_URL=https://${OPENVIDU_DOMAIN_OR_PUBLIC_IP:-}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
     openvidu-classroom:
-        image: openvidu/openvidu-classroom
+        image: openvidu/openvidu-classroom:2.13.0
         restart: on-failure
         environment: 
             - OPENVIDU_URL=https://${OPENVIDU_DOMAIN_OR_PUBLIC_IP:-}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
     
     openvidu-getaroom:
-        image: openvidu/openvidu-getaroom
+        image: openvidu/openvidu-getaroom:2.13.0
         restart: on-failure
         environment: 
             - OPENVIDU_URL=https://${OPENVIDU_DOMAIN_OR_PUBLIC_IP:-}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
     openvidu-call:
-        image: openvidu/openvidu-call:2.12.0
+        image: openvidu/openvidu-call:2.12.0-demos
         restart: on-failure
         environment: 
             - OPENVIDU_URL=https://${OPENVIDU_DOMAIN_OR_PUBLIC_IP:-}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
-    nginx:
-        image: openvidu/openvidu-demo-proxy
+    demos-page:
+        image: openvidu/openvidu-demo-proxy:1.0.0
         restart: on-failure
         ports:
             - "5442:80"
