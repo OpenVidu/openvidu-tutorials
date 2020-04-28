@@ -1,0 +1,150 @@
+html {
+	position: relative;
+	min-height: 100%;
+}
+
+nav {
+	height: 50px;
+	width: 100%;
+	z-index: 1;
+	background-color: #4d4d4d !important;
+	border-color: #4d4d4d !important;
+	border-top-right-radius: 0 !important;
+	border-top-left-radius: 0 !important;
+}
+
+.navbar-header {
+	width: 100%;
+}
+
+.nav-icon {
+	padding: 5px 15px 5px 15px;
+	float: right;
+}
+
+nav a {
+	color: #ccc !important;
+}
+
+nav i.fa {
+	font-size: 40px;
+	color: #ccc;
+}
+
+nav a:hover {
+	color: #a9a9a9 !important;
+}
+
+nav i.fa:hover {
+	color: #a9a9a9;
+}
+
+#main-container {
+	padding-bottom: 80px;
+}
+
+.footer {
+	position: absolute;
+	bottom: 0;
+	width: 100%;
+	height: 60px;
+	background-color: #4d4d4d;
+}
+
+.footer .text-muted {
+	margin: 20px 0;
+	float: left;
+	color: #ccc;
+}
+
+.openvidu-logo {
+	height: 35px;
+	float: right;
+	margin: 12px 0;
+	-webkit-transition: all 0.1s ease-in-out;
+	-moz-transition: all 0.1s ease-in-out;
+	-o-transition: all 0.1s ease-in-out;
+	transition: all 0.1s ease-in-out;
+}
+
+.openvidu-logo:hover {
+	-webkit-filter: grayscale(0.5);
+	filter: grayscale(0.5);
+}
+
+.demo-logo {
+	margin: 0;
+	height: 22px;
+	float: left;
+	padding-right: 8px;
+}
+
+a:hover .demo-logo {
+	-webkit-filter: brightness(0.7);
+	filter: brightness(0.7);
+}
+
+#img-div {
+	text-align: center;
+	padding-top: 3em;
+}
+
+#img-div img {
+	height: 15em;
+	margin: 0 auto;
+}
+
+.thumbnail img {
+	padding: 5px;
+}
+
+a.thumbnail.active, a.thumbnail:focus, a.thumbnail:hover {
+    border-color: #0088aa;
+    background-color: rgba(0, 136, 170, 0.10);
+}
+
+a:focus, a:hover {
+	color: #0088aa;
+	text-decoration: none;
+}
+
+a.thumbnail.active p, a.thumbnail:focus p, a.thumbnail:hover p {
+	color: #0088aa;
+}
+
+a:focus, a:hover p {
+	color: #0088aa;
+}
+
+.caption p {
+	margin: 10px 0 10px;
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+}
+
+
+/* xs ans md screen resolutions*/
+
+@media screen and (max-width: 991px) {
+	.container .navbar-header {
+		margin-right: 0 !important;
+		margin-left: 0 !important;
+	}
+	.nav-icon {
+		padding: 9px 8px 9px 8px;
+	}
+	nav i.fa {
+		font-size: 32px;
+	}
+	.vertical-center {
+		width: 85%;
+		padding-top: 10px;
+	}
+	#img-div {
+		padding-bottom: 1em;
+	}
+	#img-div img {
+		height: 10em;
+	}
+}

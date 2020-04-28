@@ -1,0 +1,50 @@
+version: '3.1'
+
+services:
+
+    openvidu-basic-videoconference:
+        image: openvidu/openvidu-basic-videoconference
+        restart: on-failure
+        environment: 
+            - OPENVIDU_URL=https://${OPENVIDU_DOMAIN_OR_PUBLIC_IP:-}
+            - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
+    
+    openvidu-basic-webinar:
+        image: openvidu/openvidu-basic-webinar
+        restart: on-failure
+        environment: 
+            - OPENVIDU_URL=https://${OPENVIDU_DOMAIN_OR_PUBLIC_IP:-}
+            - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
+
+    openvidu-classroom:
+        image: openvidu/openvidu-classroom
+        restart: on-failure
+        environment: 
+            - OPENVIDU_URL=https://${OPENVIDU_DOMAIN_OR_PUBLIC_IP:-}
+            - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
+    
+    openvidu-getaroom:
+        image: openvidu/openvidu-getaroom
+        restart: on-failure
+        environment: 
+            - OPENVIDU_URL=https://${OPENVIDU_DOMAIN_OR_PUBLIC_IP:-}
+            - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
+
+    openvidu-call:
+        image: openvidu/openvidu-call:2.12.0
+        restart: on-failure
+        environment: 
+            - OPENVIDU_URL=https://${OPENVIDU_DOMAIN_OR_PUBLIC_IP:-}
+            - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
+
+    nginx:
+        image: openvidu/openvidu-demo-proxy
+        restart: on-failure
+        ports:
+            - "5442:80"
+        environment:
+            - URL_OV_BASIC_VIDEOCONFERENCE=openvidu-basic-videoconference:80
+            - URL_OV_BASIC_WEBINAR=openvidu-basic-webinar:5000
+            - URL_OV_CLASSROOM=openvidu-classroom:5000
+            - URL_OV_GETAROOM=openvidu-getaroom:80
+            - URL_OV_CALL=openvidu-call:80
