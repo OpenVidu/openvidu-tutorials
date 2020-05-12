@@ -4,8 +4,8 @@ set -eo pipefail
 if [[ -z "$FROM_VERSION" || -z "$TO_VERSION" ]]; then
     echo
     echo "Examples of use: "
-    echo "   FROM_VERSION=2.12.0 TO_VERSION=2.13.0 ${0}"
-    echo "   FROM_VERSION=2.12.0 TO_VERSION=2.13.0 FROM_VERSION_SDK=2.12.0 TO_VERSION_SDK=2.13.0 ${0}"
+    echo "   export FROM_VERSION=2.12.0; export TO_VERSION=2.13.0; ${0}"
+    echo "   export FROM_VERSION=2.12.0; export TO_VERSION=2.13.0; export FROM_VERSION_SDK=2.12.0; export TO_VERSION_SDK=2.13.0; ${0}"
     echo
     exit 1
 fi
@@ -14,7 +14,7 @@ if [[ -z "$FROM_VERSION_SDK" || -z "$TO_VERSION_SDK" ]]; then
     echo
     echo "No FROM_VERSION_SDK and TO_VERSION_SDK properties provided. Server SDKs depdendencies won't be updated."
     echo "To update also server SDKs dependencies, run the script like this:"
-    echo "   FROM_VERSION=2.12.0 TO_VERSION=2.13.0 FROM_VERSION_SDK=2.12.0 TO_VERSION_SDK=2.13.0 ${0}"
+    echo "   export FROM_VERSION=2.12.0; export TO_VERSION=2.13.0; export FROM_VERSION_SDK=2.12.0; export TO_VERSION_SDK=2.13.0; ${0}"
     echo
     read -p "Do you still want to continue? [Y/N]" -r
     echo
@@ -74,6 +74,7 @@ fi
 # Run "npm install" in every NPM project
 for tutorial in ${NPM_TUTORIALS}
 do
+    echo
     echo "###############################"
     echo "Compiling NPM project $tutorial"
     echo "###############################"
@@ -84,6 +85,7 @@ done
 # Run "mvn clean compile package" in every Maven project
 for tutorial in ${MAVEN_TUTORIALS}
 do
+    echo
     echo "###############################"
     echo "Compiling Maven project $tutorial"
     echo "###############################"
@@ -93,6 +95,7 @@ done
 
 # Update every <script src="openvidu-browser-VERSION.js"></script> import in every *.html or *.ejs file (14 files changed)
 for file in *.html *.ejs; do
+    echo
     echo "###############################"
     echo "Updating openvidu-browser <script> tag in $file"
     echo "###############################"
@@ -105,6 +108,7 @@ wget https://github.com/OpenVidu/openvidu/releases/download/v$TO_VERSION/openvid
 readarray MY_ARRAY < <(find -name "openvidu-browser-$FROM_VERSION.js" -printf "%h\n" | sort -u)
 for directory in ${MY_ARRAY[@]}
 do
+    echo
     echo "###############################"
     echo "Replacing $directory/openvidu-browser-$FROM_VERSION.js with openvidu-browser-$TO_VERSION.js"
     echo "###############################"
@@ -116,6 +120,7 @@ rm openvidu-browser-$TO_VERSION.js
 
 # Update openvidu-webcomponent tutorial files: static web component files and import inside index.html
 
+echo
 echo "###############################"
 echo "Updating openvidu-webcomponent tutorial"
 echo "###############################"
