@@ -5,13 +5,6 @@ import android.os.Handler;
 import android.util.Log;
 import android.widget.Toast;
 
-import io.openvidu.openvidu_android.activities.SessionActivity;
-import io.openvidu.openvidu_android.constants.JsonConstants;
-import io.openvidu.openvidu_android.observers.CustomSdpObserver;
-import io.openvidu.openvidu_android.openvidu.LocalParticipant;
-import io.openvidu.openvidu_android.openvidu.Participant;
-import io.openvidu.openvidu_android.openvidu.RemoteParticipant;
-import io.openvidu.openvidu_android.openvidu.Session;
 import com.neovisionaries.ws.client.ThreadType;
 import com.neovisionaries.ws.client.WebSocket;
 import com.neovisionaries.ws.client.WebSocketException;
@@ -27,6 +20,7 @@ import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
+import org.webrtc.RtpTransceiver;
 import org.webrtc.SessionDescription;
 
 import java.io.IOException;
@@ -50,6 +44,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
+
+import io.openvidu.openvidu_android.activities.SessionActivity;
+import io.openvidu.openvidu_android.constants.JsonConstants;
+import io.openvidu.openvidu_android.observers.CustomSdpObserver;
+import io.openvidu.openvidu_android.openvidu.LocalParticipant;
+import io.openvidu.openvidu_android.openvidu.Participant;
+import io.openvidu.openvidu_android.openvidu.RemoteParticipant;
+import io.openvidu.openvidu_android.openvidu.Session;
 
 public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> implements WebSocketListener {
 
@@ -119,12 +121,15 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
             localParticipant.setConnectionId(localConnectionId);
 
             PeerConnection localPeerConnection = session.createLocalPeerConnection();
-            localParticipant.setPeerConnection(localPeerConnection);
 
-            MediaStream stream = this.session.getPeerConnectionFactory().createLocalMediaStream("102");
-            stream.addTrack(localParticipant.getAudioTrack());
-            stream.addTrack(localParticipant.getVideoTrack());
-            localParticipant.getPeerConnection().addStream(stream);
+            localPeerConnection.addTrack(localParticipant.getAudioTrack());
+            localPeerConnection.addTrack(localParticipant.getVideoTrack());
+
+            for (RtpTransceiver transceiver : localPeerConnection.getTransceivers()) {
+                transceiver.setDirection(RtpTransceiver.RtpTransceiverDirection.SEND_ONLY);
+            }
+
+            localParticipant.setPeerConnection(localPeerConnection);
 
             MediaConstraints sdpConstraints = new MediaConstraints();
             sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveAudio", "true"));
@@ -262,11 +267,17 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
         for (int i = 0; i < result.getJSONArray(JsonConstants.VALUE).length(); i++) {
             JSONObject participantJson = result.getJSONArray(JsonConstants.VALUE).getJSONObject(i);
             RemoteParticipant remoteParticipant = this.newRemoteParticipantAux(participantJson);
-            JSONArray streams = participantJson.getJSONArray("streams");
-            for (int j = 0; j < streams.length(); j++) {
-                JSONObject stream = streams.getJSONObject(0);
-                String streamId = stream.getString("id");
-                this.subscribeAux(remoteParticipant, streamId);
+            try {
+                JSONArray streams = participantJson.getJSONArray("streams");
+                for (int j = 0; j < streams.length(); j++) {
+                    JSONObject stream = streams.getJSONObject(0);
+                    String streamId = stream.getString("id");
+                    this.subscribeAux(remoteParticipant, streamId);
+                }
+            } catch (Exception e) {
+                //Sometimes when we enter in room the other participants have no stream
+                //We catch that in this way the iteration of participants doesn't stop
+                Log.e(TAG, "Error in addRemoteParticipantsAlreadyInRoom: " + e.getLocalizedMessage());
             }
         }
     }
@@ -336,6 +347,10 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
     }
 
     private void subscribeAux(RemoteParticipant remoteParticipant, String streamId) {
+        MediaConstraints sdpConstraints = new MediaConstraints();
+        sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveAudio", "true"));
+        sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveVideo", "true"));
+
         remoteParticipant.getPeerConnection().createOffer(new CustomSdpObserver("remote offer sdp") {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
@@ -348,7 +363,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
             public void onCreateFailure(String s) {
                 Log.e("createOffer error", s);
             }
-        }, new MediaConstraints());
+        }, sdpConstraints);
     }
 
     public void setWebsocketCancelled(boolean websocketCancelled) {
@@ -530,7 +545,9 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
     private String getWebSocketAddress(String openviduUrl) {
         try {
             URL url = new URL(openviduUrl);
-            return "wss://" + url.getHost() + ":" + url.getPort() + "/openvidu";
+            if (url.getPort() > -1)
+                return "wss://" + url.getHost() + ":" + url.getPort() + "/openvidu";
+            return "wss://" + url.getHost() + "/openvidu";
         } catch (MalformedURLException e) {
             Log.e(TAG, "Wrong URL", e);
             e.printStackTrace();

@@ -14,6 +14,8 @@ import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
+import org.webrtc.RtpReceiver;
+import org.webrtc.RtpTransceiver;
 import org.webrtc.SessionDescription;
 import org.webrtc.SoftwareVideoDecoderFactory;
 import org.webrtc.SoftwareVideoEncoderFactory;
@@ -70,7 +72,16 @@ public class Session {
         PeerConnection.IceServer iceServer = PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer();
         iceServers.add(iceServer);
 
-        PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(iceServers, new CustomPeerConnectionObserver("local") {
+        PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
+        rtcConfig.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.ENABLED;
+        rtcConfig.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE;
+        rtcConfig.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.NEGOTIATE;
+        rtcConfig.continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY;
+        rtcConfig.keyType = PeerConnection.KeyType.ECDSA;
+        rtcConfig.enableDtlsSrtp = true;
+        rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
+
+        PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(rtcConfig, new CustomPeerConnectionObserver("local") {
             @Override
             public void onIceCandidate(IceCandidate iceCandidate) {
                 super.onIceCandidate(iceCandidate);
@@ -86,7 +97,16 @@ public class Session {
         PeerConnection.IceServer iceServer = PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer();
         iceServers.add(iceServer);
 
-        PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(iceServers, new CustomPeerConnectionObserver("remotePeerCreation") {
+        PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
+        rtcConfig.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.ENABLED;
+        rtcConfig.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE;
+        rtcConfig.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.NEGOTIATE;
+        rtcConfig.continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY;
+        rtcConfig.keyType = PeerConnection.KeyType.ECDSA;
+        rtcConfig.enableDtlsSrtp = true;
+        rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
+
+        PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(rtcConfig, new CustomPeerConnectionObserver("remotePeerCreation") {
             @Override
             public void onIceCandidate(IceCandidate iceCandidate) {
                 super.onIceCandidate(iceCandidate);
@@ -94,9 +114,9 @@ public class Session {
             }
 
             @Override
-            public void onAddStream(MediaStream mediaStream) {
-                super.onAddStream(mediaStream);
-                activity.setRemoteMediaStream(mediaStream, remoteParticipants.get(connectionId));
+            public void onAddTrack(RtpReceiver rtpReceiver, MediaStream[] mediaStreams) {
+                super.onAddTrack(rtpReceiver, mediaStreams);
+                activity.setRemoteMediaStream(mediaStreams[0], remoteParticipants.get(connectionId));
             }
 
             @Override
@@ -113,10 +133,13 @@ public class Session {
             }
         });
 
-        MediaStream mediaStream = peerConnectionFactory.createLocalMediaStream("105");
-        mediaStream.addTrack(localParticipant.getAudioTrack());
-        mediaStream.addTrack(localParticipant.getVideoTrack());
-        peerConnection.addStream(mediaStream);
+        peerConnection.addTrack(localParticipant.getAudioTrack());//Add audio track to create transReceiver
+        peerConnection.addTrack(localParticipant.getVideoTrack());//Add video track to create transReceiver
+
+        for (RtpTransceiver transceiver : peerConnection.getTransceivers()) {
+            //We set both audio and video in receive only mode
+            transceiver.setDirection(RtpTransceiver.RtpTransceiverDirection.RECV_ONLY);
+        }
 
         this.remoteParticipants.get(connectionId).setPeerConnection(peerConnection);
     }
