@@ -63,7 +63,7 @@ export default class App extends Component<Props> {
                 buttonPositive: 'OK',
             });
             const audio = await PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO, {
-                title: 'Aduio Permission',
+                title: 'Audio Permission',
                 message: 'OpenVidu needs access to your microphone',
                 buttonNeutral: 'Ask Me Later',
                 buttonNegative: 'Cancel',
@@ -254,7 +254,7 @@ export default class App extends Component<Props> {
                 frameRate: 30,
                 insertMode: 'APPEND',
             }
-            
+
             let publisher = this.OV.initPublisher(undefined, properties);
 
             this.state.session.unpublish(this.state.mainStreamManager);
@@ -328,7 +328,7 @@ export default class App extends Component<Props> {
                             justifyContent: 'center',
                             alignItems: 'center',
                             padding: 20}}>
-                                
+
                             <Image style={styles.img} source={require('./resources/images/openvidu_grey_bg_transp_cropped.png')} />
                         </View>
                         <View style={{ justifyContent: 'center', alignItems: 'center'}}>
@@ -494,6 +494,6 @@ const styles = StyleSheet.create({
     img: {
         flex: 1,
         width: 400,
-        height: 200, 
+        height: 200,
     }
 });
