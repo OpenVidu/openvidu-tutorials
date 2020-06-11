@@ -16,7 +16,7 @@
 		2D02E4BD1E0B4A84006451C7 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		2D02E4BF1E0B4AB3006451C7 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		2DCD954D1E0B4F2C00145EB5 /* openvidu_react_nativeTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* openvidu_react_nativeTests.m */; };
-		36B7A51343504C3A2E0D6296 /* libPods-openvidu_react_nativeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 03025B7DF723D7F3C02E3157 /* libPods-openvidu_react_nativeTests.a */; };
+		6915BA8B98F4AB8448B840CD /* libPods-openvidu_react_native-openvidu_react_nativeTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = D4B8AAB926E94B1D15A52449 /* libPods-openvidu_react_native-openvidu_react_nativeTests.a */; };
 		896DD868CF38453868F37F63 /* libPods-openvidu_react_native.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 01583BA18B52F494D4938B56 /* libPods-openvidu_react_native.a */; };
 		BBD1D0F32316D96D0052542D /* WebRTC.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BBD1D0F22316D96D0052542D /* WebRTC.framework */; };
 		F5CE16BF80445DF12372F354 /* libPods-openvidu_react_native-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7F408B0B8EB8E85626767D6A /* libPods-openvidu_react_native-tvOSTests.a */; };
@@ -53,7 +53,7 @@
 		00E356F11AD99517003FC87E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00E356F21AD99517003FC87E /* openvidu_react_nativeTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = openvidu_react_nativeTests.m; sourceTree = "<group>"; };
 		01583BA18B52F494D4938B56 /* libPods-openvidu_react_native.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-openvidu_react_native.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		03025B7DF723D7F3C02E3157 /* libPods-openvidu_react_nativeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-openvidu_react_nativeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		02D7648F477C3D4C6D0CD2FC /* Pods-openvidu_react_native-openvidu_react_nativeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-openvidu_react_native-openvidu_react_nativeTests.release.xcconfig"; path = "Target Support Files/Pods-openvidu_react_native-openvidu_react_nativeTests/Pods-openvidu_react_native-openvidu_react_nativeTests.release.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* openvidu_react_native.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = openvidu_react_native.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = openvidu_react_native/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = openvidu_react_native/AppDelegate.m; sourceTree = "<group>"; };
@@ -64,6 +64,7 @@
 		1B64867F888530C24447AE96 /* Pods-openvidu_react_native-tvOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-openvidu_react_native-tvOS.debug.xcconfig"; path = "Target Support Files/Pods-openvidu_react_native-tvOS/Pods-openvidu_react_native-tvOS.debug.xcconfig"; sourceTree = "<group>"; };
 		2D02E47B1E0B4A5D006451C7 /* openvidu_react_native-tvOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "openvidu_react_native-tvOS.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2D02E4901E0B4A5D006451C7 /* openvidu_react_native-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "openvidu_react_native-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		60F59DC217F76C2CBF256B31 /* Pods-openvidu_react_native-openvidu_react_nativeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-openvidu_react_native-openvidu_react_nativeTests.debug.xcconfig"; path = "Target Support Files/Pods-openvidu_react_native-openvidu_react_nativeTests/Pods-openvidu_react_native-openvidu_react_nativeTests.debug.xcconfig"; sourceTree = "<group>"; };
 		6149DF38AB09BB1B1CC231F1 /* Pods-openvidu_react_nativeTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-openvidu_react_nativeTests.release.xcconfig"; path = "Target Support Files/Pods-openvidu_react_nativeTests/Pods-openvidu_react_nativeTests.release.xcconfig"; sourceTree = "<group>"; };
 		7165027E04B3C2F4902717D0 /* libPods-openvidu_react_native-tvOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-openvidu_react_native-tvOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		7F408B0B8EB8E85626767D6A /* libPods-openvidu_react_native-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-openvidu_react_native-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -73,6 +74,7 @@
 		BBD1D0F22316D96D0052542D /* WebRTC.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WebRTC.framework; path = "../node_modules/openvidu-browser/node_modules/react-native-webrtc/ios/WebRTC.framework"; sourceTree = "<group>"; };
 		C6AE7B52D2E590FA94DC124C /* Pods-openvidu_react_native.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-openvidu_react_native.release.xcconfig"; path = "Target Support Files/Pods-openvidu_react_native/Pods-openvidu_react_native.release.xcconfig"; sourceTree = "<group>"; };
 		C937D6231BBCBACC0D07F8B0 /* Pods-openvidu_react_nativeTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-openvidu_react_nativeTests.debug.xcconfig"; path = "Target Support Files/Pods-openvidu_react_nativeTests/Pods-openvidu_react_nativeTests.debug.xcconfig"; sourceTree = "<group>"; };
+		D4B8AAB926E94B1D15A52449 /* libPods-openvidu_react_native-openvidu_react_nativeTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-openvidu_react_native-openvidu_react_nativeTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E5F47056E9326E5A5D7DE028 /* Pods-openvidu_react_native.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-openvidu_react_native.debug.xcconfig"; path = "Target Support Files/Pods-openvidu_react_native/Pods-openvidu_react_native.debug.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
@@ -84,7 +86,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				36B7A51343504C3A2E0D6296 /* libPods-openvidu_react_nativeTests.a in Frameworks */,
+				6915BA8B98F4AB8448B840CD /* libPods-openvidu_react_native-openvidu_react_nativeTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,7 +158,7 @@
 				01583BA18B52F494D4938B56 /* libPods-openvidu_react_native.a */,
 				7165027E04B3C2F4902717D0 /* libPods-openvidu_react_native-tvOS.a */,
 				7F408B0B8EB8E85626767D6A /* libPods-openvidu_react_native-tvOSTests.a */,
-				03025B7DF723D7F3C02E3157 /* libPods-openvidu_react_nativeTests.a */,
+				D4B8AAB926E94B1D15A52449 /* libPods-openvidu_react_native-openvidu_react_nativeTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -214,6 +216,8 @@
 				FFB1653098E20B83AE5E0548 /* Pods-openvidu_react_native-tvOSTests.release.xcconfig */,
 				C937D6231BBCBACC0D07F8B0 /* Pods-openvidu_react_nativeTests.debug.xcconfig */,
 				6149DF38AB09BB1B1CC231F1 /* Pods-openvidu_react_nativeTests.release.xcconfig */,
+				60F59DC217F76C2CBF256B31 /* Pods-openvidu_react_native-openvidu_react_nativeTests.debug.xcconfig */,
+				02D7648F477C3D4C6D0CD2FC /* Pods-openvidu_react_native-openvidu_react_nativeTests.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -229,6 +233,7 @@
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
+				D88C1217FDEF026FBA5401E4 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -509,7 +514,7 @@
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-openvidu_react_nativeTests-checkManifestLockResult.txt",
+				"$(DERIVED_FILE_DIR)/Pods-openvidu_react_native-openvidu_react_nativeTests-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -532,6 +537,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native/Pods-openvidu_react_native-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D88C1217FDEF026FBA5401E4 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native-openvidu_react_nativeTests/Pods-openvidu_react_native-openvidu_react_nativeTests-frameworks.sh",
+				"${PODS_ROOT}/../../node_modules/openvidu-browser/node_modules/react-native-webrtc/ios/WebRTC.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native-openvidu_react_nativeTests/Pods-openvidu_react_native-openvidu_react_nativeTests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -639,7 +662,7 @@
 /* Begin XCBuildConfiguration section */
 		00E356F61AD99517003FC87E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C937D6231BBCBACC0D07F8B0 /* Pods-openvidu_react_nativeTests.debug.xcconfig */;
+			baseConfigurationReference = 60F59DC217F76C2CBF256B31 /* Pods-openvidu_react_native-openvidu_react_nativeTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -662,7 +685,7 @@
 		};
 		00E356F71AD99517003FC87E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6149DF38AB09BB1B1CC231F1 /* Pods-openvidu_react_nativeTests.release.xcconfig */;
+			baseConfigurationReference = 02D7648F477C3D4C6D0CD2FC /* Pods-openvidu_react_native-openvidu_react_nativeTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
@@ -696,7 +719,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.openvidu-react-native2";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.openvidu-react-native2";
 				PRODUCT_NAME = openvidu_react_native;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -718,7 +741,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.openvidu-react-native2";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.openvidu-react-native2";
 				PRODUCT_NAME = openvidu_react_native;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
