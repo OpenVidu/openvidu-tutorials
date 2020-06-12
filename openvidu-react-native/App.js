@@ -43,7 +43,8 @@ export default class App extends Component<Props> {
             role: 'PUBLISHER',
             mirror: true,
             videoSource: undefined,
-            camera: true,
+            video: true,
+            audio: true
         };
     }
 
@@ -269,9 +270,14 @@ export default class App extends Component<Props> {
         */
     }
 
+    muteUnmuteMic() {
+        this.state.mainStreamManager.publishAudio(!this.state.audio);
+        this.setState({ audio: !this.state.audio });
+    }
+
     muteUnmuteCamera() {
-        this.state.mainStreamManager.publishVideo(!this.state.camera);
-        this.setState({ camera: !this.state.camera });
+        this.state.mainStreamManager.publishVideo(!this.state.video);
+        this.setState({ video: !this.state.video });
     }
 
     render() {
@@ -302,12 +308,21 @@ export default class App extends Component<Props> {
                                     title="Toggle Camera"
                                     color="#841584"
                                 />
+
+                            </View>
+                            <View style={styles.button}>
+                                <Button
+                                    onLongPress={() => this.muteUnmuteMic()}
+                                    onPress={() => this.muteUnmuteMic()}
+                                    title={this.state.audio ? 'Mute Microphone' : 'Unmute Microphone'}
+                                    color="#3383FF"
+                                />
                             </View>
                             <View style={styles.button}>
                                 <Button
                                     onLongPress={() => this.muteUnmuteCamera()}
                                     onPress={() => this.muteUnmuteCamera()}
-                                    title={this.state.camera ? 'Mute Camera' : 'Unmute Camera'}
+                                    title={this.state.video ? 'Mute Camera' : 'Unmute Camera'}
                                     color="#00cbff"
                                 />
                             </View>
