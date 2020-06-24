@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">WebRTCExampleApp</string>
+    <string name="start_button">Join</string>
+    <string name="session_name">Session Name</string>
+    <string name="default_session_name">SessionA</string>
+    <string name="participant_name">Participant Name</string>
+    <string name="default_participant_name">Participant</string>
+    <string name="openvidu_url">OPENVIDU URL</string>
+    <string name="openvidu_secret">OPENVIDU SECRET</string>
+    <string name="default_openvidu_url">https://192.168.1.106:4443/</string>
+    <string name="default_openvidu_secret">MY_SECRET</string>
+    <string name="hang_up">Leave session</string>
+    <string name="no_connection">COULD NOT ESTABLISH THE CONNECTION, TRY AGAIN </string>
+    <string name="no_permissions_granted">We can not give you service without your permission</string>
+    <string name="permissions_dialog_title">We need your help</string>
+    <string name="accept_permissions_dialog">GIVE PERMISSIONS!</string>
+    <string name="cancel_dialog">CANCEL</string>
+    <string name="no_internet_connection">NO INTERNET CONNECTION, PLEASE CHECK YOUR CONNECTION</string>
+</resources>
