@@ -5,13 +5,11 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,16 +28,17 @@ import org.webrtc.SurfaceViewRenderer;
 import org.webrtc.VideoTrack;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.Random;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.openvidu.openvidu_android.R;
+import io.openvidu.openvidu_android.databinding.ActivityMainBinding;
 import io.openvidu.openvidu_android.fragments.PermissionsDialogFragment;
 import io.openvidu.openvidu_android.openvidu.LocalParticipant;
 import io.openvidu.openvidu_android.openvidu.RemoteParticipant;
 import io.openvidu.openvidu_android.openvidu.Session;
 import io.openvidu.openvidu_android.utils.CustomHttpClient;
+import io.openvidu.openvidu_android.utils.OpenViduUtils;
 import io.openvidu.openvidu_android.websocket.CustomWebSocket;
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -47,124 +46,217 @@ import okhttp3.MediaType;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+/**
+ *
+ */
 public class SessionActivity extends AppCompatActivity {
 
+    /** Android */
     private static final int MY_PERMISSIONS_REQUEST_CAMERA = 100;
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 101;
     private static final int MY_PERMISSIONS_REQUEST = 102;
+
+    /** Logging */
     private final String TAG = "SessionActivity";
-    @BindView(R.id.views_container)
-    LinearLayout views_container;
-    @BindView(R.id.start_finish_call)
-    Button start_finish_call;
-    @BindView(R.id.session_name)
-    EditText session_name;
-    @BindView(R.id.participant_name)
-    EditText participant_name;
-    @BindView(R.id.openvidu_url)
-    EditText openvidu_url;
-    @BindView(R.id.openvidu_secret)
-    EditText openvidu_secret;
-    @BindView(R.id.local_gl_surface_view)
-    SurfaceViewRenderer localVideoView;
-    @BindView(R.id.main_participant)
-    TextView main_participant;
-    @BindView(R.id.peer_container)
-    FrameLayout peer_container;
+
+    /** Layout */
+    // View Binding for layout activity_main.xml; (initialized in onCreate)
+    private ActivityMainBinding activityMainBinding = null;
+
+    /** HTTP */
+    static final String METHOD_POST = "POST";
+
+    /** OpenVidu */
+    static final String SESSION_URL = "/api/sessions";
+    static final String TOKEN_URL = "/api/tokens";
 
     private String OPENVIDU_URL;
-    private String OPENVIDU_SECRET;
+    private String OPENVIDU_SECRET; // WARNING: For example only; use login and user tokens in production
     private Session session;
     private CustomHttpClient httpClient;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        setContentView(R.layout.activity_main);
+
+        // Initialize View Binding for activity_main and set content View
+        // The class name "ActivityMainBinding" is automatically generated from the layout filename activity_main
+        // https://developer.android.com/topic/libraries/view-binding
+        activityMainBinding = ActivityMainBinding.inflate(getLayoutInflater());
+        View rootView = activityMainBinding.getRoot();
+        setContentView( rootView );
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
+
         askForPermissions();
-        ButterKnife.bind(this);
-        Random random = new Random();
-        int randomIndex = random.nextInt(100);
-        participant_name.setText(participant_name.getText().append(String.valueOf(randomIndex)));
+
+        generateRandomName();
     }
 
+    /**
+     *
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+    }
+
+    /**
+     * Restore state
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    /**
+     * Save state
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
+
+    /**
+     *
+     */
+    @Override
+    protected void onStop() {
+        leaveSession();
+        super.onStop();
+    }
+
+    /**
+     *
+     */
+    @Override
+    protected void onDestroy() {
+        leaveSession();
+        super.onDestroy();
+    }
+
+
+    /**
+     * Ask for permissions CAMERA and/or RECORD_AUDIO
+     */
     public void askForPermissions() {
-        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) &&
-                (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                        != PackageManager.PERMISSION_GRANTED)) {
+        boolean bCameraPermission
+                = ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
+        boolean bRecordAudioPermission
+                = ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) == PackageManager.PERMISSION_GRANTED;
+
+        if( !bCameraPermission && !bRecordAudioPermission ) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO},
-                    MY_PERMISSIONS_REQUEST);
-        } else if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
+                    new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO}, MY_PERMISSIONS_REQUEST);
+        } else if ( !bRecordAudioPermission ){
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.RECORD_AUDIO},
-                    MY_PERMISSIONS_REQUEST_RECORD_AUDIO);
-        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
+                    new String[]{Manifest.permission.RECORD_AUDIO}, MY_PERMISSIONS_REQUEST_RECORD_AUDIO);
+        } else if ( !bCameraPermission ) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA},
-                    MY_PERMISSIONS_REQUEST_CAMERA);
+                    new String[]{Manifest.permission.CAMERA}, MY_PERMISSIONS_REQUEST_CAMERA);
         }
     }
 
-    public void buttonPressed(View view) {
-        if (start_finish_call.getText().equals(getResources().getString(R.string.hang_up))) {
-            // Already connected to a session
-            leaveSession();
-            return;
-        }
-        if (arePermissionGranted()) {
-            initViews();
-            viewToConnectingState();
-
-            OPENVIDU_URL = openvidu_url.getText().toString();
-            OPENVIDU_SECRET = openvidu_secret.getText().toString();
-            httpClient = new CustomHttpClient(OPENVIDU_URL, "Basic " + android.util.Base64.encodeToString(("OPENVIDUAPP:" + OPENVIDU_SECRET).getBytes(), android.util.Base64.DEFAULT).trim());
-
-            String sessionId = session_name.getText().toString();
-            getToken(sessionId);
-        } else {
-            DialogFragment permissionsFragment = new PermissionsDialogFragment();
-            permissionsFragment.show(getSupportFragmentManager(), "Permissions Fragment");
-        }
-    }
-
-    private void getToken(String sessionId) {
+    /**
+     * Join or leave a session depending on the text value of id/start_finish_call.
+     *
+     * @param view
+     */
+    public void onClickStartFinishCall(View view) {
         try {
-            // Session Request
-            RequestBody sessionBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{\"customSessionId\": \"" + sessionId + "\"}");
-            this.httpClient.httpCall("/api/sessions", "POST", "application/json", sessionBody, new Callback() {
+            boolean bInSession = activityMainBinding.startFinishCall.getText().equals("Leave session");
+            if (bInSession) {
+                leaveSession();
+                return;
+            }
+            if (arePermissionGranted()) {
+                initViews();
+                viewToConnectingState();
 
+                OPENVIDU_URL = activityMainBinding.openviduUrl.getText().toString();
+                OPENVIDU_SECRET = activityMainBinding.openviduSecret.getText().toString();
+                httpClient = new CustomHttpClient(OPENVIDU_URL, OpenViduUtils.getBasicAuthString(OPENVIDU_SECRET));
+
+                String sessionId = activityMainBinding.sessionName.getText().toString();
+                joinOpenViduSession(sessionId);
+            } else {
+                DialogFragment permissionsFragment = new PermissionsDialogFragment();
+                permissionsFragment.show(getSupportFragmentManager(), "Permissions Fragment");
+            }
+        }catch(Exception e){
+            Log.e(TAG, e.toString());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Create and/or join sessionId
+     *
+     * @param sessionId The customSessionId of the session.
+     */
+    private void joinOpenViduSession(String sessionId) {
+        try {
+            // HTTP POST sessionId to SESSION_URL
+            MediaType jsonMediaType = MediaType.parse("application/json; charset=utf-8");
+            String contentString = String.format("{\"customSessionId\": \"%s\"}", sessionId);
+            RequestBody sessionBody = RequestBody.create(contentString, jsonMediaType);
+            this.httpClient.httpCall(SESSION_URL, METHOD_POST, "application/json", sessionBody, new Callback(){
+                /**
+                 * WARNING: response.body().string() != response.body().toString(), e.g.
+                 *          toString() = okhttp3.internal.http.RealResponseBody@fe18513
+                 *          string() = {"id":"SessionA","createdAt":1593059100440}
+                 *
+                 * @param call
+                 * @param response
+                 * @throws IOException
+                 */
                 @Override
-                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    Log.d(TAG, "responseString: " + response.body().string());
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
+                {
+                    Log.d(TAG, String.format("joinOpenViduSession.httpCall(SESSION_URL).onResponse(): code = %d, body = %s", response.code(), response.body().string()));
 
-                    // Token Request
-                    RequestBody tokenBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{\"session\": \"" + sessionId + "\"}");
-                    httpClient.httpCall("/api/tokens", "POST", "application/json", tokenBody, new Callback() {
+                    // For example,
+                    // If no session exists, code = 200 and response.body().string() = {"id":"SessionA","createdAt":1593059100440}
+                    // If session already exists, code = 409 and response.body().string() is empty
+                    if( response.code() != 200 && response.code() != 409 ) {
+                        Log.e(TAG, "JoinOpenViduSession.httpCall(SESSION_URL) - unhandled error code");
+                        return;
+                    }
 
+                    final String tokenRequestContent = "{\"session\": \"" + sessionId + "\"}";
+                    final RequestBody tokenRequestBody = RequestBody.create(tokenRequestContent, jsonMediaType);
+                    final String tokenContentType = "application/json";
+                    httpClient.httpCall(TOKEN_URL, METHOD_POST, tokenContentType, tokenRequestBody, new Callback() {
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) {
-                            String responseString = null;
-                            try {
-                                responseString = response.body().string();
-                            } catch (IOException e) {
-                                Log.e(TAG, "Error getting body", e);
+                            if( !response.isSuccessful() ){
+                                Log.e(TAG, "joinOpenViduSession().httpCall(TOKEN_URL).onResponse() - Failed to get token");
+                                return;
                             }
-                            Log.d(TAG, "responseString2: " + responseString);
-                            JSONObject tokenJsonObject = null;
-                            String token = null;
+
                             try {
-                                tokenJsonObject = new JSONObject(responseString);
-                                token = tokenJsonObject.getString("token");
-                            } catch (JSONException e) {
+                                // @requireNonNull - Throws NullPointerException with message
+                                String jsonBodyString = Objects.requireNonNull(response.body(), "response body empty").string();
+                                Log.d(TAG, String.format("joinOpenViduSession().httpCall(TOKEN_URL): jsonBody = %s", jsonBodyString));
+
+                                if( jsonBodyString.isEmpty() ){
+                                    Log.e(TAG, "JoinOpenViduSession().httpCall(TOKEN_URL): response empty");
+                                    return;
+                                }
+                                try {
+                                    JSONObject tokenJsonObject = new JSONObject(jsonBodyString);
+                                    String tokenString = tokenJsonObject.getString("token");
+                                    onSessionTokenReceived(tokenString, sessionId);
+                                } catch (JSONException e) {
+                                    Log.e(TAG, String.valueOf(e));
+                                    e.printStackTrace();
+                                }
+                            }catch(NullPointerException | IOException e){
+                                Log.e(TAG, String.valueOf(e));
                                 e.printStackTrace();
                             }
-                            getTokenSuccess(token, sessionId);
                         }
 
                         @Override
@@ -188,30 +280,41 @@ public class SessionActivity extends AppCompatActivity {
         }
     }
 
-    private void getTokenSuccess(String token, String sessionId) {
-        // Initialize our session
-        session = new Session(sessionId, token, views_container, this);
+    private void onSessionTokenReceived(String token, String sessionId) {
+        session = new Session(sessionId, token, activityMainBinding.viewsContainer, this);
 
         // Initialize our local participant and start local camera
-        String participantName = participant_name.getText().toString();
-        LocalParticipant localParticipant = new LocalParticipant(participantName, session, this.getApplicationContext(), localVideoView);
+        String participantName = activityMainBinding.participantName.getText().toString();
+        LocalParticipant localParticipant = new LocalParticipant(
+                participantName,
+                session,
+                this.getApplicationContext(),
+                activityMainBinding.localGlSurfaceView);
         localParticipant.startCamera();
+
+        // Update local participant view
         runOnUiThread(() -> {
-            // Update local participant view
-            main_participant.setText(participant_name.getText().toString());
-            main_participant.setPadding(20, 3, 20, 3);
+            String participantNameString = activityMainBinding.participantName.getText().toString();
+            activityMainBinding.mainParticipant.setText(participantNameString);
+            activityMainBinding.mainParticipant.setPadding(20, 3, 20, 3);
         });
 
         // Initialize and connect the websocket to OpenVidu Server
         startWebSocket();
     }
 
+    /**
+     * Start custom OpenVidu web socket
+     */
     private void startWebSocket() {
         CustomWebSocket webSocket = new CustomWebSocket(session, OPENVIDU_URL, this);
         webSocket.execute();
         session.setWebSocket(webSocket);
     }
 
+    /**
+     * On connection error, display a toast and transition the UI to disconnected state.
+     */
     private void connectionError() {
         Runnable myRunnable = () -> {
             Toast toast = Toast.makeText(this, "Error connecting to " + OPENVIDU_URL, Toast.LENGTH_LONG);
@@ -221,54 +324,56 @@ public class SessionActivity extends AppCompatActivity {
         new Handler(this.getMainLooper()).post(myRunnable);
     }
 
-    private void initViews() {
-        EglBase rootEglBase = EglBase.create();
-        localVideoView.init(rootEglBase.getEglBaseContext(), null);
-        localVideoView.setMirror(true);
-        localVideoView.setEnableHardwareScaler(true);
-        localVideoView.setZOrderMediaOverlay(true);
-    }
-
     public void viewToDisconnectedState() {
         runOnUiThread(() -> {
-            localVideoView.clearImage();
-            localVideoView.release();
-            start_finish_call.setText(getResources().getString(R.string.start_button));
-            start_finish_call.setEnabled(true);
-            openvidu_url.setEnabled(true);
-            openvidu_url.setFocusableInTouchMode(true);
-            openvidu_secret.setEnabled(true);
-            openvidu_secret.setFocusableInTouchMode(true);
-            session_name.setEnabled(true);
-            session_name.setFocusableInTouchMode(true);
-            participant_name.setEnabled(true);
-            participant_name.setFocusableInTouchMode(true);
-            main_participant.setText(null);
-            main_participant.setPadding(0, 0, 0, 0);
+            activityMainBinding.localGlSurfaceView.clearImage();
+            activityMainBinding.localGlSurfaceView.release();
+            activityMainBinding.startFinishCall.setText(getResources().getString(R.string.start_button));
+            activityMainBinding.startFinishCall.setEnabled(true);
+            activityMainBinding.openviduUrl.setEnabled(true);
+            activityMainBinding.openviduUrl.setFocusableInTouchMode(true);
+            activityMainBinding.openviduSecret.setEnabled(true);
+            activityMainBinding.openviduSecret.setFocusableInTouchMode(true);
+            activityMainBinding.sessionName.setEnabled(true);
+            activityMainBinding.sessionName.setFocusableInTouchMode(true);
+            activityMainBinding.participantName.setEnabled(true);
+            activityMainBinding.participantName.setFocusableInTouchMode(true);
+            activityMainBinding.mainParticipant.setText(null);
+            activityMainBinding.mainParticipant.setPadding(0, 0, 0, 0);
         });
     }
 
+    /**
+     *
+     */
     public void viewToConnectingState() {
         runOnUiThread(() -> {
-            start_finish_call.setEnabled(false);
-            openvidu_url.setEnabled(false);
-            openvidu_url.setFocusable(false);
-            openvidu_secret.setEnabled(false);
-            openvidu_secret.setFocusable(false);
-            session_name.setEnabled(false);
-            session_name.setFocusable(false);
-            participant_name.setEnabled(false);
-            participant_name.setFocusable(false);
+            activityMainBinding.startFinishCall.setEnabled(false);
+            activityMainBinding.openviduUrl.setEnabled(false);
+            activityMainBinding.openviduUrl.setFocusable(false);
+            activityMainBinding.openviduSecret.setEnabled(false);
+            activityMainBinding.openviduSecret.setFocusable(false);
+            activityMainBinding.sessionName.setEnabled(false);
+            activityMainBinding.sessionName.setFocusable(false);
+            activityMainBinding.participantName.setEnabled(false);
+            activityMainBinding.participantName.setFocusable(false);
         });
     }
 
+    /**
+     *
+     */
     public void viewToConnectedState() {
         runOnUiThread(() -> {
-            start_finish_call.setText(getResources().getString(R.string.hang_up));
-            start_finish_call.setEnabled(true);
+            activityMainBinding.startFinishCall.setText(getResources().getString(R.string.hang_up));
+            activityMainBinding.startFinishCall.setEnabled(true);
         });
     }
 
+    /**
+     *
+     * @param remoteParticipant
+     */
     public void createRemoteParticipantVideo(final RemoteParticipant remoteParticipant) {
         Handler mainHandler = new Handler(this.getMainLooper());
         Runnable myRunnable = () -> {
@@ -278,7 +383,7 @@ public class SessionActivity extends AppCompatActivity {
             rowView.setLayoutParams(lp);
             int rowId = View.generateViewId();
             rowView.setId(rowId);
-            views_container.addView(rowView);
+            activityMainBinding.viewsContainer.addView(rowView);
             SurfaceViewRenderer videoView = (SurfaceViewRenderer) ((ViewGroup) rowView).getChildAt(0);
             remoteParticipant.setVideoView(videoView);
             videoView.setMirror(false);
@@ -295,6 +400,11 @@ public class SessionActivity extends AppCompatActivity {
         mainHandler.post(myRunnable);
     }
 
+    /**
+     *
+     * @param stream
+     * @param remoteParticipant
+     */
     public void setRemoteMediaStream(MediaStream stream, final RemoteParticipant remoteParticipant) {
         final VideoTrack videoTrack = stream.videoTracks.get(0);
         videoTrack.addSink(remoteParticipant.getVideoView());
@@ -303,33 +413,57 @@ public class SessionActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     *
+     */
     public void leaveSession() {
-        this.session.leaveSession();
-        this.httpClient.dispose();
-        viewToDisconnectedState();
+        try {
+            this.session.leaveSession();
+            this.httpClient.dispose();
+            viewToDisconnectedState();
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
+    /**
+     *
+     * @return
+     */
     private boolean arePermissionGranted() {
         return (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_DENIED) &&
                 (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_DENIED);
     }
 
-    @Override
-    protected void onDestroy() {
-        leaveSession();
-        super.onDestroy();
-    }
-
+    /**
+     *
+     */
     @Override
     public void onBackPressed() {
         leaveSession();
         super.onBackPressed();
     }
 
-    @Override
-    protected void onStop() {
-        leaveSession();
-        super.onStop();
+    /**
+     * Initializes the surface view for the local participant.
+     */
+    private void initViews() {
+        EglBase.Context rootEglBaseContext = EglBase.create().getEglBaseContext();
+        activityMainBinding.localGlSurfaceView.init(rootEglBaseContext, null);
+        activityMainBinding.localGlSurfaceView.setMirror(true);
+        activityMainBinding.localGlSurfaceView.setEnableHardwareScaler(true);
+        activityMainBinding.localGlSurfaceView.setZOrderMediaOverlay(true);
     }
+
+    /**
+     *
+     */
+    private void generateRandomName(){
+        Random random = new Random();
+        int randomIndex = random.nextInt(100);
+        Editable randomName = activityMainBinding.participantName.getText().append(String.valueOf(randomIndex));
+        activityMainBinding.participantName.setText( randomName );
+    }
+
 
 }

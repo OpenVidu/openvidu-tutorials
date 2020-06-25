@@ -11,6 +11,10 @@ import androidx.fragment.app.DialogFragment;
 import io.openvidu.openvidu_android.R;
 import io.openvidu.openvidu_android.activities.SessionActivity;
 
+/**
+ * This fragment display a permission request message to the user before
+ * invoking SessionActivity.askForPermissions
+ */
 public class PermissionsDialogFragment extends DialogFragment {
 
     private static final String TAG = "PermissionsDialog";
