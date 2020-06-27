@@ -1,6 +1,9 @@
 package io.openvidu.openvidu_android.activities;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -56,6 +59,8 @@ public class SessionActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 101;
     private static final int MY_PERMISSIONS_REQUEST = 102;
 
+    private SharedPreferences sharedPreferences = null; // initialized in onCreate
+
     /** Logging */
     private final String TAG = "SessionActivity";
 
@@ -67,6 +72,7 @@ public class SessionActivity extends AppCompatActivity {
     static final String METHOD_POST = "POST";
 
     /** OpenVidu */
+    static final String CONFIG_URL = "/config";
     static final String SESSION_URL = "/api/sessions";
     static final String TOKEN_URL = "/api/tokens";
 
@@ -74,12 +80,16 @@ public class SessionActivity extends AppCompatActivity {
     private String OPENVIDU_SECRET; // WARNING: For example only; use login and user tokens in production
     private Session session;
     private CustomHttpClient httpClient;
+    private static boolean bAuthenticated;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.i(TAG, "LIFECYCLE: onCreate");
         super.onCreate(savedInstanceState);
 
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        loadSharedPreferences();
 
         // Initialize View Binding for activity_main and set content View
         // The class name "ActivityMainBinding" is automatically generated from the layout filename activity_main
@@ -95,11 +105,17 @@ public class SessionActivity extends AppCompatActivity {
         generateRandomName();
     }
 
+    private void loadSharedPreferences(){
+        final String sharedPreferencesName = getString(R.string.main_shared_preferences);
+        sharedPreferences = getSharedPreferences(sharedPreferencesName, Context.MODE_PRIVATE);
+    }
+
     /**
      *
      */
     @Override
     protected void onStart() {
+        Log.i(TAG, "LIFECYCLE: onStart");
         super.onStart();
     }
 
@@ -108,7 +124,18 @@ public class SessionActivity extends AppCompatActivity {
      */
     @Override
     protected void onResume() {
+        Log.i(TAG, "LIFECYCLE: onResume");
         super.onResume();
+
+        if( bAuthenticated ) {
+            viewToLoggedInState();
+            initHttpClientUnsecure();
+        }else{
+            viewToLoggedOutState();
+        }
+
+        String urlString = sharedPreferences.getString(getString(R.string.sp_key_openvidu_url), getString(R.string.default_openvidu_url));
+        activityMainBinding.openviduUrl.setText(urlString);
     }
 
     /**
@@ -116,7 +143,12 @@ public class SessionActivity extends AppCompatActivity {
      */
     @Override
     protected void onPause() {
+        Log.i(TAG, "LIFECYCLE: onPause");
         super.onPause();
+
+        SharedPreferences.Editor spEditor = sharedPreferences.edit();
+        spEditor.putString(getSharedPrefKey(R.string.sp_openvidu_url), activityMainBinding.openviduUrl.getText().toString());
+        spEditor.apply();
     }
 
     /**
@@ -124,6 +156,7 @@ public class SessionActivity extends AppCompatActivity {
      */
     @Override
     protected void onStop() {
+        Log.i(TAG, "LIFECYCLE: onStop");
         leaveSession();
         super.onStop();
     }
@@ -133,6 +166,7 @@ public class SessionActivity extends AppCompatActivity {
      */
     @Override
     protected void onDestroy() {
+        Log.i(TAG, "LIFECYCLE: onDestroy");
         leaveSession();
         super.onDestroy();
     }
@@ -160,6 +194,16 @@ public class SessionActivity extends AppCompatActivity {
     }
 
     /**
+     * This is a pseudo-login that performs an API request to see if it was successful.
+     *
+     * @param view
+     */
+    public void onClickLogin(View view) {
+        initHttpClientUnsecure();
+        verifyOpenViduAuthentication();
+    }
+
+    /**
      * Join or leave a session depending on the text value of id/start_finish_call.
      *
      * @param view
@@ -175,10 +219,6 @@ public class SessionActivity extends AppCompatActivity {
                 initViews();
                 viewToConnectingState();
 
-                OPENVIDU_URL = activityMainBinding.openviduUrl.getText().toString();
-                OPENVIDU_SECRET = activityMainBinding.openviduSecret.getText().toString();
-                httpClient = new CustomHttpClient(OPENVIDU_URL, OpenViduUtils.getBasicAuthString(OPENVIDU_SECRET));
-
                 String sessionId = activityMainBinding.sessionName.getText().toString();
                 joinOpenViduSession(sessionId);
             } else {
@@ -187,6 +227,58 @@ public class SessionActivity extends AppCompatActivity {
             }
         }catch(Exception e){
             Log.e(TAG, e.toString());
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Initialize httpClient using the server's url and secret. This is
+     * not a secure way to perform operations from the client-side -- convert to
+     * login and user tokens in production.
+     */
+    private void initHttpClientUnsecure(){
+        if( this.httpClient != null){
+            this.httpClient.dispose();
+        }
+        OPENVIDU_URL = activityMainBinding.openviduUrl.getText().toString();
+        OPENVIDU_SECRET = activityMainBinding.openviduSecret.getText().toString();
+        httpClient = new CustomHttpClient(OPENVIDU_URL, OpenViduUtils.getBasicAuthString(OPENVIDU_SECRET));
+    }
+
+    /**
+     * If authentication is successful, enable the ability to join sessions.
+     */
+    private void verifyOpenViduAuthentication(){
+        try {
+            httpClient.httpGet(CONFIG_URL, new Callback() {
+                @SuppressLint("DefaultLocale")
+                @Override
+                public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException
+                {
+                    if( !response.isSuccessful() ){
+                        Log.e(TAG, String.format("verifyOpenViduAuthentication(%d) - Response not successful", response.code()));
+                        runOnUiThread( () -> {
+                            Toast.makeText( getApplicationContext(),
+                                    String.format("verifyOpenViduAuthentication(%d) - Response not successful", response.code()),
+                                    Toast.LENGTH_SHORT).show();
+                        });
+                        return;
+                    }
+                    runOnUiThread( () -> {
+                        Toast.makeText(getApplicationContext(), "Authentication Successful", Toast.LENGTH_SHORT).show();
+                        viewToLoggedInState();
+                    });
+                }
+
+                @Override
+                public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                    runOnUiThread( () -> {
+                        Toast.makeText(getApplicationContext(), "Authentication Failed", Toast.LENGTH_LONG).show();
+                    });
+                }
+
+            });
+        }catch( IOException e ){
             e.printStackTrace();
         }
     }
@@ -322,6 +414,26 @@ public class SessionActivity extends AppCompatActivity {
             viewToDisconnectedState();
         };
         new Handler(this.getMainLooper()).post(myRunnable);
+    }
+
+    /**
+     *
+     */
+    private void viewToLoggedOutState(){
+        bAuthenticated = false;
+        activityMainBinding.sessionName.setEnabled(false);
+        activityMainBinding.participantName.setEnabled(false);
+        activityMainBinding.startFinishCall.setEnabled(false);
+    }
+
+    /**
+     *
+     */
+    private void viewToLoggedInState(){
+        bAuthenticated = true;
+        activityMainBinding.sessionName.setEnabled(true);
+        activityMainBinding.participantName.setEnabled(true);
+        activityMainBinding.startFinishCall.setEnabled(true);
     }
 
     public void viewToDisconnectedState() {
@@ -465,5 +577,6 @@ public class SessionActivity extends AppCompatActivity {
         activityMainBinding.participantName.setText( randomName );
     }
 
-
+    private String getSharedPrefKey(int stringId) { return getSharedPrefString(stringId); }
+    private String getString(int stringId){ return getResources().getString(stringId); }
 }

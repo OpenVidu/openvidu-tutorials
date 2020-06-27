@@ -88,6 +88,16 @@ public class CustomHttpClient {
         call.enqueue(callback);
     }
 
+    public void httpGet(String url, Callback callback) throws IOException{
+        url = url.startsWith("/") ? url.substring(1) : url;
+        Request request = new Request.Builder()
+                .url(this.baseUrl + url)
+                .header("Authorization", this.basicAuth)
+                .build();
+        Call call = client.newCall(request);
+        call.enqueue(callback);
+    }
+
     public void dispose() {
         this.client.dispatcher().executorService().shutdown();
     }
