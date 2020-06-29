@@ -248,7 +248,7 @@ export class AppComponent implements OnDestroy {
                 {
                     name: 'url',
                     type: 'text',
-                    value: 'https://demos.openvidu.io:4443',
+                    value: 'https://demos.openvidu.io',
                     placeholder: 'URL'
                 },
                 {
@@ -291,7 +291,7 @@ export class AppComponent implements OnDestroy {
     getToken(): Promise<string> {
         if (this.platform.is('ios') && this.platform.is('cordova') && this.OPENVIDU_SERVER_URL === 'https://localhost:4443') {
             // To make easier first steps with iOS apps, use demos OpenVidu Sever if no custom valid server is configured
-            this.OPENVIDU_SERVER_URL = 'https://demos.openvidu.io:4443';
+            this.OPENVIDU_SERVER_URL = 'https://demos.openvidu.io';
         }
         return this.createSession(this.mySessionId).then((sessionId) => {
             return this.createToken(sessionId);

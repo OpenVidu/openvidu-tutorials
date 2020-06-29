@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { StreamManager } from 'openvidu-browser';
 
 
@@ -29,19 +29,26 @@ import { StreamManager } from 'openvidu-browser';
     template: `
         <div>
             <ov-video [streamManager]="streamManager"></ov-video>
-            <div><p>{{getNicknameTag()}}</p></div>
+            <div><p>{{nickname}}</p></div>
         </div>`,
 })
-export class UserVideoComponent {
+export class UserVideoComponent implements OnInit {
+
+    nickname = '';
 
     @Input()
     streamManager: StreamManager;
 
+    ngOnInit() {
+        this.getNicknameTag();
+    }
+
     getNicknameTag() {
         try {
-            return JSON.parse(this.streamManager.stream.connection.data).clientData;
+            this.nickname = JSON.parse(this.streamManager.stream.connection.data).clientData;
         } catch (err) {
             console.error('ClientData is not JSON formatted');
+            this.nickname = 'unknown';
         }
     }
 }
