@@ -29,8 +29,8 @@
 				<user-video :stream-manager="mainStreamManager"/>
 			</div>
 			<div id="video-container" class="col-md-6">
-				<user-video :stream-manager="publisher" @click="setMainVideoStream(publisher)"/>
-				<user-video v-for="(sub, index) in subscribers" :key="index" :stream-manager="sub" @click="setMainVideoStream(sub)"/>
+				<user-video :stream-manager="publisher" @click.native="updateMainVideoStreamManager(publisher)"/>
+				<user-video v-for="(sub, index) in subscribers" :key="index" :stream-manager="sub" @click.native="updateMainVideoStreamManager(sub)"/>
 			</div>
 		</div>
 	</div>
@@ -55,6 +55,7 @@ export default {
 
 	data () {
 		return {
+			OV: undefined,
 			session: undefined,
 			mainStreamManager: undefined,
 			publisher: undefined,
@@ -68,16 +69,17 @@ export default {
 	methods: {
 		joinSession () {
 			// --- Get an OpenVidu object ---
-			const OV = new OpenVidu();
+			this.OV = new OpenVidu();
 
 			// --- Init a session ---
-			this.session = OV.initSession();
+			this.session = this.OV.initSession();
 
 			// --- Specify the actions when events take place in the session ---
 
 			// On every new Stream received...
 			this.session.on('streamCreated', ({ stream }) => {
-				this.subscribers.push(this.session.subscribe(stream));
+				const subscriber = this.session.subscribe(stream);
+				this.subscribers.push(subscriber);
 			});
 
 			// On every Stream destroyed...
@@ -98,7 +100,7 @@ export default {
 
 						// --- Get your own camera stream with the desired properties ---
 
-						this.publisher = OV.initPublisher(undefined, {
+						let publisher = this.OV.initPublisher(undefined, {
 							audioSource: undefined, // The source of audio. If undefined default microphone
 							videoSource: undefined, // The source of video. If undefined default webcam
 							publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
@@ -109,7 +111,8 @@ export default {
 							mirror: false       	// Whether to mirror your local video or not
 						});
 
-						this.mainStreamManager = this.publisher;
+						this.mainStreamManager = publisher;
+						this.publisher = publisher;
 
 						// --- Publish your stream ---
 
@@ -131,13 +134,14 @@ export default {
 			this.mainStreamManager = undefined;
 			this.publisher = undefined;
 			this.subscribers = [];
+			this.OV = undefined;
 
 			window.removeEventListener('beforeunload', this.leaveSession);
 		},
 
-		setMainVideoStream (stream) {
+		updateMainVideoStreamManager (stream) {
 			if (this.mainStreamManager === stream) return;
-			this.mainStreamManager = stream
+			this.mainStreamManager = stream;
 		},
 
 		/**
