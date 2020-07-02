@@ -38,8 +38,7 @@
     "core-js": "3.6.5",
     "openvidu-browser": "2.14.0",
     "rxjs": "6.5.5",
-    "tslib": "1.11.1",
-    "xcode": "2.1.0",
+    "xcode": "3.0.1",
     "zone.js": "0.10.3"
   },
   "optionalDependencies": {
@@ -69,6 +68,7 @@
     "karma-jasmine-html-reporter": "1.5.3",
     "protractor": "5.4.4",
     "ts-node": "8.9.1",
+    "tslib": "1.11.1",
     "tslint": "6.1.2",
     "typescript": "3.8.3"
   },
