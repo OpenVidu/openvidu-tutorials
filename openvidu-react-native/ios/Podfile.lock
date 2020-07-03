@@ -262,7 +262,7 @@ DEPENDENCIES:
   - React-jsi (from `../node_modules/react-native/ReactCommon/jsi`)
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
-  - react-native-webrtc (from `../node_modules/openvidu-browser/node_modules/react-native-webrtc`)
+  - react-native-webrtc (from `../node_modules/react-native-webrtc`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
   - React-RCTAnimation (from `../node_modules/react-native/Libraries/NativeAnimation`)
   - React-RCTBlob (from `../node_modules/react-native/Libraries/Blob`)
@@ -310,7 +310,7 @@ EXTERNAL SOURCES:
   React-jsinspector:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   react-native-webrtc:
-    :path: "../node_modules/openvidu-browser/node_modules/react-native-webrtc"
+    :path: "../node_modules/react-native-webrtc"
   React-RCTActionSheet:
     :path: "../node_modules/react-native/Libraries/ActionSheetIOS"
   React-RCTAnimation:
@@ -363,6 +363,6 @@ SPEC CHECKSUMS:
   ReactCommon: ed4e11d27609d571e7eee8b65548efc191116eb3
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
 
-PODFILE CHECKSUM: 2a8724dd37ad9da3fa655126179f1e41a112856e
+PODFILE CHECKSUM: 6312870dc1d8c7a73076e81f7dde0dbf5a3737ee
 
 COCOAPODS: 1.9.2

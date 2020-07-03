@@ -33,7 +33,7 @@ target 'openvidu_react_native' do
   pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
   pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
   pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
-  pod 'react-native-webrtc', :path => '../node_modules/openvidu-browser/node_modules/react-native-webrtc'
+  pod 'react-native-webrtc', :path => '../node_modules/react-native-webrtc'
 
   target 'openvidu_react_nativeTests' do
     inherit! :complete

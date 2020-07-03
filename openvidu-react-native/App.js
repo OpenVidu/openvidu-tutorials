@@ -1,11 +1,3 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow
- */
-
 import React, { Component } from 'react';
 import {
     Platform,
@@ -20,10 +12,9 @@ import {
     Image,
     PermissionsAndroid,
 } from 'react-native';
-
-import { OpenVidu } from 'openvidu-browser';
-import { RTCView } from './node_modules/openvidu-browser/node_modules/react-native-webrtc';
 import axios from 'axios';
+
+import { OpenViduReactNativeAdapter, OpenVidu, RTCView, StreamManager } from 'openvidu-react-native-adapter';
 
 const OPENVIDU_SERVER_URL = 'https://demos.openvidu.io';
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
@@ -34,8 +25,11 @@ export default class App extends Component<Props> {
     constructor(props) {
         super(props);
 
+        const openViduReact = new OpenViduReactNativeAdapter();
+        openViduReact.initialize();
+
         this.state = {
-            mySessionId: 'SessionA',
+            mySessionId: 'testReact',
             myUserName: 'Participant' + Math.floor(Math.random() * 100),
             session: undefined,
             mainStreamManager: undefined,
@@ -48,10 +42,12 @@ export default class App extends Component<Props> {
         };
     }
 
-    componentDidMount() {}
+    componentDidMount() {
+       //this.joinSession();
+    }
 
     componentWillUnmount() {
-        //this.leaveSession();
+        this.leaveSession();
     }
 
     async checkAndroidPermissions() {
@@ -113,13 +109,11 @@ export default class App extends Component<Props> {
                 // --- 3) Specify the actions when events take place in the session ---
 
                 // On every new Stream received...
-                mySession.on('streamCreated', (event) => {
+                mySession.on('streamCreated', async (event) => {
                     // Subscribe to the Stream to receive it. Second parameter is undefined
                     // so OpenVidu doesn't create an HTML video by its own
-                    const subscriber = mySession.subscribe(event.stream, undefined);
-
-                    var subscribers = this.state.subscribers;
-
+                    const subscriber = await mySession.subscribeAsync(event.stream, undefined);
+                    var subscribers = Array.from(this.state.subscribers);
                     subscribers.push(subscriber);
                     // Update the state with the new subscribers
                     this.setState({
@@ -131,7 +125,7 @@ export default class App extends Component<Props> {
                 mySession.on('streamDestroyed', (event) => {
                     event.preventDefault();
                     // Remove the stream from 'subscribers' array
-                    this.deleteSubscriber(event.stream.streamManager);
+                    this.deleteSubscriber(event.stream);
                 });
 
                 // --- 4) Connect to the session with a valid user token ---
@@ -190,17 +184,15 @@ export default class App extends Component<Props> {
         return '';
     }
 
-    deleteSubscriber(streamManager) {
-        setTimeout(() => {
-            let subscribers = this.state.subscribers;
-            const index = subscribers.indexOf(streamManager, 0);
-            if (index > -1) {
-                subscribers.splice(index, 1);
-                this.setState({
-                    subscribers: subscribers,
-                });
-            }
-        });
+    deleteSubscriber(stream) {
+        var subscribers = Array.from(this.state.subscribers);
+        const index = subscribers.indexOf(stream.streamManager, 0);
+        if (index > -1) {
+            subscribers.splice(index, 1);
+            this.setState({
+                subscribers: subscribers,
+            });
+        }
     }
 
     leaveSession() {
@@ -367,23 +359,17 @@ export default class App extends Component<Props> {
 
                 <View style={[styles.container, { flexDirection: 'row', flexWrap: 'wrap' }]}>
                     {this.state.subscribers.map((item, index) => {
-                        if (!!item) {
-                            return (
-                                <View key={index}>
-                                    <Text>{this.getNicknameTag(item.stream)}</Text>
-                                    <RTCView
-                                        zOrder={0}
-                                        objectFit="cover"
-                                        style={styles.remoteView}
-                                        ref={(rtcVideo) => {
-                                            if (!!rtcVideo) {
-                                                item.addVideoElement(rtcVideo);
-                                            }
-                                        }}
-                                    />
-                                </View>
-                            );
-                        }
+                        return(
+                            <View key={index}>
+                                <Text>{this.getNicknameTag(item.stream)}</Text>
+                                <RTCView
+                                    zOrder={0}
+                                    objectFit="cover"
+                                    style={styles.remoteView}
+                                    streamURL={item.stream.getMediaStream().toURL()}
+                                />
+                            </View>
+                        );
                     })}
                 </View>
             </ScrollView>
