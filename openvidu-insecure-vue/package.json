@@ -1,6 +1,6 @@
 {
   "name": "openvidu-insecure-vue",
-  "version": "2.14.0",
+  "version": "2.15.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
