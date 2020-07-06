@@ -17,7 +17,7 @@
     "rxjs": "6.5.4",
     "tslib": "1.11.1",
     "zone.js": "0.10.2",
-    "openvidu-browser": "2.14.0"
+    "openvidu-browser": "2.15.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.900.6",

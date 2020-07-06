@@ -37,7 +37,8 @@ NPM_TUTORIALS="openvidu-insecure-angular
                 openvidu-mvc-node
                 openvidu-recording-node
                 openvidu-react-native
-                openvidu-electron"
+                openvidu-electron
+                openvidu-insecure-vue"
 
 MAVEN_TUTORIALS="openvidu-js-java
                 openvidu-mvc-java
@@ -48,7 +49,7 @@ MAVEN_TUTORIALS="openvidu-js-java
 find -type f -name 'package-lock.json' -exec rm {} \;
 find -type d -name 'node_modules' -exec rm -rf {} \;
 
-# Updating openvidu-browser dependencies in package.json files [openvidu-insecure-angular, openvidu-insecure-react, openvidu-ionic, openvidu-react-native]
+# Updating openvidu-browser dependencies in package.json files [openvidu-insecure-angular, openvidu-insecure-react, openvidu-ionic, openvidu-react-native, openvidu-insecure-vue]
 find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/\"openvidu-browser\": \"$FROM_VERSION\"/\"openvidu-browser\": \"$TO_VERSION\"/" {} \;
 
 # Updating openvidu-react dependencies in package.json files [openvidu-library-react]
@@ -79,7 +80,9 @@ do
     echo "Compiling NPM project $tutorial"
     echo "###############################"
     echo
-    cd $tutorial && npm install && cd ..
+    cd $tutorial
+    npm install || true
+    cd ..
 done
 
 # Run "mvn clean compile package" in every Maven project
@@ -90,7 +93,9 @@ do
     echo "Compiling Maven project $tutorial"
     echo "###############################"
     echo
-    cd $tutorial && mvn clean compile package && cd ..
+    cd $tutorial
+    mvn clean compile package
+    cd ..
 done
 
 # Update every <script src="openvidu-browser-VERSION.js"></script> import in every *.html or *.ejs file (14 files changed)
