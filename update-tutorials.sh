@@ -149,4 +149,8 @@ rm -rf openvidu-webcomponent-$TO_VERSION
 sed -i "s/<script src=\"openvidu-webcomponent-$FROM_VERSION.js\"><\/script>/<script src=\"openvidu-webcomponent-$TO_VERSION.js\"><\/script>/" openvidu-webcomponent/web/index.html
 sed -i "s/<link rel=\"stylesheet\" href=\"openvidu-webcomponent-$FROM_VERSION.css\">/<link rel=\"stylesheet\" href=\"openvidu-webcomponent-$TO_VERSION.css\">/" openvidu-webcomponent/web/index.html
 
+echo
+echo "###################################"
 echo "SUCCESS UPDATING OPENVIDU-TUTORIALS"
+echo "###################################"
+echo
