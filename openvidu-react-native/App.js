@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 
-import { OpenViduReactNativeAdapter, OpenVidu, RTCView, StreamManager } from 'openvidu-react-native-adapter';
+import { OpenViduReactNativeAdapter, OpenVidu, RTCView } from 'openvidu-react-native-adapter';
 
 const OPENVIDU_SERVER_URL = 'https://demos.openvidu.io';
 const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
@@ -25,8 +25,8 @@ export default class App extends Component<Props> {
     constructor(props) {
         super(props);
 
-        const openViduReact = new OpenViduReactNativeAdapter();
-        openViduReact.initialize();
+        const ovReact = new OpenViduReactNativeAdapter();
+        ovReact.initialize();
 
         this.state = {
             mySessionId: 'testReact',
@@ -137,7 +137,7 @@ export default class App extends Component<Props> {
                         // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
                         mySession
                             .connect(token, { clientData: this.state.myUserName })
-                            .then(() => {
+                            .then(async () => {
                                 if (Platform.OS == 'android') {
                                     this.checkAndroidPermissions();
                                 }
@@ -155,7 +155,7 @@ export default class App extends Component<Props> {
                                     };
                                     // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
                                     // element: we will manage it on our own) and with the desired properties
-                                    let publisher = this.OV.initPublisher(undefined, properties);
+                                    let publisher = await this.OV.initPublisherAsync(undefined, properties);
 
                                     // --- 6) Publish your stream ---
 
@@ -284,11 +284,7 @@ export default class App extends Component<Props> {
                                 zOrder={0}
                                 objectFit="cover"
                                 mirror={this.state.mirror}
-                                ref={(rtcVideo) => {
-                                    if (!!rtcVideo) {
-                                        this.state.mainStreamManager.addVideoElement(rtcVideo);
-                                    }
-                                }}
+                                streamURL={this.state.mainStreamManager.stream.getMediaStream().toURL()}
                                 style={styles.selfView}
                             />
                         </View>
