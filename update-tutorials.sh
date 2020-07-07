@@ -26,6 +26,10 @@ if [[ -z "$FROM_VERSION_SDK" || -z "$TO_VERSION_SDK" ]]; then
 fi
 
 echo "## Updating openvidu-tutorials"
+echo "## From $FROM_VERSION to $TO_VERSION"
+if [[ ! -z "$FROM_VERSION_SDK" || ! -z "$TO_VERSION_SDK" ]]; then
+    echo "## From SDK $FROM_VERSION_SDK to SDK $TO_VERSION_SDK"
+fi
 echo
 
 NPM_TUTORIALS="openvidu-insecure-angular
@@ -50,53 +54,29 @@ find -type f -name 'package-lock.json' -exec rm {} \;
 find -type d -name 'node_modules' -exec rm -rf {} \;
 
 # Updating openvidu-browser dependencies in package.json files [openvidu-insecure-angular, openvidu-insecure-react, openvidu-ionic, openvidu-react-native, openvidu-insecure-vue]
-find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/\"openvidu-browser\": \"$FROM_VERSION\"/\"openvidu-browser\": \"$TO_VERSION\"/" {} \;
+find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-browser\": \"$FROM_VERSION\"/\"openvidu-browser\": \"$TO_VERSION\"/" {} \;
 
 # Updating openvidu-react dependencies in package.json files [openvidu-library-react]
-find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/\"openvidu-react\": \"$FROM_VERSION\"/\"openvidu-react\": \"$TO_VERSION\"/" {} \;
+find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-react\": \"$FROM_VERSION\"/\"openvidu-react\": \"$TO_VERSION\"/" {} \;
 
 # Updating openvidu-angular dependencies in package.json files [openvidu-library-angular]
-find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/\"openvidu-angular\": \"$FROM_VERSION\"/\"openvidu-angular\": \"$TO_VERSION\"/" {} \;
+find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-angular\": \"$FROM_VERSION\"/\"openvidu-angular\": \"$TO_VERSION\"/" {} \;
 
 # If server SDKs must be udpated
 if [[ -n "$FROM_VERSION_SDK" && -n "$TO_VERSION_SDK" ]]; then
 
     # Updating openvidu-node-client dependencies in package.json files [openvidu-js-node, openvidu-mvc-node, openvidu-recording-node]
-    find . -type f -name 'package.json' -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/\"openvidu-node-client\": \"$FROM_VERSION_SDK\"/\"openvidu-node-client\": \"$TO_VERSION_SDK\"/" {} \;
+    find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-node-client\": \"$FROM_VERSION_SDK\"/\"openvidu-node-client\": \"$TO_VERSION_SDK\"/" {} \;
 
     # Updating openvidu-java-client dependencies in pom.xml files
     for tutorial in ${MAVEN_TUTORIALS}
     do
-        cd $tutorial && mvn --batch-mode versions:use-dep-version -Dincludes=io.openvidu:openvidu-java-client -DdepVersion=$TO_VERSION_SDK -DforceVersion=true && cd ..
+        cd $tutorial
+        mvn --batch-mode versions:use-dep-version -Dincludes=io.openvidu:openvidu-java-client -DdepVersion=$TO_VERSION_SDK -DforceVersion=true
+        cd ..
     done
 
 fi
-
-# Run "npm install" in every NPM project
-for tutorial in ${NPM_TUTORIALS}
-do
-    echo
-    echo "###############################"
-    echo "Compiling NPM project $tutorial"
-    echo "###############################"
-    echo
-    cd $tutorial
-    npm install || true
-    cd ..
-done
-
-# Run "mvn clean compile package" in every Maven project
-for tutorial in ${MAVEN_TUTORIALS}
-do
-    echo
-    echo "###############################"
-    echo "Compiling Maven project $tutorial"
-    echo "###############################"
-    echo
-    cd $tutorial
-    mvn clean compile package
-    cd ..
-done
 
 # Update every <script src="openvidu-browser-VERSION.js"></script> import in every *.html or *.ejs file (14 files changed)
 for file in *.html *.ejs; do
@@ -105,7 +85,7 @@ for file in *.html *.ejs; do
     echo "Updating openvidu-browser <script> tag in $file"
     echo "###############################"
     echo
-    find . -type f -name $file -not \( -path '*/node_modules/*' -o -path '*/package-lock.json'  \) -exec sed -i "s/<script src=\"openvidu-browser-$FROM_VERSION.js\"><\/script>/<script src=\"openvidu-browser-$TO_VERSION.js\"><\/script>/" {} \;
+    find . -type f -name $file -exec sed -i "s/<script src=\"openvidu-browser-$FROM_VERSION.js\"><\/script>/<script src=\"openvidu-browser-$TO_VERSION.js\"><\/script>/" {} \;
 done
 
 # Update every openvidu-browser-VERSION.js file (13 FILES CHANGED)
@@ -122,6 +102,34 @@ do
     cp openvidu-browser-$TO_VERSION.js $directory/openvidu-browser-$TO_VERSION.js
 done
 rm openvidu-browser-$TO_VERSION.js
+
+# Run "npm install" in every NPM project
+for tutorial in ${NPM_TUTORIALS}
+do
+    echo
+    echo "###############################"
+    echo "Compiling NPM project $tutorial"
+    echo "###############################"
+    echo
+    cd $tutorial
+    npm --no-git-tag-version --allow-same-version version $TO_VERSION
+    npm install || true
+    cd ..
+done
+
+# Run "mvn clean compile package" in every Maven project
+for tutorial in ${MAVEN_TUTORIALS}
+do
+    echo
+    echo "###############################"
+    echo "Compiling Maven project $tutorial"
+    echo "###############################"
+    echo
+    cd $tutorial
+    mvn versions:set -DnewVersion=$TO_VERSION
+    mvn clean compile package || true
+    cd ..
+done
 
 # Update openvidu-webcomponent tutorial files: static web component files and import inside index.html
 
@@ -140,3 +148,5 @@ mv openvidu-webcomponent-$TO_VERSION/openvidu-webcomponent-$TO_VERSION.css openv
 rm -rf openvidu-webcomponent-$TO_VERSION
 sed -i "s/<script src=\"openvidu-webcomponent-$FROM_VERSION.js\"><\/script>/<script src=\"openvidu-webcomponent-$TO_VERSION.js\"><\/script>/" openvidu-webcomponent/web/index.html
 sed -i "s/<link rel=\"stylesheet\" href=\"openvidu-webcomponent-$FROM_VERSION.css\">/<link rel=\"stylesheet\" href=\"openvidu-webcomponent-$TO_VERSION.css\">/" openvidu-webcomponent/web/index.html
+
+echo "SUCCESS UPDATING OPENVIDU-TUTORIALS"
