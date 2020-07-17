@@ -39,15 +39,17 @@ $(document).ready(() => {
         // You can see the publisher documentation here
         // https://docs.openvidu.io/en/stable/api/openvidu-browser/classes/publisher.html
 
-        publisher.on('streamCreated', (e) => {
+        publisher?.on('streamCreated', (e) => {
              console.warn("Publisher streamCreated", e);
         });
 
-        publisher.on('streamPlaying', (e) => {
-            document.body.style.backgroundColor = "gray";
-            form.style.display = 'none';
-            webComponent.style.display = 'block';
+        publisher?.on('streamPlaying', (e) => {
+            console.warn("Publisher streamPlaying", e);
         });
+
+        document.body.style.backgroundColor = "gray";
+        form.style.display = 'none';
+        webComponent.style.display = 'block';
     });
 
 
@@ -84,7 +86,7 @@ async function joinSession() {
  *   3) Configure OpenVidu Web Component in your client side with the token
  */
 
-var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
+var OPENVIDU_SERVER_URL = "https://demos.openvidu.io";
 var OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 function getToken(sessionName) {

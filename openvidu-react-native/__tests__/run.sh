@@ -1,0 +1,1 @@
+google-chrome https://demos.openvidu.io/getaroom/#testReact
