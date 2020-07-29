@@ -104,8 +104,8 @@ export default class App extends Component<Props> {
             {
                 session: this.OV.initSession(),
             },
-            () => {
-                var mySession = this.state.session;
+            async () => {
+                const mySession = this.state.session;
                 // --- 3) Specify the actions when events take place in the session ---
 
                 // On every new Stream received...
@@ -131,47 +131,44 @@ export default class App extends Component<Props> {
                 // --- 4) Connect to the session with a valid user token ---
                 // 'getToken' method is simulating what your server-side should do.
                 // 'token' parameter should be retrieved and returned by your own backend
-                this.getToken()
-                    .then((token) => {
-                        // First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
-                        // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-                        mySession
-                            .connect(token, { clientData: this.state.myUserName })
-                            .then(async () => {
-                                if (Platform.OS == 'android') {
-                                    this.checkAndroidPermissions();
-                                }
+                const token = await this.getToken();
+                // First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
+                // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
+                try {
+                    await mySession.connect(token, { clientData: this.state.myUserName });
+                } catch (error) {
+                    console.log('There was an error connecting to the session:', error.code, error.message);
+                }
 
-                                // --- 5) Get your own camera stream ---
-                                if (this.state.role !== 'SUBSCRIBER') {
-                                    const properties = {
-                                        audioSource: undefined, // The source of audio. If undefined default microphone
-                                        videoSource: undefined, // The source of video. If undefined default webcam
-                                        publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-                                        publishVideo: true, // Whether you want to start publishing with your video enabled or not
-                                        resolution: '640x480', // The resolution of your video
-                                        frameRate: 30, // The frame rate of your video
-                                        insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
-                                    };
-                                    // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
-                                    // element: we will manage it on our own) and with the desired properties
-                                    let publisher = await this.OV.initPublisherAsync(undefined, properties);
+                if (Platform.OS == 'android') {
+                    await this.checkAndroidPermissions();
+                }
 
-                                    // --- 6) Publish your stream ---
+                // --- 5) Get your own camera stream ---
+                if (this.state.role !== 'SUBSCRIBER') {
+                    const properties = {
+                        audioSource: undefined, // The source of audio. If undefined default microphone
+                        videoSource: undefined, // The source of video. If undefined default webcam
+                        publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+                        publishVideo: true, // Whether you want to start publishing with your video enabled or not
+                        resolution: '640x480', // The resolution of your video
+                        frameRate: 30, // The frame rate of your video
+                        insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
+                    };
+                    // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
+                    // element: we will manage it on our own) and with the desired propertiesç
 
-                                    // Set the main video in the page to display our webcam and store our Publisher
-                                    this.setState({
-                                        mainStreamManager: publisher,
-                                        videoSource: !properties.videoSource ? '1' : properties.videoSource, // 0: back camera | 1: user camera |
-                                    });
-                                    mySession.publish(publisher);
-                                }
-                            })
-                            .catch((error) => {
-                                console.log('There was an error connecting to the session:', error.code, error.message);
-                            });
-                    })
-                    .catch((error) => console.log('Error', error));
+                    const publisher = await this.OV.initPublisherAsync(undefined, properties);
+                    // --- 6) Publish your stream ---
+
+                    // Set the main video in the page to display our webcam and store our Publisher
+                    this.setState({
+                        mainStreamManager: publisher,
+                        videoSource: !properties.videoSource ? '1' : properties.videoSource, // 0: back camera | 1: user camera |
+                    }, () => {
+                        mySession.publish(publisher);
+                    });
+                }
             },
         );
     }
@@ -224,11 +221,11 @@ export default class App extends Component<Props> {
          * This function allows to switch the front / back cameras in a video track on the fly, without the need for adding / removing tracks or renegotiating
          */
 
-        this.state.mainStreamManager.stream
-            .getMediaStream()
-            .getVideoTracks()[0]
-            ._switchCamera();
-        this.setState({ mirror: !this.state.mirror });
+        const camera = this.state.mainStreamManager.stream.getMediaStream().getVideoTracks()[0];
+        if(!!camera){
+            camera._switchCamera();
+            this.setState({ mirror: !this.state.mirror });
+        }
 
         /**
          * Traditional way:
