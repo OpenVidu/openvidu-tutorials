@@ -1,5 +1,6 @@
 package io.openvidu.openvidu_android.openvidu;
 
+import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -195,22 +196,28 @@ public class Session {
     }
 
     public void leaveSession() {
-        websocket.setWebsocketCancelled(true);
-        if (websocket != null) {
-            websocket.leaveRoom();
-            websocket.disconnect();
-        }
-        this.localParticipant.dispose();
-        for (RemoteParticipant remoteParticipant : remoteParticipants.values()) {
-            if (remoteParticipant.getPeerConnection() != null) {
-                remoteParticipant.getPeerConnection().close();
+        AsyncTask.execute(() -> {
+            websocket.setWebsocketCancelled(true);
+            if (websocket != null) {
+                websocket.leaveRoom();
+                websocket.disconnect();
             }
-            views_container.removeView(remoteParticipant.getView());
-        }
-        if (peerConnectionFactory != null) {
-            peerConnectionFactory.dispose();
-            peerConnectionFactory = null;
-        }
+            this.localParticipant.dispose();
+        });
+        this.activity.runOnUiThread(() -> {
+            for (RemoteParticipant remoteParticipant : remoteParticipants.values()) {
+                if (remoteParticipant.getPeerConnection() != null) {
+                    remoteParticipant.getPeerConnection().close();
+                }
+                views_container.removeView(remoteParticipant.getView());
+            }
+        });
+        AsyncTask.execute(() -> {
+            if (peerConnectionFactory != null) {
+                peerConnectionFactory.dispose();
+                peerConnectionFactory = null;
+            }
+        });
     }
 
     public void removeView(View view) {
