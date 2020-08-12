@@ -709,13 +709,14 @@
 				DEVELOPMENT_TEAM = 3PJW9W9M4B;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = openvidu_react_native/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.openvidu-react-native";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.openvidu-react-nativeo";
 				PRODUCT_NAME = openvidu_react_native;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -731,13 +732,14 @@
 				DEVELOPMENT_TEAM = 3PJW9W9M4B;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = openvidu_react_native/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.openvidu-react-native";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.openvidu-react-nativeo";
 				PRODUCT_NAME = openvidu_react_native;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -899,7 +901,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -945,7 +947,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
