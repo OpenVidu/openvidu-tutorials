@@ -1,0 +1,10 @@
+version: '3.1'
+
+services:
+    app:
+        image: openvidu/openvidu-insecure-js-demo:2.15.0
+        restart: on-failure
+        network_mode: host
+        environment:
+            - OPENVIDU_URL=http://localhost:5443
+            - OPENVIDU_SECRET=${OPENVIDU_SECRET}

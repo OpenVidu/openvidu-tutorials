@@ -1,7 +1,5 @@
 FROM nginx:1.19.2-alpine
 
-ARG OPENVIDU_TUTORIALS_VERSION
-
 RUN apk update && \
     # apk add wget && \
     rm -rf /var/cache/apk/*
