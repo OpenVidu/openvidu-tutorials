@@ -1,0 +1,11 @@
+version: '3.1'
+
+services:
+    app:
+        image: openvidu/openvidu-basic-webinar-demo:2.15.0
+        restart: on-failure
+        network_mode: host
+        environment:
+            - SERVER_PORT=5442
+            - OPENVIDU_URL=http://localhost:5443
+            - OPENVIDU_SECRET=${OPENVIDU_SECRET}
