@@ -33,9 +33,7 @@ public class LocalParticipant extends Participant {
     public LocalParticipant(String participantName, Session session, Context context, SurfaceViewRenderer localVideoView) {
         super(participantName, session);
         this.localVideoView = localVideoView;
-        this.localVideoView = localVideoView;
         this.context = context;
-        this.participantName = participantName;
         this.localIceCandidates = new ArrayList<>();
         session.setLocalParticipant(this);
     }
