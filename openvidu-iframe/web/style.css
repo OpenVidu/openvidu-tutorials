@@ -3,6 +3,11 @@ html {
 	min-height: 100%;
 }
 
+.openvidu-iframe{
+	width: 100%;
+	height: 70%;
+}
+
 nav {
 	height: 50px;
 	width: 100%;
