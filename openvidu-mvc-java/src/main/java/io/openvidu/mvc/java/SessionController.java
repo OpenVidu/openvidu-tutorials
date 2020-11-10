@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.OpenViduRole;
 import io.openvidu.java.client.Session;
-import io.openvidu.java.client.TokenOptions;
+import io.openvidu.java.client.ConnectionProperties;
 
 @Controller
 public class SessionController {
@@ -57,16 +57,20 @@ public class SessionController {
 		// In this case, a JSON with the value we stored in the HttpSession object on login
 		String serverData = "{\"serverData\": \"" + httpSession.getAttribute("loggedUser") + "\"}";
 
-		// Build tokenOptions object with the serverData and the role
-		TokenOptions tokenOptions = new TokenOptions.Builder().data(serverData).role(role).build();
+		// Build connectionProperties object with the serverData and the role
+		ConnectionProperties connectionProperties = new ConnectionProperties.Builder()
+			.type(ConnectionType.WEBRTC)
+			.role(role)
+			.data(serverData)
+			.build();
 
 		if (this.mapSessions.get(sessionName) != null) {
 			// Session already exists
 			System.out.println("Existing session " + sessionName);
 			try {
 
-				// Generate a new token with the recently created tokenOptions
-				String token = this.mapSessions.get(sessionName).generateToken(tokenOptions);
+				// Generate a new token with the recently created connectionProperties
+				String token = this.mapSessions.get(sessionName).createConnection(connectionProperties).getToken();
 
 				// Update our collection storing the new token
 				this.mapSessionNamesTokens.get(sessionName).put(token, role);
@@ -92,8 +96,8 @@ public class SessionController {
 
 				// Create a new OpenVidu Session
 				Session session = this.openVidu.createSession();
-				// Generate a new token with the recently created tokenOptions
-				String token = session.generateToken(tokenOptions);
+				// Generate a new token with the recently created connectionProperties
+				String token = session.createConnection(connectionProperties).getToken();
 
 				// Store the session and the token in our collections
 				this.mapSessions.put(sessionName, session);

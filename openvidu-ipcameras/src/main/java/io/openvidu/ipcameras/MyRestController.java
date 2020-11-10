@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
+import io.openvidu.java.client.OpenViduRole;
+import io.openvidu.java.client.ConnectionType;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
 
@@ -69,8 +71,13 @@ public class MyRestController {
 
 		// Generate a token for the user
 		String token = null;
+		ConnectionProperties connectionProperties = new ConnectionProperties.Builder()
+			    .type(ConnectionType.WEBRTC)
+			    .role(OpenViduRole.PUBLISHER)
+			    .data("user_data")
+			    .build();
 		try {
-			token = this.session.generateToken();
+			token = this.session.createConnection(connectionProperties).getToken();
 		} catch (OpenViduHttpException e) {
 			if (e.getStatus() == 404) {
 				// Session was closed in openvidu-server. Create it again

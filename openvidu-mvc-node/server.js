@@ -117,7 +117,7 @@ function dashboardController(req, res) {
         console.log("Logging in | {user, pass}={" + user + ", " + pass + "}");
 
         if (login(user, pass)) { // Correct user-pass
-            // Validate session and return OK 
+            // Validate session and return OK
             // Value stored in req.session allows us to identify the user in future requests
             console.log("'" + user + "' has logged in");
             req.session.loggedUser = user;
@@ -152,8 +152,8 @@ app.post('/session', (req, res) => {
 
         console.log("Getting a token | {sessionName}={" + sessionName + "}");
 
-        // Build tokenOptions object with the serverData and the role
-        var tokenOptions = {
+        // Build connectionProperties object with the serverData and the role
+        var connectionProperties = {
             data: serverData,
             role: role
         };
@@ -165,17 +165,17 @@ app.post('/session', (req, res) => {
             // Get the existing Session from the collection
             var mySession = mapSessions[sessionName];
 
-            // Generate a new token asynchronously with the recently created tokenOptions
-            mySession.generateToken(tokenOptions)
-                .then(token => {
+            // Generate a new token asynchronously with the recently created connectionProperties
+            mySession.createConnection(connectionProperties)
+                .then(connection => {
 
                     // Store the new token in the collection of tokens
-                    mapSessionNamesTokens[sessionName].push(token);
+                    mapSessionNamesTokens[sessionName].push(connection.token);
 
                     // Return session template with all the needed attributes
                     res.render('session.ejs', {
                         sessionId: mySession.getSessionId(),
-                        token: token,
+                        token: connection.token,
                         nickName: clientData,
                         userName: req.session.loggedUser,
                         sessionName: sessionName
@@ -196,17 +196,17 @@ app.post('/session', (req, res) => {
                     // Store a new empty array in the collection of tokens
                     mapSessionNamesTokens[sessionName] = [];
 
-                    // Generate a new token asynchronously with the recently created tokenOptions
-                    session.generateToken(tokenOptions)
-                        .then(token => {
+                    // Generate a new token asynchronously with the recently created connectionProperties
+                    session.createConnection(connectionProperties)
+                        .then(connection => {
 
                             // Store the new token in the collection of tokens
-                            mapSessionNamesTokens[sessionName].push(token);
+                            mapSessionNamesTokens[sessionName].push(connection.token);
 
                             // Return session template with all the needed attributes
                             res.render('session.ejs', {
                                 sessionName: sessionName,
-                                token: token,
+                                token: connection.token,
                                 nickName: clientData,
                                 userName: req.session.loggedUser,
                             });

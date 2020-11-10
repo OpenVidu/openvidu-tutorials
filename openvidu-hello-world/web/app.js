@@ -48,9 +48,9 @@ window.onbeforeunload = function () {
  * These methods retrieve the mandatory user token from OpenVidu Server.
  * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
  * the API REST, openvidu-java-client or openvidu-node-client):
- *   1) Initialize a session in OpenVidu Server	(POST /api/sessions)
- *   2) Generate a token in OpenVidu Server		(POST /api/tokens)
- *   3) The token must be consumed in Session.connect() method
+ *   1) Initialize a session in OpenVidu Server	(POST /openvidu/api/sessions)
+ *   2) Generate a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
+ *   3) The Connection.token must be consumed in Session.connect() method
  */
 
 var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
@@ -60,11 +60,11 @@ function getToken(mySessionId) {
 	return createSession(mySessionId).then(sessionId => createToken(sessionId));
 }
 
-function createSession(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-apisessions
+function createSession(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessions
 	return new Promise((resolve, reject) => {
 		$.ajax({
 			type: "POST",
-			url: OPENVIDU_SERVER_URL + "/api/sessions",
+			url: OPENVIDU_SERVER_URL + "/openvidu/api/sessions",
 			data: JSON.stringify({ customSessionId: sessionId }),
 			headers: {
 				"Authorization": "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
@@ -86,12 +86,12 @@ function createSession(sessionId) { // See https://docs.openvidu.io/en/stable/re
 	});
 }
 
-function createToken(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-apitokens
+function createToken(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessionsltsession_idgtconnection
 	return new Promise((resolve, reject) => {
 		$.ajax({
 			type: "POST",
-			url: OPENVIDU_SERVER_URL + "/api/tokens",
-			data: JSON.stringify({ session: sessionId }),
+			url: OPENVIDU_SERVER_URL + "/openvidu/api/sessions/" + sessionId + "/connection",
+			data: JSON.stringify({}),
 			headers: {
 				"Authorization": "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
 				"Content-Type": "application/json"

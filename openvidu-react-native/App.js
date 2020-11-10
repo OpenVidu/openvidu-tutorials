@@ -379,9 +379,9 @@ export default class App extends Component<Props> {
      * These methods retrieve the mandatory user token from OpenVidu Server.
      * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
      * the API REST, openvidu-java-client or openvidu-node-client):
-     *   1) Initialize a session in OpenVidu Server	(POST /api/sessions)
-     *   2) Generate a token in OpenVidu Server		(POST /api/tokens)
-     *   3) The token must be consumed in Session.connect() method
+     *   1) Initialize a session in OpenVidu Server	(POST /openvidu/api/sessions)
+     *   2) Generate a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
+     *   3) The Connection.token must be consumed in Session.connect() method
      */
 
     getToken() {
@@ -394,7 +394,7 @@ export default class App extends Component<Props> {
         return new Promise((resolve) => {
             var data = JSON.stringify({ customSessionId: sessionId });
             axios
-                .post(OPENVIDU_SERVER_URL + '/api/sessions', data, {
+                .post(OPENVIDU_SERVER_URL + '/openvidu/api/sessions', data, {
                     headers: {
                         Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
                         'Content-Type': 'application/json',
@@ -453,9 +453,9 @@ export default class App extends Component<Props> {
 
     createToken(sessionId) {
         return new Promise((resolve, reject) => {
-            var data = JSON.stringify({ session: sessionId });
+            var data = JSON.stringify({});
             axios
-                .post(OPENVIDU_SERVER_URL + '/api/tokens', data, {
+                .post(OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection', data, {
                     headers: {
                         Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
                         'Content-Type': 'application/json',
