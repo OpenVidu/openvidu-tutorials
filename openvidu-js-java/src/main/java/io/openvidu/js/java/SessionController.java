@@ -22,6 +22,7 @@ import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.ConnectionProperties;
+import io.openvidu.java.client.ConnectionType;
 
 @RestController
 @RequestMapping("/api-sessions")
@@ -112,7 +113,7 @@ public class SessionController {
 			// Create a new OpenVidu Session
 			Session session = this.openVidu.createSession();
 			// Generate a new Connection with the recently created connectionProperties
-			String token = this.mapSessions.get(sessionName).createConnection(connectionProperties).getToken();
+			String token = session.createConnection(connectionProperties).getToken();
 
 			// Store the session and the token in our collections
 			this.mapSessions.put(sessionName, session);
