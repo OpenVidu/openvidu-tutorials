@@ -86,7 +86,7 @@ app.post('/api-login/login', function (req, res) {
     console.log("Logging in | {user, pass}={" + user + ", " + pass + "}");
 
     if (login(user, pass)) { // Correct user-pass
-        // Validate session and return OK 
+        // Validate session and return OK
         // Value stored in req.session allows us to identify the user in future requests
         console.log("'" + user + "' has logged in");
         req.session.loggedUser = user;
@@ -124,8 +124,8 @@ app.post('/api-sessions/get-token', function (req, res) {
 
         console.log("Getting a token | {sessionName}={" + sessionName + "}");
 
-        // Build tokenOptions object with the serverData and the role
-        var tokenOptions = {
+        // Build connectionProperties object with the serverData and the role
+        var connectionProperties = {
             data: serverData,
             role: role
         };
@@ -137,16 +137,16 @@ app.post('/api-sessions/get-token', function (req, res) {
             // Get the existing Session from the collection
             var mySession = mapSessions[sessionName];
 
-            // Generate a new token asynchronously with the recently created tokenOptions
-            mySession.generateToken(tokenOptions)
-                .then(token => {
+            // Generate a new token asynchronously with the recently created connectionProperties
+            mySession.createConnection(connectionProperties)
+                .then(connection => {
 
                     // Store the new token in the collection of tokens
-                    mapSessionNamesTokens[sessionName].push(token);
+                    mapSessionNamesTokens[sessionName].push(connection.token);
 
                     // Return the token to the client
                     res.status(200).send({
-                        0: token
+                        0: connection.token
                     });
                 })
                 .catch(error => {
@@ -164,16 +164,16 @@ app.post('/api-sessions/get-token', function (req, res) {
                     // Store a new empty array in the collection of tokens
                     mapSessionNamesTokens[sessionName] = [];
 
-                    // Generate a new token asynchronously with the recently created tokenOptions
-                    session.generateToken(tokenOptions)
-                        .then(token => {
+                    // Generate a new connection asynchronously with the recently created connectionProperties
+                    session.createConnection(connectionProperties)
+                        .then(connection => {
 
                             // Store the new token in the collection of tokens
-                            mapSessionNamesTokens[sessionName].push(token);
+                            mapSessionNamesTokens[sessionName].push(connection.token);
 
                             // Return the Token to the client
                             res.status(200).send({
-                                0: token
+                                0: connection.token
                             });
                         })
                         .catch(error => {

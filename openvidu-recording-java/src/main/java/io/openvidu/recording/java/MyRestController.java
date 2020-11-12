@@ -21,10 +21,11 @@ import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
+import io.openvidu.java.client.ConnectionType;
 import io.openvidu.java.client.Recording;
 import io.openvidu.java.client.RecordingProperties;
 import io.openvidu.java.client.Session;
-import io.openvidu.java.client.TokenOptions;
+import io.openvidu.java.client.ConnectionProperties;
 
 @RestController
 @RequestMapping("/api")
@@ -69,8 +70,12 @@ public class MyRestController {
 		// Role associated to this user
 		OpenViduRole role = OpenViduRole.PUBLISHER;
 
-		// Build tokenOptions object with the serverData and the role
-		TokenOptions tokenOptions = new TokenOptions.Builder().role(role).build();
+		// Build connectionProperties object with the serverData and the role
+		ConnectionProperties connectionProperties = new ConnectionProperties.Builder()
+			.type(ConnectionType.WEBRTC)
+			.role(role)
+			.data("user_data")
+			.build();
 
 		JSONObject responseJson = new JSONObject();
 
@@ -79,8 +84,8 @@ public class MyRestController {
 			System.out.println("Existing session " + sessionName);
 			try {
 
-				// Generate a new token with the recently created tokenOptions
-				String token = this.mapSessions.get(sessionName).generateToken(tokenOptions);
+				// Generate a new token with the recently created connectionProperties
+				String token = this.mapSessions.get(sessionName).createConnection(connectionProperties).getToken();
 
 				// Update our collection storing the new token
 				this.mapSessionNamesTokens.get(sessionName).put(token, role);
@@ -111,8 +116,8 @@ public class MyRestController {
 			// Create a new OpenVidu Session
 			Session session = this.openVidu.createSession();// new
 															// SessionProperties.Builder().customSessionId("CUSTOMSESSIONID").defaultRecordingLayout(RecordingLayout.CUSTOM).defaultCustomLayout("CUSTOM/LAYOUT").recordingMode(RecordingMode.ALWAYS).build());
-			// Generate a new token with the recently created tokenOptions
-			String token = session.generateToken(tokenOptions);
+			// Generate a new token with the recently created connectionProperties
+			String token = session.createConnection(connectionProperties).getToken();
 
 			// Store the session and the token in our collections
 			this.mapSessions.put(sessionName, session);
@@ -384,9 +389,9 @@ public class MyRestController {
 		json.put("defaultRecordingLayout", session.getProperties().defaultRecordingLayout());
 		json.put("defaultCustomLayout", session.getProperties().defaultCustomLayout());
 		JSONObject connections = new JSONObject();
-		connections.put("numberOfElements", session.getActiveConnections().size());
+		connections.put("numberOfElements", session.getConnections().size());
 		JSONArray jsonArrayConnections = new JSONArray();
-		session.getActiveConnections().forEach(con -> {
+		session.getConnections().forEach(con -> {
 			JSONObject c = new JSONObject();
 			c.put("connectionId", con.getConnectionId());
 			c.put("role", con.getRole());

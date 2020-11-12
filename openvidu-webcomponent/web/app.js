@@ -39,15 +39,17 @@ $(document).ready(() => {
         // You can see the publisher documentation here
         // https://docs.openvidu.io/en/stable/api/openvidu-browser/classes/publisher.html
 
-        publisher.on('streamCreated', (e) => {
+        publisher?.on('streamCreated', (e) => {
              console.warn("Publisher streamCreated", e);
         });
 
-        publisher.on('streamPlaying', (e) => {
-            document.body.style.backgroundColor = "gray";
-            form.style.display = 'none';
-            webComponent.style.display = 'block';
+        publisher?.on('streamPlaying', (e) => {
+            console.warn("Publisher streamPlaying", e);
         });
+
+        document.body.style.backgroundColor = "gray";
+        form.style.display = 'none';
+        webComponent.style.display = 'block';
     });
 
 
@@ -79,23 +81,23 @@ async function joinSession() {
  * These methods retrieve the mandatory user token from OpenVidu Server.
  * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
  * the API REST, openvidu-java-client or openvidu-node-client):
- *   1) Initialize a session in OpenVidu Server	(POST /api/sessions)
- *   2) Generate a token in OpenVidu Server		(POST /api/tokens)
- *   3) Configure OpenVidu Web Component in your client side with the token
+ *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
+ *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
+ *   3) The Connection.token must be consumed in Session.connect() method
  */
 
-var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
+var OPENVIDU_SERVER_URL = "https://demos.openvidu.io";
 var OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 function getToken(sessionName) {
     return createSession(sessionName).then((sessionId) => createToken(sessionId));
 }
 
-function createSession(sessionName) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-apisessions
+function createSession(sessionName) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessions
     return new Promise((resolve, reject) => {
         $.ajax({
             type: 'POST',
-            url: OPENVIDU_SERVER_URL + '/api/sessions',
+            url: OPENVIDU_SERVER_URL + '/openvidu/api/sessions',
             data: JSON.stringify({ customSessionId: sessionName }),
             headers: {
                 Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
@@ -126,11 +128,11 @@ function createSession(sessionName) { // See https://docs.openvidu.io/en/stable/
 }
 
 function createToken(sessionId) {
-    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-apitokens
+    // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessionsltsession_idgtconnection
     return new Promise((resolve, reject) => {
         $.ajax({
             type: 'POST',
-            url: OPENVIDU_SERVER_URL + '/api/tokens',
+            url: OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection',
             data: JSON.stringify({ session: sessionId }),
             headers: {
                 Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),

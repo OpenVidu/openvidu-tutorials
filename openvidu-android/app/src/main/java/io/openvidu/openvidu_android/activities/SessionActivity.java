@@ -137,15 +137,15 @@ public class SessionActivity extends AppCompatActivity {
         try {
             // Session Request
             RequestBody sessionBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{\"customSessionId\": \"" + sessionId + "\"}");
-            this.httpClient.httpCall("/api/sessions", "POST", "application/json", sessionBody, new Callback() {
+            this.httpClient.httpCall("/openvidu/api/sessions", "POST", "application/json", sessionBody, new Callback() {
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     Log.d(TAG, "responseString: " + response.body().string());
 
                     // Token Request
-                    RequestBody tokenBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{\"session\": \"" + sessionId + "\"}");
-                    httpClient.httpCall("/api/tokens", "POST", "application/json", tokenBody, new Callback() {
+                    RequestBody tokenBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{}");
+                    httpClient.httpCall("/openvidu/api/sessions/" + sessionId + "/connection", "POST", "application/json", tokenBody, new Callback() {
 
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) {

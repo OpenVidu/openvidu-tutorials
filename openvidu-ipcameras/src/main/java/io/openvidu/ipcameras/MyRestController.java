@@ -12,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.openvidu.java.client.ConnectionProperties;
+import io.openvidu.java.client.ConnectionType;
 import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
@@ -38,10 +40,6 @@ public class MyRestController {
 	// OpenVidu objects
 	private OpenVidu OV;
 	private Session session;
-
-	// A simple HTTP client to perform OpenVidu REST API operations that are not
-	// available yet in OpenVidu Java Client
-	private final SimpleHttpClient httpClient = new SimpleHttpClient();
 
 	@RequestMapping(value = "/")
 	public String subscribe(@RequestParam(name = "credentials", required = false) String credentials, Model model)
@@ -125,7 +123,8 @@ public class MyRestController {
 				String cameraName = cameraMapEntry.getKey();
 				if (!alreadyPublishedCameras.contains(cameraName)) {
 					// Publish the camera only if it is not already published
-					httpClient.publishIpCamera(SESSION_ID, cameraUri, cameraName, true, true);
+					session.createConnection(new ConnectionProperties.Builder().type(ConnectionType.IPCAM).data(cameraName)
+							.rtspUri(cameraUri).adaptativeBitrate(true).onlyPlayWithSubscribers(true).build());
 				}
 			} catch (Exception e) {
 				log.error("Error publishing camera {}", cameraMapEntry.getKey());

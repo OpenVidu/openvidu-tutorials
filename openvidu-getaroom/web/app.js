@@ -173,7 +173,7 @@ function showSessionHideJoin() {
 	$('#main-container').removeClass('container');
 }
 
-// 'Join' page 
+// 'Join' page
 function showJoinHideSession() {
 	$('#nav-join').show();
 	$('#nav-session').hide();
@@ -261,9 +261,9 @@ function updateLayout() {
  * These methods retrieve the mandatory user token from OpenVidu Server.
  * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
  * the API REST, openvidu-java-client or openvidu-node-client):
- *   1) Initialize a session in OpenVidu Server	(POST /api/sessions)
- *   2) Generate a token in OpenVidu Server		(POST /api/tokens)
- *   3) The token must be consumed in Session.connect() method
+ *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
+ *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
+ *   3) The Connection.token must be consumed in Session.connect() method
  */
 
 var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
@@ -273,12 +273,12 @@ function getToken(mySessionId) {
 	return createSession(mySessionId).then(sId => createToken(sId));
 }
 
-function createSession(sId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-apisessions
+function createSession(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessions
 	return new Promise((resolve, reject) => {
 		$.ajax({
 			type: "POST",
-			url: OPENVIDU_SERVER_URL + "/api/sessions",
-			data: JSON.stringify({ customSessionId: sId }),
+			url: OPENVIDU_SERVER_URL + "/openvidu/api/sessions",
+			data: JSON.stringify({ customSessionId: sessionId }),
 			headers: {
 				"Authorization": "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
 				"Content-Type": "application/json"
@@ -286,7 +286,7 @@ function createSession(sId) { // See https://docs.openvidu.io/en/stable/referenc
 			success: response => resolve(response.id),
 			error: (error) => {
 				if (error.status === 409) {
-					resolve(sId);
+					resolve(sessionId);
 				} else {
 					console.warn('No connection to OpenVidu Server. This may be a certificate error at ' + OPENVIDU_SERVER_URL);
 					if (window.confirm('No connection to OpenVidu Server. This may be a certificate error at \"' + OPENVIDU_SERVER_URL + '\"\n\nClick OK to navigate and accept it. ' +
@@ -299,12 +299,12 @@ function createSession(sId) { // See https://docs.openvidu.io/en/stable/referenc
 	});
 }
 
-function createToken(sId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-apitokens
+function createToken(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-apitokens
 	return new Promise((resolve, reject) => {
 		$.ajax({
 			type: "POST",
-			url: OPENVIDU_SERVER_URL + "/api/tokens",
-			data: JSON.stringify({ session: sId }),
+			url: OPENVIDU_SERVER_URL + "/openvidu/api/sessions/" + sessionId + "/connection",
+			data: JSON.stringify({}),
 			headers: {
 				"Authorization": "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
 				"Content-Type": "application/json"

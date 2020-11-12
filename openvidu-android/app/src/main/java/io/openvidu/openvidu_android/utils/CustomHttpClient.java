@@ -82,7 +82,8 @@ public class CustomHttpClient {
         url = url.startsWith("/") ? url.substring(1) : url;
         Request request = new Request.Builder()
                 .url(this.baseUrl + url)
-                .header("Authorization", this.basicAuth).header("Content-Type", contentType).method(method, body)
+                .header("Authorization", this.basicAuth).header("Content-Type", contentType)
+                .method(method, body)
                 .build();
         Call call = client.newCall(request);
         call.enqueue(callback);

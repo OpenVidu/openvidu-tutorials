@@ -88,9 +88,9 @@ export class AppComponent {
    * This method retrieve the mandatory user token from OpenVidu Server,
    * in this case making use Angular http API.
    * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION. In this case:
-   *   1) Initialize a session in OpenVidu Server	 (POST /api/sessions)
-   *   2) Generate a token in OpenVidu Server		   (POST /api/tokens)
-   *   3) The token must be consumed in Session.connect() method of OpenVidu Browser
+   *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
+   *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
+   *   3) The Connection.token must be consumed in Session.connect() method
    */
 
   getToken(): Promise<string> {
@@ -109,7 +109,7 @@ export class AppComponent {
         }),
       };
       return this.httpClient
-        .post(this.OPENVIDU_SERVER_URL + '/api/sessions', body, options)
+        .post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions', body, options)
         .pipe(
           catchError((error) => {
             if (error.status === 409) {
@@ -141,7 +141,7 @@ export class AppComponent {
 
   createToken(sessionId): Promise<string> {
     return new Promise((resolve, reject) => {
-      const body = JSON.stringify({ session: sessionId });
+      const body = JSON.stringify({});
       const options = {
         headers: new HttpHeaders({
           Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
@@ -149,7 +149,7 @@ export class AppComponent {
         }),
       };
       return this.httpClient
-        .post(this.OPENVIDU_SERVER_URL + '/api/tokens', body, options)
+        .post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection', body, options)
         .pipe(
           catchError((error) => {
             reject(error);
