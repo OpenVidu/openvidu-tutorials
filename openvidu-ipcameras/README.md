@@ -27,7 +27,7 @@ You will need OpenVidu Server running in your development machine. To do so:
 1. Run Kurento Media Server Docker container
 
 ```
-docker run --rm -p 8888:8888 kurento/kurento-media-server:6.12
+docker run --rm -p 8888:8888 kurento/kurento-media-server:6.15.0
 ```
 
 2. Clone, compile and run OpenVidu Server

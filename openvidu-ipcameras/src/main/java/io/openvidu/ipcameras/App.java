@@ -30,8 +30,8 @@ public class App {
 	static String OPENVIDU_SECRET;
 	static Map<String, String> IP_CAMERAS = new HashMap<String, String>() {
 		{
-			put("Beach camera 1", "rtsp://b1.dnsdojo.com:1935/live/sys3.stream");
-			put("Beach camera 2", "rtsp://b1.dnsdojo.com:1935/live/sys5.stream");
+			put("Russian building", "rtsp://195.46.114.132/live/ch00_0");
+			put("Wickenburg, Arizona", "rtsp://98.163.61.242/live/ch00_0");
 			put("City", "rtsp://91.191.213.49:554/live_mpeg4.sdp");
 		}
 	};
