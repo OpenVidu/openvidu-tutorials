@@ -340,9 +340,10 @@ function sessionToJson(session) {
         c.connectionId = con.connectionId;
         c.createdAt = con.createdAt;
         c.role = con.role;
+        c.serverData = con.serverData;
+        c.record = con.record;
         c.token = con.token;
         c.clientData = con.clientData;
-        c.serverData = con.serverData;
         var pubs = [];
         con.publishers.forEach(p => {
             jsonP = {};

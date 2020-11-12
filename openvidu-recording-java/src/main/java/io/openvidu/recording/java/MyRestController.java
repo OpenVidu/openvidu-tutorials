@@ -389,9 +389,9 @@ public class MyRestController {
 		json.put("defaultRecordingLayout", session.getProperties().defaultRecordingLayout());
 		json.put("defaultCustomLayout", session.getProperties().defaultCustomLayout());
 		JSONObject connections = new JSONObject();
-		connections.put("numberOfElements", session.getActiveConnections().size());
+		connections.put("numberOfElements", session.getConnections().size());
 		JSONArray jsonArrayConnections = new JSONArray();
-		session.getActiveConnections().forEach(con -> {
+		session.getConnections().forEach(con -> {
 			JSONObject c = new JSONObject();
 			c.put("connectionId", con.getConnectionId());
 			c.put("role", con.getRole());
