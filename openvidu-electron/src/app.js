@@ -7,12 +7,14 @@ var publisher;
 var mySessionId;
 
 ipcRenderer.on('screen-share-ready', (event, message) => {
-    // User has chosen a screen to share. screenId is message parameter
-    showSession();
-    publisher = openvidu.initPublisher("publisher", {
-        videoSource: "screen:" + message
-    });
-    joinSession();
+    if (!!message) {
+        // User has chosen a screen to share. screenId is message parameter
+        showSession();
+        publisher = openvidu.initPublisher("publisher", {
+            videoSource: "screen:" + message
+        });
+        joinSession();
+    }
 });
 
 function initPublisher() {
@@ -38,7 +40,9 @@ function joinSession() {
     mySessionId = document.getElementById("sessionId").value;
 
     getToken(mySessionId).then(token => {
-        session.connect(token, {clientData: 'OpenVidu Electron'})
+        session.connect(token, {
+                clientData: 'OpenVidu Electron'
+            })
             .then(() => {
                 showSession();
                 session.publish(publisher);
@@ -72,10 +76,11 @@ function openScreenShareModal() {
         minimizable: false,
         maximizable: false,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            enableRemoteModule: true
         },
         resizable: false
-    })
+    });
     win.setMenu(null);
     // win.webContents.openDevTools();
 
@@ -141,8 +146,7 @@ function createSession(sessionId) { // See https://docs.openvidu.io/en/stable/re
 function createToken(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessionsltsession_idgtconnection
     return new Promise((resolve, reject) => {
         axios.post(
-                OPENVIDU_SERVER_URL + "/openvidu/api/sessions/" + sessionId + "/connection",
-                 {
+                OPENVIDU_SERVER_URL + "/openvidu/api/sessions/" + sessionId + "/connection", {
                     headers: {
                         'Authorization': "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
                         'Content-Type': 'application/json',
