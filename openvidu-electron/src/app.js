@@ -91,8 +91,8 @@ function openScreenShareModal() {
  * These methods retrieve the mandatory user token from OpenVidu Server.
  * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
  * the API REST, openvidu-java-client or openvidu-node-client):
- *   1) Initialize a session in OpenVidu Server	(POST /openvidu/api/sessions)
- *   2) Generate a Connection in OpenVidu Server		(POST /openvidu/api/sessions/<SESSION_ID>/connection)
+ *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
+ *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
  *   3) The Connection.token must be consumed in Session.connect() method
  */
 
