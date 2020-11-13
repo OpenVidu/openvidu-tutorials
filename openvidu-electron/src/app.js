@@ -151,7 +151,8 @@ function createToken(sessionId) { // See https://docs.openvidu.io/en/stable/refe
                         'Authorization': "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
                         'Content-Type': 'application/json',
                         'Access-Control-Allow-Origin': '*'
-                    }
+                    },
+                    data: JSON.stringify({})
                 }
             )
             .then(res => {

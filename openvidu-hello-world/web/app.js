@@ -87,17 +87,17 @@ function createSession(sessionId) { // See https://docs.openvidu.io/en/stable/re
 }
 
 function createToken(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessionsltsession_idgtconnection
-	return new Promise((resolve, reject) => {
-		$.ajax({
-			type: "POST",
-			url: OPENVIDU_SERVER_URL + "/openvidu/api/sessions/" + sessionId + "/connection",
-			data: JSON.stringify({}),
-			headers: {
-				"Authorization": "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
-				"Content-Type": "application/json"
-			},
-			success: response => resolve(response.token),
-			error: error => reject(error)
-		});
-	});
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            type: 'POST',
+            url: OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection',
+            data: JSON.stringify({}),
+            headers: {
+                'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
+                'Content-Type': 'application/json',
+            },
+            success: (response) => resolve(response.token),
+            error: (error) => reject(error)
+        });
+    });
 }
