@@ -51,9 +51,9 @@ MAVEN_TUTORIALS="openvidu-js-java
 
 # Delete all package-lock.json and node_modules
 find -type f -name 'package-lock.json' -exec rm {} \;
-find -type d -name 'node_modules' -exec rm -rf {} \;
+find -type d -name 'node_modules' -prune -exec rm -rf {} \;
 
-# Updating openvidu-browser dependencies in package.json files [openvidu-insecure-angular, openvidu-insecure-react, openvidu-ionic, openvidu-react-native, openvidu-insecure-vue]
+# Updating openvidu-browser dependencies in package.json files [openvidu-insecure-angular, openvidu-insecure-react, openvidu-ionic, openvidu-insecure-vue]
 find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-browser\": \"$FROM_VERSION\"/\"openvidu-browser\": \"$TO_VERSION\"/" {} \;
 
 # Updating openvidu-react dependencies in package.json files [openvidu-library-react]

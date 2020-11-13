@@ -1,6 +1,6 @@
 {
   "name": "openvidu-insecure-vue",
-  "version": "2.15.0",
+  "version": "2.16.0",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -10,7 +10,7 @@
   "dependencies": {
     "axios": "0.19.2",
     "core-js": "3.6.5",
-    "openvidu-browser": "2.15.0",
+    "openvidu-browser": "2.16.0",
     "vue": "2.6.11"
   },
   "devDependencies": {

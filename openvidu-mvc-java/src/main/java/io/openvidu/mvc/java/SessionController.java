@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import io.openvidu.java.client.ConnectionProperties;
+import io.openvidu.java.client.ConnectionType;
 import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.OpenViduRole;
 import io.openvidu.java.client.Session;
-import io.openvidu.java.client.ConnectionProperties;
 
 @Controller
 public class SessionController {
@@ -25,7 +26,8 @@ public class SessionController {
 
 	// Collection to pair session names and OpenVidu Session objects
 	private Map<String, Session> mapSessions = new ConcurrentHashMap<>();
-	// Collection to pair session names and tokens (the inner Map pairs tokens and role associated)
+	// Collection to pair session names and tokens (the inner Map pairs tokens and
+	// role associated)
 	private Map<String, Map<String, OpenViduRole>> mapSessionNamesTokens = new ConcurrentHashMap<>();
 
 	// URL where our OpenVidu server is listening
@@ -53,16 +55,14 @@ public class SessionController {
 		// Role associated to this user
 		OpenViduRole role = LoginController.users.get(httpSession.getAttribute("loggedUser")).role;
 
-		// Optional data to be passed to other users when this user connects to the video-call
-		// In this case, a JSON with the value we stored in the HttpSession object on login
+		// Optional data to be passed to other users when this user connects to the
+		// video-call. In this case, a JSON with the value we stored in the HttpSession
+		// object on login
 		String serverData = "{\"serverData\": \"" + httpSession.getAttribute("loggedUser") + "\"}";
 
 		// Build connectionProperties object with the serverData and the role
-		ConnectionProperties connectionProperties = new ConnectionProperties.Builder()
-			.type(ConnectionType.WEBRTC)
-			.role(role)
-			.data(serverData)
-			.build();
+		ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
+				.role(role).data(serverData).build();
 
 		if (this.mapSessions.get(sessionName) != null) {
 			// Session already exists
