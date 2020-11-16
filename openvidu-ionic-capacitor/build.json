@@ -1,0 +1,16 @@
+{
+    "ios": {
+      "build": {
+        "buildFlag": ["-UseModernBuildSystem=0"]
+      },
+      "run": {
+        "buildFlag": ["-UseModernBuildSystem=0"]
+      },
+      "debug": {
+        "buildFlag": ["-UseModernBuildSystem=0"]
+      },
+      "release": {
+        "buildFlag": ["-UseModernBuildSystem=0"]
+        }
+    }
+}
