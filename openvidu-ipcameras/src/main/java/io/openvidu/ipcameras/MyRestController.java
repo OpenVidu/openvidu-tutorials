@@ -68,13 +68,13 @@ public class MyRestController {
 		// Generate a token for the user
 		String token = null;
 		try {
-			token = this.session.generateToken();
+			token = this.session.createConnection().getToken();
 		} catch (OpenViduHttpException e) {
 			if (e.getStatus() == 404) {
 				// Session was closed in openvidu-server. Create it again
 				createOpenViduSession();
 				publishCameras();
-				token = this.session.generateToken();
+				token = this.session.createConnection().getToken();
 			} else {
 				return generateError(model,
 						"Error creating OpenVidu token for session " + SESSION_ID + ": " + e.getMessage());
@@ -123,8 +123,9 @@ public class MyRestController {
 				String cameraName = cameraMapEntry.getKey();
 				if (!alreadyPublishedCameras.contains(cameraName)) {
 					// Publish the camera only if it is not already published
-					session.createConnection(new ConnectionProperties.Builder().type(ConnectionType.IPCAM).data(cameraName)
-							.rtspUri(cameraUri).adaptativeBitrate(true).onlyPlayWithSubscribers(true).build());
+					session.createConnection(
+							new ConnectionProperties.Builder().type(ConnectionType.IPCAM).data(cameraName)
+									.rtspUri(cameraUri).adaptativeBitrate(true).onlyPlayWithSubscribers(true).build());
 				}
 			} catch (Exception e) {
 				log.error("Error publishing camera {}", cameraMapEntry.getKey());
