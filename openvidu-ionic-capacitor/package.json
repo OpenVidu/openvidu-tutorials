@@ -21,6 +21,7 @@
     "@angular/router": "10.0.8",
     "@capacitor/android": "^2.4.2",
     "@capacitor/core": "2.4.2",
+    "@capacitor/ios": "^2.4.2",
     "@ionic-native/android-permissions": "5.27.0",
     "@ionic-native/core": "5.27.0",
     "@ionic-native/splash-screen": "5.27.0",
