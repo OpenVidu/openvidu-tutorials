@@ -1,0 +1,26 @@
+.demo-logo {
+    height: 26px;
+    padding-left: 5px;
+}
+
+#img-div {
+    max-width: 60%;
+    margin: 10px auto;
+}
+
+#title {
+    margin-bottom: 10px;
+    font-size: 2em;
+}
+
+#join-button {
+    margin-top: 20px;
+}
+
+#session-header {
+    text-align: center;
+}
+
+ion-col {
+    padding: 1px;
+}
