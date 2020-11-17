@@ -17,6 +17,7 @@ import io.openvidu.java.client.ConnectionType;
 import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
+import io.openvidu.java.client.OpenViduRole;
 import io.openvidu.java.client.Session;
 import io.openvidu.java.client.SessionProperties;
 
@@ -65,23 +66,27 @@ public class MyRestController {
 			}
 		}
 
-		// Generate a token for the user
+		// Create a Connection for the client
+		ConnectionProperties connectionProperties = new ConnectionProperties.Builder()
+				.type(ConnectionType.WEBRTC)
+				.role(OpenViduRole.SUBSCRIBER)
+				.build();
 		String token = null;
 		try {
-			token = this.session.createConnection().getToken();
+			token = this.session.createConnection(connectionProperties).getToken();
 		} catch (OpenViduHttpException e) {
 			if (e.getStatus() == 404) {
-				// Session was closed in openvidu-server. Create it again
+				// Session was closed in openvidu-server. Re-create it
 				createOpenViduSession();
 				publishCameras();
-				token = this.session.createConnection().getToken();
+				token = this.session.createConnection(connectionProperties).getToken();
 			} else {
 				return generateError(model,
-						"Error creating OpenVidu token for session " + SESSION_ID + ": " + e.getMessage());
+						"Error creating Connection for session " + SESSION_ID + ": " + e.getMessage());
 			}
 		} catch (OpenViduJavaClientException e) {
 			return generateError(model,
-					"Error creating OpenVidu token for session " + SESSION_ID + ": " + e.getMessage());
+					"Error creating Connection for session " + SESSION_ID + ": " + e.getMessage());
 		}
 
 		model.addAttribute("token", token);
@@ -121,11 +126,16 @@ public class MyRestController {
 			try {
 				String cameraUri = cameraMapEntry.getValue();
 				String cameraName = cameraMapEntry.getKey();
+				// Publish the camera only if it is not already published
 				if (!alreadyPublishedCameras.contains(cameraName)) {
-					// Publish the camera only if it is not already published
-					session.createConnection(
-							new ConnectionProperties.Builder().type(ConnectionType.IPCAM).data(cameraName)
-									.rtspUri(cameraUri).adaptativeBitrate(true).onlyPlayWithSubscribers(true).build());
+					ConnectionProperties connectionProperties = new ConnectionProperties.Builder()
+							.type(ConnectionType.IPCAM)
+							.data(cameraName)
+							.rtspUri(cameraUri)
+							.adaptativeBitrate(true)
+							.onlyPlayWithSubscribers(true)
+							.build();
+					session.createConnection(connectionProperties);
 				}
 			} catch (Exception e) {
 				log.error("Error publishing camera {}", cameraMapEntry.getKey());
