@@ -8,7 +8,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "clean": "rm -rf $TMPDIR/react-native-packager-cache-* && rm -rf $TMPDIR/metro-bundler-cache-* && rm -rf node_modules && rm package-lock.json",
-    "install": "npm i openvidu-react-native-adapter-*.tgz  && npm install",
+    "install-ov": "npm i openvidu-react-native-adapter-*.tgz && npm install",
     "test": "jest"
   },
   "dependencies": {
