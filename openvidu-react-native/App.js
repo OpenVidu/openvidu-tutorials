@@ -97,6 +97,7 @@ export default class App extends Component<Props> {
         // --- 1) Get an OpenVidu object ---
 
         this.OV = new OpenVidu();
+        this.OV.enableProdMode();
 
         // --- 2) Init a session ---
 
@@ -399,7 +400,7 @@ export default class App extends Component<Props> {
                     },
                 })
                 .then((response) => {
-                    console.log('CREATE SESION', response);
+                    console.log('SESSION ' + response.data.id + ' CREATED');
                     resolve(response.data.id);
                 })
                 .catch((response) => {
@@ -459,7 +460,7 @@ export default class App extends Component<Props> {
                     },
                 })
                 .then((response) => {
-                    console.log('TOKEN', response);
+                    console.log('TOKEN CREATED: ', response.data.token);
                     resolve(response.data.token);
                 })
                 .catch((error) => reject(error));
