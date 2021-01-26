@@ -176,9 +176,11 @@ export default class App extends Component<Props> {
 
     getNicknameTag(stream) {
         // Gets the nickName of the user
-        if (stream.connection && JSON.parse(stream.connection.data) && JSON.parse(stream.connection.data).clientData) {
-            return JSON.parse(stream.connection.data).clientData;
-        }
+        try {
+            if (stream.connection && JSON.parse(stream.connection.data) && JSON.parse(stream.connection.data).clientData) {
+                return JSON.parse(stream.connection.data).clientData;
+            }
+        } catch (error) { }
         return '';
     }
 
