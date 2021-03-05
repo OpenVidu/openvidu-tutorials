@@ -1,6 +1,6 @@
 {
   "name": "openvidu-mvc-node",
-  "version": "2.16.0",
+  "version": "2.17.0",
   "description": "",
   "main": "server.js",
   "scripts": {
@@ -21,6 +21,6 @@
     "ejs": "2.6.1",
     "express": "4.17.1",
     "express-session": "1.17.1",
-    "openvidu-node-client": "2.16.0"
+    "openvidu-node-client": "2.17.0"
   }
 }

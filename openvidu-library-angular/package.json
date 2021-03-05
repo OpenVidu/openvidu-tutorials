@@ -1,6 +1,6 @@
 {
   "name": "openvidu-library-angular",
-  "version": "2.16.0",
+  "version": "2.17.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -20,7 +20,7 @@
     "@angular/platform-browser-dynamic": "10.0.3",
     "@angular/router": "10.0.3",
     "core-js": "3.6.4",
-    "openvidu-angular": "2.16.1",
+    "openvidu-angular": "2.17.0",
     "rxjs": "6.5.4",
     "tslib": "^2.0.0",
     "zone.js": "0.10.3"

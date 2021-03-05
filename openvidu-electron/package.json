@@ -1,7 +1,7 @@
 {
   "name": "openvidu-electron",
   "productName": "openvidu-electron",
-  "version": "2.16.0",
+  "version": "2.17.0",
   "description": "OpenVidu Electron Tutorial",
   "main": "src/main.js",
   "scripts": {
