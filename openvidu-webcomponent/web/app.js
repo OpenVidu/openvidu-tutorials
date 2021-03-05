@@ -86,7 +86,7 @@ async function joinSession() {
  *   3) The Connection.token must be consumed in Session.connect() method
  */
 
-var OPENVIDU_SERVER_URL = "https://demos.openvidu.io";
+var OPENVIDU_SERVER_URL = "https://localhost:4443";
 var OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
 function getToken(sessionName) {
