@@ -145,19 +145,45 @@ public class Session {
         this.remoteParticipants.get(connectionId).setPeerConnection(peerConnection);
     }
 
-    public void createLocalOffer(MediaConstraints constraints) {
-        localParticipant.getPeerConnection().createOffer(new CustomSdpObserver("local offer sdp") {
+    public void createOfferForPublishing(MediaConstraints constraints) {
+        localParticipant.getPeerConnection().createOffer(new CustomSdpObserver("createOffer") {
             @Override
             public void onCreateSuccess(SessionDescription sessionDescription) {
                 super.onCreateSuccess(sessionDescription);
                 Log.i("createOffer SUCCESS", sessionDescription.toString());
-                localParticipant.getPeerConnection().setLocalDescription(new CustomSdpObserver("local set local"), sessionDescription);
+                localParticipant.getPeerConnection().setLocalDescription(new CustomSdpObserver("createOffer_setLocalDescription"), sessionDescription);
                 websocket.publishVideo(sessionDescription);
             }
 
             @Override
             public void onCreateFailure(String s) {
                 Log.e("createOffer ERROR", s);
+            }
+
+        }, constraints);
+    }
+
+    public void createAnswerForSubscribing(RemoteParticipant remoteParticipant, String streamId, MediaConstraints constraints) {
+        remoteParticipant.getPeerConnection().createAnswer(new CustomSdpObserver("createAnswerSubscribing") {
+            @Override
+            public void onCreateSuccess(SessionDescription sessionDescription) {
+                super.onCreateSuccess(sessionDescription);
+                Log.i("createAnswer SUCCESS", sessionDescription.toString());
+                remoteParticipant.getPeerConnection().setLocalDescription(new CustomSdpObserver("createAnswerSubscribing_setLocalDescription") {
+                    @Override
+                    public void onSetSuccess() {
+                        websocket.receiveVideoFrom(sessionDescription, remoteParticipant, streamId);
+                    }
+                    @Override
+                    public void onSetFailure(String s) {
+                        Log.e("setRemoteDescription ER", s);
+                    }
+                }, sessionDescription);
+            }
+
+            @Override
+            public void onCreateFailure(String s) {
+                Log.e("createAnswer ERROR", s);
             }
 
         }, constraints);

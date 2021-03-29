@@ -3,6 +3,7 @@ package io.openvidu.openvidu_android.websocket;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
+import android.util.Pair;
 import android.widget.Toast;
 
 import com.neovisionaries.ws.client.ThreadType;
@@ -78,6 +79,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
     private AtomicInteger ID_JOINROOM = new AtomicInteger(-1);
     private AtomicInteger ID_LEAVEROOM = new AtomicInteger(-1);
     private AtomicInteger ID_PUBLISHVIDEO = new AtomicInteger(-1);
+    private Map<Integer, Pair<String, String>> IDS_PREPARERECEIVEVIDEO = new ConcurrentHashMap<>();
     private Map<Integer, String> IDS_RECEIVEVIDEO = new ConcurrentHashMap<>();
     private Set<Integer> IDS_ONICECANDIDATE = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private Session session;
@@ -134,7 +136,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
             MediaConstraints sdpConstraints = new MediaConstraints();
             sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveAudio", "true"));
             sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveVideo", "true"));
-            session.createLocalOffer(sdpConstraints);
+            session.createOfferForPublishing(sdpConstraints);
 
             if (result.getJSONArray(JsonConstants.VALUE).length() > 0) {
                 // There were users already connected to the session
@@ -146,21 +148,33 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
             if (websocket.isOpen()) {
                 websocket.disconnect();
             }
-
         } else if (rpcId == this.ID_PUBLISHVIDEO.get()) {
             // Response to publishVideo
-            SessionDescription sessionDescription = new SessionDescription(SessionDescription.Type.ANSWER, result.getString("sdpAnswer"));
-            this.session.getLocalParticipant().getPeerConnection().setRemoteDescription(new CustomSdpObserver("localSetRemoteDesc"), sessionDescription);
-
+            LocalParticipant localParticipant = this.session.getLocalParticipant();
+            SessionDescription remoteSdpAnswer = new SessionDescription(SessionDescription.Type.ANSWER, result.getString("sdpAnswer"));
+            localParticipant.getPeerConnection().setRemoteDescription(new CustomSdpObserver("publishVideo_setRemoteDescription"), remoteSdpAnswer);
+        } else if (this.IDS_PREPARERECEIVEVIDEO.containsKey(rpcId)) {
+            // Response to prepareReceiveVideoFrom
+            Pair<String, String> participantAndStream = IDS_PREPARERECEIVEVIDEO.remove(rpcId);
+            RemoteParticipant remoteParticipant = session.getRemoteParticipant(participantAndStream.first);
+            String streamId = participantAndStream.second;
+            SessionDescription remoteSdpOffer = new SessionDescription(SessionDescription.Type.OFFER, result.getString("sdpOffer"));
+            remoteParticipant.getPeerConnection().setRemoteDescription(new CustomSdpObserver("prepareReceiveVideoFrom_setRemoteDescription") {
+                @Override
+                public void onSetSuccess() {
+                    subscribeAux(remoteParticipant, streamId);
+                }
+                @Override
+                public void onSetFailure(String s) {
+                    Log.i("setRemoteDescription ER", s);
+                }
+            }, remoteSdpOffer);
         } else if (this.IDS_RECEIVEVIDEO.containsKey(rpcId)) {
             // Response to receiveVideoFrom
-            SessionDescription sessionDescription = new SessionDescription(SessionDescription.Type.ANSWER, result.getString("sdpAnswer"));
-            session.getRemoteParticipant(IDS_RECEIVEVIDEO.remove(rpcId)).getPeerConnection().setRemoteDescription(new CustomSdpObserver("remoteSetRemoteDesc"), sessionDescription);
-
+            IDS_RECEIVEVIDEO.remove(rpcId);
         } else if (this.IDS_ONICECANDIDATE.contains(rpcId)) {
             // Response to onIceCandidate
             IDS_ONICECANDIDATE.remove(rpcId);
-
         } else {
             Log.e(TAG, "Unrecognized server response: " + result);
         }
@@ -194,10 +208,16 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
         this.ID_PUBLISHVIDEO.set(this.sendJson(JsonConstants.PUBLISHVIDEO_METHOD, publishVideoParams));
     }
 
+    public void prepareReceiveVideoFrom(RemoteParticipant remoteParticipant, String streamId) {
+        Map<String, String> prepareReceiveVideoFromParams = new HashMap<>();
+        prepareReceiveVideoFromParams.put("sender", streamId);
+        this.IDS_PREPARERECEIVEVIDEO.put(this.sendJson(JsonConstants.PREPARERECEIVEVIDEO_METHOD, prepareReceiveVideoFromParams), new Pair<>(remoteParticipant.getConnectionId(), streamId));
+    }
+
     public void receiveVideoFrom(SessionDescription sessionDescription, RemoteParticipant remoteParticipant, String streamId) {
         Map<String, String> receiveVideoFromParams = new HashMap<>();
-        receiveVideoFromParams.put("sdpOffer", sessionDescription.description);
         receiveVideoFromParams.put("sender", streamId);
+        receiveVideoFromParams.put("sdpAnswer", sessionDescription.description);
         this.IDS_RECEIVEVIDEO.put(this.sendJson(JsonConstants.RECEIVEVIDEO_METHOD, receiveVideoFromParams), remoteParticipant.getConnectionId());
     }
 
@@ -254,7 +274,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
             jsonObject.put("id", id);
             jsonObject.put("params", paramsJson);
         } catch (JSONException e) {
-            Log.i(TAG, "JSONException raised on sendJson", e);
+            Log.e(TAG, "JSONException raised on sendJson", e);
             return -1;
         }
         this.websocket.sendText(jsonObject.toString());
@@ -272,7 +292,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
                 for (int j = 0; j < streams.length(); j++) {
                     JSONObject stream = streams.getJSONObject(0);
                     String streamId = stream.getString("id");
-                    this.subscribeAux(remoteParticipant, streamId);
+                    this.prepareSubscriptionAux(remoteParticipant, streamId);
                 }
             } catch (Exception e) {
                 //Sometimes when we enter in room the other participants have no stream
@@ -314,7 +334,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
         String remoteParticipantId = params.getString(JsonConstants.ID);
         final RemoteParticipant remoteParticipant = this.session.getRemoteParticipant(remoteParticipantId);
         final String streamId = params.getJSONArray("streams").getJSONObject(0).getString("id");
-        this.subscribeAux(remoteParticipant, streamId);
+        this.prepareSubscriptionAux(remoteParticipant, streamId);
     }
 
     private void participantLeftEvent(JSONObject params) throws JSONException {
@@ -346,24 +366,15 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
         return remoteParticipant;
     }
 
+    private void prepareSubscriptionAux(RemoteParticipant remoteParticipant, String streamId) {
+        prepareReceiveVideoFrom(remoteParticipant, streamId);
+    }
+
     private void subscribeAux(RemoteParticipant remoteParticipant, String streamId) {
         MediaConstraints sdpConstraints = new MediaConstraints();
         sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveAudio", "true"));
         sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveVideo", "true"));
-
-        remoteParticipant.getPeerConnection().createOffer(new CustomSdpObserver("remote offer sdp") {
-            @Override
-            public void onCreateSuccess(SessionDescription sessionDescription) {
-                super.onCreateSuccess(sessionDescription);
-                remoteParticipant.getPeerConnection().setLocalDescription(new CustomSdpObserver("remoteSetLocalDesc"), sessionDescription);
-                receiveVideoFrom(sessionDescription, remoteParticipant, streamId);
-            }
-
-            @Override
-            public void onCreateFailure(String s) {
-                Log.e("createOffer error", s);
-            }
-        }, sdpConstraints);
+        this.session.createAnswerForSubscribing(remoteParticipant, streamId, sdpConstraints);
     }
 
     public void setWebsocketCancelled(boolean websocketCancelled) {
@@ -478,43 +489,43 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
 
     @Override
     public void onError(WebSocket websocket, WebSocketException cause) throws Exception {
-        Log.i(TAG, "Error!");
+        Log.e(TAG, "Error!");
     }
 
     @Override
     public void onFrameError(WebSocket websocket, WebSocketException cause, WebSocketFrame
             frame) throws Exception {
-        Log.i(TAG, "Frame error!");
+        Log.e(TAG, "Frame error!");
     }
 
     @Override
     public void onMessageError(WebSocket websocket, WebSocketException
             cause, List<WebSocketFrame> frames) throws Exception {
-        Log.i(TAG, "Message error! " + cause);
+        Log.e(TAG, "Message error! " + cause);
     }
 
     @Override
     public void onMessageDecompressionError(WebSocket websocket, WebSocketException cause,
                                             byte[] compressed) throws Exception {
-        Log.i(TAG, "Message decompression error!");
+        Log.e(TAG, "Message decompression error!");
     }
 
     @Override
     public void onTextMessageError(WebSocket websocket, WebSocketException cause, byte[] data) throws
             Exception {
-        Log.i(TAG, "Text message error! " + cause);
+        Log.e(TAG, "Text message error! " + cause);
     }
 
     @Override
     public void onSendError(WebSocket websocket, WebSocketException cause, WebSocketFrame frame) throws
             Exception {
-        Log.i(TAG, "Send error! " + cause);
+        Log.e(TAG, "Send error! " + cause);
     }
 
     @Override
     public void onUnexpectedError(WebSocket websocket, WebSocketException cause) throws
             Exception {
-        Log.i(TAG, "Unexpected error! " + cause);
+        Log.e(TAG, "Unexpected error! " + cause);
     }
 
     @Override
