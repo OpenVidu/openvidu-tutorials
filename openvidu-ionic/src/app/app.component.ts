@@ -168,7 +168,7 @@ export class AppComponent implements OnDestroy {
         }
     }
 
-    private checkAndroidPermissions(): Promise<any> {
+    private checkAndroidPermissions(): Promise<void> {
         return new Promise((resolve, reject) => {
             this.platform.ready().then(() => {
                 this.androidPermissions

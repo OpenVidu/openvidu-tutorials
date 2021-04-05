@@ -229,7 +229,8 @@
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				5F5514A97C0CE59053805E4A /* [CP] Embed Pods Frameworks */,
+				5CAC88432291D2BF770D7980 /* [CP] Copy Pods Resources */,
+				0B4D7B04328DA9B7B1714B24 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -251,7 +252,8 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				BE58697D43F3830957D87470 /* [CP] Embed Pods Frameworks */,
+				C5E4BF76846FD2A73E9575F4 /* [CP] Copy Pods Resources */,
+				32EE43FECA11B2146EBAAA80 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -437,6 +439,24 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		0B4D7B04328DA9B7B1714B24 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native-openvidu_react_nativeTests/Pods-openvidu_react_native-openvidu_react_nativeTests-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/WebRTC/WebRTC.framework/WebRTC",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native-openvidu_react_nativeTests/Pods-openvidu_react_native-openvidu_react_nativeTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		0D047C7F700B758D842D987A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -473,13 +493,13 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
-		5F5514A97C0CE59053805E4A /* [CP] Embed Pods Frameworks */ = {
+		32EE43FECA11B2146EBAAA80 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native-openvidu_react_nativeTests/Pods-openvidu_react_native-openvidu_react_nativeTests-frameworks.sh",
+				"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native/Pods-openvidu_react_native-frameworks.sh",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/WebRTC/WebRTC.framework/WebRTC",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -488,7 +508,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native-openvidu_react_nativeTests/Pods-openvidu_react_native-openvidu_react_nativeTests-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native/Pods-openvidu_react_native-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5CAC88432291D2BF770D7980 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native-openvidu_react_nativeTests/Pods-openvidu_react_native-openvidu_react_nativeTests-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native-openvidu_react_nativeTests/Pods-openvidu_react_native-openvidu_react_nativeTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		612E987CF352FFCDBD6FAD88 /* [CP] Check Pods Manifest.lock */ = {
@@ -513,22 +551,22 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		BE58697D43F3830957D87470 /* [CP] Embed Pods Frameworks */ = {
+		C5E4BF76846FD2A73E9575F4 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native/Pods-openvidu_react_native-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/WebRTC/WebRTC.framework/WebRTC",
+				"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native/Pods-openvidu_react_native-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/React-Core/AccessibilityResources.bundle",
 			);
-			name = "[CP] Embed Pods Frameworks";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/WebRTC.framework",
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/AccessibilityResources.bundle",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native/Pods-openvidu_react_native-frameworks.sh\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-openvidu_react_native/Pods-openvidu_react_native-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C62DE0BA9862DB5812338011 /* [CP] Check Pods Manifest.lock */ = {
@@ -716,7 +754,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.openvidu-react-";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.openvidu-react";
 				PRODUCT_NAME = openvidu_react_native;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
@@ -739,7 +777,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.openvidu-react-";
+				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.openvidu-react";
 				PRODUCT_NAME = openvidu_react_native;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
