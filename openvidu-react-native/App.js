@@ -213,7 +213,7 @@ export default class App extends Component<Props> {
             this.setState({
                 session: undefined,
                 subscribers: [],
-                mySessionId: 'SessionA',
+                mySessionId: 'testReact',
                 myUserName: 'Participant' + Math.floor(Math.random() * 100),
                 mainStreamManager: undefined,
                 publisher: undefined,
@@ -482,7 +482,10 @@ export default class App extends Component<Props> {
                     console.log('TOKEN CREATED: ', response.data.token);
                     resolve(response.data.token);
                 })
-                .catch((error) => reject(error));
+                .catch((error) => {
+                    console.error(error);
+                    reject(error)
+                });
         });
     }
 }
