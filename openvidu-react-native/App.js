@@ -12,6 +12,8 @@ import {
     Image,
     PermissionsAndroid,
 } from 'react-native';
+import InCallManager from 'react-native-incall-manager';
+
 import axios from 'axios';
 
 import { OpenViduReactNativeAdapter, OpenVidu, RTCView } from 'openvidu-react-native-adapter';
@@ -38,7 +40,8 @@ export default class App extends Component<Props> {
             mirror: true,
             videoSource: undefined,
             video: true,
-            audio: true
+            audio: true,
+            speaker: false
         };
     }
 
@@ -272,6 +275,12 @@ export default class App extends Component<Props> {
         this.setState({ video: !this.state.video });
     }
 
+    muteUnmuteSpeaker() {
+        InCallManager.setSpeakerphoneOn(!this.state.speaker);
+        this.setState({ speaker: !this.state.speaker });
+
+    }
+
     render() {
         return (
             <ScrollView>
@@ -304,6 +313,14 @@ export default class App extends Component<Props> {
                                     onPress={() => this.muteUnmuteMic()}
                                     title={this.state.audio ? 'Mute Microphone' : 'Unmute Microphone'}
                                     color="#3383FF"
+                                />
+                            </View>
+                            <View style={styles.button}>
+                                <Button
+                                    onLongPress={() => this.muteUnmuteSpeaker()}
+                                    onPress={() => this.muteUnmuteSpeaker()}
+                                    title={this.state.speaker ? 'Mute Speaker' : 'Unmute Speaker'}
+                                    color="#79b21e"
                                 />
                             </View>
                             <View style={styles.button}>
