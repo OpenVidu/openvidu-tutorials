@@ -41,6 +41,11 @@ function joinSession() {
 			removeUserData(event.stream.connection);
 		});
 
+		// On every asynchronous exception...
+		session.on('exception', (exception) => {
+			console.warn(exception);
+		});
+
 		// --- 4) Connect to the session passing the retrieved token and some more data from
 		//        the client (in this case a JSON with the nickname chosen by the user) ---
 
@@ -177,7 +182,7 @@ function removeUser() {
 	httpPostRequest(
 		'api-sessions/remove-user',
 		{sessionName: sessionName, token: token},
-		'User couldn\'t be removed from session', 
+		'User couldn\'t be removed from session',
 		(response) => {
 			console.warn("You have been removed from session " + sessionName);
 		}

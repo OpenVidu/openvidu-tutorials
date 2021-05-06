@@ -17,6 +17,11 @@ function joinSession() {
 		}
 	});
 
+	// On every asynchronous exception...
+	session.on('exception', (exception) => {
+		console.warn(exception);
+	});
+
 	getToken(mySessionId).then(token => {
 
 		session.connect(token)

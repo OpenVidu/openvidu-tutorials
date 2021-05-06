@@ -86,6 +86,11 @@
 			});
 		});
 
+		// On every asynchronous exception...
+		session.on('exception', (exception) => {
+			console.warn(exception);
+		});
+
 		// Connect to session. We will receive all necessary events when success
 		session.connect(token)
 			.catch(error => {

@@ -31,6 +31,10 @@ $(document).ready(() => {
             form.style.display = 'block';
             webComponent.style.display = 'none';
         });
+
+        session.on('exception', (exception) => {
+            console.warn(exception);
+        });
     });
 
     webComponent.addEventListener('publisherCreated', (event) => {

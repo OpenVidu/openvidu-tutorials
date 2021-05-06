@@ -109,6 +109,11 @@ class App extends Component {
                     this.deleteSubscriber(event.stream.streamManager);
                 });
 
+                // On every asynchronous exception...
+                mySession.on('exception', (exception) => {
+                    console.warn(exception);
+                });
+
                 // --- 4) Connect to the session with a valid user token ---
 
                 // 'getToken' method is simulating what your server-side should do.

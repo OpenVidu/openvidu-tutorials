@@ -132,6 +132,11 @@ export default class App extends Component<Props> {
                     this.deleteSubscriber(event.stream);
                 });
 
+                // On every asynchronous exception...
+                mySession.on('exception', (exception) => {
+                    console.warn(exception);
+                });
+
                 // --- 4) Connect to the session with a valid user token ---
                 // 'getToken' method is simulating what your server-side should do.
                 // 'token' parameter should be retrieved and returned by your own backend
