@@ -296,7 +296,7 @@ class App extends Component {
                 })
                 .catch((response) => {
                     var error = Object.assign({}, response);
-                    if (error.response.status === 409) {
+                    if (error?.response?.status === 409) {
                         resolve(sessionId);
                     } else {
                         console.log(error);
