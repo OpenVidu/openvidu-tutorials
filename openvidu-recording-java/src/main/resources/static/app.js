@@ -9,6 +9,12 @@ var numVideos = 0;
 /* OPENVIDU METHODS */
 
 function joinSession() {
+
+	// --- 0) Change the button ---
+		
+	document.getElementById("join-btn").disabled = true;
+	document.getElementById("join-btn").innerHTML = "Joining...";
+
 	getToken(function () {
 
 		// --- 1) Get an OpenVidu object ---
@@ -178,6 +184,8 @@ function leaveSession() {
 
 	// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
 	session.disconnect();
+	document.getElementById("join-btn").disabled = false;
+	document.getElementById("join-btn").innerHTML = "Join!";
 
 }
 
