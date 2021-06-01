@@ -330,8 +330,7 @@ function sessionToJson(session) {
     json.recording = session.recording;
     json.mediaMode = session.properties.mediaMode;
     json.recordingMode = session.properties.recordingMode;
-    json.defaultRecordingLayout = session.properties.defaultRecordingLayout;
-    json.defaultCustomLayout = !!session.properties.defaultCustomLayout ? session.properties.defaultCustomLayout : "";
+    json.defaultRecordingProperties = session.properties.defaultRecordingProperties;
     var connections = {};
     connections.numberOfElements = session.activeConnections.length;
     var jsonArrayConnections = [];

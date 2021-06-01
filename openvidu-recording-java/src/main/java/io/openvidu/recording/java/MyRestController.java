@@ -4,10 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,15 +13,19 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
+import io.openvidu.java.client.ConnectionProperties;
+import io.openvidu.java.client.ConnectionType;
 import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.OpenViduRole;
-import io.openvidu.java.client.ConnectionType;
 import io.openvidu.java.client.Recording;
 import io.openvidu.java.client.RecordingProperties;
 import io.openvidu.java.client.Session;
-import io.openvidu.java.client.ConnectionProperties;
 
 @RestController
 @RequestMapping("/api")
@@ -58,26 +58,21 @@ public class MyRestController {
 	/*******************/
 
 	@RequestMapping(value = "/get-token", method = RequestMethod.POST)
-	public ResponseEntity<JSONObject> getToken(@RequestBody String sessionNameParam) throws ParseException {
+	public ResponseEntity<JsonObject> getToken(@RequestBody Map<String, Object> sessionNameParam) {
 
 		System.out.println("Getting sessionId and token | {sessionName}=" + sessionNameParam);
 
-		JSONObject sessionJSON = (JSONObject) new JSONParser().parse(sessionNameParam);
-
 		// The video-call to connect ("TUTORIAL")
-		String sessionName = (String) sessionJSON.get("sessionName");
+		String sessionName = (String) sessionNameParam.get("sessionName");
 
 		// Role associated to this user
 		OpenViduRole role = OpenViduRole.PUBLISHER;
 
 		// Build connectionProperties object with the serverData and the role
-		ConnectionProperties connectionProperties = new ConnectionProperties.Builder()
-			.type(ConnectionType.WEBRTC)
-			.role(role)
-			.data("user_data")
-			.build();
+		ConnectionProperties connectionProperties = new ConnectionProperties.Builder().type(ConnectionType.WEBRTC)
+				.role(role).data("user_data").build();
 
-		JSONObject responseJson = new JSONObject();
+		JsonObject responseJson = new JsonObject();
 
 		if (this.mapSessions.get(sessionName) != null) {
 			// Session already exists
@@ -91,7 +86,7 @@ public class MyRestController {
 				this.mapSessionNamesTokens.get(sessionName).put(token, role);
 
 				// Prepare the response with the token
-				responseJson.put(0, token);
+				responseJson.addProperty("0", token);
 
 				// Return the response to the client
 				return new ResponseEntity<>(responseJson, HttpStatus.OK);
@@ -114,8 +109,7 @@ public class MyRestController {
 		try {
 
 			// Create a new OpenVidu Session
-			Session session = this.openVidu.createSession();// new
-															// SessionProperties.Builder().customSessionId("CUSTOMSESSIONID").defaultRecordingLayout(RecordingLayout.CUSTOM).defaultCustomLayout("CUSTOM/LAYOUT").recordingMode(RecordingMode.ALWAYS).build());
+			Session session = this.openVidu.createSession();
 			// Generate a new token with the recently created connectionProperties
 			String token = session.createConnection(connectionProperties).getToken();
 
@@ -125,7 +119,7 @@ public class MyRestController {
 			this.mapSessionNamesTokens.get(sessionName).put(token, role);
 
 			// Prepare the response with the sessionId and the token
-			responseJson.put(0, token);
+			responseJson.addProperty("0", token);
 
 			// Return the response to the client
 			return new ResponseEntity<>(responseJson, HttpStatus.OK);
@@ -137,14 +131,13 @@ public class MyRestController {
 	}
 
 	@RequestMapping(value = "/remove-user", method = RequestMethod.POST)
-	public ResponseEntity<JSONObject> removeUser(@RequestBody String sessionNameToken) throws Exception {
+	public ResponseEntity<JsonObject> removeUser(@RequestBody Map<String, Object> sessionNameToken) throws Exception {
 
 		System.out.println("Removing user | {sessionName, token}=" + sessionNameToken);
 
 		// Retrieve the params from BODY
-		JSONObject sessionNameTokenJSON = (JSONObject) new JSONParser().parse(sessionNameToken);
-		String sessionName = (String) sessionNameTokenJSON.get("sessionName");
-		String token = (String) sessionNameTokenJSON.get("token");
+		String sessionName = (String) sessionNameToken.get("sessionName");
+		String token = (String) sessionNameToken.get("token");
 
 		// If the session exists
 		if (this.mapSessions.get(sessionName) != null && this.mapSessionNamesTokens.get(sessionName) != null) {
@@ -171,13 +164,12 @@ public class MyRestController {
 	}
 
 	@RequestMapping(value = "/close-session", method = RequestMethod.DELETE)
-	public ResponseEntity<JSONObject> closeSession(@RequestBody String sessionName) throws Exception {
+	public ResponseEntity<JsonObject> closeSession(@RequestBody Map<String, Object> sessionName) throws Exception {
 
 		System.out.println("Closing session | {sessionName}=" + sessionName);
 
 		// Retrieve the param from BODY
-		JSONObject sessionNameJSON = (JSONObject) new JSONParser().parse(sessionName);
-		String session = (String) sessionNameJSON.get("sessionName");
+		String session = (String) sessionName.get("sessionName");
 
 		// If the session exists
 		if (this.mapSessions.get(session) != null && this.mapSessionNamesTokens.get(session) != null) {
@@ -195,13 +187,12 @@ public class MyRestController {
 	}
 
 	@RequestMapping(value = "/fetch-info", method = RequestMethod.POST)
-	public ResponseEntity<JSONObject> fetchInfo(@RequestBody String sessionName) {
+	public ResponseEntity<JsonObject> fetchInfo(@RequestBody Map<String, Object> sessionName) {
 		try {
 			System.out.println("Fetching session info | {sessionName}=" + sessionName);
 
 			// Retrieve the param from BODY
-			JSONObject sessionNameJSON = (JSONObject) new JSONParser().parse(sessionName);
-			String session = (String) sessionNameJSON.get("sessionName");
+			String session = (String) sessionName.get("sessionName");
 
 			// If the session exists
 			if (this.mapSessions.get(session) != null && this.mapSessionNamesTokens.get(session) != null) {
@@ -214,7 +205,7 @@ public class MyRestController {
 				System.out.println("Problems in the app server: the SESSION does not exist");
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		} catch (ParseException | OpenViduJavaClientException | OpenViduHttpException e) {
+		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
 			e.printStackTrace();
 			return getErrorResponse(e);
 		}
@@ -226,7 +217,7 @@ public class MyRestController {
 			System.out.println("Fetching all session info");
 			boolean changed = this.openVidu.fetch();
 			System.out.println("Any change: " + changed);
-			JSONArray jsonArray = new JSONArray();
+			JsonArray jsonArray = new JsonArray();
 			for (Session s : this.openVidu.getActiveSessions()) {
 				jsonArray.add(this.sessionToJson(s));
 			}
@@ -238,12 +229,11 @@ public class MyRestController {
 	}
 
 	@RequestMapping(value = "/force-disconnect", method = RequestMethod.DELETE)
-	public ResponseEntity<JSONObject> forceDisconnect(@RequestBody String sessionName) {
+	public ResponseEntity<JsonObject> forceDisconnect(@RequestBody Map<String, Object> params) {
 		try {
 			// Retrieve the param from BODY
-			JSONObject sessionNameConnectionIdJSON = (JSONObject) new JSONParser().parse(sessionName);
-			String session = (String) sessionNameConnectionIdJSON.get("sessionName");
-			String connectionId = (String) sessionNameConnectionIdJSON.get("connectionId");
+			String session = (String) params.get("sessionName");
+			String connectionId = (String) params.get("connectionId");
 
 			// If the session exists
 			if (this.mapSessions.get(session) != null && this.mapSessionNamesTokens.get(session) != null) {
@@ -254,19 +244,18 @@ public class MyRestController {
 				// The SESSION does not exist
 				return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-		} catch (ParseException | OpenViduJavaClientException | OpenViduHttpException e) {
+		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
 			e.printStackTrace();
 			return getErrorResponse(e);
 		}
 	}
 
 	@RequestMapping(value = "/force-unpublish", method = RequestMethod.DELETE)
-	public ResponseEntity<JSONObject> forceUnpublish(@RequestBody String sessionName) {
+	public ResponseEntity<JsonObject> forceUnpublish(@RequestBody Map<String, Object> params) {
 		try {
 			// Retrieve the param from BODY
-			JSONObject sessionNameStreamIdJSON = (JSONObject) new JSONParser().parse(sessionName);
-			String session = (String) sessionNameStreamIdJSON.get("sessionName");
-			String streamId = (String) sessionNameStreamIdJSON.get("streamId");
+			String session = (String) params.get("sessionName");
+			String streamId = (String) params.get("streamId");
 
 			// If the session exists
 			if (this.mapSessions.get(session) != null && this.mapSessionNamesTokens.get(session) != null) {
@@ -277,7 +266,7 @@ public class MyRestController {
 				// The SESSION does not exist
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
-		} catch (ParseException | OpenViduJavaClientException | OpenViduHttpException e) {
+		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
 			e.printStackTrace();
 			return getErrorResponse(e);
 		}
@@ -288,13 +277,11 @@ public class MyRestController {
 	/*******************/
 
 	@RequestMapping(value = "/recording/start", method = RequestMethod.POST)
-	public ResponseEntity<?> startRecording(@RequestBody String param) throws ParseException {
-		JSONObject json = (JSONObject) new JSONParser().parse(param);
-
-		String sessionId = (String) json.get("session");
-		Recording.OutputMode outputMode = Recording.OutputMode.valueOf((String) json.get("outputMode"));
-		boolean hasAudio = (boolean) json.get("hasAudio");
-		boolean hasVideo = (boolean) json.get("hasVideo");
+	public ResponseEntity<?> startRecording(@RequestBody Map<String, Object> params) {
+		String sessionId = (String) params.get("session");
+		Recording.OutputMode outputMode = Recording.OutputMode.valueOf((String) params.get("outputMode"));
+		boolean hasAudio = (boolean) params.get("hasAudio");
+		boolean hasVideo = (boolean) params.get("hasVideo");
 
 		RecordingProperties properties = new RecordingProperties.Builder().outputMode(outputMode).hasAudio(hasAudio)
 				.hasVideo(hasVideo).build();
@@ -312,9 +299,8 @@ public class MyRestController {
 	}
 
 	@RequestMapping(value = "/recording/stop", method = RequestMethod.POST)
-	public ResponseEntity<?> stopRecording(@RequestBody String param) throws ParseException {
-		JSONObject json = (JSONObject) new JSONParser().parse(param);
-		String recordingId = (String) json.get("recording");
+	public ResponseEntity<?> stopRecording(@RequestBody Map<String, Object> params) {
+		String recordingId = (String) params.get("recording");
 
 		System.out.println("Stoping recording | {recordingId}=" + recordingId);
 
@@ -328,9 +314,8 @@ public class MyRestController {
 	}
 
 	@RequestMapping(value = "/recording/delete", method = RequestMethod.DELETE)
-	public ResponseEntity<?> deleteRecording(@RequestBody String param) throws ParseException {
-		JSONObject json = (JSONObject) new JSONParser().parse(param);
-		String recordingId = (String) json.get("recording");
+	public ResponseEntity<?> deleteRecording(@RequestBody Map<String, Object> params) {
+		String recordingId = (String) params.get("recording");
 
 		System.out.println("Deleting recording | {recordingId}=" + recordingId);
 
@@ -369,58 +354,48 @@ public class MyRestController {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
-	private ResponseEntity<JSONObject> getErrorResponse(Exception e) {
-		JSONObject json = new JSONObject();
-		json.put("cause", e.getCause());
-		json.put("error", e.getMessage());
-		json.put("exception", e.getClass());
+	private ResponseEntity<JsonObject> getErrorResponse(Exception e) {
+		JsonObject json = new JsonObject();
+		json.addProperty("cause", e.getCause().toString());
+		json.addProperty("error", e.getMessage());
+		json.addProperty("exception", e.getClass().getCanonicalName());
 		return new ResponseEntity<>(json, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
-	@SuppressWarnings("unchecked")
-	protected JSONObject sessionToJson(Session session) {
-		JSONObject json = new JSONObject();
-		json.put("sessionId", session.getSessionId());
-		json.put("customSessionId", session.getProperties().customSessionId());
-		json.put("recording", session.isBeingRecorded());
-		json.put("mediaMode", session.getProperties().mediaMode());
-		json.put("recordingMode", session.getProperties().recordingMode());
-		json.put("defaultRecordingLayout", session.getProperties().defaultRecordingLayout());
-		json.put("defaultCustomLayout", session.getProperties().defaultCustomLayout());
-		JSONObject connections = new JSONObject();
-		connections.put("numberOfElements", session.getConnections().size());
-		JSONArray jsonArrayConnections = new JSONArray();
+	protected JsonObject sessionToJson(Session session) {
+		Gson gson = new Gson();
+		JsonObject json = new JsonObject();
+		json.addProperty("sessionId", session.getSessionId());
+		json.addProperty("customSessionId", session.getProperties().customSessionId());
+		json.addProperty("recording", session.isBeingRecorded());
+		json.addProperty("mediaMode", session.getProperties().mediaMode().name());
+		json.addProperty("recordingMode", session.getProperties().recordingMode().name());
+		json.add("defaultRecordingProperties",
+				gson.toJsonTree(session.getProperties().defaultRecordingProperties()).getAsJsonObject());
+		JsonObject connections = new JsonObject();
+		connections.addProperty("numberOfElements", session.getConnections().size());
+		JsonArray jsonArrayConnections = new JsonArray();
 		session.getConnections().forEach(con -> {
-			JSONObject c = new JSONObject();
-			c.put("connectionId", con.getConnectionId());
-			c.put("role", con.getRole());
-			c.put("token", con.getToken());
-			c.put("clientData", con.getClientData());
-			c.put("serverData", con.getServerData());
-			JSONArray pubs = new JSONArray();
+			JsonObject c = new JsonObject();
+			c.addProperty("connectionId", con.getConnectionId());
+			c.addProperty("role", con.getRole().name());
+			c.addProperty("token", con.getToken());
+			c.addProperty("clientData", con.getClientData());
+			c.addProperty("serverData", con.getServerData());
+			JsonArray pubs = new JsonArray();
 			con.getPublishers().forEach(p -> {
-				JSONObject jsonP = new JSONObject();
-				jsonP.put("streamId", p.getStreamId());
-				jsonP.put("hasAudio", p.hasAudio());
-				jsonP.put("hasVideo", p.hasVideo());
-				jsonP.put("audioActive", p.isAudioActive());
-				jsonP.put("videoActive", p.isVideoActive());
-				jsonP.put("frameRate", p.getFrameRate());
-				jsonP.put("typeOfVideo", p.getTypeOfVideo());
-				jsonP.put("videoDimensions", p.getVideoDimensions());
-				pubs.add(jsonP);
+				pubs.add(gson.toJsonTree(p).getAsJsonObject());
 			});
-			JSONArray subs = new JSONArray();
+			JsonArray subs = new JsonArray();
 			con.getSubscribers().forEach(s -> {
 				subs.add(s);
 			});
-			c.put("publishers", pubs);
-			c.put("subscribers", subs);
+			c.add("publishers", pubs);
+			c.add("subscribers", subs);
 			jsonArrayConnections.add(c);
 		});
-		connections.put("content", jsonArrayConnections);
-		json.put("connections", connections);
+		connections.add("content", jsonArrayConnections);
+		json.add("connections", connections);
 		return json;
 	}
 
