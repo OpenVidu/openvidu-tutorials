@@ -41,22 +41,8 @@ nav i.fa:hover {
 
 #main-container {
 	padding-bottom: 80px;
-}
-
-.vertical-center {
-    width: -webkit-fit-content;
-    width: fit-content;
-    margin: auto;   
-}
-
-.vertical-center#not-logged form {
-	width: -moz-fit-content;
-	margin: auto;
-}
-
-.vertical-center#not-logged table {
-	width: -moz-fit-content;
-	margin: auto;
+	display: flex;
+	justify-content: center;
 }
 
 .vertical-center table {
@@ -177,6 +163,7 @@ a:hover .demo-logo {
 
 #not-logged {
 	padding-top: 40px;
+	width: 350px;
 }
 
 #join-dialog h1 {
