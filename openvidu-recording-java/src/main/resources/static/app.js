@@ -9,6 +9,12 @@ var numVideos = 0;
 /* OPENVIDU METHODS */
 
 function joinSession() {
+
+	// --- 0) Change the button ---
+		
+	document.getElementById("join-btn").disabled = true;
+	document.getElementById("join-btn").innerHTML = "Joining...";
+
 	getToken(function () {
 
 		// --- 1) Get an OpenVidu object ---
@@ -168,6 +174,7 @@ function joinSession() {
 			})
 			.catch(error => {
 				console.warn('There was an error connecting to the session:', error.code, error.message);
+				enableBtn();
 			});
 
 		return false;
@@ -178,12 +185,16 @@ function leaveSession() {
 
 	// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
 	session.disconnect();
+	enableBtn();
 
 }
 
 /* OPENVIDU METHODS */
 
-
+function enableBtn (){
+	document.getElementById("join-btn").disabled = false;
+	document.getElementById("join-btn").innerHTML = "Join!";
+}
 
 /* APPLICATION REST METHODS */
 
