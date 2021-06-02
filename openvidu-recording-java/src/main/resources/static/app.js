@@ -174,8 +174,7 @@ function joinSession() {
 			})
 			.catch(error => {
 				console.warn('There was an error connecting to the session:', error.code, error.message);
-				document.getElementById("join-btn").disabled = false;
-				document.getElementById("join-btn").innerHTML = "Join!";
+				enableBtn();
 			});
 
 		return false;
@@ -186,14 +185,16 @@ function leaveSession() {
 
 	// --- 9) Leave the session by calling 'disconnect' method over the Session object ---
 	session.disconnect();
-	document.getElementById("join-btn").disabled = false;
-	document.getElementById("join-btn").innerHTML = "Join!";
+	enableBtn();
 
 }
 
 /* OPENVIDU METHODS */
 
-
+function enableBtn (){
+	document.getElementById("join-btn").disabled = false;
+	document.getElementById("join-btn").innerHTML = "Join!";
+}
 
 /* APPLICATION REST METHODS */
 
