@@ -174,6 +174,8 @@ function joinSession() {
 			})
 			.catch(error => {
 				console.warn('There was an error connecting to the session:', error.code, error.message);
+				document.getElementById("join-btn").disabled = false;
+				document.getElementById("join-btn").innerHTML = "Join!";
 			});
 
 		return false;
