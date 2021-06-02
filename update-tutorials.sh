@@ -88,7 +88,7 @@ for file in *.html *.ejs; do
     find . -type f -name $file -exec sed -i "s/<script src=\"openvidu-browser-$FROM_VERSION.js\"><\/script>/<script src=\"openvidu-browser-$TO_VERSION.js\"><\/script>/" {} \;
 done
 
-# Update every openvidu-browser-VERSION.js file (13 FILES CHANGED)
+# Update every openvidu-browser-VERSION.js file (15 FILES CHANGED)
 wget https://github.com/OpenVidu/openvidu/releases/download/v$TO_VERSION/openvidu-browser-$TO_VERSION.js
 readarray MY_ARRAY < <(find -name "openvidu-browser-$FROM_VERSION.js" -printf "%h\n" | sort -u)
 for directory in ${MY_ARRAY[@]}

@@ -1,3 +1,3 @@
 #!/bin/bash
 
-docker build -t openvidu/openvidu-demo-proxy .
+docker build --pull --no-cache --rm=true -t openvidu/openvidu-demo-proxy .
