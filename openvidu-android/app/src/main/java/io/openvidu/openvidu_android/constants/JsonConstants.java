@@ -44,6 +44,7 @@ public final class JsonConstants {
     public static final String METHOD = "method";
     public static final String ID = "id";
     public static final String RESULT = "result";
+    public static final String MEDIA_SERVER = "mediaServer";
 
     public static final String SESSION_ID = "sessionId";
     public static final String SDP_ANSWER = "sdpAnswer";

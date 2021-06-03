@@ -84,6 +84,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
     private Set<Integer> IDS_ONICECANDIDATE = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private Session session;
     private String openviduUrl;
+    private String mediaServer;
     private SessionActivity activity;
     private WebSocket websocket;
     private boolean websocketCancelled = false;
@@ -120,6 +121,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
 
             final LocalParticipant localParticipant = this.session.getLocalParticipant();
             final String localConnectionId = result.getString(JsonConstants.ID);
+            this.mediaServer = result.getString(JsonConstants.MEDIA_SERVER);
             localParticipant.setConnectionId(localConnectionId);
 
             PeerConnection localPeerConnection = session.createLocalPeerConnection();
@@ -162,7 +164,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
             remoteParticipant.getPeerConnection().setRemoteDescription(new CustomSdpObserver("prepareReceiveVideoFrom_setRemoteDescription") {
                 @Override
                 public void onSetSuccess() {
-                    subscribeAux(remoteParticipant, streamId);
+                    subscriptionInitiatedFromServer(remoteParticipant, streamId);
                 }
                 @Override
                 public void onSetFailure(String s) {
@@ -171,7 +173,11 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
             }, remoteSdpOffer);
         } else if (this.IDS_RECEIVEVIDEO.containsKey(rpcId)) {
             // Response to receiveVideoFrom
-            IDS_RECEIVEVIDEO.remove(rpcId);
+            String id = IDS_RECEIVEVIDEO.remove(rpcId);
+            if ("kurento".equals(this.mediaServer)) {
+                SessionDescription sessionDescription = new SessionDescription(SessionDescription.Type.ANSWER, result.getString("sdpAnswer"));
+                session.getRemoteParticipant(id).getPeerConnection().setRemoteDescription(new CustomSdpObserver("remoteSetRemoteDesc"), sessionDescription);
+            }
         } else if (this.IDS_ONICECANDIDATE.contains(rpcId)) {
             // Response to onIceCandidate
             IDS_ONICECANDIDATE.remove(rpcId);
@@ -211,13 +217,18 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
     public void prepareReceiveVideoFrom(RemoteParticipant remoteParticipant, String streamId) {
         Map<String, String> prepareReceiveVideoFromParams = new HashMap<>();
         prepareReceiveVideoFromParams.put("sender", streamId);
+        prepareReceiveVideoFromParams.put("reconnect", "false");
         this.IDS_PREPARERECEIVEVIDEO.put(this.sendJson(JsonConstants.PREPARERECEIVEVIDEO_METHOD, prepareReceiveVideoFromParams), new Pair<>(remoteParticipant.getConnectionId(), streamId));
     }
 
     public void receiveVideoFrom(SessionDescription sessionDescription, RemoteParticipant remoteParticipant, String streamId) {
         Map<String, String> receiveVideoFromParams = new HashMap<>();
         receiveVideoFromParams.put("sender", streamId);
-        receiveVideoFromParams.put("sdpAnswer", sessionDescription.description);
+        if ("kurento".equals(this.mediaServer)) {
+            receiveVideoFromParams.put("sdpOffer", sessionDescription.description);
+        } else {
+            receiveVideoFromParams.put("sdpAnswer", sessionDescription.description);
+        }
         this.IDS_RECEIVEVIDEO.put(this.sendJson(JsonConstants.RECEIVEVIDEO_METHOD, receiveVideoFromParams), remoteParticipant.getConnectionId());
     }
 
@@ -292,7 +303,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
                 for (int j = 0; j < streams.length(); j++) {
                     JSONObject stream = streams.getJSONObject(0);
                     String streamId = stream.getString("id");
-                    this.prepareSubscriptionAux(remoteParticipant, streamId);
+                    this.subscribe(remoteParticipant, streamId);
                 }
             } catch (Exception e) {
                 //Sometimes when we enter in room the other participants have no stream
@@ -334,7 +345,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
         String remoteParticipantId = params.getString(JsonConstants.ID);
         final RemoteParticipant remoteParticipant = this.session.getRemoteParticipant(remoteParticipantId);
         final String streamId = params.getJSONArray("streams").getJSONObject(0).getString("id");
-        this.prepareSubscriptionAux(remoteParticipant, streamId);
+        this.subscribe(remoteParticipant, streamId);
     }
 
     private void participantLeftEvent(JSONObject params) throws JSONException {
@@ -366,11 +377,34 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
         return remoteParticipant;
     }
 
-    private void prepareSubscriptionAux(RemoteParticipant remoteParticipant, String streamId) {
-        prepareReceiveVideoFrom(remoteParticipant, streamId);
+    private void subscribe(RemoteParticipant remoteParticipant, String streamId) {
+        if ("kurento".equals(this.mediaServer)) {
+            this.subscriptionInitiatedFromClient(remoteParticipant, streamId);
+        } else {
+            this.prepareReceiveVideoFrom(remoteParticipant, streamId);
+        }
     }
 
-    private void subscribeAux(RemoteParticipant remoteParticipant, String streamId) {
+    private void subscriptionInitiatedFromClient(RemoteParticipant remoteParticipant, String streamId) {
+        MediaConstraints sdpConstraints = new MediaConstraints();
+        sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveAudio", "true"));
+        sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveVideo", "true"));
+
+        remoteParticipant.getPeerConnection().createOffer(new CustomSdpObserver("remote offer sdp") {
+            @Override
+            public void onCreateSuccess(SessionDescription sessionDescription) {
+                super.onCreateSuccess(sessionDescription);
+                remoteParticipant.getPeerConnection().setLocalDescription(new CustomSdpObserver("remoteSetLocalDesc"), sessionDescription);
+                receiveVideoFrom(sessionDescription, remoteParticipant, streamId);
+            }
+            @Override
+            public void onCreateFailure(String s) {
+                Log.e("createOffer error", s);
+            }
+        }, sdpConstraints);
+    }
+
+    private void subscriptionInitiatedFromServer(RemoteParticipant remoteParticipant, String streamId) {
         MediaConstraints sdpConstraints = new MediaConstraints();
         sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveAudio", "true"));
         sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveVideo", "true"));
