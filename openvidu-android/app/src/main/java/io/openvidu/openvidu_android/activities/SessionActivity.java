@@ -304,8 +304,12 @@ public class SessionActivity extends AppCompatActivity {
     }
 
     public void leaveSession() {
-        this.session.leaveSession();
-        this.httpClient.dispose();
+        if(this.session != null) {
+            this.session.leaveSession();
+        }
+        if(this.httpClient != null) {
+            this.httpClient.dispose();
+        }
         viewToDisconnectedState();
     }
 
