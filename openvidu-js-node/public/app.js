@@ -8,6 +8,10 @@ var token;			// Token retrieved from OpenVidu Server
 /* OPENVIDU METHODS */
 
 function joinSession() {
+
+	document.getElementById("join-btn").disabled = true;
+	document.getElementById("join-btn").innerHTML = "Joining...";
+
 	getToken((token) => {
 
 		// --- 1) Get an OpenVidu object ---
@@ -106,6 +110,7 @@ function joinSession() {
 			})
 			.catch(error => {
 				console.warn('There was an error connecting to the session:', error.code, error.message);
+				enableBtn();
 			});
 	});
 
@@ -124,11 +129,17 @@ function leaveSession() {
 
 	$('#join').show();
 	$('#session').hide();
+
+	// eneble button
+	enableBtn();
 }
 
 /* OPENVIDU METHODS */
 
-
+function enableBtn (){
+	document.getElementById("join-btn").disabled = false;
+	document.getElementById("join-btn").innerHTML = "Join!";
+}
 
 /* APPLICATION REST METHODS */
 
@@ -161,6 +172,8 @@ function logOut() {
 			$("#logged").hide();
 		}
 	);
+	
+	enableBtn();
 }
 
 function getToken(callback) {
