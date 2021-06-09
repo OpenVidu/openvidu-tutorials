@@ -41,7 +41,8 @@ export default class App extends Component<Props> {
             videoSource: undefined,
             video: true,
             audio: true,
-            speaker: false
+            speaker: false,
+            joinBtnEnabled: true
         };
     }
 
@@ -49,9 +50,9 @@ export default class App extends Component<Props> {
        //this.joinSession();
     }
 
-    componentWillUnmount() {
-        this.leaveSession();
-    }
+    // componentWillUnmount() {
+        // this.leaveSession();
+    // }
 
     async checkAndroidPermissions() {
         try {
@@ -106,6 +107,7 @@ export default class App extends Component<Props> {
 
         this.setState(
             {
+                joinBtnEnabled: false,
                 session: this.OV.initSession(),
             },
             async () => {
@@ -137,48 +139,55 @@ export default class App extends Component<Props> {
                     console.warn(exception);
                 });
 
-                // --- 4) Connect to the session with a valid user token ---
-                // 'getToken' method is simulating what your server-side should do.
-                // 'token' parameter should be retrieved and returned by your own backend
-                const token = await this.getToken();
-                // First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
-                // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
+
                 try {
+                    // --- 4) Connect to the session with a valid user token ---
+                    // 'getToken' method is simulating what your server-side should do.
+                    // 'token' parameter should be retrieved and returned by your own backend
+                    const token = await this.getToken();
+                    // First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
+                    // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
                     await mySession.connect(token, { clientData: this.state.myUserName });
+
+                    if (Platform.OS == 'android') {
+                        await this.checkAndroidPermissions();
+                    }
+
+                    // --- 5) Get your own camera stream ---
+                    if (this.state.role !== 'SUBSCRIBER') {
+                        const properties = {
+                            audioSource: undefined, // The source of audio. If undefined default microphone
+                            videoSource: undefined, // The source of video. If undefined default webcam
+                            publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
+                            publishVideo: true, // Whether you want to start publishing with your video enabled or not
+                            resolution: '640x480', // The resolution of your video
+                            frameRate: 30, // The frame rate of your video
+                            insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
+                        };
+
+                        // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
+                        // element: we will manage it on our own) and with the desired propertiesç
+
+                        const publisher = await this.OV.initPublisherAsync(undefined, properties);
+                        // --- 6) Publish your stream ---
+
+                        // Set the main video in the page to display our webcam and store our Publisher
+                        this.setState({
+                            mainStreamManager: publisher,
+                            videoSource: !properties.videoSource ? '1' : properties.videoSource, // 0: back camera | 1: user camera |
+                        }, () => {
+                            mySession.publish(publisher);
+                        });
+                    }
                 } catch (error) {
                     console.log('There was an error connecting to the session:', error.code, error.message);
-                }
-
-                if (Platform.OS == 'android') {
-                    await this.checkAndroidPermissions();
-                }
-
-                // --- 5) Get your own camera stream ---
-                if (this.state.role !== 'SUBSCRIBER') {
-                    const properties = {
-                        audioSource: undefined, // The source of audio. If undefined default microphone
-                        videoSource: undefined, // The source of video. If undefined default webcam
-                        publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-                        publishVideo: true, // Whether you want to start publishing with your video enabled or not
-                        resolution: '640x480', // The resolution of your video
-                        frameRate: 30, // The frame rate of your video
-                        insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
-                    };
-                    // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
-                    // element: we will manage it on our own) and with the desired propertiesç
-
-                    const publisher = await this.OV.initPublisherAsync(undefined, properties);
-                    // --- 6) Publish your stream ---
-
-                    // Set the main video in the page to display our webcam and store our Publisher
                     this.setState({
-                        mainStreamManager: publisher,
-                        videoSource: !properties.videoSource ? '1' : properties.videoSource, // 0: back camera | 1: user camera |
-                    }, () => {
-                        mySession.publish(publisher);
+                        joinBtnEnabled: true
                     });
+
                 }
-            },
+
+            }
         );
     }
 
@@ -222,6 +231,7 @@ export default class App extends Component<Props> {
                 myUserName: 'Participant' + Math.floor(Math.random() * 100),
                 mainStreamManager: undefined,
                 publisher: undefined,
+                joinBtnEnabled: true
             });
         });
     }
@@ -366,6 +376,7 @@ export default class App extends Component<Props> {
 
                         <View style={styles.button}>
                             <Button
+                                disabled={!this.state.joinBtnEnabled}
                                 onLongPress={() => this.joinSession()}
                                 onPress={() => this.joinSession()}
                                 title="Join"
