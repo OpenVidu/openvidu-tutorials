@@ -77,7 +77,8 @@ function openScreenShareModal() {
         maximizable: false,
         webPreferences: {
             nodeIntegration: true,
-            enableRemoteModule: true
+            enableRemoteModule: true,
+            contextIsolation: false
         },
         resizable: false
     });
