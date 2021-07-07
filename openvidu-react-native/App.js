@@ -101,7 +101,7 @@ export default class App extends Component<Props> {
         // --- 1) Get an OpenVidu object ---
 
         this.OV = new OpenVidu();
-        this.OV.enableProdMode();
+        // this.OV.enableProdMode();
 
         // --- 2) Init a session ---
 
