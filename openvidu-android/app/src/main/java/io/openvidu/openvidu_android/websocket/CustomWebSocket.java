@@ -121,7 +121,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
 
             final LocalParticipant localParticipant = this.session.getLocalParticipant();
             final String localConnectionId = result.getString(JsonConstants.ID);
-            this.mediaServer = result.getString(JsonConstants.MEDIA_SERVER);
+            this.mediaServer = "kurento";
             localParticipant.setConnectionId(localConnectionId);
 
             PeerConnection localPeerConnection = session.createLocalPeerConnection();
