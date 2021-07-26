@@ -1,10 +1,10 @@
 {
   "name": "openvidu-insecure-react",
-  "version": "2.18.0",
+  "version": "2.19.0",
   "private": true,
   "dependencies": {
     "axios": "0.21.1",
-    "openvidu-browser": "2.18.0",
+    "openvidu-browser": "2.19.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-scripts": "4.0.3"
