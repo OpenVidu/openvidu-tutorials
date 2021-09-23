@@ -3,35 +3,35 @@ version: '3.1'
 services:
 
     openvidu-basic-videoconference:
-        image: openvidu/openvidu-basic-videoconference:2.19.0
+        image: openvidu/openvidu-basic-videoconference:2.20.0
         restart: on-failure
         environment: 
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
     
     openvidu-basic-webinar:
-        image: openvidu/openvidu-basic-webinar:2.19.0
+        image: openvidu/openvidu-basic-webinar:2.20.0
         restart: on-failure
         environment: 
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
     openvidu-classroom:
-        image: openvidu/openvidu-classroom:2.19.0
+        image: openvidu/openvidu-classroom:2.20.0
         restart: on-failure
         environment: 
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
     
     openvidu-getaroom:
-        image: openvidu/openvidu-getaroom:2.19.0
+        image: openvidu/openvidu-getaroom:2.20.0
         restart: on-failure
         environment: 
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
     openvidu-call:
-        image: openvidu/openvidu-call:2.19.0-demos
+        image: openvidu/openvidu-call:2.20.0-demos
         restart: on-failure
         environment: 
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}

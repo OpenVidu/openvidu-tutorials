@@ -62,6 +62,9 @@ find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-react\": \"$FROM_
 # Updating openvidu-angular dependencies in package.json files [openvidu-library-angular]
 find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-angular\": \"$FROM_VERSION\"/\"openvidu-angular\": \"$TO_VERSION\"/" {} \;
 
+# Updating openvidu-react-native-adapter dependencies in package.json files [openvidu-react-native]
+find . -type f -name 'package.json' -exec sed -i "s/file:openvidu-react-native-adapter-$FROM_VERSION.tgz/file:openvidu-react-native-adapter-$TO_VERSION.tgz/" {} \;
+
 # If server SDKs must be udpated
 if [[ -n "$FROM_VERSION_SDK" && -n "$TO_VERSION_SDK" ]]; then
 

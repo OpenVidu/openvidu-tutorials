@@ -5,7 +5,7 @@
 
 	<groupId>io.openvidu</groupId>
 	<artifactId>openvidu-js-java</artifactId>
-	<version>2.19.0</version>
+	<version>2.20.0</version>
 	<packaging>jar</packaging>
 
 	<name>openvidu-js-java</name>
@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>io.openvidu</groupId>
 			<artifactId>openvidu-java-client</artifactId>
-			<version>2.19.0</version>
+			<version>2.20.0</version>
 		</dependency>
 	</dependencies>
 
