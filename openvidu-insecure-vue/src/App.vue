@@ -165,7 +165,7 @@ export default {
 			return this.createSession(mySessionId).then(sessionId => this.createToken(sessionId));
 		},
 
-		// See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessions
+		// See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-session
 		createSession (sessionId) {
 			return new Promise((resolve, reject) => {
 				axios
@@ -193,7 +193,7 @@ export default {
 			});
 		},
 
-		// See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessionsltsession_idgtconnection
+		// See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-connection
 		createToken (sessionId) {
 			return new Promise((resolve, reject) => {
 				axios
