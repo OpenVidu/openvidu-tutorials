@@ -126,6 +126,26 @@ export default class App extends Component<Props> {
 					console.warn(exception);
 				});
 
+				// On reconnection events
+				mySession.on('reconnecting', () => console.warn('Oops! Trying to reconnect to the session'));
+				mySession.on('reconnected', () => {
+					console.log('Hurray! You successfully reconnected to the session');
+					setTimeout(() => {
+						// Updated state and rendering the view avoiding frozen streams
+						const subs = this.state.subscribers;
+						this.setState({ subscribers: [] });
+						this.setState({ subscribers: subs });
+					}, 1000);
+				});
+				mySession.on('sessionDisconnected', (event) => {
+					if (event.reason === 'networkDisconnect') {
+						console.warn('Dang-it... You lost your connection to the session');
+						this.leaveSession();
+					} else {
+						// Disconnected from the session for other reason than a network drop
+					}
+				});
+
 				try {
 					// --- 4) Connect to the session with a valid user token ---
 					// 'getToken' method is simulating what your server-side should do.
