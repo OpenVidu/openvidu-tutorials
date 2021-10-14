@@ -6,5 +6,5 @@ services:
         restart: on-failure
         network_mode: host
         environment:
-            - OPENVIDU_URL=http://localhost:5443
+            - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET}
