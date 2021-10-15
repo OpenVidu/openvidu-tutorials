@@ -7,17 +7,17 @@ RUN apk update && \
     rm -rf /var/cache/apk/*
 
 # Install basic-videoconference
-RUN mkdir -p /var/www/openvidu-getaroom && \
+RUN mkdir -p /var/www/openvidu-basic-screenshare && \
     wget -L -O /tmp/openvidu-tutorials.tar.gz \
         "https://github.com/OpenVidu/openvidu-tutorials/archive/v${OPENVIDU_TUTORIALS_VERSION}.tar.gz" && \
     tar zxf /tmp/openvidu-tutorials.tar.gz -C /tmp && \
     rm /tmp/openvidu-tutorials.tar.gz && \
-    cp -r /tmp/openvidu-tutorials*/openvidu-getaroom/web/* /var/www/openvidu-getaroom && \
+    cp -r /tmp/openvidu-tutorials*/openvidu-insecure-js-screen-share/web/* /var/www/openvidu-basic-screenshare && \
     rm -r /tmp/openvidu-tutorials* && \
-    chown -R nginx:nginx /var/www/openvidu-getaroom
+    chown -R nginx:nginx /var/www/openvidu-basic-screenshare
 
 # Nginx conf
-COPY ./openvidu-getaroom.conf /etc/nginx/conf.d/default.conf
+COPY ./openvidu-basic-screenshare.conf /etc/nginx/conf.d/default.conf
 
 # Entrypoint
 COPY ./entrypoint.sh /usr/local/bin

@@ -190,7 +190,7 @@ window.onbeforeunload = function () {
 };
 
 function generateParticipantInfo() {
-	document.getElementById("sessionId").value = "SessionA";
+	document.getElementById("sessionId").value = "SessionScreenA";
 	document.getElementById("userName").value = "Participant" + Math.floor(Math.random() * 100);
 }
 

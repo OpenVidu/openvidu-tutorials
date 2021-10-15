@@ -1,4 +1,4 @@
-FROM nginx:1.18.0-alpine
+FROM nginx:1.21.3-alpine
 
 ARG OPENVIDU_TUTORIALS_VERSION
 

@@ -5,47 +5,55 @@ services:
     openvidu-basic-videoconference:
         image: openvidu/openvidu-basic-videoconference:2.20.0
         restart: on-failure
-        environment: 
+        environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
-    
+
+    openvidu-basic-screenshare:
+        image: openvidu/openvidu-basic-screenshare:2.20.0
+        restart: on-failure
+        environment:
+            - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
+            - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
+
     openvidu-basic-webinar:
         image: openvidu/openvidu-basic-webinar:2.20.0
         restart: on-failure
-        environment: 
+        environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
     openvidu-classroom:
         image: openvidu/openvidu-classroom:2.20.0
         restart: on-failure
-        environment: 
+        environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
-    
+
     openvidu-getaroom:
         image: openvidu/openvidu-getaroom:2.20.0
         restart: on-failure
-        environment: 
+        environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
     openvidu-call:
         image: openvidu/openvidu-call:2.20.0-demos
         restart: on-failure
-        environment: 
+        environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
             - CALL_OPENVIDU_CERTTYPE=${CERTIFICATE_TYPE}
 
     demos-page:
-        image: openvidu/openvidu-demo-proxy:1.0.0
+        image: openvidu/openvidu-demo-proxy:1.1.0
         restart: on-failure
         ports:
             - "5442:80"
         environment:
-            - URL_OV_BASIC_VIDEOCONFERENCE=openvidu-basic-videoconference:80
-            - URL_OV_BASIC_WEBINAR=openvidu-basic-webinar:5000
-            - URL_OV_CLASSROOM=openvidu-classroom:5000
-            - URL_OV_GETAROOM=openvidu-getaroom:80
-            - URL_OV_CALL=openvidu-call:5000
+            - URL_OV_BASIC_VIDEOCONFERENCE=http://openvidu-basic-videoconference:80
+            - URL_OV_BASIC_SCREENSHARE=http://openvidu-basic-screenshare:80
+            - URL_OV_BASIC_WEBINAR=http://openvidu-basic-webinar:5000
+            - URL_OV_CLASSROOM=https://openvidu-classroom:5000
+            - URL_OV_GETAROOM=http://openvidu-getaroom:80
+            - URL_OV_CALL=http://openvidu-call:5000
