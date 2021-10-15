@@ -30,6 +30,7 @@ export default class App extends Component<Props> {
 			audio: true,
 			speaker: false,
 			joinBtnEnabled: true,
+			isReconnecting: false,
 		};
 	}
 
@@ -127,15 +128,17 @@ export default class App extends Component<Props> {
 				});
 
 				// On reconnection events
-				mySession.on('reconnecting', () => console.warn('Oops! Trying to reconnect to the session'));
+				mySession.on('reconnecting', () => {
+					console.warn('Oops! Trying to reconnect to the session');
+					this.setState({ isReconnecting: true });
+				});
+
 				mySession.on('reconnected', () => {
 					console.log('Hurray! You successfully reconnected to the session');
 					setTimeout(() => {
-						// Updated state and rendering the view avoiding frozen streams
-						const subs = this.state.subscribers;
-						this.setState({ subscribers: [] });
-						this.setState({ subscribers: subs });
-					}, 1000);
+						// Force re-render view updating state avoiding frozen streams
+						this.setState({ isReconnecting: false });
+					}, 2000);
 				});
 				mySession.on('sessionDisconnected', (event) => {
 					if (event.reason === 'networkDisconnect') {
