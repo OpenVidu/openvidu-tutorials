@@ -13,6 +13,7 @@ import io.openvidu.openvidu_android.websocket.CustomWebSocket;
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
+import org.webrtc.MediaStreamTrack;
 import org.webrtc.PeerConnection;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RtpReceiver;
@@ -88,6 +89,19 @@ public class Session {
                 super.onIceCandidate(iceCandidate);
                 websocket.onIceCandidate(iceCandidate, localParticipant.getConnectionId());
             }
+
+            @Override
+            public void onSignalingChange(PeerConnection.SignalingState signalingState) {
+                if (PeerConnection.SignalingState.STABLE.equals(signalingState)) {
+                    // SDP Offer/Answer finished. Add stored remote candidates.
+                    Iterator<IceCandidate> it = localParticipant.getIceCandidateList().iterator();
+                    while (it.hasNext()) {
+                        IceCandidate candidate = it.next();
+                        localParticipant.getPeerConnection().addIceCandidate(candidate);
+                        it.remove();
+                    }
+                }
+            }
         });
 
         if (localParticipant.getAudioTrack() != null) {
@@ -132,6 +146,7 @@ public class Session {
             @Override
             public void onSignalingChange(PeerConnection.SignalingState signalingState) {
                 if (PeerConnection.SignalingState.STABLE.equals(signalingState)) {
+                    // SDP Offer/Answer finished. Add stored remote candidates.
                     final RemoteParticipant remoteParticipant = remoteParticipants.get(connectionId);
                     Iterator<IceCandidate> it = remoteParticipant.getIceCandidateList().iterator();
                     while (it.hasNext()) {
