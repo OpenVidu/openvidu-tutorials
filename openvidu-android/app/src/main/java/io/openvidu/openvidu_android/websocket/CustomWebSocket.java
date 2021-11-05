@@ -126,18 +126,11 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
 
             PeerConnection localPeerConnection = session.createLocalPeerConnection();
 
-            localPeerConnection.addTrack(localParticipant.getAudioTrack());
-            localPeerConnection.addTrack(localParticipant.getVideoTrack());
-
-            for (RtpTransceiver transceiver : localPeerConnection.getTransceivers()) {
-                transceiver.setDirection(RtpTransceiver.RtpTransceiverDirection.SEND_ONLY);
-            }
-
             localParticipant.setPeerConnection(localPeerConnection);
 
             MediaConstraints sdpConstraints = new MediaConstraints();
-            sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveAudio", "true"));
-            sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveVideo", "true"));
+            sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveAudio", "false"));
+            sdpConstraints.mandatory.add(new MediaConstraints.KeyValuePair("offerToReceiveVideo", "false"));
             session.createOfferForPublishing(sdpConstraints);
 
             if (result.getJSONArray(JsonConstants.VALUE).length() > 0) {

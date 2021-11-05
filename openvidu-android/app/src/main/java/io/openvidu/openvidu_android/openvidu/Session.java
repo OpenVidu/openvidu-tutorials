@@ -90,6 +90,15 @@ public class Session {
             }
         });
 
+        if (localParticipant.getAudioTrack() != null) {
+            peerConnection.addTransceiver(localParticipant.getAudioTrack(),
+                    new RtpTransceiver.RtpTransceiverInit(RtpTransceiver.RtpTransceiverDirection.SEND_ONLY));
+        }
+        if (localParticipant.getVideoTrack() != null) {
+            peerConnection.addTransceiver(localParticipant.getVideoTrack(),
+                    new RtpTransceiver.RtpTransceiverInit(RtpTransceiver.RtpTransceiverDirection.SEND_ONLY));
+        }
+
         return peerConnection;
     }
 
@@ -134,13 +143,10 @@ public class Session {
             }
         });
 
-        peerConnection.addTrack(localParticipant.getAudioTrack());//Add audio track to create transReceiver
-        peerConnection.addTrack(localParticipant.getVideoTrack());//Add video track to create transReceiver
-
-        for (RtpTransceiver transceiver : peerConnection.getTransceivers()) {
-            //We set both audio and video in receive only mode
-            transceiver.setDirection(RtpTransceiver.RtpTransceiverDirection.RECV_ONLY);
-        }
+        peerConnection.addTransceiver(MediaStreamTrack.MediaType.MEDIA_TYPE_AUDIO,
+                new RtpTransceiver.RtpTransceiverInit(RtpTransceiver.RtpTransceiverDirection.RECV_ONLY));
+        peerConnection.addTransceiver(MediaStreamTrack.MediaType.MEDIA_TYPE_VIDEO,
+                new RtpTransceiver.RtpTransceiverInit(RtpTransceiver.RtpTransceiverDirection.RECV_ONLY));
 
         this.remoteParticipants.get(connectionId).setPeerConnection(peerConnection);
     }
