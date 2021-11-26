@@ -23,6 +23,7 @@ class App extends Component {
 
         this.joinSession = this.joinSession.bind(this);
         this.leaveSession = this.leaveSession.bind(this);
+        this.switchCamera = this.switchCamera.bind(this);
         this.handleChangeSessionId = this.handleChangeSessionId.bind(this);
         this.handleChangeUserName = this.handleChangeUserName.bind(this);
         this.handleMainVideoStream = this.handleMainVideoStream.bind(this);
@@ -126,7 +127,9 @@ class App extends Component {
                             token,
                             { clientData: this.state.myUserName },
                         )
-                        .then(() => {
+                        .then(async () => {
+                            var devices = await this.OV.getDevices();
+                            var videoDevices = devices.filter(device => device.kind === 'videoinput');
 
                             // --- 5) Get your own camera stream ---
 
@@ -134,7 +137,7 @@ class App extends Component {
                             // element: we will manage it on our own) and with the desired properties
                             let publisher = this.OV.initPublisher(undefined, {
                                 audioSource: undefined, // The source of audio. If undefined default microphone
-                                videoSource: undefined, // The source of video. If undefined default webcam
+                                videoSource: videoDevices[0].deviceId, // The source of video. If undefined default webcam
                                 publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
                                 publishVideo: true, // Whether you want to start publishing with your video enabled or not
                                 resolution: '640x480', // The resolution of your video
@@ -149,6 +152,7 @@ class App extends Component {
 
                             // Set the main video in the page to display our webcam and store our Publisher
                             this.setState({
+                                currentVideoDevice: videoDevices[0],
                                 mainStreamManager: publisher,
                                 publisher: publisher,
                             });
@@ -181,6 +185,41 @@ class App extends Component {
             mainStreamManager: undefined,
             publisher: undefined
         });
+    }
+
+    async switchCamera() {
+        try{
+            const devices = await this.OV.getDevices()
+            var videoDevices = devices.filter(device => device.kind === 'videoinput');
+
+            if(videoDevices && videoDevices.length > 1) {
+
+                var newVideoDevice = videoDevices.filter(device => device.deviceId !== this.state.currentVideoDevice.deviceId)
+
+                if (newVideoDevice.length > 0){
+                    // Creating a new publisher with specific videoSource
+                    // In mobile devices the default and first camera is the front one
+                    var newPublisher = this.OV.initPublisher(undefined, {
+                        videoSource: newVideoDevice[0].deviceId,
+                        publishAudio: true,
+                        publishVideo: true,
+                        mirror: true
+                    });
+
+                    //newPublisher.once("accessAllowed", () => {
+                    await this.state.session.unpublish(this.state.mainStreamManager)
+
+                    await this.state.session.publish(newPublisher)
+                    this.setState({
+                        currentVideoDevice: newVideoDevice,
+                        mainStreamManager: newPublisher,
+                        publisher: newPublisher,
+                    });
+                }
+            }
+          } catch (e) {
+            console.error(e);
+          }
     }
 
     render() {
@@ -243,6 +282,13 @@ class App extends Component {
                         {this.state.mainStreamManager !== undefined ? (
                             <div id="main-video" className="col-md-6">
                                 <UserVideoComponent streamManager={this.state.mainStreamManager} />
+                                <input
+                                    className="btn btn-large btn-success"
+                                    type="button"
+                                    id="buttonSwitchCamera"
+                                    onClick={this.switchCamera}
+                                    value="Switch Camera"
+                                />
                             </div>
                         ) : null}
                         <div id="video-container" className="col-md-6">
