@@ -33,3 +33,7 @@ openvidu-react-native-androidx/ios/build/
 .DS_Store
 
 *.tgz
+
+openvidu-angular-components/.angular/
+
+openvidu-ionic/.angular/
