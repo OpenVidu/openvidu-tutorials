@@ -1,0 +1,179 @@
+.section1 {
+  background: url('../../../assets/images/bg.webp')  top center no-repeat;
+  background-size: cover;
+  height: 100%;
+  text-align: center;
+  position: relative;
+  color: #fff;
+}
+
+#header, .footer {
+  background-color: transparent;
+  color: #ffffff;
+}
+
+.roomError{
+  font-size: 16px;
+  color: #c01515;
+}
+.footer {
+  position: absolute;
+  bottom: 0;
+  font-size: 9px;
+  height: auto;
+}
+
+.footer a {
+  color: #ffffff;
+
+}
+#header_img {
+  max-width: 150px;
+  margin-right: 10px;
+  margin-top: 10px;
+  padding: 15px;
+}
+
+.ovVersion {
+  position: absolute;
+  right: 15px;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.ovLogo {
+  margin: auto;
+}
+
+#card_content {
+  height: 50%;
+}
+
+h4 {
+  font-size: 25px;
+  font-weight: 500;
+  color: #fff;
+  position: relative;
+  padding-bottom: 5px;
+}
+
+#room_card {
+  color: #303030;
+  position: inherit;
+  max-width: 700px;
+  width: 75%;
+  margin: auto;
+  background: rgba(221, 221, 221, 0.856);
+}
+
+#room_card mat-form-field {
+  margin: auto;
+  padding: 0px 5px;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+  #header_img, .ovVersion, .footer {
+    display: none;
+  }
+  .joinForm, .ovLogo {
+    max-width: 80%;
+  }
+  .inputForm, h4 {
+    font-size: 16px ;
+  }
+
+}
+
+.container {
+  position: relative;
+  width: 100%;
+  padding: 100px 0;
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.formContainer {
+  font-size: 20px;
+  text-align: center;
+}
+
+
+.joinForm {
+  min-width: 300px;
+  margin: 10px auto;
+  max-width: 50%;
+  background: #fff;
+  padding: 6px 10px;
+  position: relative;
+  border-radius: 10px 5px 10px 0px;
+  text-align: left;
+}
+
+.inputForm {
+  border: 0;
+  padding: 4px 8px;
+  font-size: 17px;
+  width: calc(100% - 90px);
+  outline: none;
+  caret-color: #000000;
+  color: #303030;
+}
+
+.joinButton {
+  position: absolute;
+  top: 0;
+  right: -2px;
+  bottom: 0;
+  border: 0;
+  background: none;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 0 20px;
+  background: #00ad4e;
+  color: #fff;
+  border-radius: 0px 5px 10px 0px;
+  transition: 0.3s;
+  box-shadow: 0px 2px 15px rgba(0, 0, 0, 0.1);
+  margin: 0px;
+}
+
+.joinButton:hover {
+  background: #009242;
+}
+
+
+
+/* Small devices (portrait tablets and large phones, 600px and up) */
+@media only screen and (min-width: 600px) {
+  .ovLogo {
+    max-width: 75%;
+  }
+}
+
+/* Medium devices (landscape tablets, 768px and up) */
+@media only screen and (min-width: 768px) {
+
+}
+
+/* Large devices (laptops/desktops, 992px and up) */
+@media only screen and (min-width: 992px) {
+  .ovLogo {
+    max-width: 60%;
+  }
+  .inputForm {
+    font-size: 20px !important;
+  }
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+  .section1 {
+    background-attachment: fixed;
+  }
+  .ovLogo {
+    max-width: 50%;
+  }
+}

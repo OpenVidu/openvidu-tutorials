@@ -1,0 +1,18 @@
+{
+  "name": "webcomponent-test-e2e",
+  "version": "1.0.0",
+  "description": "E2E webcomponent test",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha --recursive --timeout 30000 test.js"
+  },
+  "author": "Carlos Santos Morales",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "chromedriver": "84.0.0",
+    "selenium-webdriver": "4.0.0-alpha.7"
+  },
+  "devDependencies": {
+    "mocha": "8.0.1"
+  }
+}

@@ -1,0 +1,52 @@
+{
+    "dependencies": {
+        "@angular/animations": "13.1.2",
+        "@angular/cdk": "13.1.2",
+        "@angular/common": "13.1.2",
+        "@angular/compiler": "13.1.2",
+        "@angular/core": "13.1.2",
+        "@angular/forms": "13.1.2",
+        "@angular/material": "13.1.2",
+        "@angular/platform-browser": "13.1.2",
+        "@angular/platform-browser-dynamic": "13.1.2",
+        "@angular/router": "13.1.2",
+        "openvidu-angular": "file:openvidu-angular-2.20.0.tgz",
+        "openvidu-browser": "2.21.0",
+        "rxjs": "7.5.2",
+        "unique-names-generator": "4.6.0",
+        "zone.js": "0.11.4"
+    },
+    "devDependencies": {
+        "@angular-devkit/build-angular": "13.1.3",
+        "@angular/cli": "13.1.3",
+        "@angular/compiler-cli": "13.1.2",
+        "@angular/language-service": "13.1.2",
+        "@types/jasmine": "3.10.3",
+        "@types/node": "16.11.9",
+        "codelyzer": "6.0.1",
+        "fs-extra": "9.0.1",
+        "jasmine-core": "3.10.1",
+        "karma": "6.3.9",
+        "ng-packagr": "13.1.3",
+        "protractor": "7.0.0",
+        "ts-node": "10.4.0",
+        "tslib": "2.3.1",
+        "tslint": "6.1.3",
+        "typedoc": "0.22.11",
+        "typescript": "4.4.4"
+    },
+    "name": "openvidu-call",
+    "private": true,
+    "scripts": {
+        "build": "./node_modules/@angular/cli/bin/ng build && npm run copy:backend",
+        "build-prod": "func() { ./node_modules/@angular/cli/bin/ng.js build --configuration production --base-href=\"${1:-/}\" && npm run copy:backend-prod; }; func",
+        "copy:backend": "cp -a dist/openvidu-call/. ../openvidu-call-back/public/",
+        "copy:backend-prod": "mkdir -p ../openvidu-call-back/dist/public && cp -a dist/openvidu-call/. ../openvidu-call-back/dist/public/",
+        "e2e": "ng e2e",
+        "lint": "ng lint",
+        "start": "ng serve --configuration development",
+        "start:https": "ng serve --host 192.168.1.161 --ssl --ssl-key cert.key --ssl-cert cert.crt",
+        "test": "ng test openvidu-call --watch=false --code-coverage"
+    },
+    "version": "2.22.0-beta1"
+}
