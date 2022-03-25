@@ -1,13 +1,9 @@
-$(document).ready(() => {
+
+$(document).ready(async() => {
     var webComponent = document.querySelector('openvidu-webcomponent');
     var form = document.getElementById('main');
 
-    if(webComponent.getAttribute("openvidu-secret") != undefined && webComponent.getAttribute("openvidu-server-url") != undefined ){
-        form.style.display = 'none';
-        webComponent.style.display = 'block';
-    }
-
-    webComponent.addEventListener('sessionCreated', (event) => {
+    webComponent.addEventListener('onSessionCreated', (event) => {
         var session = event.detail;
 
         // You can see the session documentation here
@@ -27,55 +23,74 @@ $(document).ready(() => {
 
         session.on('sessionDisconnected', (event) => {
             console.warn("sessionDisconnected event");
-            document.body.style.backgroundColor = "white";
             form.style.display = 'block';
             webComponent.style.display = 'none';
         });
 
         session.on('exception', (exception) => {
-            console.warn(exception);
+            console.error(exception);
         });
     });
 
-    webComponent.addEventListener('publisherCreated', (event) => {
-        var publisher = event.detail;
+    webComponent.addEventListener('onJoinButtonClicked', (event) => {});
+    webComponent.addEventListener('onToolbarLeaveButtonClicked', (event) => {});
+    webComponent.addEventListener('onToolbarCameraButtonClicked', (event) => {});
+    webComponent.addEventListener('onToolbarMicrophoneButtonClicked', (event) => {});
+    webComponent.addEventListener('onToolbarScreenshareButtonClicked', (event) => {});
+    webComponent.addEventListener('onToolbarParticipantsPanelButtonClicked', (event) => {});
+    webComponent.addEventListener('onToolbarChatPanelButtonClicked', (event) => {});
+    webComponent.addEventListener('onToolbarFullscreenButtonClicked', (event) => {});
+    webComponent.addEventListener('onParticipantCreated', (event) => {});
 
-        // You can see the publisher documentation here
-        // https://docs.openvidu.io/en/stable/api/openvidu-browser/classes/publisher.html
-
-        publisher?.on('streamCreated', (e) => {
-             console.warn("Publisher streamCreated", e);
-        });
-
-        publisher?.on('streamPlaying', (e) => {
-            console.warn("Publisher streamPlaying", e);
-        });
-
-        document.body.style.backgroundColor = "gray";
-        form.style.display = 'none';
-        webComponent.style.display = 'block';
-    });
-
-
-    webComponent.addEventListener('error', (event) => {
-        console.log('Error event', event.detail);
-    });
 });
 
 async function joinSession() {
+    //Getting form inputvalue
     var sessionName = document.getElementById('sessionName').value;
-    var user = document.getElementById('user').value;
-    var webComponent = document.querySelector('openvidu-webcomponent');
-    var tokens = [];
+    var participantName = document.getElementById('user').value;
 
-    if(webComponent.getAttribute("openvidu-secret") != undefined && webComponent.getAttribute("openvidu-server-url") != undefined ){
-       location.reload();
-    }else {
-        var token1 = await getToken(sessionName)
-        var token2 = await getToken(sessionName);
-        tokens.push(token1, token2);
-        webComponent.sessionConfig = { sessionName, user, tokens };
-    }
+    // Requesting tokens
+    var tokens = {webcam: await getToken(sessionName), screen: await getToken(sessionName)};
+
+    //Getting the webcomponent element
+    var webComponent = document.querySelector('openvidu-webcomponent');
+
+    hideForm();
+
+    // Displaying webcomponent
+    webComponent.style.display = 'block';
+
+    // webComponent.participantName = participantName;
+
+    // You can see the UI parameters documentation here
+    // https://docs.openvidu.io/en/stable/api/openvidu-angular/components/OpenviduWebComponentComponent.html#inputs
+
+    // webComponent.toolbarScreenshareButton = false;
+    // webComponent.minimal = true;
+    // webComponent.prejoin = true;
+
+    // webComponent.videoMuted = false;
+    // webComponent.audioMuted = false;
+
+    // webComponent.toolbarScreenshareButton = true;
+    // webComponent.toolbarFullscreenButton = true;
+	// webComponent.toolbarLeaveButton = true;
+	// webComponent.toolbarChatPanelButton = true;
+	// webComponent.toolbarParticipantsPanelButton = true;
+	// webComponent.toolbarDisplayLogo = true;
+	// webComponent.toolbarDisplaySessionName = true;
+	// webComponent.streamDisplayParticipantName = true;
+	// webComponent.streamDisplayAudioDetection = true;
+	// webComponent.streamSettingsButton = true;
+	// webComponent.participantPanelItemMuteButton = true;
+
+    webComponent.tokens = tokens;
+}
+
+function hideForm() {
+    var form = document.getElementById('main');
+    form.style.display = 'none';
+
 }
 
 /**
