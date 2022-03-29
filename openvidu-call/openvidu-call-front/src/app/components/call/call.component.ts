@@ -4,7 +4,6 @@ import { ParticipantService } from 'openvidu-angular';
 
 import { RestService } from '../../services/rest.service';
 
-
 @Component({
 	selector: 'app-call',
 	templateUrl: './call.component.html',
@@ -18,7 +17,12 @@ export class CallComponent implements OnInit {
 	closeClicked: boolean = false;
 	isSessionAlive: boolean = false;
 
-	constructor(private restService: RestService, private participantService: ParticipantService, private router: Router, private route: ActivatedRoute) {}
+	constructor(
+		private restService: RestService,
+		private participantService: ParticipantService,
+		private router: Router,
+		private route: ActivatedRoute
+	) {}
 
 	ngOnInit() {
 		this.route.params.subscribe((params: Params) => {
@@ -28,9 +32,10 @@ export class CallComponent implements OnInit {
 
 	async onJoinButtonClicked() {
 		let nickname;
+		// Just or debuggin purposes
 		const regex = /^UNSAFE_DEBUG_USE_CUSTOM_IDS_/gm;
 		const match = regex.exec(this.sessionId);
-		if(match && match.length > 0){
+		if (match && match.length > 0) {
 			console.warn('DEBUGGING SESSION');
 			nickname = this.participantService.getLocalParticipant().getNickname();
 		}

@@ -3,7 +3,6 @@ import * as express from 'express';
 import { Request, Response } from 'express';
 import { Session } from 'openvidu-node-client';
 import { OpenViduService } from '../services/OpenViduService';
-import { OPENVIDU_URL } from '../config';
 export const app = express.Router({
     strict: true
 });

@@ -9,19 +9,12 @@ import { environment } from 'src/environments/environment';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatToolbarModule } from '@angular/material/toolbar';
 
-// OpenVidu Components
-// import {
-// 	OpenviduComponentsLibraryModule,
-// 	UserSettingsComponent,
-// 	ToolbarComponent,
-// 	RoomComponent,
-// 	LayoutComponent
-// } from 'openvidu-components-library';
-
 // Application Components
 import { AppComponent } from './app.component';
 import { CallComponent } from './components/call/call.component';
 import { HomeComponent } from './components/home/home.component';
+
+// OpenVidu Angular
 import { OpenViduAngularConfig, OpenViduAngularModule } from 'openvidu-angular';
 
 // Services
