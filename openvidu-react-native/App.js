@@ -31,6 +31,7 @@ export default class App extends Component<Props> {
 			speaker: false,
 			joinBtnEnabled: true,
 			isReconnecting: false,
+			connected: false,
 		};
 	}
 
@@ -85,7 +86,7 @@ export default class App extends Component<Props> {
 		}
 	}
 
-	joinSession() {
+	joinSession(role) {
 		// --- 1) Get an OpenVidu object ---
 
 		this.OV = new OpenVidu();
@@ -97,6 +98,7 @@ export default class App extends Component<Props> {
 			{
 				joinBtnEnabled: false,
 				session: this.OV.initSession(),
+				role,
 			},
 			async () => {
 				const mySession = this.state.session;
@@ -191,6 +193,7 @@ export default class App extends Component<Props> {
 							},
 						);
 					}
+					this.setState({ connected: true });
 				} catch (error) {
 					console.log('There was an error connecting to the session:', error.code, error.message);
 					this.setState({
@@ -242,6 +245,7 @@ export default class App extends Component<Props> {
 				mainStreamManager: undefined,
 				publisher: undefined,
 				joinBtnEnabled: true,
+				connected: false,
 			});
 		});
 	}
@@ -308,30 +312,36 @@ export default class App extends Component<Props> {
 	render() {
 		return (
 			<ScrollView>
-				{this.state.mainStreamManager && this.state.mainStreamManager.stream ? (
+				{this.state.connected ? (
 					<View>
-						<View style={styles.container}>
-							<Text>Session: {this.state.mySessionId}</Text>
-							<Text>{this.getNicknameTag(this.state.mainStreamManager.stream)}</Text>
-							<RTCView
-								zOrder={0}
-								objectFit="cover"
-								mirror={this.state.mirror}
-								streamURL={this.state.mainStreamManager.stream.getMediaStream().toURL()}
-								style={styles.selfView}
-							/>
-						</View>
+						{this.state.mainStreamManager && this.state.mainStreamManager.stream && (
+							<View style={styles.container}>
+								<Text>Session: {this.state.mySessionId}</Text>
+								<Text>{this.getNicknameTag(this.state.mainStreamManager.stream)}</Text>
+								<RTCView
+									zOrder={0}
+									objectFit="cover"
+									mirror={this.state.mirror}
+									streamURL={this.state.mainStreamManager.stream.getMediaStream().toURL()}
+									style={styles.selfView}
+								/>
+							</View>
+						)}
+
 						<View>
 							<View style={styles.button}>
 								<Button
+									disabled={this.state.role === 'SUBSCRIBER'}
 									onLongPress={() => this.toggleCamera()}
 									onPress={() => this.toggleCamera()}
 									title="Toggle Camera"
 									color="#841584"
 								/>
 							</View>
+
 							<View style={styles.button}>
 								<Button
+									disabled={this.state.role === 'SUBSCRIBER'}
 									onLongPress={() => this.muteUnmuteMic()}
 									onPress={() => this.muteUnmuteMic()}
 									title={this.state.audio ? 'Mute Microphone' : 'Unmute Microphone'}
@@ -340,6 +350,7 @@ export default class App extends Component<Props> {
 							</View>
 							<View style={styles.button}>
 								<Button
+									disabled={this.state.role === 'SUBSCRIBER'}
 									onLongPress={() => this.muteUnmuteSpeaker()}
 									onPress={() => this.muteUnmuteSpeaker()}
 									title={this.state.speaker ? 'Mute Speaker' : 'Unmute Speaker'}
@@ -348,6 +359,7 @@ export default class App extends Component<Props> {
 							</View>
 							<View style={styles.button}>
 								<Button
+									disabled={this.state.role === 'SUBSCRIBER'}
 									onLongPress={() => this.muteUnmuteCamera()}
 									onPress={() => this.muteUnmuteCamera()}
 									title={this.state.video ? 'Mute Camera' : 'Unmute Camera'}
@@ -386,10 +398,20 @@ export default class App extends Component<Props> {
 						<View style={styles.button}>
 							<Button
 								disabled={!this.state.joinBtnEnabled}
-								onLongPress={() => this.joinSession()}
-								onPress={() => this.joinSession()}
-								title="Join"
+								onLongPress={() => this.joinSession('PUBLISHER')}
+								onPress={() => this.joinSession('PUBLISHER')}
+								title="Join as publisher"
 								color="#841584"
+							/>
+						</View>
+
+						<View style={styles.button}>
+							<Button
+								disabled={!this.state.joinBtnEnabled}
+								onLongPress={() => this.joinSession('SUBSCRIBER')}
+								onPress={() => this.joinSession('SUBSCRIBER')}
+								title="Join as subscriber"
+								color="#00cbff"
 							/>
 						</View>
 					</View>
@@ -492,7 +514,7 @@ export default class App extends Component<Props> {
 
 	createToken(sessionId) {
 		return new Promise((resolve, reject) => {
-			var data = JSON.stringify({});
+			var data = JSON.stringify({ role: this.state.role });
 			axios
 				.post(OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection', data, {
 					headers: {
