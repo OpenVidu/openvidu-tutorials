@@ -203,7 +203,7 @@ function getToken(callback) {
 
 	httpRequest(
 		'POST',
-		'api/get-token', {
+		'recording-node/api/get-token', {
 			sessionName: sessionName
 		},
 		'Request of TOKEN gone WRONG:',
@@ -218,7 +218,7 @@ function getToken(callback) {
 function removeUser() {
 	httpRequest(
 		'POST',
-		'api/remove-user', {
+		'recording-node/api/remove-user', {
 			sessionName: sessionName,
 			token: token
 		},
@@ -232,7 +232,7 @@ function removeUser() {
 function closeSession() {
 	httpRequest(
 		'DELETE',
-		'api/close-session', {
+		'recording-node/api/close-session', {
 			sessionName: sessionName
 		},
 		'Session couldn\'t be closed',
@@ -245,7 +245,7 @@ function closeSession() {
 function fetchInfo() {
 	httpRequest(
 		'POST',
-		'api/fetch-info', {
+		'recording-node/api/fetch-info', {
 			sessionName: sessionName
 		},
 		'Session couldn\'t be fetched',
@@ -259,7 +259,7 @@ function fetchInfo() {
 function fetchAll() {
 	httpRequest(
 		'GET',
-		'api/fetch-all', {},
+		'recording-node/api/fetch-all', {},
 		'All session info couldn\'t be fetched',
 		res => {
 			console.warn("All session info has been fetched");
@@ -271,7 +271,7 @@ function fetchAll() {
 function forceDisconnect() {
 	httpRequest(
 		'DELETE',
-		'api/force-disconnect', {
+		'recording-node/api/force-disconnect', {
 			sessionName: sessionName,
 			connectionId: document.getElementById('forceValue').value
 		},
@@ -285,7 +285,7 @@ function forceDisconnect() {
 function forceUnpublish() {
 	httpRequest(
 		'DELETE',
-		'api/force-unpublish', {
+		'recording-node/api/force-unpublish', {
 			sessionName: sessionName,
 			streamId: document.getElementById('forceValue').value
 		},
@@ -327,7 +327,7 @@ function startRecording() {
 	var hasVideo = $('#has-video-checkbox').prop('checked');
 	httpRequest(
 		'POST',
-		'api/recording/start', {
+		'recording-node/api/recording/start', {
 			session: session.sessionId,
 			outputMode: outputMode,
 			hasAudio: hasAudio,
@@ -347,7 +347,7 @@ function stopRecording() {
 	var forceRecordingId = document.getElementById('forceRecordingId').value;
 	httpRequest(
 		'POST',
-		'api/recording/stop', {
+		'recording-node/api/recording/stop', {
 			recording: forceRecordingId
 		},
 		'Stop recording WRONG',
@@ -362,7 +362,7 @@ function deleteRecording() {
 	var forceRecordingId = document.getElementById('forceRecordingId').value;
 	httpRequest(
 		'DELETE',
-		'api/recording/delete', {
+		'recording-node/api/recording/delete', {
 			recording: forceRecordingId
 		},
 		'Delete recording WRONG',
@@ -377,7 +377,7 @@ function getRecording() {
 	var forceRecordingId = document.getElementById('forceRecordingId').value;
 	httpRequest(
 		'GET',
-		'api/recording/get/' + forceRecordingId, {},
+		'recording-node/api/recording/get/' + forceRecordingId, {},
 		'Get recording WRONG',
 		res => {
 			console.log(res);
@@ -389,7 +389,7 @@ function getRecording() {
 function listRecordings() {
 	httpRequest(
 		'GET',
-		'api/recording/list', {},
+		'recording-node/api/recording/list', {},
 		'List recordings WRONG',
 		res => {
 			console.log(res);

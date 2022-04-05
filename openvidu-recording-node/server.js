@@ -10,11 +10,14 @@ if (process.argv.length != 4) {
 }
 // For demo purposes we ignore self-signed certificate
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+var port = process.env.PORT || 3000;
+var useSSL = (process.env.USE_SSL === 'false') ? false : true
+
 
 // Node imports
 var express = require('express');
 var fs = require('fs');
-var https = require('https');
+var httpServer = (useSSL) ? require('https') : require('http');
 var bodyParser = require('body-parser'); // Pull information from HTML POST (express4)
 var app = express(); // Create our app with express
 
@@ -29,11 +32,11 @@ app.use(bodyParser.json({
 })); // Parse application/vnd.api+json as json
 
 // Listen (start app with node server.js)
-var options = {
+var options = (useSSL) ? {
     key: fs.readFileSync('openvidukey.pem'),
     cert: fs.readFileSync('openviducert.pem')
-};
-https.createServer(options, app).listen(5000);
+} : {}
+httpServer.createServer(options, app).listen(port);
 
 // Environment variable: URL where our OpenVidu server is listening
 var OPENVIDU_URL = process.argv[2];
@@ -48,7 +51,7 @@ var mapSessions = {};
 // Collection to pair session names with tokens
 var mapSessionNamesTokens = {};
 
-console.log("App listening on port 5000");
+console.log(`App listening with ${(useSSL) ? "https": "http"} on port ${port} connected to OpenVidu at ${OPENVIDU_URL}`);
 
 
 
@@ -56,7 +59,7 @@ console.log("App listening on port 5000");
 /* Session API */
 
 // Get token (add new user to session)
-app.post('/api/get-token', function (req, res) {
+app.post('/recording-node/api/get-token', function (req, res) {
     // The video-call to connect
     var sessionName = req.body.sessionName;
 
@@ -136,7 +139,7 @@ function newSession(sessionName, connectionProperties, res) {
 }
 
 // Remove user from session
-app.post('/api/remove-user', function (req, res) {
+app.post('/recording-node/api/remove-user', function (req, res) {
     // Retrieve params from POST body
     var sessionName = req.body.sessionName;
     var token = req.body.token;
@@ -171,7 +174,7 @@ app.post('/api/remove-user', function (req, res) {
 });
 
 // Close session
-app.delete('/api/close-session', function (req, res) {
+app.delete('/recording-node/api/close-session', function (req, res) {
     // Retrieve params from POST body
     var sessionName = req.body.sessionName;
     console.log("Closing session | {sessionName}=" + sessionName);
@@ -191,7 +194,7 @@ app.delete('/api/close-session', function (req, res) {
 });
 
 // Fetch session info
-app.post('/api/fetch-info', function (req, res) {
+app.post('/recording-node/api/fetch-info', function (req, res) {
     // Retrieve params from POST body
     var sessionName = req.body.sessionName;
     console.log("Fetching session info | {sessionName}=" + sessionName);
@@ -212,7 +215,7 @@ app.post('/api/fetch-info', function (req, res) {
 });
 
 // Fetch all session info
-app.get('/api/fetch-all', function (req, res) {
+app.get('/recording-node/api/fetch-all', function (req, res) {
     console.log("Fetching all session info");
     OV.fetch()
         .then(changed => {
@@ -227,7 +230,7 @@ app.get('/api/fetch-all', function (req, res) {
 });
 
 // Force disconnect
-app.delete('/api/force-disconnect', function (req, res) {
+app.delete('/recording-node/api/force-disconnect', function (req, res) {
     // Retrieve params from POST body
     var sessionName = req.body.sessionName;
     var connectionId = req.body.connectionId;
@@ -244,7 +247,7 @@ app.delete('/api/force-disconnect', function (req, res) {
 });
 
 // Force unpublish
-app.delete('/api/force-unpublish', function (req, res) {
+app.delete('/recording-node/api/force-unpublish', function (req, res) {
     // Retrieve params from POST body
     var sessionName = req.body.sessionName;
     var streamId = req.body.streamId;
@@ -265,7 +268,7 @@ app.delete('/api/force-unpublish', function (req, res) {
 /* Recording API */
 
 // Start recording
-app.post('/api/recording/start', function (req, res) {
+app.post('/recording-node/api/recording/start', function (req, res) {
     // Retrieve params from POST body
     var recordingProperties = {
         outputMode: req.body.outputMode,
@@ -281,7 +284,7 @@ app.post('/api/recording/start', function (req, res) {
 });
 
 // Stop recording
-app.post('/api/recording/stop', function (req, res) {
+app.post('/recording-node/api/recording/stop', function (req, res) {
     // Retrieve params from POST body
     var recordingId = req.body.recording;
     console.log("Stopping recording | {recordingId}=" + recordingId);
@@ -292,7 +295,7 @@ app.post('/api/recording/stop', function (req, res) {
 });
 
 // Delete recording
-app.delete('/api/recording/delete', function (req, res) {
+app.delete('/recording-node/api/recording/delete', function (req, res) {
     // Retrieve params from DELETE body
     var recordingId = req.body.recording;
     console.log("Deleting recording | {recordingId}=" + recordingId);
@@ -303,7 +306,7 @@ app.delete('/api/recording/delete', function (req, res) {
 });
 
 // Get recording
-app.get('/api/recording/get/:recordingId', function (req, res) {
+app.get('/recording-node/api/recording/get/:recordingId', function (req, res) {
     // Retrieve params from GET url
     var recordingId = req.params.recordingId;
     console.log("Getting recording | {recordingId}=" + recordingId);
@@ -314,7 +317,7 @@ app.get('/api/recording/get/:recordingId', function (req, res) {
 });
 
 // List all recordings
-app.get('/api/recording/list', function (req, res) {
+app.get('/recording-node/api/recording/list', function (req, res) {
     console.log("Listing recordings");
 
     OV.listRecordings()
