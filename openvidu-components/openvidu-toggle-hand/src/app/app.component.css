@@ -1,0 +1,16 @@
+#call-container, #room-container {
+	height: 100%;
+}
+
+#hand-notification {
+    background-color: var(--ov-tertiary-color);
+    color: var(--ov-light-color);
+    line-height: 0px;
+    width: 30px;
+    height: 30px;
+    margin-bottom: 5px;
+    z-index: 999;
+    position: absolute;
+    right: 40px;
+    bottom: 0px;
+}

@@ -1,0 +1,24 @@
+/* You can add global styles to this file, and also import other style files */
+
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+// Custom openvidu-components styles
+:root {
+	--ov-primary-color: #cf9d9d;
+	--ov-secondary-color: #f0efef;
+	--ov-secondary-light-color: #e6e6e6;
+	--ov-tertiary-color: #598eff;
+	--ov-warn-color: #EB5144;
+	--ov-accent-color: #ffae35;
+
+	--ov-text-color: #0f0f0f;
+
+	--ov-panel-text-color: #1d1d1d;
+	--ov-panel-background: #ffffff;
+
+	--ov-buttons-radius: 1%; // border-radius property
+	--ov-leave-button-radius: 5px;
+	--ov-video-radius: 0px;
+	--ov-panel-radius: 0px;
+}

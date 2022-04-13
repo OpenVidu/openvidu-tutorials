@@ -1,0 +1,27 @@
+<ov-videoconference
+	(onJoinButtonClicked)="onJoinButtonClicked()"
+	(onSessionCreated)="onSessionCreated($event)"
+	[tokens]="tokens"
+	[prejoin]="true"
+>
+
+	<div *ovToolbarAdditionalButtons>
+		<button toolbar-btn mat-icon-button (click)="handleLocalHand()" [class.active-btn]="hasHandRaised">
+			<mat-icon matTooltip="Toggle hand">front_hand</mat-icon>
+		</button>
+	</div>
+
+	<div *ovStream="let stream" style="height: 100%">
+		<ov-stream [stream]="stream"></ov-stream>
+
+		<button mat-icon-button @inOutHandAnimation id="hand-notification" *ngIf="stream.participant.hasHandRaised">
+			<mat-icon>front_hand</mat-icon>
+		</button>
+	</div>
+
+	<div *ovParticipantPanelItemElements="let participant">
+		<button mat-icon-button *ngIf="participant.hasHandRaised">
+			<mat-icon>front_hand</mat-icon>
+		</button>
+	</div>
+</ov-videoconference>
