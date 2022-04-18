@@ -28,7 +28,7 @@ enum SignalApp {
 		])
 	]
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
 	tokens: { webcam: string; screen: string };
 	hasHandRaised: boolean = false;
 	session: Session;
@@ -36,9 +36,7 @@ export class AppComponent implements OnInit{
 	private OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443';
 	private OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
-	constructor(private httpClient: HttpClient, private openviduService: OpenViduService, private participantService: ParticipantService) {
-
-	}
+	constructor(private httpClient: HttpClient, private openviduService: OpenViduService, private participantService: ParticipantService) {}
 	async ngOnInit() {
 		this.tokens = {
 			webcam: await this.getToken(),
@@ -51,10 +49,9 @@ export class AppComponent implements OnInit{
 			webcam: await this.getToken(),
 			screen: await this.getToken()
 		};
-
 	}
 
-	onSessionCreated(session: Session){
+	onSessionCreated(session: Session) {
 		this.session = session;
 		this.handleRemoteHand();
 	}
@@ -72,10 +69,16 @@ export class AppComponent implements OnInit{
 	}
 
 	handleLocalHand() {
-		this.hasHandRaised = !this.hasHandRaised;
+		// Get local participant with ParticipantService
 		const participant = <ParticipantAppModel>this.participantService.getLocalParticipant();
+
+		// Toggle the participant hand with the method we wil add in our ParticipantAppModel
 		participant.toggleHandRaised();
+
+		// Refresh the local participant object for others component and services
 		this.participantService.updateLocalParticipant();
+
+		// Send a signal with the new value to others participant using the openvidu-browser signal
 		const remoteConnections = this.openviduService.getRemoteConnections();
 		if (remoteConnections.length > 0) {
 			//Sending hand toggle signal to others
