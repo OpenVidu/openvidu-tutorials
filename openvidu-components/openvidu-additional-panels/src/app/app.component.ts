@@ -8,8 +8,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   template: `
       <ov-videoconference (onJoinButtonClicked)="onJoinButtonClicked()" [tokens]="tokens" [toolbarDisplaySessionName]="false">
         <div *ovToolbarAdditionalPanelButtons style="text-align: center;">
-          <button (click)="toggleMyPanel('my-panel')">MY PANEL</button>
-          <button (click)="toggleMyPanel('my-panel2')">OTHER PANEL</button>
+          <button mat-icon-button (click)="toggleMyPanel('my-panel')">
+		  	<mat-icon>360</mat-icon>
+		  </button>
+          <button mat-icon-button (click)="toggleMyPanel('my-panel2')">
+		  	<mat-icon>star</mat-icon>
+		  </button>
         </div>
         <div *ovAdditionalPanels id="my-panels">
           <div id="my-panel1" *ngIf="showExternalPanel">

@@ -8,8 +8,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   template: `
     <ov-videoconference (onJoinButtonClicked)="onJoinButtonClicked()" [tokens]="tokens" [toolbarDisplaySessionName]="false">
 			<div *ovToolbarAdditionalButtons style="text-align: center;">
-				<button (click)="toggleVideo()">Toggle Video</button>
-				<button (click)="toggleAudio()">Toggle Audio</button>
+				<button mat-icon-button (click)="toggleVideo()">
+					<mat-icon>videocam</mat-icon>
+				</button>
+				<button mat-icon-button (click)="toggleAudio()">
+					<mat-icon>mic</mat-icon>
+				</button>
 			</div>
 		</ov-videoconference>
   `,
