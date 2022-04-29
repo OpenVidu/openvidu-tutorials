@@ -12,7 +12,6 @@ import { RestService } from '../../services/rest.service';
 export class CallComponent implements OnInit {
 	sessionId = '';
 	tokens: { webcam: string; screen: string };
-
 	joinSessionClicked: boolean = false;
 	closeClicked: boolean = false;
 	isSessionAlive: boolean = false;
@@ -24,14 +23,12 @@ export class CallComponent implements OnInit {
 		private route: ActivatedRoute
 	) {}
 
-	ngOnInit() {
+	async ngOnInit() {
 		this.route.params.subscribe((params: Params) => {
 			this.sessionId = params.roomName;
 		});
-	}
 
-	async onJoinButtonClicked() {
-		let nickname;
+		let nickname: string = '';
 		// Just or debuggin purposes
 		const regex = /^UNSAFE_DEBUG_USE_CUSTOM_IDS_/gm;
 		const match = regex.exec(this.sessionId);
@@ -45,6 +42,8 @@ export class CallComponent implements OnInit {
 			screen: await this.restService.getToken(this.sessionId, nickname)
 		};
 	}
+
+	async onJoinButtonClicked() {}
 	onLeaveButtonClicked() {
 		this.isSessionAlive = false;
 		this.closeClicked = true;
