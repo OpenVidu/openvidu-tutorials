@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Params, Router } from '@angular/router';
-import { ParticipantService } from 'openvidu-angular';
+import { ParticipantService, RecordingInfo, RecordingService, TokenModel } from 'openvidu-angular';
 
 import { RestService } from '../../services/rest.service';
 
@@ -11,14 +11,18 @@ import { RestService } from '../../services/rest.service';
 })
 export class CallComponent implements OnInit {
 	sessionId = '';
-	tokens: { webcam: string; screen: string };
+	tokens: TokenModel;
 	joinSessionClicked: boolean = false;
 	closeClicked: boolean = false;
 	isSessionAlive: boolean = false;
+	recordingList: RecordingInfo[] = [];
+
+	recordingError: any;
 
 	constructor(
 		private restService: RestService,
 		private participantService: ParticipantService,
+		private recordingService: RecordingService,
 		private router: Router,
 		private route: ActivatedRoute
 	) {}
@@ -37,16 +41,56 @@ export class CallComponent implements OnInit {
 			nickname = this.participantService.getLocalParticipant().getNickname();
 		}
 
+		const response = await this.restService.getTokens(this.sessionId, nickname);
+		this.recordingList = response.recordings;
 		this.tokens = {
-			webcam: await this.restService.getToken(this.sessionId, nickname),
-			screen: await this.restService.getToken(this.sessionId, nickname)
+			webcam: response.cameraToken,
+			screen: response.screenToken
 		};
 	}
-
-	async onJoinButtonClicked() {}
 	onLeaveButtonClicked() {
 		this.isSessionAlive = false;
 		this.closeClicked = true;
 		this.router.navigate([`/`]);
+	}
+	async onStartRecordingClicked() {
+		try {
+			await this.restService.startRecording(this.sessionId);
+		} catch (error) {
+			this.recordingError = error;
+		}
+	}
+
+	async onStopRecordingClicked() {
+		try {
+			this.recordingList = await this.restService.stopRecording(this.sessionId);
+		} catch (error) {
+			this.recordingError = error;
+		}
+	}
+
+	async onDeleteRecordingClicked(recordingId: string) {
+		try {
+			this.recordingList = await this.restService.deleteRecording(recordingId);
+		} catch (error) {
+			this.recordingError = error;
+		}
+	}
+	async onDownloadRecordingClicked(recordingId: string) {
+		try {
+			const file = await this.restService.downloadRecording(recordingId);
+			this.recordingService.downloadRecording(recordingId, file);
+		} catch (error) {
+			this.recordingError = error;
+		}
+	}
+
+	async onPlayRecordingClicked(recordingId: string) {
+		try {
+			const recording: Blob = await this.restService.downloadRecording(recordingId);
+			this.recordingService.playRecording(recording);
+		} catch (error) {
+			this.recordingError = error;
+		}
 	}
 }
