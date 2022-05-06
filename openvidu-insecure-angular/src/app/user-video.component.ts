@@ -25,7 +25,7 @@ import { StreamManager } from 'openvidu-browser';
     template: `
         <div>
             <ov-video [streamManager]="streamManager"></ov-video>
-            <div><p>{{getNicknameTag()}}</p></div>
+            <div><p (click)="applyFilter()">{{getNicknameTag()}}</p></div>
         </div>`
 })
 export class UserVideoComponent {
@@ -35,5 +35,15 @@ export class UserVideoComponent {
 
     getNicknameTag() { // Gets the nickName of the user
         return JSON.parse(this.streamManager.stream.connection.data).clientData;
+    }
+
+    applyFilter() {
+        if (!!this.streamManager.stream.filter) {
+            this.streamManager.stream.applyFilter('VB:image', { 
+                url: "https://localhost:4443/virtual-background/backgrounds/office.jpeg"
+            });
+        } else {
+            this.streamManager.stream.removeFilter();
+        }
     }
 }
