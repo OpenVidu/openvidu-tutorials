@@ -11,17 +11,3 @@ openvidu-virtual-background
 Visit [docs.openvidu.io/en/stable/advanced-features/virtual-background](http://docs.openvidu.io/en/stable/advanced-features/virtual-background/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
-
-## Run this application
-
-```bash
-# Launch OpenVidu Server
-docker run --rm -d -p 4443:4443 -e openvidu.secret=MY_SECRET openvidu/openvidu-server-kms:2.21.0
-
-# Clone and serve openvidu-filters application
-git clone https://github.com/OpenVidu/openvidu-tutorials.git
-cd openvidu-tutorials/openvidu-virtual-background
-http-server web/
-```
-
-You will need `http-server` npm package (`sudo npm install -g http-server`), and you will need to accept the insecure certificate at [https://localhost:4443](https://localhost:4443) once you launch openvidu-server-kms docker container.

@@ -8,8 +8,9 @@ var backgroundImageUrl;
 /* OPENVIDU METHODS */
 
 function joinSession() {
-  var mySessionId = $("#sessionId").val();
-  var myUserName = $("#userName").val();
+
+  var mySessionId = $("#sessionId").val(); // Session the user will join
+  var myUserName = $("#userName").val(); // Nickname of the user in the session
 
   // --- 1) Get an OpenVidu object ---
 
@@ -22,30 +23,30 @@ function joinSession() {
   // --- 3) Specify the actions when events take place in the session ---
 
   // On every new Stream received...
-  session.on("streamCreated", (event) => {
+  session.on("streamCreated", event => {
     // Subscribe to the Stream to receive it. HTML video will be appended to element with 'video-container' id
     var subscriber = session.subscribe(event.stream, "video-container");
 
     // When the HTML video has been appended to DOM...
-    subscriber.on("videoElementCreated", (event) => {
+    subscriber.on("videoElementCreated", event => {
       // Add a new <p> element for the user's nickname just below its video
       appendUserData(event.element, subscriber);
     });
 
     // When the video starts playing remove the spinner
-    subscriber.on("streamPlaying", function (event) {
+    subscriber.on("streamPlaying", event => {
       $("#spinner-" + subscriber.stream.connection.connectionId).remove();
     });
   });
 
   // On every Stream destroyed...
-  session.on("streamDestroyed", (event) => {
+  session.on("streamDestroyed", event => {
     // Delete the HTML element with the user's nickname. HTML videos are automatically removed from DOM
     removeUserData(event.stream.connection);
   });
 
   // On every asynchronous exception...
-  session.on("exception", (exception) => {
+  session.on("exception", exception => {
     console.warn(exception);
   });
 
@@ -53,11 +54,10 @@ function joinSession() {
 
   // 'getToken' method is simulating what your server-side should do.
   // 'token' parameter should be retrieved and returned by your own backend
-  getToken(mySessionId).then((token) => {
+  getToken(mySessionId).then(token => {
     // First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
     // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-    session
-      .connect(token, { clientData: myUserName })
+    session.connect(token, { clientData: myUserName })
       .then(() => {
         // --- 5) Set page layout for active call ---
 
@@ -82,12 +82,12 @@ function joinSession() {
         // --- 7) Specify the actions when events take place in our publisher ---
 
         // When our HTML video has been added to DOM...
-        publisher.on("videoElementCreated", function (event) {
+        publisher.on("videoElementCreated", event => {
           appendUserData(event.element, publisher);
           initMainVideo(publisher, myUserName);
         });
         // When our video has started playing...
-        publisher.on("streamPlaying", function (event) {
+        publisher.on("streamPlaying", event => {
           $("#spinner-" + publisher.stream.connection.connectionId).remove();
           $("#virtual-background-btns").show();
         });
@@ -95,12 +95,8 @@ function joinSession() {
         // --- 8) Publish your stream ---
         session.publish(publisher);
       })
-      .catch((error) => {
-        console.log(
-          "There was an error connecting to the session:",
-          error.code,
-          error.message
-        );
+      .catch(error => {
+        console.log("There was an error connecting to the session:", error.code, error.message);
       });
   });
 }
@@ -131,13 +127,6 @@ function leaveSession() {
 
 // --- Virtual Background related methods ---
 
-async function removeVirtualBackground() {
-  blockVirtualBackgroundButtons();
-  await publisher.stream.removeFilter();
-  virtualBackground = undefined;
-  noVirtualBackgroundButtons();
-}
-
 async function applyBlur() {
   blockVirtualBackgroundButtons();
   if (!!virtualBackground) {
@@ -157,16 +146,23 @@ async function applyImage() {
   imageVirtualBackgroundButtons();
 }
 
-async function modifyImage(radioButtonEvent) {
+async function modifyImage(radioBtnEvent) {
   if (!!virtualBackground && virtualBackground.type === "VB:image") {
     blockVirtualBackgroundButtons();
-    var imageUrl = "https://raw.githubusercontent.com/OpenVidu/openvidu.io/master/img/vb/" + radioButtonEvent.value;
+    var imageUrl = "https://raw.githubusercontent.com/OpenVidu/openvidu.io/master/img/vb/" + radioBtnEvent.value;
     if (backgroundImageUrl !== imageUrl) {
       await virtualBackground.execMethod("update", { url: imageUrl });
       backgroundImageUrl = imageUrl;
     }
     imageVirtualBackgroundButtons();
   }
+}
+
+async function removeVirtualBackground() {
+  blockVirtualBackgroundButtons();
+  await publisher.stream.removeFilter();
+  virtualBackground = undefined;
+  noVirtualBackgroundButtons();
 }
 
 // --- End Virtual Background related methods ---
