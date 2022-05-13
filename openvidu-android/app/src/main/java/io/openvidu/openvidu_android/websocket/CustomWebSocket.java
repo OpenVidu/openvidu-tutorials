@@ -121,8 +121,25 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
 
             final LocalParticipant localParticipant = this.session.getLocalParticipant();
             final String localConnectionId = result.getString(JsonConstants.ID);
-            this.mediaServer = result.getString(JsonConstants.MEDIA_SERVER);
             localParticipant.setConnectionId(localConnectionId);
+
+            this.mediaServer = result.getString(JsonConstants.MEDIA_SERVER);
+
+            if (result.has(JsonConstants.TURN_HOST) && result.has(JsonConstants.TURN_PORT)) {
+                final String turnHost = result.getString(JsonConstants.TURN_HOST);
+                final String turnPort = result.getString(JsonConstants.TURN_PORT);
+                session.setIceServerUri("turn:" + turnHost + ":" + turnPort);
+            }
+
+            if (result.has(JsonConstants.TURN_USER)) {
+                final String turnUser = result.getString(JsonConstants.TURN_USER);
+                session.setIceServerUser(turnUser);
+            }
+
+            if (result.has(JsonConstants.TURN_PASS)) {
+                final String turnPass = result.getString(JsonConstants.TURN_PASS);
+                session.setIceServerPass(turnPass);
+            }
 
             PeerConnection localPeerConnection = session.createLocalPeerConnection();
 

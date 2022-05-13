@@ -36,6 +36,9 @@ public class Session {
     private Map<String, RemoteParticipant> remoteParticipants = new HashMap<>();
     private String id;
     private String token;
+    private String iceServerUri;
+    private String iceServerUser;
+    private String iceServerPass;
     private LinearLayout views_container;
     private PeerConnectionFactory peerConnectionFactory;
     private CustomWebSocket websocket;
@@ -44,6 +47,9 @@ public class Session {
     public Session(String id, String token, LinearLayout views_container, SessionActivity activity) {
         this.id = id;
         this.token = token;
+        this.iceServerUri = "stun:stun.l.google.com:19302"; // Default value, will be updated from OpenVidu Server.
+        this.iceServerUser = "";
+        this.iceServerPass = "";
         this.views_container = views_container;
         this.activity = activity;
 
@@ -71,7 +77,12 @@ public class Session {
 
     public PeerConnection createLocalPeerConnection() {
         final List<PeerConnection.IceServer> iceServers = new ArrayList<>();
-        PeerConnection.IceServer iceServer = PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer();
+
+        PeerConnection.IceServer iceServer = PeerConnection.IceServer
+                .builder(this.iceServerUri)
+                .setUsername(this.iceServerUser)
+                .setPassword(this.iceServerPass)
+                .createIceServer();
         iceServers.add(iceServer);
 
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
@@ -106,11 +117,11 @@ public class Session {
 
         if (localParticipant.getAudioTrack() != null) {
             peerConnection.addTransceiver(localParticipant.getAudioTrack(),
-                    new RtpTransceiver.RtpTransceiverInit(RtpTransceiver.RtpTransceiverDirection.SEND_ONLY));
+                new RtpTransceiver.RtpTransceiverInit(RtpTransceiver.RtpTransceiverDirection.SEND_ONLY));
         }
         if (localParticipant.getVideoTrack() != null) {
             peerConnection.addTransceiver(localParticipant.getVideoTrack(),
-                    new RtpTransceiver.RtpTransceiverInit(RtpTransceiver.RtpTransceiverDirection.SEND_ONLY));
+                new RtpTransceiver.RtpTransceiverInit(RtpTransceiver.RtpTransceiverDirection.SEND_ONLY));
         }
 
         return peerConnection;
@@ -118,7 +129,12 @@ public class Session {
 
     public void createRemotePeerConnection(final String connectionId) {
         final List<PeerConnection.IceServer> iceServers = new ArrayList<>();
-        PeerConnection.IceServer iceServer = PeerConnection.IceServer.builder("stun:stun.l.google.com:19302").createIceServer();
+
+        PeerConnection.IceServer iceServer = PeerConnection.IceServer
+                .builder(this.iceServerUri)
+                .setUsername(this.iceServerUser)
+                .setPassword(this.iceServerPass)
+                .createIceServer();
         iceServers.add(iceServer);
 
         PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
@@ -230,6 +246,18 @@ public class Session {
 
     public String getToken() {
         return this.token;
+    }
+
+    public void setIceServerUri(String uri) {
+        this.iceServerUri = uri;
+    }
+
+    public void setIceServerUser(String user) {
+        this.iceServerUser = user;
+    }
+
+    public void setIceServerPass(String pass) {
+        this.iceServerPass = pass;
     }
 
     public LocalParticipant getLocalParticipant() {

@@ -50,4 +50,8 @@ public final class JsonConstants {
     public static final String SDP_ANSWER = "sdpAnswer";
     public static final String METADATA = "metadata";
 
+    public static final String TURN_HOST = "coturnIp";
+    public static final String TURN_PORT = "coturnPort";
+    public static final String TURN_USER = "turnUsername";
+    public static final String TURN_PASS = "turnCredential";
 }
