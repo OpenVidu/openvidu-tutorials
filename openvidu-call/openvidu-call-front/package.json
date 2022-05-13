@@ -11,7 +11,6 @@
         "@angular/platform-browser-dynamic": "13.3.0",
         "@angular/router": "13.3.0",
         "openvidu-angular": "file:openvidu-angular-2.22.0-beta2.tgz",
-        "openvidu-browser": "2.21.0",
         "rxjs": "7.5.5",
         "unique-names-generator": "4.7.1",
         "zone.js": "0.11.5"
