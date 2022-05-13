@@ -23,6 +23,7 @@ cd ../openvidu-call-back || exit 1
 sed -i "/\"version\":/ s/\"version\":[^,]*/\"version\": \"${RELEASE_VERSION}\"/" package.json
 sed -i "/\"openvidu-node-client\":/ s/\"openvidu-node-client\":[^,]*/\"openvidu-node-client\": \"${RELEASE_VERSION}\"/" package.json
 cat package.json
+cd ..
 
 printf '\n'
 printf '\n     -------------------------------------------------------------'
@@ -33,8 +34,8 @@ printf '\n          Demos container tag:  openvidu/openvidu-call-demos:%s'  "${R
 printf '\n     -------------------------------------------------------------'
 printf '\n'
 
-docker build -f Dockerfile -t openvidu/openvidu-call:${RELEASE_VERSION} --build-arg BASE_HREF=${CALL_BASE_HREF} .
-docker build -f Dockerfile -t openvidu/openvidu-call:${RELEASE_VERSION}-demos --build-arg BASE_HREF=${DEMOS_BASE_HREF} .
+docker build -f docker/Dockerfile -t openvidu/openvidu-call:${RELEASE_VERSION} --build-arg BASE_HREF=${CALL_BASE_HREF} .
+docker build -f docker/Dockerfile -t openvidu/openvidu-call:${RELEASE_VERSION}-demos --build-arg BASE_HREF=${DEMOS_BASE_HREF} .
 
 printf '\n'
 printf '\n     Pushing containers to OpenVidu DockerHub'
