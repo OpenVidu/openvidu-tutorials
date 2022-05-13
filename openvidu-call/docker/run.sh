@@ -15,7 +15,7 @@ printf '\n       Upgrading dependencies'
 printf '\n     -------------------------------------------------------------'
 printf '\n'
 
-cd ../openvidu-call/openvidu-call-front || exit 1
+cd ../openvidu-call-front || exit 1
 npm version ${RELEASE_VERSION} || exit 1
 npm install openvidu-angular@${RELEASE_VERSION} || exit 1
 cd ../openvidu-call-back || exit 1
