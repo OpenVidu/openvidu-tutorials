@@ -34,7 +34,6 @@ echo
 
 NPM_TUTORIALS="openvidu-insecure-angular
                 openvidu-insecure-react
-                openvidu-library-angular
                 openvidu-library-react
                 openvidu-ionic
                 openvidu-js-node
