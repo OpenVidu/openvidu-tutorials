@@ -16,10 +16,13 @@ printf '\n     -------------------------------------------------------------'
 printf '\n'
 
 cd ../openvidu-call-front || exit 1
-npm version ${RELEASE_VERSION} || exit 1
-npm install openvidu-angular@${RELEASE_VERSION} || exit 1
+sed -i "/\"version\":/ s/\"version\":[^,]*/\"version\": \"${RELEASE_VERSION}\"/" package.json
+sed -i "/\"openvidu-angular\":/ s/\"openvidu-angular\":[^,]*/\"openvidu-angular\": \"${RELEASE_VERSION}\"/" package.json
+cat package.json
 cd ../openvidu-call-back || exit 1
-npm install openvidu-node-client@${RELEASE_VERSION} || exit 1
+sed -i "/\"version\":/ s/\"version\":[^,]*/\"version\": \"${RELEASE_VERSION}\"/" package.json
+sed -i "/\"openvidu-node-client\":/ s/\"openvidu-node-client\":[^,]*/\"openvidu-node-client\": \"${RELEASE_VERSION}\"/" package.json
+cat package.json
 
 printf '\n'
 printf '\n     -------------------------------------------------------------'
