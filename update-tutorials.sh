@@ -42,7 +42,9 @@ NPM_TUTORIALS="openvidu-insecure-angular
                 openvidu-recording-node
                 openvidu-react-native
                 openvidu-electron
-                openvidu-insecure-vue"
+                openvidu-insecure-vue
+                openvidu-call/openvidu-call-front
+                openvidu-call/openvidu-call-back"
 
 MAVEN_TUTORIALS="openvidu-js-java
                 openvidu-mvc-java
@@ -59,7 +61,7 @@ find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-browser\": \"$FRO
 # Updating openvidu-react dependencies in package.json files [openvidu-library-react]
 find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-react\": \"$FROM_VERSION\"/\"openvidu-react\": \"$TO_VERSION\"/" {} \;
 
-# Updating openvidu-angular dependencies in package.json files [openvidu-library-angular]
+# Updating openvidu-angular dependencies in package.json files [openvidu-call, openvidu-components/*]
 find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-angular\": \"$FROM_VERSION\"/\"openvidu-angular\": \"$TO_VERSION\"/" {} \;
 
 # Updating openvidu-react-native-adapter dependencies in package.json files [openvidu-react-native]
