@@ -172,8 +172,22 @@ public class Session {
             public void onCreateSuccess(SessionDescription sessionDescription) {
                 super.onCreateSuccess(sessionDescription);
                 Log.i("createOffer SUCCESS", sessionDescription.toString());
-                localParticipant.getPeerConnection().setLocalDescription(new CustomSdpObserver("createOffer_setLocalDescription"), sessionDescription);
-                websocket.publishVideo(sessionDescription);
+
+                localParticipant.getPeerConnection().setLocalDescription(
+                        new CustomSdpObserver("createOffer_setLocalDescription") {
+                            @Override
+                            public void onSetSuccess() {
+                                super.onSetSuccess();
+                                websocket.publishVideo(sessionDescription);
+                            }
+
+                            @Override
+                            public void onSetFailure(String s) {
+                                super.onCreateFailure(s);
+                                Log.e("setLocalDescription ERROR", s);
+                            }
+                        },
+                        sessionDescription);
             }
 
             @Override
