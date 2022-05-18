@@ -174,11 +174,8 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
             remoteParticipant.getPeerConnection().setRemoteDescription(new CustomSdpObserver("prepareReceiveVideoFrom_setRemoteDescription") {
                 @Override
                 public void onSetSuccess() {
+                    super.onSetSuccess();
                     subscriptionInitiatedFromServer(remoteParticipant, streamId);
-                }
-                @Override
-                public void onSetFailure(String s) {
-                    Log.i("setRemoteDescription ER", s);
                 }
             }, remoteSdpOffer);
         } else if (this.IDS_RECEIVEVIDEO.containsKey(rpcId)) {
@@ -402,14 +399,15 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
 
         remoteParticipant.getPeerConnection().createOffer(new CustomSdpObserver("remote offer sdp") {
             @Override
-            public void onCreateSuccess(SessionDescription sessionDescription) {
-                super.onCreateSuccess(sessionDescription);
-                remoteParticipant.getPeerConnection().setLocalDescription(new CustomSdpObserver("remoteSetLocalDesc"), sessionDescription);
-                receiveVideoFrom(sessionDescription, remoteParticipant, streamId);
-            }
-            @Override
-            public void onCreateFailure(String s) {
-                Log.e("createOffer error", s);
+            public void onCreateSuccess(SessionDescription sdp) {
+                super.onCreateSuccess(sdp);
+                remoteParticipant.getPeerConnection().setLocalDescription(new CustomSdpObserver("remoteSetLocalDesc") {
+                    @Override
+                    public void onSetSuccess() {
+                        super.onSetSuccess();
+                        receiveVideoFrom(sdp, remoteParticipant, streamId);
+                    }
+                }, sdp);
             }
         }, sdpConstraints);
     }

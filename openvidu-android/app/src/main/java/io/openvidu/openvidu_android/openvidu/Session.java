@@ -185,58 +185,34 @@ public class Session {
     public void createOfferForPublishing(MediaConstraints constraints) {
         localParticipant.getPeerConnection().createOffer(new CustomSdpObserver("createOffer") {
             @Override
-            public void onCreateSuccess(SessionDescription sessionDescription) {
-                super.onCreateSuccess(sessionDescription);
-                Log.i("createOffer SUCCESS", sessionDescription.toString());
-
-                localParticipant.getPeerConnection().setLocalDescription(
-                        new CustomSdpObserver("createOffer_setLocalDescription") {
-                            @Override
-                            public void onSetSuccess() {
-                                super.onSetSuccess();
-                                websocket.publishVideo(sessionDescription);
-                            }
-
-                            @Override
-                            public void onSetFailure(String s) {
-                                super.onCreateFailure(s);
-                                Log.e("setLocalDescription ERROR", s);
-                            }
-                        },
-                        sessionDescription);
+            public void onCreateSuccess(SessionDescription sdp) {
+                super.onCreateSuccess(sdp);
+                Log.i("createOffer SUCCESS", sdp.toString());
+                localParticipant.getPeerConnection().setLocalDescription(new CustomSdpObserver("createOffer_setLocalDescription") {
+                    @Override
+                    public void onSetSuccess() {
+                        super.onSetSuccess();
+                        websocket.publishVideo(sdp);
+                    }
+                }, sdp);
             }
-
-            @Override
-            public void onCreateFailure(String s) {
-                Log.e("createOffer ERROR", s);
-            }
-
         }, constraints);
     }
 
     public void createAnswerForSubscribing(RemoteParticipant remoteParticipant, String streamId, MediaConstraints constraints) {
         remoteParticipant.getPeerConnection().createAnswer(new CustomSdpObserver("createAnswerSubscribing") {
             @Override
-            public void onCreateSuccess(SessionDescription sessionDescription) {
-                super.onCreateSuccess(sessionDescription);
-                Log.i("createAnswer SUCCESS", sessionDescription.toString());
+            public void onCreateSuccess(SessionDescription sdp) {
+                super.onCreateSuccess(sdp);
+                Log.i("createAnswer SUCCESS", sdp.toString());
                 remoteParticipant.getPeerConnection().setLocalDescription(new CustomSdpObserver("createAnswerSubscribing_setLocalDescription") {
                     @Override
                     public void onSetSuccess() {
-                        websocket.receiveVideoFrom(sessionDescription, remoteParticipant, streamId);
+                        super.onSetSuccess();
+                        websocket.receiveVideoFrom(sdp, remoteParticipant, streamId);
                     }
-                    @Override
-                    public void onSetFailure(String s) {
-                        Log.e("setRemoteDescription ER", s);
-                    }
-                }, sessionDescription);
+                }, sdp);
             }
-
-            @Override
-            public void onCreateFailure(String s) {
-                Log.e("createAnswer ERROR", s);
-            }
-
         }, constraints);
     }
 
