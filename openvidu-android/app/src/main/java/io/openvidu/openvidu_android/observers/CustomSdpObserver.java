@@ -7,33 +7,29 @@ import org.webrtc.SessionDescription;
 
 public class CustomSdpObserver implements SdpObserver {
 
-    private String tag;
+    private final String tag;
 
     public CustomSdpObserver(String tag) {
         this.tag = "SdpObserver-" + tag;
     }
 
-    private void log(String s) {
-        Log.d(tag, s);
-    }
-
     @Override
-    public void onCreateSuccess(SessionDescription sessionDescription) {
-        log("onCreateSuccess " + sessionDescription);
+    public void onCreateSuccess(SessionDescription sdp) {
+        Log.d(this.tag, "onCreateSuccess, SDP: " + sdp.toString());
     }
 
     @Override
     public void onSetSuccess() {
-        log("onSetSuccess ");
+        Log.d(this.tag, "onSetSuccess");
     }
 
     @Override
-    public void onCreateFailure(String s) {
-        log("onCreateFailure " + s);
+    public void onCreateFailure(String error) {
+        Log.e(this.tag, "onCreateFailure, error: " + error);
     }
 
     @Override
-    public void onSetFailure(String s) {
-        log("onSetFailure " + s);
+    public void onSetFailure(String error) {
+        Log.e(this.tag, "onSetFailure, error: " + error);
     }
 }
