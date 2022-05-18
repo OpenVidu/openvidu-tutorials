@@ -115,10 +115,10 @@ do
     echo "Compiling NPM project $tutorial"
     echo "###############################"
     echo
-    cd $tutorial
+    pushd $tutorial
     npm --no-git-tag-version --allow-same-version version $TO_VERSION
-    npm install || true
-    cd ..
+    npm install --force || true
+    popd
 done
 
 # Run "mvn clean compile package" in every Maven project

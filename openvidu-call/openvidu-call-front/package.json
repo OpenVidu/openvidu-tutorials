@@ -10,7 +10,7 @@
         "@angular/platform-browser": "13.3.0",
         "@angular/platform-browser-dynamic": "13.3.0",
         "@angular/router": "13.3.0",
-        "openvidu-angular": "file:openvidu-angular-2.22.0-beta2.tgz",
+        "openvidu-angular": "2.22.0",
         "rxjs": "7.5.5",
         "unique-names-generator": "4.7.1",
         "zone.js": "0.11.5"
@@ -47,5 +47,5 @@
         "start:https": "ng serve --host 192.168.1.161 --ssl --ssl-key cert.key --ssl-cert cert.crt",
         "test": "ng test openvidu-call --watch=false --code-coverage"
     },
-    "version": "2.22.0-beta2"
+    "version": "2.22.0"
 }

@@ -7,7 +7,7 @@
         "btoa": "1.2.1",
         "dotenv": "16.0.0",
         "express": "4.17.3",
-        "openvidu-node-client": "2.21.0"
+        "openvidu-node-client": "2.22.0"
     },
     "description": "OpenVidu Call Server",
     "devDependencies": {
@@ -51,5 +51,5 @@
         "start": "cross-env CALL_OPENVIDU_CERTTYPE=selfsigned nodemon src/app.ts",
         "test": "jest"
     },
-    "version": "2.20.0"
+    "version": "2.22.0"
 }
