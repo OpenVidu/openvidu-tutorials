@@ -16,6 +16,23 @@ sed -i "s|url_ov_classroom|${URL_OV_CLASSROOM}|" /etc/nginx/conf.d/default.conf
 sed -i "s|url_ov_getaroom|${URL_OV_GETAROOM}|" /etc/nginx/conf.d/default.conf
 sed -i "s|url_ov_call|${URL_OV_CALL}|" /etc/nginx/conf.d/default.conf
 
+cat > /tmp/redirect_index_to_domain.tpl <<EOL
+    location / {
+        rewrite ^/$ {{ redirect_domain }} redirect;
+    }
+EOL
+
+if [ -n "${REDIRECT_INDEX_TO_DOMAIN}" ]; then
+    sed -i '/{{ no_redirect_to_domain }}/d' /etc/nginx/conf.d/default.conf
+    sed -i "s|{{ redirect_domain }}|${REDIRECT_INDEX_TO_DOMAIN}|" /tmp/redirect_index_to_domain.tpl
+    sed -e '/{{ redirect_index_to_domain }}/{r /tmp/redirect_index_to_domain.tpl' -e 'd}' -i /etc/nginx/conf.d/default.conf
+    rm /tmp/redirect_index_to_domain.tpl
+else
+    sed -i "s|{{ no_redirect_to_domain }}|root /var/www/html;|" /etc/nginx/conf.d/default.conf
+    sed -i '/{{ redirect_index_to_domain }}/d' /etc/nginx/conf.d/default.conf
+    rm /tmp/redirect_index_to_domain.tpl
+fi
+
 # Run nginx
 nginx -g "daemon off;"
 

@@ -46,7 +46,7 @@ services:
             - CALL_OPENVIDU_CERTTYPE=${CERTIFICATE_TYPE}
 
     demos-page:
-        image: openvidu/openvidu-demo-proxy:1.1.0
+        image: openvidu/openvidu-demo-proxy:2.22.0
         restart: on-failure
         ports:
             - "5442:80"
@@ -57,3 +57,4 @@ services:
             - URL_OV_CLASSROOM=https://openvidu-classroom:5000
             - URL_OV_GETAROOM=http://openvidu-getaroom:80
             - URL_OV_CALL=http://openvidu-call:5000
+            - REDIRECT_INDEX_TO_DOMAIN=${REDIRECT_INDEX_TO_DOMAIN:-}
