@@ -12,4 +12,4 @@ CALL_OPENVIDU_CERTTYPE=${CALL_OPENVIDU_CERTTYPE}
 EOF
 
 cd /opt/openvidu-call
-nodemon openvidu-call-server.js
+node openvidu-call-server.js

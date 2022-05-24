@@ -30,8 +30,7 @@ COPY --from=openvidu-call-build /openvidu-call/dist .
 # Entrypoint
 COPY docker/entrypoint.sh /usr/local/bin
 RUN apk add curl && \
-    chmod +x /usr/local/bin/entrypoint.sh && \
-    npm install -g nodemon
+    chmod +x /usr/local/bin/entrypoint.sh
 
 # CMD /usr/local/bin/entrypoint.sh
 CMD ["/usr/local/bin/entrypoint.sh"]
