@@ -50,7 +50,8 @@ async function joinSession() {
     var participantName = document.getElementById('user').value;
 
     // Requesting tokens
-    var tokens = {webcam: await getToken(sessionName), screen: await getToken(sessionName)};
+    var promiseResults = await Promise.all([getToken(sessionName), getToken(sessionName)]);
+    var tokens = {webcam: promiseResults[0], screen: promiseResults[1]};
 
     //Getting the webcomponent element
     var webComponent = document.querySelector('openvidu-webcomponent');
