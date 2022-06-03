@@ -101,6 +101,8 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
         JSONObject json = new JSONObject(text);
         if (json.has(JsonConstants.RESULT)) {
             handleServerResponse(json);
+        } else if (json.has(JsonConstants.ERROR)) {
+            handleServerError(json);
         } else {
             handleServerEvent(json);
         }
@@ -193,6 +195,15 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
         }
     }
 
+    private void handleServerError(JSONObject json) throws JSONException {
+        final JSONObject error = new JSONObject(json.getString(JsonConstants.ERROR));
+
+        final int errorCode = error.getInt("code");
+        final String errorMessage = error.getString("message");
+
+        Log.e(TAG, "Server error code " + errorCode + ": " + errorMessage);
+    }
+
     public void joinRoom() {
         Map<String, String> joinRoomParams = new HashMap<>();
         joinRoomParams.put(JsonConstants.METADATA, "{\"clientData\": \"" + this.session.getLocalParticipant().getParticipantName() + "\"}");
@@ -252,27 +263,35 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
     }
 
     private void handleServerEvent(JSONObject json) throws JSONException {
+        if (!json.has(JsonConstants.METHOD)) {
+            Log.e(TAG, "Server event lacks a field '" + JsonConstants.METHOD + "'; JSON: "
+                    + json.toString());
+            return;
+        }
+        final String method = json.getString(JsonConstants.METHOD);
+
         if (!json.has(JsonConstants.PARAMS)) {
-            Log.e(TAG, "No params " + json.toString());
-        } else {
-            final JSONObject params = new JSONObject(json.getString(JsonConstants.PARAMS));
-            String method = json.getString(JsonConstants.METHOD);
-            switch (method) {
-                case JsonConstants.ICE_CANDIDATE:
-                    iceCandidateEvent(params);
-                    break;
-                case JsonConstants.PARTICIPANT_JOINED:
-                    participantJoinedEvent(params);
-                    break;
-                case JsonConstants.PARTICIPANT_PUBLISHED:
-                    participantPublishedEvent(params);
-                    break;
-                case JsonConstants.PARTICIPANT_LEFT:
-                    participantLeftEvent(params);
-                    break;
-                default:
-                    throw new JSONException("Unknown method: " + method);
-            }
+            Log.e(TAG, "Server event '" + method + "' lacks a field '" + JsonConstants.PARAMS
+                    + "'; JSON: " + json.toString());
+            return;
+        }
+        final JSONObject params = new JSONObject(json.getString(JsonConstants.PARAMS));
+
+        switch (method) {
+            case JsonConstants.ICE_CANDIDATE:
+                iceCandidateEvent(params);
+                break;
+            case JsonConstants.PARTICIPANT_JOINED:
+                participantJoinedEvent(params);
+                break;
+            case JsonConstants.PARTICIPANT_PUBLISHED:
+                participantPublishedEvent(params);
+                break;
+            case JsonConstants.PARTICIPANT_LEFT:
+                participantLeftEvent(params);
+                break;
+            default:
+                throw new JSONException("Unknown method: '" + method + "'");
         }
     }
 
