@@ -1,4 +1,3 @@
-
 import * as express from 'express';
 import { SERVER_PORT, OPENVIDU_URL, OPENVIDU_SECRET, CALL_OPENVIDU_CERTTYPE } from './config';
 import {app as callController} from './controllers/CallController';
@@ -15,7 +14,7 @@ app.use('/call', callController);
 
 // Accept selfsigned certificates if CALL_OPENVIDU_CERTTYPE=selfsigned
 if (CALL_OPENVIDU_CERTTYPE === 'selfsigned') {
-    process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
+	process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
 }
 
 app.listen(SERVER_PORT, () => {
