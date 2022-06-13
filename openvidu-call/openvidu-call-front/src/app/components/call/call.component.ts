@@ -29,7 +29,7 @@ export class CallComponent implements OnInit {
 		});
 
 		let nickname: string = '';
-		// Just or debuggin purposes
+		// Just for debugging purposes
 		const regex = /^UNSAFE_DEBUG_USE_CUSTOM_IDS_/gm;
 		const match = regex.exec(this.sessionId);
 		if (match && match.length > 0) {
