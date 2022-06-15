@@ -7,7 +7,7 @@
     <string name="default_participant_name">Participant</string>
     <string name="openvidu_url">OPENVIDU URL</string>
     <string name="openvidu_secret">OPENVIDU SECRET</string>
-    <string name="default_openvidu_url">https://192.168.1.106:4443/</string>
+    <string name="default_openvidu_url">https://demos.openvidu.io</string>
     <string name="default_openvidu_secret">MY_SECRET</string>
     <string name="hang_up">Leave session</string>
     <string name="no_connection">COULD NOT ESTABLISH THE CONNECTION, TRY AGAIN </string>
