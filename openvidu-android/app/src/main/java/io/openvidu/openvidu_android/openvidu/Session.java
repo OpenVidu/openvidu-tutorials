@@ -15,6 +15,7 @@ import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.MediaStreamTrack;
 import org.webrtc.PeerConnection;
+import org.webrtc.PeerConnection.IceServer;
 import org.webrtc.PeerConnectionFactory;
 import org.webrtc.RtpReceiver;
 import org.webrtc.RtpTransceiver;
@@ -25,6 +26,7 @@ import org.webrtc.VideoDecoderFactory;
 import org.webrtc.VideoEncoderFactory;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -36,9 +38,11 @@ public class Session {
     private Map<String, RemoteParticipant> remoteParticipants = new HashMap<>();
     private String id;
     private String token;
-    private String iceServerUri;
-    private String iceServerUser;
-    private String iceServerPass;
+
+    private final List<IceServer> iceServersDefault =
+            Arrays.asList(IceServer.builder("stun:stun.l.google.com:19302").createIceServer());
+    private List<IceServer> iceServers = new ArrayList();
+
     private LinearLayout views_container;
     private PeerConnectionFactory peerConnectionFactory;
     private CustomWebSocket websocket;
@@ -47,9 +51,6 @@ public class Session {
     public Session(String id, String token, LinearLayout views_container, SessionActivity activity) {
         this.id = id;
         this.token = token;
-        this.iceServerUri = "stun:stun.l.google.com:19302"; // Default value, will be updated from OpenVidu Server.
-        this.iceServerUser = "";
-        this.iceServerPass = "";
         this.views_container = views_container;
         this.activity = activity;
 
@@ -76,25 +77,42 @@ public class Session {
     }
 
     public PeerConnection createLocalPeerConnection() {
-        final List<PeerConnection.IceServer> iceServers = new ArrayList<>();
+        // TODO: start block to remove after 2.23
+        do {
+            if (iceServers.isEmpty()) {
+                if (iceServerUri != null) {
+                    IceServer.Builder iceServerBuilder;
+                    try {
+                        iceServerBuilder = IceServer.builder(iceServerUri);
+                    } catch (IllegalArgumentException e) {
+                        break;
+                    }
+                    if (iceServerUser != null) {
+                        iceServerBuilder.setUsername(iceServerUser);
+                    }
+                    if (iceServerPass != null) {
+                        iceServerBuilder.setPassword(iceServerPass);
+                    }
+                    iceServers.add(iceServerBuilder.createIceServer());
+                }
+            }
+        } while (false);
+        // TODO: end block to remove after 2.23
 
-        PeerConnection.IceServer iceServer = PeerConnection.IceServer
-                .builder(this.iceServerUri)
-                .setUsername(this.iceServerUser)
-                .setPassword(this.iceServerPass)
-                .createIceServer();
-        iceServers.add(iceServer);
+        PeerConnection.RTCConfiguration config =
+                new PeerConnection.RTCConfiguration(iceServers.isEmpty()
+                        ? iceServersDefault
+                        : iceServers);
+        config.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.ENABLED;
+        config.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE;
+        config.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.NEGOTIATE;
+        config.continualGatheringPolicy =
+                PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY;
+        config.keyType = PeerConnection.KeyType.ECDSA;
+        config.enableDtlsSrtp = true;
+        config.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
 
-        PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
-        rtcConfig.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.ENABLED;
-        rtcConfig.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE;
-        rtcConfig.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.NEGOTIATE;
-        rtcConfig.continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY;
-        rtcConfig.keyType = PeerConnection.KeyType.ECDSA;
-        rtcConfig.enableDtlsSrtp = true;
-        rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
-
-        PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(rtcConfig, new CustomPeerConnectionObserver("local") {
+        PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(config, new CustomPeerConnectionObserver("local") {
             @Override
             public void onIceCandidate(IceCandidate iceCandidate) {
                 super.onIceCandidate(iceCandidate);
@@ -128,25 +146,42 @@ public class Session {
     }
 
     public void createRemotePeerConnection(final String connectionId) {
-        final List<PeerConnection.IceServer> iceServers = new ArrayList<>();
+        // TODO: start block to remove after 2.23
+        do {
+            if (iceServers.isEmpty()) {
+                if (iceServerUri != null) {
+                    IceServer.Builder iceServerBuilder;
+                    try {
+                        iceServerBuilder = IceServer.builder(iceServerUri);
+                    } catch (IllegalArgumentException e) {
+                        break;
+                    }
+                    if (iceServerUser != null) {
+                        iceServerBuilder.setUsername(iceServerUser);
+                    }
+                    if (iceServerPass != null) {
+                        iceServerBuilder.setPassword(iceServerPass);
+                    }
+                    iceServers.add(iceServerBuilder.createIceServer());
+                }
+            }
+        } while (false);
+        // TODO: end block to remove after 2.23
 
-        PeerConnection.IceServer iceServer = PeerConnection.IceServer
-                .builder(this.iceServerUri)
-                .setUsername(this.iceServerUser)
-                .setPassword(this.iceServerPass)
-                .createIceServer();
-        iceServers.add(iceServer);
+        PeerConnection.RTCConfiguration config =
+                new PeerConnection.RTCConfiguration(iceServers.isEmpty()
+                        ? iceServersDefault
+                        : iceServers);
+        config.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.ENABLED;
+        config.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE;
+        config.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.NEGOTIATE;
+        config.continualGatheringPolicy =
+                PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY;
+        config.keyType = PeerConnection.KeyType.ECDSA;
+        config.enableDtlsSrtp = true;
+        config.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
 
-        PeerConnection.RTCConfiguration rtcConfig = new PeerConnection.RTCConfiguration(iceServers);
-        rtcConfig.tcpCandidatePolicy = PeerConnection.TcpCandidatePolicy.ENABLED;
-        rtcConfig.bundlePolicy = PeerConnection.BundlePolicy.MAXBUNDLE;
-        rtcConfig.rtcpMuxPolicy = PeerConnection.RtcpMuxPolicy.NEGOTIATE;
-        rtcConfig.continualGatheringPolicy = PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY;
-        rtcConfig.keyType = PeerConnection.KeyType.ECDSA;
-        rtcConfig.enableDtlsSrtp = true;
-        rtcConfig.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
-
-        PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(rtcConfig, new CustomPeerConnectionObserver("remotePeerCreation") {
+        PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(config, new CustomPeerConnectionObserver("remotePeerCreation") {
             @Override
             public void onIceCandidate(IceCandidate iceCandidate) {
                 super.onIceCandidate(iceCandidate);
@@ -224,16 +259,26 @@ public class Session {
         return this.token;
     }
 
+    // TODO: start block to remove after 2.23
+    private String iceServerUri = null;
+    private String iceServerUser = null;
+    private String iceServerPass = null;
+
     public void setIceServerUri(String uri) {
-        this.iceServerUri = uri;
+        iceServerUri = uri;
     }
 
     public void setIceServerUser(String user) {
-        this.iceServerUser = user;
+        iceServerUser = user;
     }
 
     public void setIceServerPass(String pass) {
-        this.iceServerPass = pass;
+        iceServerPass = pass;
+    }
+    // TODO: end block to remove after 2.23
+
+    public void setIceServers(List<IceServer> iceServers) {
+        this.iceServers = iceServers;
     }
 
     public LocalParticipant getLocalParticipant() {

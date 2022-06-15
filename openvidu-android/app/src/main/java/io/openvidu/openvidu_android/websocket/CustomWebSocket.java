@@ -21,6 +21,7 @@ import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
 import org.webrtc.PeerConnection;
+import org.webrtc.PeerConnection.IceServer;
 import org.webrtc.RtpTransceiver;
 import org.webrtc.SessionDescription;
 
@@ -31,6 +32,7 @@ import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.CertificateException;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
@@ -127,21 +129,56 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
 
             this.mediaServer = result.getString(JsonConstants.MEDIA_SERVER);
 
-            if (result.has(JsonConstants.TURN_HOST) && result.has(JsonConstants.TURN_PORT)) {
-                final String turnHost = result.getString(JsonConstants.TURN_HOST);
-                final String turnPort = result.getString(JsonConstants.TURN_PORT);
+            if (result.has(JsonConstants.ICE_SERVERS)) {
+                final JSONArray jsonIceServers = result.getJSONArray(JsonConstants.ICE_SERVERS);
+                List<IceServer> iceServers = new ArrayList();
+
+                for (int i = 0; i < jsonIceServers.length(); i++) {
+                    JSONObject jsonIceServer = jsonIceServers.getJSONObject(i);
+                    List<String> urls = new ArrayList();
+                    if (jsonIceServer.has("urls")) {
+                        final JSONArray jsonUrls = jsonIceServer.getJSONArray("urls");
+                        for (int j = 0; j < jsonUrls.length(); j++) {
+                            urls.add(jsonUrls.getString(j));
+                        }
+                    }
+                    if (jsonIceServer.has("url")) {
+                        urls.add(jsonIceServer.getString("url"));
+                    }
+
+                    IceServer.Builder iceServerBuilder;
+                    try {
+                        iceServerBuilder = IceServer.builder(urls);
+                    } catch (IllegalArgumentException e) {
+                        continue;
+                    }
+                    if (jsonIceServer.has("username")) {
+                        iceServerBuilder.setUsername(jsonIceServer.getString("username"));
+                    }
+                    if (jsonIceServer.has("credential")) {
+                        iceServerBuilder.setPassword(jsonIceServer.getString("credential"));
+                    }
+                    iceServers.add(iceServerBuilder.createIceServer());
+                }
+
+                session.setIceServers(iceServers);
+            }
+
+            // TODO: start block to remove after 2.23
+            if (result.has("coturnIp") && result.has("coturnPort")) {
+                final String turnHost = result.getString("coturnIp");
+                final String turnPort = result.getString("coturnPort");
                 session.setIceServerUri("turn:" + turnHost + ":" + turnPort);
             }
-
-            if (result.has(JsonConstants.TURN_USER)) {
-                final String turnUser = result.getString(JsonConstants.TURN_USER);
+            if (result.has("turnUsername")) {
+                final String turnUser = result.getString("turnUsername");
                 session.setIceServerUser(turnUser);
             }
-
-            if (result.has(JsonConstants.TURN_PASS)) {
-                final String turnPass = result.getString(JsonConstants.TURN_PASS);
+            if (result.has("turnCredential")) {
+                final String turnPass = result.getString("turnCredential");
                 session.setIceServerPass(turnPass);
             }
+            // TODO: end block to remove after 2.23
 
             PeerConnection localPeerConnection = session.createLocalPeerConnection();
 
@@ -291,7 +328,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
                 participantLeftEvent(params);
                 break;
             default:
-                throw new JSONException("Unknown method: '" + method + "'");
+                throw new JSONException("Unknown server event '" + method + "'");
         }
     }
 
