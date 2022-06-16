@@ -1,11 +1,21 @@
 apply plugin: 'com.android.application'
 
+// NOTES
+// =====
+//
+// * minSdk: API level 21 (Android 5) required by org.webrtc:google-webrtc:1.0.32006 (Google WebRTC).
+// * targetSdk: API level 31 (Android 12) required by Google Play Store, since August 1, 2022.
+//   See: https://support.google.com/googleplay/android-developer/answer/11926878
+// * compileSdkVersion: Should match "targetSdk".
+//
+// For a complete table of all Android API levels, check https://apilevels.com/
+
 android {
-    compileSdkVersion 29
+    compileSdk 31
     defaultConfig {
         applicationId "io.openvidu.openvidu_android"
-        minSdkVersion 21
-        targetSdkVersion 29
+        minSdk 21
+        targetSdk 31
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
