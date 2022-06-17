@@ -31,8 +31,6 @@ public class Controller {
 
 	private OpenVidu openvidu;
 
-	private Utils utils = new Utils();
-
 	@PostConstruct
 	public void init() {
 		this.openvidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
@@ -42,10 +40,10 @@ public class Controller {
 	 * @param params The Session properties
 	 * @return The Session ID
 	 */
-	@PostMapping("/session")
-	public ResponseEntity<String> initializeSession(@RequestBody Map<String, Object> params)
+	@PostMapping("/sessions")
+	public ResponseEntity<String> initializeSession(@RequestBody(required = false) Map<String, Object> params)
 			throws OpenViduJavaClientException, OpenViduHttpException {
-		SessionProperties properties = utils.generateSessionProperties(params);
+		SessionProperties properties = SessionProperties.fromJson(params).build();
 		Session session = openvidu.createSession(properties);
 		return new ResponseEntity<>(session.getSessionId(), HttpStatus.OK);
 	}
@@ -55,16 +53,17 @@ public class Controller {
 	 * @param params    The Connection properties
 	 * @return The Token associated to the Connection
 	 */
-	@PostMapping("/session/{sessionId}/connection")
+	@PostMapping("/sessions/{sessionId}/connections")
 	public ResponseEntity<String> createConnection(@PathVariable("sessionId") String sessionId,
-			@RequestBody Map<String, Object> params) throws OpenViduJavaClientException, OpenViduHttpException {
+			@RequestBody(required = false) Map<String, Object> params)
+			throws OpenViduJavaClientException, OpenViduHttpException {
 		openvidu.fetch();
 		Session session = openvidu.getActiveSessions().stream().filter(s -> sessionId.equals(s.getSessionId()))
 				.findFirst().orElse(null);
 		if (session == null) {
 			return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 		}
-		ConnectionProperties properties = utils.generateConnectionProperties(params);
+		ConnectionProperties properties = ConnectionProperties.fromJson(params).build();
 		Connection connection = session.createConnection(properties);
 		return new ResponseEntity<>(connection.getToken(), HttpStatus.OK);
 	}
