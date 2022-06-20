@@ -1,2 +1,14 @@
-<ov-videoconference (onJoinButtonClicked)="onJoinButtonClicked()" (onToolbarLeaveButtonClicked)="onLeaveButtonClicked()" [tokens]="tokens">
+<ov-videoconference
+	[tokens]="tokens"
+	[recordingActivityRecordingsList]="recordingList"
+	[recordingActivityRecordingError]="recordingError"
+	(onToolbarLeaveButtonClicked)="onLeaveButtonClicked()"
+	(onToolbarStartRecordingClicked)="onStartRecordingClicked()"
+	(onActivitiesPanelStartRecordingClicked)="onStartRecordingClicked()"
+	(onToolbarStopRecordingClicked)="onStopRecordingClicked()"
+	(onActivitiesPanelStopRecordingClicked)="onStopRecordingClicked()"
+	(onActivitiesPanelDownloadRecordingClicked)="onDownloadRecordingClicked($event)"
+	(onActivitiesPanelDeleteRecordingClicked)="onDeleteRecordingClicked($event)"
+	(onActivitiesPanelPlayRecordingClicked)="onPlayRecordingClicked($event)"
+>
 </ov-videoconference>
