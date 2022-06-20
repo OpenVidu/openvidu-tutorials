@@ -16,6 +16,7 @@ import { HomeComponent } from './components/home/home.component';
 
 // OpenVidu Angular
 import { OpenViduAngularConfig, OpenViduAngularModule } from 'openvidu-angular';
+import { AdminDashboardComponent } from './components/admin-dashboard/admin-dashboard.component';
 
 // Services
 
@@ -25,7 +26,7 @@ const config: OpenViduAngularConfig = {
 
 
 @NgModule({
-	declarations: [AppComponent, HomeComponent, CallComponent],
+	declarations: [AppComponent, HomeComponent, CallComponent, AdminDashboardComponent],
 	imports: [
 		BrowserModule,
 		BrowserAnimationsModule,
