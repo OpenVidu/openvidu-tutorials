@@ -1,6 +1,12 @@
 # openvidu-basic-python
 
-Create a python3 environment and activate it
+This is a minimal OpenVidu server application sample built for Python with [Flask](https://flask.palletsprojects.com/). Visit [Application server](https://docs.openvidu.io/en/stable/application-server/) documentation for further context.
+
+Prerequisites:
+
+- [Python 3](https://www.python.org/downloads/)
+
+Create a python3 environment and activate it:
 
 ```
 python3 -m venv venv
@@ -10,13 +16,13 @@ python3 -m venv venv
 . venv/bin/activate
 ```
 
-Install dependencies
+Install dependencies:
 
 ```
 pip install -r requirements.txt
 ```
 
-Run the application
+Run the application:
 
 ```
 python3 app.py
