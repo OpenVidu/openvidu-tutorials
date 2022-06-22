@@ -24,7 +24,6 @@ app.get('/', async (req: Request, res: Response) => {
 				const date = openviduService.getDateFromCookie(req.cookies);
 				recordings = await openviduService.listRecordingsBySessionIdAndDate(sessionId, date);
 			}
-			console.log('a', recordings)
 			res.status(200).send(JSON.stringify(recordings));
 		} else {
 			const message = IS_RECORDING_ENABLED ? 'Permissions denied to drive recording' : 'Recording is disabled';
@@ -107,13 +106,13 @@ app.delete('/delete/:recordingId', async (req: Request, res: Response) => {
 		const isAdminDashboard = openviduService.adminTokens.includes(req['session'].token);
 		let recordings = [];
 		if ((!!sessionId && openviduService.isValidToken(sessionId, req.cookies)) || isAdminDashboard) {
-			console.log('DELETE RECORDING');
 			const recordingId: string = req.params.recordingId;
 			if (!recordingId) {
 				return res.status(400).send('Missing recording id parameter.');
 			}
+			console.log(`Deleting recording ${recordingId}`);
 			await openviduService.deleteRecording(recordingId);
-			if (isAdminDashboard) {
+			if (isAdminDashboard && !!req['session']) {
 				recordings = await openviduService.listAllRecordings(true);
 			} else {
 				const date = openviduService.getDateFromCookie(req.cookies);
@@ -152,6 +151,7 @@ export const proxyGETRecording = createProxyMiddleware({
 			if (!recordingId) {
 				return res.status(400).send(JSON.stringify({ message: 'Missing recording id parameter.' }));
 			} else {
+				proxyReq.setHeader('Connection', 'keep-alive');
 				proxyReq.setHeader('Authorization', openviduService.getBasicAuth());
 				proxyReq.setHeader('Range', 'bytes=0-');
 			}

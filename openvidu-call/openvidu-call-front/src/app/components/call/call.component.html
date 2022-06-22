@@ -9,6 +9,7 @@
 	(onActivitiesPanelStopRecordingClicked)="onStopRecordingClicked()"
 	(onActivitiesPanelDownloadRecordingClicked)="onDownloadRecordingClicked($event)"
 	(onActivitiesPanelDeleteRecordingClicked)="onDeleteRecordingClicked($event)"
-	(onActivitiesPanelPlayRecordingClicked)="onPlayRecordingClicked($event)"
+	[activitiesPanelRecordingActivity]="recordingEnabled"
+	[toolbarRecordingButton]="recordingEnabled"
 >
 </ov-videoconference>

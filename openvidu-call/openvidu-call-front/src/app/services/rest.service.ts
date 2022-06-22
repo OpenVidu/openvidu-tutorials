@@ -15,7 +15,7 @@ export class RestService {
 	async getTokens(
 		sessionId: string,
 		nickname?: string
-	): Promise<{ cameraToken: string; screenToken: string; recordings?: RecordingInfo[] }> {
+	): Promise<{ cameraToken: string; screenToken: string, recordingEnabled: boolean, recordings?: RecordingInfo[] }> {
 		return this.postRequest('sessions', { sessionId, nickname });
 	}
 	login(password: string): Promise<any[]> {

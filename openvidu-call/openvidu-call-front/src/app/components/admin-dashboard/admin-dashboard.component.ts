@@ -15,6 +15,10 @@ export class AdminDashboardComponent implements OnInit {
 
 	ngOnInit(): void {}
 
+	ngOnDestroy() {
+		this.onLogoutClicked();
+	}
+
 	async onLoginClicked(pass: string) {
 		try {
 			const resp: any = await this.restService.login(pass);
@@ -50,15 +54,6 @@ export class AdminDashboardComponent implements OnInit {
 	async onDeleteRecordingClicked(recordingId: string) {
 		try {
 			this.recordings = await this.restService.deleteRecording(recordingId);
-		} catch (error) {
-			console.error(error);
-		}
-	}
-
-	async onPlayRecordingClicked(recordingId: string) {
-		try {
-			const file: Blob = await this.restService.downloadRecording(recordingId);
-			this.recordingService.playRecording(file);
 		} catch (error) {
 			console.error(error);
 		}

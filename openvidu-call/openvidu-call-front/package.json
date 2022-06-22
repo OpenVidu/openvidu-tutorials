@@ -43,7 +43,7 @@
         "copy:backend-prod": "mkdir -p ../openvidu-call-back/dist/public && cp -a dist/openvidu-call/. ../openvidu-call-back/dist/public/",
         "e2e": "ng e2e",
         "lint": "ng lint",
-        "start": "ng serve --configuration development",
+        "start": "ng serve --ssl --configuration development",
         "start:https": "ng serve --host 192.168.1.161 --ssl --ssl-key cert.key --ssl-cert cert.crt",
         "test": "ng test openvidu-call --watch=false --code-coverage"
     },

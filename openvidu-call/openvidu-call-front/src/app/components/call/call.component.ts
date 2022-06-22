@@ -15,8 +15,8 @@ export class CallComponent implements OnInit {
 	joinSessionClicked: boolean = false;
 	closeClicked: boolean = false;
 	isSessionAlive: boolean = false;
+	recordingEnabled: boolean = true;
 	recordingList: RecordingInfo[] = [];
-
 	recordingError: any;
 
 	constructor(
@@ -42,6 +42,7 @@ export class CallComponent implements OnInit {
 		}
 
 		const response = await this.restService.getTokens(this.sessionId, nickname);
+		this.recordingEnabled = response.recordingEnabled;
 		this.recordingList = response.recordings;
 		this.tokens = {
 			webcam: response.cameraToken,
@@ -80,15 +81,6 @@ export class CallComponent implements OnInit {
 		try {
 			const file = await this.restService.downloadRecording(recordingId);
 			this.recordingService.downloadRecording(recordingId, file);
-		} catch (error) {
-			this.recordingError = error;
-		}
-	}
-
-	async onPlayRecordingClicked(recordingId: string) {
-		try {
-			const recording: Blob = await this.restService.downloadRecording(recordingId);
-			this.recordingService.playRecording(recording);
 		} catch (error) {
 			this.recordingError = error;
 		}

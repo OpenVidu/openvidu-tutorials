@@ -41,6 +41,7 @@ export class OpenViduService {
 			const cookieTokenUrl = new URL(cookies[this.RECORDING_TOKEN_NAME]);
 			return cookieTokenUrl?.searchParams.get('sessionId');
 		} catch (error) {
+			console.log('Recording cookie not found');
 			console.error(error);
 			return '';
 		}
