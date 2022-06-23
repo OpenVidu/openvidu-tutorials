@@ -9,6 +9,7 @@ import { catchError } from 'rxjs/operators';
 import { AlertController, Platform } from '@ionic/angular';
 
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+declare var cordova;
 
 @Component({
 	selector: 'app-root',
@@ -52,7 +53,7 @@ export class AppComponent implements OnInit, OnDestroy {
 		this.platform.ready().then(() => {
 			if (this.platform.is('ios') && this.platform.is('capacitor')) {
 				console.warn('ios');
-				// cordova.plugins.iosrtc.registerGlobals();
+				cordova.plugins.iosrtc.registerGlobals();
 			}
 		});
 	}
@@ -142,7 +143,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
 	refreshVideos() {
 		if (this.platform.is('ios') && this.platform.is('capacitor')) {
-			// cordova.plugins.iosrtc.refreshVideos();
+			cordova.plugins.iosrtc.refreshVideos();
 		}
 	}
 

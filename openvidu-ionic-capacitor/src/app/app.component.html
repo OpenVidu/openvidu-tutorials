@@ -55,7 +55,7 @@
     </ion-fab>
   </ion-content>
 
-  <ion-content [scrollEvents]="true" (ionScroll)="refreshVideos()" *ngIf="session">
+  <ion-content [scrollEvents]="true" (ionScroll)="refreshVideos()" *ngIf="session" style="background-color: transparent; background: transparent;">
 		<div id="session-header">
 			<h1 id="session-title">{{ mySessionId }}</h1>
 		</div>

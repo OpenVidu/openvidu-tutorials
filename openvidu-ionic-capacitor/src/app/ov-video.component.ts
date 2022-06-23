@@ -8,7 +8,7 @@ declare let cordova;
 
 @Component({
 	selector: 'ov-video',
-	template: '<video #videoElement style="width: 100%"></video>'
+	template: '<video #videoElement style="width: 100%; background: transparent"></video>'
 })
 export class OpenViduVideoComponent implements AfterViewInit, OnDestroy {
 	@ViewChild('videoElement') elementRef: ElementRef;
@@ -61,7 +61,7 @@ export class OpenViduVideoComponent implements AfterViewInit, OnDestroy {
 		const ratio = this._streamManager.stream.videoDimensions.height / this._streamManager.stream.videoDimensions.width;
 		this.elementRef.nativeElement.style.width = '100% !important';
 		this.elementRef.nativeElement.style.objectFit = 'fill';
-		this.elementRef.nativeElement.style.zIndex = '-1';
+		this.elementRef.nativeElement.style.zIndex = '0';
 		const computedWidth = this.elementRef.nativeElement.offsetWidth;
 		this.elementRef.nativeElement.style.height = computedWidth * ratio + 'px';
 		if (!this._streamManager.remote) {
@@ -72,8 +72,7 @@ export class OpenViduVideoComponent implements AfterViewInit, OnDestroy {
 	}
 
 	private isIos(): boolean {
-		// return this.platform.is('ios') && this.platform.is('capacitor');
-		return false;
+		return this.platform.is('ios') && this.platform.is('capacitor');
 	}
 
 	private applyIosAttributes() {

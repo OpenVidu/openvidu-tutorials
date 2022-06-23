@@ -1,0 +1,6 @@
+{
+	"appId": "io.ionic.starter",
+	"appName": "openvidu-ionic-capacitor",
+	"webDir": "www",
+	"bundledWebRuntime": false
+}

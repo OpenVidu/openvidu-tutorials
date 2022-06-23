@@ -19,8 +19,20 @@
 @import '~@ionic/angular/css/display.css';
 
 /* Optional CSS utils that can be commented out */
-@import "~@ionic/angular/css/padding.css";
-@import "~@ionic/angular/css/float-elements.css";
-@import "~@ionic/angular/css/text-alignment.css";
-@import "~@ionic/angular/css/text-transformation.css";
-@import "~@ionic/angular/css/flex-utils.css";
+// @import "~@ionic/angular/css/padding.css";
+// @import "~@ionic/angular/css/float-elements.css";
+// @import "~@ionic/angular/css/text-alignment.css";
+// @import "~@ionic/angular/css/text-transformation.css";
+// @import "~@ionic/angular/css/flex-utils.css";
+
+:root {
+    --ion-background-color: transparent !important;
+}
+
+::ng-deep ion-content {
+    --background: transparent !important;
+}
+
+.alert-wrapper{
+   --background: #ffffff !important;
+}
