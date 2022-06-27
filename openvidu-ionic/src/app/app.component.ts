@@ -7,7 +7,6 @@ import { Platform, AlertController } from '@ionic/angular';
 import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from 'openvidu-browser';
 import { throwError as observableThrowError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-declare var cordova;
 
 @Component({
     selector: 'app-root',
@@ -49,11 +48,8 @@ export class AppComponent implements OnDestroy {
 
     initializeApp() {
         this.platform.ready().then(() => {
-            this.statusBar.styleDefault();
+            this.statusBar.overlaysWebView(false);
             this.splashScreen.hide();
-            if (this.platform.is('ios') && this.platform.is('cordova')) {
-                cordova.plugins.iosrtc.registerGlobals();
-            }
         });
     }
 
@@ -165,12 +161,6 @@ export class AppComponent implements OnDestroy {
         delete this.session;
         delete this.OV;
         this.generateParticipantInfo();
-    }
-
-    refreshVideos() {
-        if (this.platform.is('ios') && this.platform.is('cordova')) {
-            cordova.plugins.iosrtc.refreshVideos();
-        }
     }
 
     private checkAndroidPermissions(): Promise<void> {

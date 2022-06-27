@@ -39,7 +39,7 @@
 
   </ion-content>
 
-  <ion-content [scrollEvents]="true" (ionScroll)="refreshVideos()" *ngIf="session">
+  <ion-content *ngIf="session">
     <div id="session-header">
       <h1 id="session-title">{{mySessionId}}</h1>
     </div>

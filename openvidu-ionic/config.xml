@@ -19,6 +19,8 @@
     <preference name="SplashShowOnlyFirstTime" value="false" />
     <preference name="SplashScreen" value="screen" />
     <preference name="SplashScreenDelay" value="3000" />
+    <preference name="WKWebViewOnly" value="true" />
+    <preference name="AllowInlineMediaPlayback" value="true" />
     <platform name="android">
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
@@ -48,7 +50,6 @@
     <platform name="ios">
         <allow-intent href="itms:*" />
         <allow-intent href="itms-apps:*" />
-        <hook src="hooks/iosrtc-swift-support.js" type="after_platform_add" />
         <config-file parent="NSCameraUsageDescription" target="*-Info.plist">
             <string>OpenVidu needs access to your camera</string>
         </config-file>
@@ -115,6 +116,5 @@
     <plugin name="cordova-plugin-ionic-webview" spec="2.0.0" />
     <plugin name="cordova-plugin-ionic-keyboard" spec="2.0.5" />
     <plugin name="cordova-plugin-android-permissions" spec="1.0.0" />
-    <engine name="browser" spec="6.0.0" />
     <engine name="android" spec="7.0.0" />
 </widget>
