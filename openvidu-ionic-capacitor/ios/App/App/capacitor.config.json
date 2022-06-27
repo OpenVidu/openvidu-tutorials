@@ -1,24 +1,6 @@
 {
-  "appId": "io.openvidu.ionic",
-  "appName": "OpenViduIonic",
-  "bundledWebRuntime": false,
-  "npmClient": "npm",
-  "webDir": "www",
-  "plugins": {
-    "SplashScreen": {
-      "launchShowDuration": 0
-    }
-  },
-  "cordova": {
-    "preferences": {
-      "ScrollEnabled": "false",
-      "android-minSdkVersion": "22",
-      "BackupWebStorage": "none",
-      "SplashMaintainAspectRatio": "true",
-      "FadeSplashScreenDuration": "300",
-      "SplashShowOnlyFirstTime": "false",
-      "SplashScreen": "screen",
-      "SplashScreenDelay": "3000"
-    }
-  }
+	"appId": "io.ionic.starter",
+	"appName": "openvidu-ionic-capacitor",
+	"webDir": "www",
+	"bundledWebRuntime": false
 }

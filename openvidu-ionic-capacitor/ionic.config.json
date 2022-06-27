@@ -1,7 +1,6 @@
 {
-  "name": "openvidu-ionic",
+  "name": "openvidu-ionic-capacitor",
   "integrations": {
-    "cordova": {},
     "capacitor": {}
   },
   "type": "angular"
