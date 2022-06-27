@@ -33,7 +33,6 @@
     <string>This Application uses your microphone to make calls.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
     <string>This Application uses your wireless headphones and microphone to make calls.</string>
-
 	<key>UILaunchStoryboardName</key>
 	<string>LaunchScreen</string>
 	<key>UIMainStoryboardFile</key>

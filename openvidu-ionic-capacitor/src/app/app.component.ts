@@ -9,7 +9,6 @@ import { catchError } from 'rxjs/operators';
 import { AlertController, Platform } from '@ionic/angular';
 
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
-declare var cordova;
 
 @Component({
 	selector: 'app-root',
@@ -50,12 +49,6 @@ export class AppComponent implements OnInit, OnDestroy {
 
 	ngOnInit() {
 		this.generateParticipantInfo();
-		this.platform.ready().then(() => {
-			if (this.platform.is('ios') && this.platform.is('capacitor')) {
-				console.warn('ios');
-				cordova.plugins.iosrtc.registerGlobals();
-			}
-		});
 	}
 
 	ngOnDestroy() {
@@ -138,12 +131,6 @@ export class AppComponent implements OnInit, OnDestroy {
 			this.publisher = publisher;
 		} catch (error) {
 			console.error(error);
-		}
-	}
-
-	refreshVideos() {
-		if (this.platform.is('ios') && this.platform.is('capacitor')) {
-			cordova.plugins.iosrtc.refreshVideos();
 		}
 	}
 
@@ -254,7 +241,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	 */
 
 	private getToken(): Promise<string> {
-		if (this.platform.is('ios') && this.platform.is('cordova') && this.OPENVIDU_SERVER_URL === 'https://localhost:4443') {
+		if (this.platform.is('ios') && this.platform.is('capacitor') && this.OPENVIDU_SERVER_URL === 'https://localhost:4443') {
 			// To make easier first steps with iOS apps, use demos OpenVidu Sever if no custom valid server is configured
 			this.OPENVIDU_SERVER_URL = 'https://demos.openvidu.io';
 		}

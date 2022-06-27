@@ -1,4 +1,4 @@
-<ion-app>
+<ion-app class="transparent">
   <ion-header>
     <ion-toolbar color="dark">
       <img
@@ -16,7 +16,7 @@
     </ion-toolbar>
   </ion-header>
 
-  <ion-content class="ion-padding" *ngIf="!session">
+  <ion-content class="ion-padding transparent" *ngIf="!session">
     <div id="img-div">
       <img src="assets/images/openvidu_grey_bg_transp_cropped.png" />
     </div>
@@ -55,7 +55,7 @@
     </ion-fab>
   </ion-content>
 
-  <ion-content [scrollEvents]="true" (ionScroll)="refreshVideos()" *ngIf="session" style="background-color: transparent; background: transparent;">
+  <ion-content [scrollEvents]="true" (ionScroll)="refreshVideos()" *ngIf="session" class="transparent">
 		<div id="session-header">
 			<h1 id="session-title">{{ mySessionId }}</h1>
 		</div>
