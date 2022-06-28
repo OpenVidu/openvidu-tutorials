@@ -15,7 +15,7 @@ export class RestService {
 	async getTokens(
 		sessionId: string,
 		nickname?: string
-	): Promise<{ cameraToken: string; screenToken: string, recordingEnabled: boolean, recordings?: RecordingInfo[] }> {
+	): Promise<{ cameraToken: string, screenToken: string, recordingEnabled: boolean, recordings?: RecordingInfo[] }> {
 		return this.postRequest('sessions', { sessionId, nickname });
 	}
 	login(password: string): Promise<any[]> {
@@ -35,10 +35,6 @@ export class RestService {
 
 	stopRecording(sessionId: string) {
 		return this.postRequest('recordings/stop', { sessionId });
-	}
-
-	downloadRecording(recordingId: string): Promise<Blob> {
-		return this.getRequest(`recordings/${recordingId}`, 'blob');
 	}
 
 	deleteRecording(recordingId: string): Promise<RecordingInfo[]> {

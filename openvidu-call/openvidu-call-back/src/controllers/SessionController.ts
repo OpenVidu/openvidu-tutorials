@@ -24,7 +24,7 @@ app.post('/', async (req: Request, res: Response) => {
 		const hasValidToken = openviduService.isValidToken(sessionId, req.cookies);
 		const isSessionCreator = hasValidToken || sessionCreated.activeConnections.length === 0;
 		const role: OpenViduRole = isSessionCreator && IS_RECORDING_ENABLED ? OpenViduRole.MODERATOR : OpenViduRole.PUBLISHER;
-		const response = {cameraToken : '', screenToken: '', recordingEnabled: IS_RECORDING_ENABLED};
+		const response = {cameraToken : '', screenToken: '', recordingEnabled: IS_RECORDING_ENABLED, recordings: []};
 		const cameraConnection = await openviduService.createConnection(sessionCreated, nickname, role);
 		const screenConnection = await openviduService.createConnection(sessionCreated, nickname, role);
 		response.cameraToken = cameraConnection.token;
@@ -51,7 +51,7 @@ app.post('/', async (req: Request, res: Response) => {
 
 		if(IS_RECORDING_ENABLED){
 			date = date || openviduService.getDateFromCookie(req.cookies);
-			response['recordings'] = await openviduService.listRecordingsBySessionIdAndDate(sessionId, date);
+			response.recordings = await openviduService.listRecordingsBySessionIdAndDate(sessionId, date);
 		}
 
 		res.status(200).send(JSON.stringify(response));

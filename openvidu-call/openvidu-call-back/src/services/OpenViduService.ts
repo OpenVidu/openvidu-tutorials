@@ -61,9 +61,9 @@ export class OpenViduService {
 
 				return sessionId === cookieSessionId && cookieToken === storedToken && cookieDate === storedDate;
 			}
-
 			return false;
 		} catch (error) {
+			console.log(error)
 			return false;
 		}
 	}

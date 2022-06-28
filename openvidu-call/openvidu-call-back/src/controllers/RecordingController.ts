@@ -138,11 +138,8 @@ app.delete('/delete/:recordingId', async (req: Request, res: Response) => {
 });
 
 export const proxyGETRecording = createProxyMiddleware({
-	target: `${OPENVIDU_URL}/openvidu/recordings/`,
+	target: `${OPENVIDU_URL}/openvidu/`,
 	secure: CALL_OPENVIDU_CERTTYPE !== 'selfsigned',
-	pathRewrite: (path, req) => {
-		return `${req.params.recordingId}/${req.params.recordingId}.mp4`;
-	},
 	onProxyReq: (proxyReq, req: Request, res: Response) => {
 		const isAdminDashboard = openviduService.adminTokens.includes(req['session'].token);
 		const sessionId = openviduService.getSessionIdFromCookie(req.cookies);
@@ -153,7 +150,6 @@ export const proxyGETRecording = createProxyMiddleware({
 			} else {
 				proxyReq.setHeader('Connection', 'keep-alive');
 				proxyReq.setHeader('Authorization', openviduService.getBasicAuth());
-				proxyReq.setHeader('Range', 'bytes=0-');
 			}
 		} else {
 			return res.status(403).send(JSON.stringify({ message: 'Permissions denied to drive recording' }));

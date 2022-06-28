@@ -42,15 +42,6 @@ export class AdminDashboardComponent implements OnInit {
 		}
 	}
 
-	async onDownloadRecordingClicked(recordingId: string) {
-		try {
-			const file = await this.restService.downloadRecording(recordingId);
-			this.recordingService.downloadRecording(recordingId, file);
-		} catch (error) {
-			console.error(error);
-		}
-	}
-
 	async onDeleteRecordingClicked(recordingId: string) {
 		try {
 			this.recordings = await this.restService.deleteRecording(recordingId);
