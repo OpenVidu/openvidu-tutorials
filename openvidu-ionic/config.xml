@@ -22,6 +22,8 @@
     <preference name="WKWebViewOnly" value="true" />
     <preference name="AllowInlineMediaPlayback" value="true" />
     <platform name="android">
+        <preference name="android-minSdkVersion" value="23" />
+        <preference name="android-targetSdkVersion" value="31" />
         <allow-intent href="market:*" />
         <icon density="ldpi" src="resources/android/icon/drawable-ldpi-icon.png" />
         <icon density="mdpi" src="resources/android/icon/drawable-mdpi-icon.png" />

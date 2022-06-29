@@ -37,3 +37,5 @@ openvidu-react-native-androidx/ios/build/
 openvidu-angular-components/.angular/
 
 openvidu-ionic/.angular/
+
+openvidu-ionic-capacitor/android/.idea/
