@@ -9,7 +9,6 @@ import { Session, SignalOptions } from "openvidu-browser";
 	selector: "app-root",
 	template: `
 		<ov-videoconference
-			(onJoinButtonClicked)="onJoinButtonClicked()"
 			(onSessionCreated)="onSessionCreated($event)"
 			[tokens]="tokens"
 			[toolbarDisplaySessionName]="false"
@@ -37,7 +36,7 @@ import { Session, SignalOptions } from "openvidu-browser";
 		`,
 	],
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
 	title = "openvidu-custom-chat-panel";
 	tokens!: TokenModel;
 	sessionId = "chat-panel-directive-example";
@@ -47,7 +46,7 @@ export class AppComponent {
 	messages: string[] = [];
 	constructor(private httpClient: HttpClient) {}
 
-	async onJoinButtonClicked() {
+	async ngOnInit() {
 		this.tokens = {
 			webcam: await this.getToken(),
 			screen: await this.getToken(),

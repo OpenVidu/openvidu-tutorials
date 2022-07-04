@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ParticipantAbstractModel, ParticipantService, TokenModel } from 'openvidu-angular';
 import { Subscription } from 'rxjs';
 import { catchError, throwError as observableThrowError } from 'rxjs';
@@ -8,7 +8,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 @Component({
   selector: 'app-root',
   template: `
-		<ov-videoconference (onJoinButtonClicked)="onJoinButtonClicked()" [tokens]="tokens" [toolbarDisplaySessionName]="false">
+		<ov-videoconference [tokens]="tokens" [toolbarDisplaySessionName]="false">
 			<div *ovParticipantsPanel id="my-panel">
 				<ul id="local">
 					<li>{{localParticipant.nickname}}</li>
@@ -37,7 +37,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 		`
   ]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'openvidu-custom-participants-panel';
   tokens!: TokenModel;
 	sessionId = 'participants-panel-directive-example';
@@ -53,20 +53,17 @@ export class AppComponent {
 		private participantService: ParticipantService
 	) {}
 
-	ngOnInit(): void {
+	async ngOnInit() {
 		this.subscribeToParticipants();
+		this.tokens = {
+			webcam: await this.getToken(),
+			screen: await this.getToken()
+		};
 	}
 
 	ngOnDestroy() {
 		this.localParticipantSubs.unsubscribe();
 		this.remoteParticipantsSubs.unsubscribe();
-	}
-
-	async onJoinButtonClicked() {
-		this.tokens = {
-			webcam: await this.getToken(),
-			screen: await this.getToken()
-		};
 	}
 
 	subscribeToParticipants() {
