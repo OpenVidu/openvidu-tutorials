@@ -6,26 +6,19 @@ import { TokenModel } from 'openvidu-angular';
 
 @Component({
   selector: 'app-root',
-  template: `
-    <ov-videoconference
-      (onJoinButtonClicked)="onJoinButtonClicked()"
-      [tokens]="tokens"
-    ></ov-videoconference>
-  `,
-  styleUrls: ['./app.component.scss'],
+  template: ` <ov-videoconference [tokens]="tokens"></ov-videoconference> `,
+  styles: [''],
 })
 export class AppComponent {
   title = 'openvidu-custom-ui';
   tokens!: TokenModel;
-  private sessionId = 'openvidu-toggle-hand';
+  private sessionId = 'openvidu-custom-ui';
   private OPENVIDU_SERVER_URL = 'https://' + location.hostname + ':4443';
   private OPENVIDU_SERVER_SECRET = 'MY_SECRET';
 
   constructor(private httpClient: HttpClient) {}
 
-  ngOnInit() {}
-
-  async onJoinButtonClicked() {
+  async ngOnInit() {
     this.tokens = {
       webcam: await this.getToken(),
       screen: await this.getToken(),

@@ -44,13 +44,6 @@ export class AppComponent implements OnInit {
 		};
 	}
 
-	async onJoinButtonClicked() {
-		this.tokens = {
-			webcam: await this.getToken(),
-			screen: await this.getToken()
-		};
-	}
-
 	onSessionCreated(session: Session) {
 		this.session = session;
 		this.handleRemoteHand();

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { OpenViduService, TokenModel, ParticipantService } from 'openvidu-angular';
 import { catchError, throwError as observableThrowError } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 @Component({
   selector: 'app-root',
   template: `
-    <ov-videoconference (onJoinButtonClicked)="onJoinButtonClicked()" [tokens]="tokens" [toolbarDisplaySessionName]="false">
+    <ov-videoconference [tokens]="tokens" [toolbarDisplaySessionName]="false">
 			<div *ovToolbarAdditionalButtons style="text-align: center;">
 				<button mat-icon-button (click)="toggleVideo()">
 					<mat-icon>videocam</mat-icon>
@@ -19,7 +19,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   `,
   styles: []
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'openvidu-toolbar-buttons';
   tokens!: TokenModel;
 	sessionId = 'toolbar-additionalbtn-directive-example';
@@ -32,7 +32,7 @@ export class AppComponent {
 		private participantService: ParticipantService
 	) {}
 
-	async onJoinButtonClicked() {
+	async ngOnInit() {
 		this.tokens = {
 			webcam: await this.getToken(),
 			screen: await this.getToken()

@@ -1,23 +1,25 @@
-import { Component } from '@angular/core';
-import { catchError, throwError as observableThrowError } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, OnInit } from "@angular/core";
+import { catchError, throwError as observableThrowError } from "rxjs";
+import { HttpClient, HttpHeaders } from "@angular/common/http";
 
-import { TokenModel } from 'openvidu-angular';
+import { TokenModel } from "openvidu-angular";
 
 @Component({
-  selector: 'app-root',
-  template: `
-    <ov-videoconference (onJoinButtonClicked)="onJoinButtonClicked()" [tokens]="tokens">
+	selector: "app-root",
+	template: `
+		<ov-videoconference [tokens]="tokens">
 			<ov-panel *ovPanel>
 				<div *ovChatPanel id="my-chat-panel">This is my custom chat panel</div>
-				<div *ovParticipantsPanel id="my-participants-panel">This is my custom participants panel</div>
+				<div *ovParticipantsPanel id="my-participants-panel">
+					This is my custom participants panel
+				</div>
 			</ov-panel>
 		</ov-videoconference>
-
-  `,
-  styles: [
-    `
-			#my-chat-panel, #my-participants-panel {
+	`,
+	styles: [
+		`
+			#my-chat-panel,
+			#my-participants-panel {
 				text-align: center;
 				height: calc(100% - 40px);
 				margin: 20px;
@@ -28,26 +30,26 @@ import { TokenModel } from 'openvidu-angular';
 			#my-participants-panel {
 				background: #ddf2ff;
 			}
-		`
-  ]
+		`,
+	],
 })
-export class AppComponent {
-  title = 'openvidu-custom-panels';
-  tokens!: TokenModel;
-	sessionId = 'panel-directive-example';
-	OPENVIDU_SERVER_URL = 'https://localhost:4443';
-	OPENVIDU_SERVER_SECRET = 'MY_SECRET';
+export class AppComponent implements OnInit {
+	title = "openvidu-custom-panels";
+	tokens!: TokenModel;
+	sessionId = "panel-directive-example";
+	OPENVIDU_SERVER_URL = "https://localhost:4443";
+	OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
-  constructor(private httpClient: HttpClient) {}
+	constructor(private httpClient: HttpClient) {}
 
-	async onJoinButtonClicked() {
+	async ngOnInit() {
 		this.tokens = {
 			webcam: await this.getToken(),
-			screen: await this.getToken()
+			screen: await this.getToken(),
 		};
 	}
 
-      	/**
+	/**
 	 * --------------------------
 	 * SERVER-SIDE RESPONSIBILITY
 	 * --------------------------
@@ -70,19 +72,25 @@ export class AppComponent {
 			const body = JSON.stringify({ customSessionId: sessionId });
 			const options = {
 				headers: new HttpHeaders({
-					Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
-					'Content-Type': 'application/json'
-				})
+					Authorization:
+						"Basic " + btoa("OPENVIDUAPP:" + this.OPENVIDU_SERVER_SECRET),
+					"Content-Type": "application/json",
+				}),
 			};
 			return this.httpClient
-				.post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions', body, options)
+				.post(
+					this.OPENVIDU_SERVER_URL + "/openvidu/api/sessions",
+					body,
+					options
+				)
 				.pipe(
 					catchError((error) => {
 						if (error.status === 409) {
 							resolve(sessionId);
 						} else {
 							console.warn(
-								'No connection to OpenVidu Server. This may be a certificate error at ' + this.OPENVIDU_SERVER_URL
+								"No connection to OpenVidu Server. This may be a certificate error at " +
+									this.OPENVIDU_SERVER_URL
 							);
 							if (
 								window.confirm(
@@ -94,7 +102,9 @@ export class AppComponent {
 										'"'
 								)
 							) {
-								location.assign(this.OPENVIDU_SERVER_URL + '/accept-certificate');
+								location.assign(
+									this.OPENVIDU_SERVER_URL + "/accept-certificate"
+								);
 							}
 						}
 						return observableThrowError(error);
@@ -102,7 +112,7 @@ export class AppComponent {
 				)
 				.subscribe((response: any) => {
 					console.log(response);
-					resolve(response['id']);
+					resolve(response["id"]);
 				});
 		});
 	}
@@ -112,12 +122,20 @@ export class AppComponent {
 			const body = {};
 			const options = {
 				headers: new HttpHeaders({
-					Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
-					'Content-Type': 'application/json'
-				})
+					Authorization:
+						"Basic " + btoa("OPENVIDUAPP:" + this.OPENVIDU_SERVER_SECRET),
+					"Content-Type": "application/json",
+				}),
 			};
 			return this.httpClient
-				.post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection', body, options)
+				.post(
+					this.OPENVIDU_SERVER_URL +
+						"/openvidu/api/sessions/" +
+						sessionId +
+						"/connection",
+					body,
+					options
+				)
 				.pipe(
 					catchError((error) => {
 						reject(error);
@@ -126,9 +144,8 @@ export class AppComponent {
 				)
 				.subscribe((response: any) => {
 					console.log(response);
-					resolve(response['token']);
+					resolve(response["token"]);
 				});
 		});
 	}
-
 }

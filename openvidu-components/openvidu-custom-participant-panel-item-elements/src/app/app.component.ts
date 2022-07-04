@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { catchError, throwError as observableThrowError } from "rxjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 
@@ -9,7 +9,6 @@ import { OpenViduService, TokenModel } from "openvidu-angular";
 	template: `
 		<ov-videoconference
 			*ngIf="connected"
-			(onJoinButtonClicked)="onJoinButtonClicked()"
 			[tokens]="tokens"
 			[toolbarDisplaySessionName]="false"
 		>
@@ -24,7 +23,7 @@ import { OpenViduService, TokenModel } from "openvidu-angular";
 	`,
 	styles: [],
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 	title = "openvidu-custom-participant-panel-item-elements";
 	tokens!: TokenModel;
 	connected = true;
@@ -37,7 +36,7 @@ export class AppComponent {
 		private openviduService: OpenViduService
 	) {}
 
-	async onJoinButtonClicked() {
+	async ngOnInit() {
 		this.tokens = {
 			webcam: await this.getToken(),
 			screen: await this.getToken(),

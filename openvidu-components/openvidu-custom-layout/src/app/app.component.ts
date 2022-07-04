@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Subscription } from 'rxjs';
 import { catchError, throwError as observableThrowError } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -8,10 +8,7 @@ import { ParticipantAbstractModel, ParticipantService, TokenModel } from 'openvi
 @Component({
 	selector: "app-root",
 	template: `
-		<ov-videoconference
-			(onJoinButtonClicked)="onJoinButtonClicked()"
-			[tokens]="tokens"
-		>
+		<ov-videoconference	[tokens]="tokens">
 			<div *ovLayout>
 				<div class="container">
 					<div class="item" *ngFor="let stream of localParticipant | streams">
@@ -41,7 +38,7 @@ import { ParticipantAbstractModel, ParticipantService, TokenModel } from 'openvi
 		`,
 	],
 })
-export class AppComponent {
+export class AppComponent implements OnInit{
 	title = "openvidu-custom-layout";
   tokens!: TokenModel;
 	sessionId = 'layout-directive-example';
@@ -56,9 +53,13 @@ export class AppComponent {
 
 	ngOnInit(): void {
 		this.subscribeToParticipants();
+		this.tokens = {
+			webcam: await this.getToken(),
+			screen: await this.getToken()
+		};
 	}
 
-	ngOnDestroy() {
+	async ngOnDestroy() {
 		this.localParticipantSubs.unsubscribe();
 		this.remoteParticipantsSubs.unsubscribe();
 	}
@@ -70,13 +71,6 @@ export class AppComponent {
 		this.remoteParticipantsSubs = this.participantService.remoteParticipantsObs.subscribe((participants) => {
 			this.remoteParticipants = participants;
 		});
-	}
-
-	async onJoinButtonClicked() {
-		this.tokens = {
-			webcam: await this.getToken(),
-			screen: await this.getToken()
-		};
 	}
 
       	/**

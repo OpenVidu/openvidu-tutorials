@@ -1,10 +1,4 @@
-<ov-videoconference
-	(onJoinButtonClicked)="onJoinButtonClicked()"
-	(onSessionCreated)="onSessionCreated($event)"
-	[tokens]="tokens"
-	[prejoin]="true"
->
-
+<ov-videoconference (onSessionCreated)="onSessionCreated($event)" [tokens]="tokens" [prejoin]="true">
 	<div *ovToolbarAdditionalButtons>
 		<button toolbar-btn mat-icon-button (click)="handleLocalHand()" [class.active-btn]="hasHandRaised">
 			<mat-icon matTooltip="Toggle hand">front_hand</mat-icon>

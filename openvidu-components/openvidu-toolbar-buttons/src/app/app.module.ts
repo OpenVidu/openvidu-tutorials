@@ -22,7 +22,6 @@ const config: OpenViduAngularConfig = {
     MatButtonModule,
     MatIconModule,
     OpenViduAngularModule.forRoot(config)
-
   ],
   providers: [],
   bootstrap: [AppComponent]

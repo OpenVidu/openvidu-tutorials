@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TokenModel } from 'openvidu-angular';
 import { catchError, throwError as observableThrowError } from 'rxjs';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
@@ -6,7 +6,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 @Component({
   selector: 'app-root',
   template: `
-    <ov-videoconference (onJoinButtonClicked)="onJoinButtonClicked()" [tokens]="tokens">
+    <ov-videoconference [tokens]="tokens">
 			<div *ovStream="let stream">
 				<ov-stream [stream]="stream" [displayParticipantName]="false"></ov-stream>
 				<p>{{ stream.participant.nickname }}</p>
@@ -25,7 +25,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
     `
   ]
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
   title = 'openvidu-custom-stream';
 
 	tokens!: TokenModel;
@@ -35,7 +35,7 @@ export class AppComponent {
 
 	constructor(private httpClient: HttpClient) {}
 
-	async onJoinButtonClicked() {
+	async ngOnInit() {
 		this.tokens = {
 			webcam: await this.getToken(),
 			screen: await this.getToken()
