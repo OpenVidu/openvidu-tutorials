@@ -4,8 +4,11 @@ from flask import Flask, request
 from flask_cors import CORS
 
 app = Flask(__name__)
+
+# Enable CORS support
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
+# Load env variables
 OPENVIDU_URL = os.environ.get("OPENVIDU_URL")
 OPENVIDU_SECRET = os.environ.get("OPENVIDU_SECRET")
 

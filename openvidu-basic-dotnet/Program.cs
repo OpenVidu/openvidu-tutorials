@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json;
 using System.Net;
 using System.Net.Http.Headers;
 using Microsoft.AspNetCore.Mvc;
@@ -26,6 +27,7 @@ IConfiguration config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json")
                 .AddEnvironmentVariables().Build();
 
+// Load env variables
 var OPENVIDU_URL = config.GetValue<string>("OPENVIDU_URL");
 var OPENVIDU_SECRET = config.GetValue<string>("OPENVIDU_SECRET");
 
@@ -41,25 +43,36 @@ client.BaseAddress = new System.Uri(OPENVIDU_URL);
 var basicAuth = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes($"OPENVIDUAPP:{OPENVIDU_SECRET}"));
 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", basicAuth);
 
-app.MapPost("/sessions", async (HttpContext context) =>
+app.MapPost("/sessions", async (HttpRequest request) =>
 {
-    HttpContent content = new StringContent(context.Request.Body.ToString(), Encoding.UTF8, "application/json");
-    HttpResponseMessage response = await client.PostAsJsonAsync("openvidu/api/sessions", content);
+    String contentString;
+    HttpContent content;
+    using (var streamContent = new StreamContent(request.Body)) {
+        contentString = await streamContent.ReadAsStringAsync();
+        content = new StringContent(contentString, Encoding.UTF8, "application/json");
+    }
+    HttpResponseMessage response = await client.PostAsync("openvidu/api/sessions", content);
     if (response.StatusCode == HttpStatusCode.Conflict) {
-        var json = await context.Request.ReadFromJsonAsync<Dictionary<string, object>>();
-        return json["customSessionId"];
+        // Session already exists in OpenVidu
+        var bodyRequest = JsonSerializer.Deserialize<Dictionary<string, object>>(contentString);
+        return bodyRequest["customSessionId"];
     }
     response.EnsureSuccessStatusCode();
     var responseBody = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
     return responseBody["sessionId"];
 });
 
-app.MapPost("/sessions/{sessionId}/connections", async ([FromRoute] string sessionId, [FromBody] string json) =>
+app.MapPost("/sessions/{sessionId}/connections", async (HttpRequest request, [FromRoute] string sessionId) =>
 {
-    HttpContent content = new StringContent(json, Encoding.UTF8, "application/json");
-    HttpResponseMessage response = await client.PostAsync("openvidu/api/sessions/" + sessionId + "/connections", content);
+    HttpContent content;
+    using (var streamContent = new StreamContent(request.Body)) {
+        var contentString = await streamContent.ReadAsStringAsync();
+        content = new StringContent(contentString, Encoding.UTF8, "application/json");
+    }
+    HttpResponseMessage response = await client.PostAsync("openvidu/api/sessions/" + sessionId + "/connection", content);
     response.EnsureSuccessStatusCode();
-    string responseBody = await response.Content.ReadAsStringAsync();
+    var responseBody = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+    return responseBody["token"];
 });
 
 app.Run();
