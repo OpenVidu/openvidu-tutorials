@@ -9,5 +9,7 @@ Prerequisites:
 Run the application:
 
 ```
+git clone git@github.com:OpenVidu/openvidu-tutorials.git
+cd openvidu-tutorials/openvidu-basic-dotnet
 dotnet run
 ```

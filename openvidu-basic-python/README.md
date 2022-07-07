@@ -6,6 +6,13 @@ Prerequisites:
 
 - [Python 3](https://www.python.org/downloads/)
 
+Download repository:
+
+```
+git clone git@github.com:OpenVidu/openvidu-tutorials.git
+cd openvidu-tutorials/openvidu-basic-python
+```
+
 Create a python3 environment and activate it:
 
 ```

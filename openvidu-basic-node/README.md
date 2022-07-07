@@ -17,5 +17,8 @@ npm install
 Run the application:
 
 ```
+git clone git@github.com:OpenVidu/openvidu-tutorials.git
+cd openvidu-tutorials/openvidu-basic-node
+npm i
 node index.js
 ```

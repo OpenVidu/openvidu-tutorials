@@ -12,5 +12,7 @@ Prerequisites:
 To run the application:
 
 ```
+git clone git@github.com:OpenVidu/openvidu-tutorials.git
+cd openvidu-tutorials/openvidu-basic-java
 mvn spring-boot:run
 ```
