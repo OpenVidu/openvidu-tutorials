@@ -4,21 +4,27 @@ This is a minimal OpenVidu server application sample built for Node with Express
 
 It internally uses [openvidu-node-client SDK](https://docs.openvidu.io/en/stable/reference-docs/openvidu-node-client/).
 
-Prerequisites:
+## Prerequisites
 
 - [Node](https://nodejs.org/es/download/)
 
-Install dependencies:
+## Run
+
+Download repository
+
+```
+git clone git@github.com:OpenVidu/openvidu-tutorials.git
+cd openvidu-tutorials/openvidu-basic-node
+```
+
+Install dependencies
 
 ```
 npm install
 ```
 
-Run the application:
+Run the application
 
 ```
-git clone git@github.com:OpenVidu/openvidu-tutorials.git
-cd openvidu-tutorials/openvidu-basic-node
-npm i
 node index.js
 ```
