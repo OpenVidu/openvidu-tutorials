@@ -1,5 +1,5 @@
 {
-  "name": "openvidu-panel-buttons",
+  "name": "openvidu-toolbar-panel-buttons",
   "version": "2.21.0",
   "scripts": {
     "ng": "ng",
