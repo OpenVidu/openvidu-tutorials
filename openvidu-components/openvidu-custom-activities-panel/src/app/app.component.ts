@@ -2,26 +2,22 @@ import { Component, OnInit } from "@angular/core";
 import { catchError, throwError as observableThrowError } from "rxjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 
-import { TokenModel, Signal } from "openvidu-angular";
-import { Session, SignalOptions } from "openvidu-browser";
+import { TokenModel } from "openvidu-angular";
+import { Session } from "openvidu-browser";
 
 @Component({
 	selector: "app-root",
 	template: `
 		<ov-videoconference
-			(onSessionCreated)="onSessionCreated($event)"
 			[tokens]="tokens"
+			[toolbarRecordingButton]="false"
 			[toolbarDisplaySessionName]="false"
 		>
-			<div *ovChatPanel id="my-panel">
-				<h3>Chat</h3>
+			<div *ovActivitiesPanel id="my-panel">
+				<h3>ACTIVITIES</h3>
 				<div>
-					<ul>
-						<li *ngFor="let msg of messages">{{ msg }}</li>
-					</ul>
+					CUSTOM ACTIVITIES
 				</div>
-				<input value="Hello" #input />
-				<button (click)="send(input.value)">Send</button>
 			</div>
 		</ov-videoconference>
 	`,
@@ -37,9 +33,9 @@ import { Session, SignalOptions } from "openvidu-browser";
 	],
 })
 export class AppComponent implements OnInit{
-	title = "openvidu-custom-chat-panel";
+	title = "openvidu-custom-activities-panel";
 	tokens!: TokenModel;
-	sessionId = "chat-panel-directive-example";
+	sessionId = "activities-panel-directive-example";
 	OPENVIDU_SERVER_URL = "https://localhost:4443";
 	OPENVIDU_SERVER_SECRET = "MY_SECRET";
 	session!: Session;
@@ -51,23 +47,6 @@ export class AppComponent implements OnInit{
 			webcam: await this.getToken(),
 			screen: await this.getToken(),
 		};
-	}
-
-	onSessionCreated(session: Session) {
-		this.session = session;
-		this.session.on(`signal:${Signal.CHAT}`, (event: any) => {
-			const msg = JSON.parse(event.data).message;
-			this.messages.push(msg);
-		});
-	}
-
-	send(message: string): void {
-		const signalOptions: SignalOptions = {
-			data: JSON.stringify({ message }),
-			type: Signal.CHAT,
-			to: undefined,
-		};
-		this.session.signal(signalOptions);
 	}
 
 	/**
