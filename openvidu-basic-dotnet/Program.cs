@@ -59,7 +59,8 @@ app.MapPost("/sessions", async (HttpRequest request) =>
     }
     response.EnsureSuccessStatusCode();
     var responseBody = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
-    return responseBody["sessionId"];
+    var sessionId = responseBody["sessionId"].ToString().Trim('"');
+    return sessionId;
 });
 
 app.MapPost("/sessions/{sessionId}/connections", async (HttpRequest request, [FromRoute] string sessionId) =>
@@ -72,7 +73,8 @@ app.MapPost("/sessions/{sessionId}/connections", async (HttpRequest request, [Fr
     HttpResponseMessage response = await client.PostAsync("openvidu/api/sessions/" + sessionId + "/connection", content);
     response.EnsureSuccessStatusCode();
     var responseBody = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
-    return responseBody["token"];
+    var token = responseBody["token"].ToString().Trim('"');
+    return token;
 });
 
 app.Run();
