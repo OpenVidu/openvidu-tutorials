@@ -63,8 +63,8 @@ public class SessionActivity extends AppCompatActivity {
     EditText participant_name;
     @BindView(R.id.openvidu_url)
     EditText openvidu_url;
-    @BindView(R.id.openvidu_secret)
-    EditText openvidu_secret;
+    @BindView(R.id.application_server_url)
+    EditText application_server_url;
     @BindView(R.id.local_gl_surface_view)
     SurfaceViewRenderer localVideoView;
     @BindView(R.id.main_participant)
@@ -73,7 +73,7 @@ public class SessionActivity extends AppCompatActivity {
     FrameLayout peer_container;
 
     private String OPENVIDU_URL;
-    private String OPENVIDU_SECRET;
+    private String APPLICATION_SERVER_URL;
     private Session session;
     private CustomHttpClient httpClient;
 
@@ -122,8 +122,8 @@ public class SessionActivity extends AppCompatActivity {
             viewToConnectingState();
 
             OPENVIDU_URL = openvidu_url.getText().toString();
-            OPENVIDU_SECRET = openvidu_secret.getText().toString();
-            httpClient = new CustomHttpClient(OPENVIDU_URL, "Basic " + android.util.Base64.encodeToString(("OPENVIDUAPP:" + OPENVIDU_SECRET).getBytes(), android.util.Base64.DEFAULT).trim());
+            APPLICATION_SERVER_URL = application_server_url.getText().toString();
+            httpClient = new CustomHttpClient(APPLICATION_SERVER_URL);
 
             String sessionId = session_name.getText().toString();
             getToken(sessionId);
@@ -137,7 +137,7 @@ public class SessionActivity extends AppCompatActivity {
         try {
             // Session Request
             RequestBody sessionBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{\"customSessionId\": \"" + sessionId + "\"}");
-            this.httpClient.httpCall("/openvidu/api/sessions", "POST", "application/json", sessionBody, new Callback() {
+            this.httpClient.httpCall("/sessions", "POST", "application/json", sessionBody, new Callback() {
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -145,7 +145,7 @@ public class SessionActivity extends AppCompatActivity {
 
                     // Token Request
                     RequestBody tokenBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{}");
-                    httpClient.httpCall("/openvidu/api/sessions/" + sessionId + "/connection", "POST", "application/json", tokenBody, new Callback() {
+                    httpClient.httpCall("/sessions/" + sessionId + "/connections", "POST", "application/json", tokenBody, new Callback() {
 
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) {
@@ -155,22 +155,13 @@ public class SessionActivity extends AppCompatActivity {
                             } catch (IOException e) {
                                 Log.e(TAG, "Error getting body", e);
                             }
-                            Log.d(TAG, "responseString2: " + responseString);
-                            JSONObject tokenJsonObject = null;
-                            String token = null;
-                            try {
-                                tokenJsonObject = new JSONObject(responseString);
-                                token = tokenJsonObject.getString("token");
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                            getTokenSuccess(token, sessionId);
+                            getTokenSuccess(responseString, sessionId);
                         }
 
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
                             Log.e(TAG, "Error POST /api/tokens", e);
-                            connectionError();
+                            connectionError(APPLICATION_SERVER_URL);
                         }
                     });
                 }
@@ -178,13 +169,13 @@ public class SessionActivity extends AppCompatActivity {
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     Log.e(TAG, "Error POST /api/sessions", e);
-                    connectionError();
+                    connectionError(APPLICATION_SERVER_URL);
                 }
             });
         } catch (IOException e) {
             Log.e(TAG, "Error getting token", e);
             e.printStackTrace();
-            connectionError();
+            connectionError(APPLICATION_SERVER_URL);
         }
     }
 
@@ -212,9 +203,9 @@ public class SessionActivity extends AppCompatActivity {
         session.setWebSocket(webSocket);
     }
 
-    private void connectionError() {
+    private void connectionError(String url) {
         Runnable myRunnable = () -> {
-            Toast toast = Toast.makeText(this, "Error connecting to " + OPENVIDU_URL, Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(this, "Error connecting to " + url, Toast.LENGTH_LONG);
             toast.show();
             viewToDisconnectedState();
         };
@@ -235,10 +226,8 @@ public class SessionActivity extends AppCompatActivity {
             localVideoView.release();
             start_finish_call.setText(getResources().getString(R.string.start_button));
             start_finish_call.setEnabled(true);
-            openvidu_url.setEnabled(true);
-            openvidu_url.setFocusableInTouchMode(true);
-            openvidu_secret.setEnabled(true);
-            openvidu_secret.setFocusableInTouchMode(true);
+            application_server_url.setEnabled(true);
+            application_server_url.setFocusableInTouchMode(true);
             session_name.setEnabled(true);
             session_name.setFocusableInTouchMode(true);
             participant_name.setEnabled(true);
@@ -251,10 +240,8 @@ public class SessionActivity extends AppCompatActivity {
     public void viewToConnectingState() {
         runOnUiThread(() -> {
             start_finish_call.setEnabled(false);
-            openvidu_url.setEnabled(false);
-            openvidu_url.setFocusable(false);
-            openvidu_secret.setEnabled(false);
-            openvidu_secret.setFocusable(false);
+            application_server_url.setEnabled(false);
+            application_server_url.setFocusable(false);
             session_name.setEnabled(false);
             session_name.setFocusable(false);
             participant_name.setEnabled(false);

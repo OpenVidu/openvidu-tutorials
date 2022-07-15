@@ -98,17 +98,17 @@
                 android:layout_weight="1"
                 android:hint="@string/openvidu_url"
                 android:inputType="text"
-                android:text="@string/default_openvidu_url" />
+                android:text="@string/openvidu_url" />
 
             <EditText
-                android:id="@+id/openvidu_secret"
+                android:id="@+id/application_server_url"
                 style="@android:style/Widget.Material.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="@string/openvidu_secret"
+                android:hint="@string/application_server_url"
                 android:inputType="text"
-                android:text="@string/default_openvidu_secret" />
+                android:text="@string/application_server_url" />
 
             <EditText
                 android:id="@+id/session_name"

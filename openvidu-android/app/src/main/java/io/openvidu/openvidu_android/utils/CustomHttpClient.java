@@ -22,11 +22,9 @@ public class CustomHttpClient {
 
     private OkHttpClient client;
     private String baseUrl;
-    private String basicAuth;
 
-    public CustomHttpClient(String baseUrl, String basicAuth) {
+    public CustomHttpClient(String baseUrl) {
         this.baseUrl = baseUrl.endsWith("/") ? baseUrl : baseUrl + "/";
-        this.basicAuth = basicAuth;
 
         try {
             // Create a trust manager that does not validate certificate chains
@@ -82,7 +80,7 @@ public class CustomHttpClient {
         url = url.startsWith("/") ? url.substring(1) : url;
         Request request = new Request.Builder()
                 .url(this.baseUrl + url)
-                .header("Authorization", this.basicAuth).header("Content-Type", contentType)
+                .header("Content-Type", contentType)
                 .method(method, body)
                 .build();
         Call call = client.newCall(request);
