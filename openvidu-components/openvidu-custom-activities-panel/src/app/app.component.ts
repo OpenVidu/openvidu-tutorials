@@ -3,7 +3,6 @@ import { catchError, throwError as observableThrowError } from "rxjs";
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 
 import { TokenModel } from "openvidu-angular";
-import { Session } from "openvidu-browser";
 
 @Component({
 	selector: "app-root",
@@ -38,8 +37,6 @@ export class AppComponent implements OnInit{
 	sessionId = "activities-panel-directive-example";
 	OPENVIDU_SERVER_URL = "https://localhost:4443";
 	OPENVIDU_SERVER_SECRET = "MY_SECRET";
-	session!: Session;
-	messages: string[] = [];
 	constructor(private httpClient: HttpClient) {}
 
 	async ngOnInit() {
