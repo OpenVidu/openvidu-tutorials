@@ -51,18 +51,30 @@ app.post('/', async (req: Request, res: Response) => {
 
 		if(IS_RECORDING_ENABLED){
 			date = date || openviduService.getDateFromCookie(req.cookies);
-			response.recordings = await openviduService.listRecordingsBySessionIdAndDate(sessionId, date);
+			try {
+				response.recordings = await openviduService.listRecordingsBySessionIdAndDate(sessionId, date);
+			} catch (error) {
+				if(error.message === '501'){
+					console.log('Recording is diasbled in OpenVidu Server. Disabling it in OpenVidu Call');
+					response.recordings = [];
+					response.recordingEnabled = false;
+				}
+			}
 		}
 
 		res.status(200).send(JSON.stringify(response));
 	} catch (error) {
 		console.error(error);
 		let message = 'Cannot connect with OpenVidu Server';
+		let code = Number(error?.message);
 		if(error.message === 500){
 			message = 'Unexpected error when creating the Connection object.'
 		} else if (error.message === 404){
 			message = 'No session exists';
 		}
-		res.status(error?.message || 503).send({ message });
+		if(typeof code !== 'number') {
+			code = 503
+		}
+		res.status(code).send({ message });
 	}
 });
