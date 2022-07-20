@@ -7,9 +7,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "android": "ionic cap run android -l --external",
-    "ios": "ionic cap run ios",
-    "sync": "ionic capacitor sync android --watch",
+    "android": "ionic capacitor run android",
+    "ios": "ionic capacitor run ios",
+    "sync": "ionic capacitor sync android",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e"

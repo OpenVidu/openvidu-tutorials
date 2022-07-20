@@ -3,7 +3,7 @@
 import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } from 'openvidu-browser';
+import { Device, OpenVidu, Publisher, PublisherProperties, Session, StreamEvent, StreamManager, Subscriber } from 'openvidu-browser';
 import { throwError as observableThrowError } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 import { AlertController, Platform } from '@ionic/angular';
@@ -34,6 +34,16 @@ export class AppComponent implements OnInit, OnDestroy {
 	mySessionId: string;
 	myUserName: string;
 
+	cameraIcon = 'videocam';
+	microphoneIcon = 'mic';
+
+	private devices: Device[];
+	private cameras: Device[];
+	private microphones: Device[];
+	private cameraSelected: Device;
+	private microphoneSelected: Device;
+	private isFrontCamera = true;
+
 	constructor(
 		private httpClient: HttpClient,
 		private platform: Platform,
@@ -60,6 +70,8 @@ export class AppComponent implements OnInit, OnDestroy {
 		// --- 1) Get an OpenVidu object ---
 
 		this.OV = new OpenVidu();
+
+		this.initDevices();
 
 		// --- 2) Init a session ---
 
@@ -113,14 +125,14 @@ export class AppComponent implements OnInit, OnDestroy {
 		// Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
 		// element: we will manage it on our own) and with the desired properties
 		const publisher: Publisher = this.OV.initPublisher(undefined, {
-			audioSource: undefined, // The source of audio. If undefined default microphone
-			videoSource: undefined, // The source of video. If undefined default webcam
+			audioSource: this.microphones[0].deviceId, // The source of audio. If undefined default microphone
+			videoSource: this.cameras[0].deviceId, // The source of video. If undefined default webcam
 			publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
 			publishVideo: true, // Whether you want to start publishing with your video enabled or not
 			resolution: '640x480', // The resolution of your video
 			frameRate: 30, // The frame rate of your video
 			insertMode: 'APPEND', // How the video is inserted in the target element 'video-container'
-			mirror: true // Whether to mirror your local video or not
+			mirror: this.isFrontCamera // Whether to mirror your local video or not
 		});
 
 		// --- 6) Publish your stream ---
@@ -147,6 +159,43 @@ export class AppComponent implements OnInit, OnDestroy {
 		delete this.session;
 		delete this.OV;
 		this.generateParticipantInfo();
+	}
+
+	async swapCamera() {
+		try {
+			const newCamera = this.cameras.find((cam) => cam.deviceId !== this.cameraSelected.deviceId);
+			if (!!newCamera) {
+				this.isFrontCamera = !this.isFrontCamera;
+				const pp: PublisherProperties = {
+					videoSource: newCamera.deviceId,
+					audioSource: false,
+					mirror: this.isFrontCamera
+				};
+
+				// Stopping the video tracks after request for another MediaStream
+				this.publisher.stream.getMediaStream().getVideoTracks().forEach((track) => {
+					track.stop();
+				});
+				const newTrack = await this.OV.getUserMedia(pp);
+				const videoTrack: MediaStreamTrack = newTrack.getVideoTracks()[0];
+				await (this.publisher as Publisher).replaceTrack(videoTrack);
+				this.cameraSelected = newCamera;
+
+			}
+		} catch (error) {
+			console.error(error);
+		}
+	}
+	toggleCamera() {
+		const publish = !this.publisher.stream.videoActive;
+		(this.publisher as Publisher).publishVideo(publish, true);
+		this.cameraIcon = publish ? 'videocam' : 'eye-off';
+	}
+
+	toggleMicrophone() {
+		const publish = !this.publisher.stream.audioActive;
+		(this.publisher as Publisher).publishAudio(publish);
+		this.microphoneIcon = publish ? 'mic' : 'mic-off';
 	}
 
 	async presentSettingsAlert() {
@@ -183,6 +232,16 @@ export class AppComponent implements OnInit, OnDestroy {
 		});
 
 		await alert.present();
+	}
+
+	private async initDevices() {
+		this.devices = await this.OV.getDevices();
+
+		this.cameras = this.devices.filter((d) => d.kind === 'videoinput');
+		this.microphones = this.devices.filter((d) => d.kind === 'audioinput' && d.label !== 'Default');
+
+		this.cameraSelected = this.cameras[0];
+		this.microphoneSelected = this.microphones[0];
 	}
 
 	private checkAndroidPermissions(): Promise<void> {
