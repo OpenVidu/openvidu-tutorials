@@ -87,8 +87,6 @@ export class AppComponent implements OnDestroy {
 
 		this.OV = new OpenVidu();
 
-		this.initDevices();
-
 		// --- 2) Init a session ---
 
 		this.session = this.OV.initSession();
@@ -154,8 +152,8 @@ export class AppComponent implements OnDestroy {
 		// Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
 		// element: we will manage it on our own) and with the desired properties
 		const publisher: Publisher = await this.OV.initPublisherAsync(undefined, {
-			audioSource: this.microphones[0].deviceId, // The source of audio. If undefined default microphone
-			videoSource: this.cameras[0].deviceId, // The source of video. If undefined default webcam
+			audioSource: undefined, // The source of audio. If undefined default microphone
+			videoSource: undefined, // The source of video. If undefined default webcam
 			publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
 			publishVideo: true, // Whether you want to start publishing with your video enabled or not
 			resolution: "640x480", // The resolution of your video
@@ -163,6 +161,8 @@ export class AppComponent implements OnDestroy {
 			insertMode: "APPEND", // How the video is inserted in the target element 'video-container'
 			mirror: this.isFrontCamera, // Whether to mirror your local video or not
 		});
+
+		publisher.on('accessAllowed', () => this.initDevices());
 
 		// --- 6) Publish your stream ---
 
@@ -200,10 +200,9 @@ export class AppComponent implements OnDestroy {
 					mirror: this.isFrontCamera
 				};
 
-				// Stopping the video tracks after request for another MediaStream
-				this.publisher.stream.getMediaStream().getVideoTracks().forEach((track) => {
-					track.stop();
-				});
+				// Stopping the video tracks before request for another MediaStream
+				// Only one unique device can be used at same time
+				this.publisher.stream.getMediaStream().getVideoTracks()[0].stop();
 				const newTrack = await this.OV.getUserMedia(pp);
 				const videoTrack: MediaStreamTrack = newTrack.getVideoTracks()[0];
 				await (this.publisher as Publisher).replaceTrack(videoTrack);
