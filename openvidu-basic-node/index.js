@@ -1,14 +1,10 @@
 require("dotenv").config();
 var express = require("express");
 var bodyParser = require("body-parser");
-var https = require("https");
-var fs = require("fs");
+var http = require("http");
 var OpenVidu = require("openvidu-node-client").OpenVidu;
 var cors = require("cors");
 var app = express();
-
-// Allow for insecure certificate in OpenVidu deployment
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 // Enable CORS support
 app.use(
@@ -17,14 +13,7 @@ app.use(
   })
 );
 
-// Enable SSL
-var server = https.createServer(
-  {
-    key: fs.readFileSync("./cert/key.pem"),
-    cert: fs.readFileSync("./cert/cert.pem"),
-  },
-  app
-);
+var server = http.createServer(app);
 
 // Allow application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
