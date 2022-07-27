@@ -30,12 +30,12 @@ var openvidu = new OpenVidu(
   process.env.OPENVIDU_SECRET
 );
 
-app.post("/sessions", async (req, res) => {
+app.post("/api/sessions", async (req, res) => {
   var session = await openvidu.createSession(req.body);
   res.send(session.sessionId);
 });
 
-app.post("/sessions/:sessionId/connections", async (req, res) => {
+app.post("/api/sessions/:sessionId/connections", async (req, res) => {
   var session = openvidu.activeSessions.find(
     (s) => s.sessionId === req.params.sessionId
   );

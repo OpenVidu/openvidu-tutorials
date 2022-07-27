@@ -13,7 +13,7 @@ OPENVIDU_URL = os.environ.get("OPENVIDU_URL")
 OPENVIDU_SECRET = os.environ.get("OPENVIDU_SECRET")
 
 
-@app.route("/sessions", methods=['POST'])
+@app.route("/api/sessions", methods=['POST'])
 def initializeSession():
     try:
         body = request.json if request.data else {}
@@ -34,7 +34,7 @@ def initializeSession():
             return err
 
 
-@app.route("/sessions/<sessionId>/connections", methods=['POST'])
+@app.route("/api/sessions/<sessionId>/connections", methods=['POST'])
 def createConnection(sessionId):
     body = request.json if request.data else {}
     return requests.post(

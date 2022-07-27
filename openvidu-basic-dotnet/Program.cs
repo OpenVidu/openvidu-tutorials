@@ -42,7 +42,7 @@ client.BaseAddress = new System.Uri(OPENVIDU_URL);
 var basicAuth = Convert.ToBase64String(System.Text.ASCIIEncoding.UTF8.GetBytes($"OPENVIDUAPP:{OPENVIDU_SECRET}"));
 client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", basicAuth);
 
-app.MapPost("/sessions", async (HttpRequest request) =>
+app.MapPost("/api/sessions", async (HttpRequest request) =>
 {
     String contentString;
     HttpContent content;
@@ -62,7 +62,7 @@ app.MapPost("/sessions", async (HttpRequest request) =>
     return sessionId;
 });
 
-app.MapPost("/sessions/{sessionId}/connections", async (HttpRequest request, [FromRoute] string sessionId) =>
+app.MapPost("/api/sessions/{sessionId}/connections", async (HttpRequest request, [FromRoute] string sessionId) =>
 {
     HttpContent content;
     using (var streamContent = new StreamContent(request.Body)) {
