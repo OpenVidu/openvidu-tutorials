@@ -1,6 +1,5 @@
 {
   "name": "openvidu-electron",
-  "productName": "openvidu-electron",
   "version": "2.22.0",
   "description": "OpenVidu Electron Tutorial",
   "main": "src/main.js",
@@ -8,19 +7,26 @@
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
-    "publish": "electron-forge publish",
+    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "echo \"No linting configured\""
   },
   "repository": "https://github.com/OpenVidu/openvidu-tutorials",
-  "keywords": [
-    "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
-  ],
   "author": "pablofuenteperez@gmail.com",
   "license": "Apache-2.0",
+  "devDependencies": {
+    "@electron-forge/cli": "6.0.0-beta.65",
+    "@electron-forge/maker-deb": "6.0.0-beta.65",
+    "@electron-forge/maker-rpm": "6.0.0-beta.65",
+    "@electron-forge/maker-squirrel": "6.0.0-beta.65",
+    "@electron-forge/maker-zip": "6.0.0-beta.65",
+    "electron": "19.0.10"
+  },
+  "dependencies": {
+    "@electron/remote": "2.0.8",
+    "axios": "0.27.2",
+    "electron-squirrel-startup": "1.0.0",
+    "openvidu-browser": "2.22.0"
+  },
   "config": {
     "forge": {
       "packagerConfig": {},
@@ -28,7 +34,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "openvidu_electron_forge"
+            "name": "my_electron_app"
           }
         },
         {
@@ -47,16 +53,5 @@
         }
       ]
     }
-  },
-  "dependencies": {
-    "electron-squirrel-startup": "1.0.0"
-  },
-  "devDependencies": {
-    "@electron-forge/cli": "6.0.0-beta.57",
-    "@electron-forge/maker-deb": "6.0.0-beta.57",
-    "@electron-forge/maker-rpm": "6.0.0-beta.57",
-    "@electron-forge/maker-squirrel": "6.0.0-beta.57",
-    "@electron-forge/maker-zip": "6.0.0-beta.57",
-    "electron": "13.1.4"
   }
 }

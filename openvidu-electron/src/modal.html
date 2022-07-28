@@ -4,6 +4,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy" content="script-src 'self' 'unsafe-inline';" />
     <title>OpenVidu Electron</title>
 
     <style>
@@ -41,10 +42,7 @@
     var htmlElements = [];
     var selectedElement;
 
-    const {
-        desktopCapturer
-    } = require('electron')
-
+    const desktopCapturer = require('@electron/remote').desktopCapturer;
     const ipcRenderer = require('electron').ipcRenderer;
 
     // Call Electron API to list all available screens
@@ -91,6 +89,6 @@
     }
 
     function closeWindow() {
-        require('electron').remote.getCurrentWindow().close();
+        require('@electron/remote').getCurrentWindow().close();
     }
 </script>
