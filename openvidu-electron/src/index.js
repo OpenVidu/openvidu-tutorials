@@ -43,6 +43,7 @@ async function joinSession() {
     mySessionId = document.getElementById("sessionId").value;
 
     const token = await getToken(mySessionId);
+
     await session.connect(token, { clientData: 'OpenVidu Electron' });
     showSession();
     session.publish(publisher);
@@ -80,7 +81,7 @@ function openScreenShareModal() {
     require("@electron/remote").require("@electron/remote/main").enable(win.webContents);
 
     win.setMenu(null);
-    win.webContents.openDevTools();
+    // win.webContents.openDevTools();
 
     var theUrl = 'file://' + __dirname + '/modal.html'
     win.loadURL(theUrl);
