@@ -27,6 +27,8 @@ import org.webrtc.SessionDescription;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
@@ -85,15 +87,13 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
     private Map<Integer, String> IDS_RECEIVEVIDEO = new ConcurrentHashMap<>();
     private Set<Integer> IDS_ONICECANDIDATE = Collections.newSetFromMap(new ConcurrentHashMap<>());
     private Session session;
-    private String openviduUrl;
     private String mediaServer;
     private SessionActivity activity;
     private WebSocket websocket;
     private boolean websocketCancelled = false;
 
-    public CustomWebSocket(Session session, String openviduUrl, SessionActivity activity) {
+    public CustomWebSocket(Session session, SessionActivity activity) {
         this.session = session;
-        this.openviduUrl = openviduUrl;
         this.activity = activity;
     }
 
@@ -652,13 +652,17 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
         }, initialDelay, PING_MESSAGE_INTERVAL, TimeUnit.SECONDS);
     }
 
-    private String getWebSocketAddress(String openviduUrl) {
+    private String getWebSocketAddress() {
+        String wsUri;
         try {
-            URL url = new URL(openviduUrl);
-            if (url.getPort() > -1)
-                return "wss://" + url.getHost() + ":" + url.getPort() + "/openvidu";
-            return "wss://" + url.getHost() + "/openvidu";
-        } catch (MalformedURLException e) {
+            URI url = new URI(this.session.getToken());
+            if (url.getPort() > -1) {
+                wsUri = url.getScheme() + "://" + url.getHost() + ":" + url.getPort() + "/openvidu";
+            } else {
+                wsUri = url.getScheme() + "://" + url.getHost() + "/openvidu";
+            }
+            return wsUri;
+        } catch (URISyntaxException e) {
             Log.e(TAG, "Wrong URL", e);
             e.printStackTrace();
             return "";
@@ -673,7 +677,7 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
             sslContext.init(null, trustManagers, new java.security.SecureRandom());
             factory.setSSLContext(sslContext);
             factory.setVerifyHostname(false);
-            websocket = factory.createSocket(getWebSocketAddress(openviduUrl));
+            websocket = factory.createSocket(getWebSocketAddress());
             websocket.addListener(this);
             websocket.connect();
         } catch (KeyManagementException | NoSuchAlgorithmException | IOException | WebSocketException e) {

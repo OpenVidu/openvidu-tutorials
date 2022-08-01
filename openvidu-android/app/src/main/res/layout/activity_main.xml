@@ -91,16 +91,6 @@
             app:layout_constraintRight_toRightOf="parent">
 
             <EditText
-                android:id="@+id/openvidu_url"
-                style="@android:style/Widget.Material.Button.Borderless.Colored"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:hint="@string/openvidu_url"
-                android:inputType="text"
-                android:text="@string/openvidu_url" />
-
-            <EditText
                 android:id="@+id/application_server_url"
                 style="@android:style/Widget.Material.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
@@ -134,4 +124,3 @@
     </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
-

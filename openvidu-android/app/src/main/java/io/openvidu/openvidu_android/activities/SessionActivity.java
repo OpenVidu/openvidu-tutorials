@@ -61,8 +61,6 @@ public class SessionActivity extends AppCompatActivity {
     EditText session_name;
     @BindView(R.id.participant_name)
     EditText participant_name;
-    @BindView(R.id.openvidu_url)
-    EditText openvidu_url;
     @BindView(R.id.application_server_url)
     EditText application_server_url;
     @BindView(R.id.local_gl_surface_view)
@@ -72,7 +70,6 @@ public class SessionActivity extends AppCompatActivity {
     @BindView(R.id.peer_container)
     FrameLayout peer_container;
 
-    private String OPENVIDU_URL;
     private String APPLICATION_SERVER_URL;
     private Session session;
     private CustomHttpClient httpClient;
@@ -121,7 +118,6 @@ public class SessionActivity extends AppCompatActivity {
             initViews();
             viewToConnectingState();
 
-            OPENVIDU_URL = openvidu_url.getText().toString();
             APPLICATION_SERVER_URL = application_server_url.getText().toString();
             httpClient = new CustomHttpClient(APPLICATION_SERVER_URL);
 
@@ -137,7 +133,7 @@ public class SessionActivity extends AppCompatActivity {
         try {
             // Session Request
             RequestBody sessionBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{\"customSessionId\": \"" + sessionId + "\"}");
-            this.httpClient.httpCall("/sessions", "POST", "application/json", sessionBody, new Callback() {
+            this.httpClient.httpCall("/api/sessions", "POST", "application/json", sessionBody, new Callback() {
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
@@ -145,7 +141,7 @@ public class SessionActivity extends AppCompatActivity {
 
                     // Token Request
                     RequestBody tokenBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{}");
-                    httpClient.httpCall("/sessions/" + sessionId + "/connections", "POST", "application/json", tokenBody, new Callback() {
+                    httpClient.httpCall("/api/sessions/" + sessionId + "/connections", "POST", "application/json", tokenBody, new Callback() {
 
                         @Override
                         public void onResponse(@NotNull Call call, @NotNull Response response) {
@@ -160,7 +156,7 @@ public class SessionActivity extends AppCompatActivity {
 
                         @Override
                         public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                            Log.e(TAG, "Error POST /api/tokens", e);
+                            Log.e(TAG, "Error POST /api/sessions/SESSION_ID/connections", e);
                             connectionError(APPLICATION_SERVER_URL);
                         }
                     });
@@ -198,7 +194,7 @@ public class SessionActivity extends AppCompatActivity {
     }
 
     private void startWebSocket() {
-        CustomWebSocket webSocket = new CustomWebSocket(session, OPENVIDU_URL, this);
+        CustomWebSocket webSocket = new CustomWebSocket(session, this);
         webSocket.execute();
         session.setWebSocket(webSocket);
     }
