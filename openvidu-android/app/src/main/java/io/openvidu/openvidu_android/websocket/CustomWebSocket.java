@@ -673,10 +673,16 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
     protected Void doInBackground(SessionActivity... sessionActivities) {
         try {
             WebSocketFactory factory = new WebSocketFactory();
+
+            //Returns a SSLContext object that implements the specified secure socket protocol
             SSLContext sslContext = SSLContext.getInstance("TLS");
             sslContext.init(null, trustManagers, new java.security.SecureRandom());
             factory.setSSLContext(sslContext);
+
+            // Set the flag which indicates whether the hostname in the server's certificate should be verified or not.
             factory.setVerifyHostname(false);
+
+            // Connecting the websocket to OpenVidu URL
             websocket = factory.createSocket(getWebSocketAddress());
             websocket.addListener(this);
             websocket.connect();

@@ -43,20 +43,22 @@ public class LocalParticipant extends Participant {
         final EglBase.Context eglBaseContext = EglBase.create().getEglBaseContext();
         PeerConnectionFactory peerConnectionFactory = this.session.getPeerConnectionFactory();
 
-        // create AudioSource
+        // Create AudioSource
         AudioSource audioSource = peerConnectionFactory.createAudioSource(new MediaConstraints());
         this.audioTrack = peerConnectionFactory.createAudioTrack("101", audioSource);
 
         surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread", eglBaseContext);
-        // create VideoCapturer
+
+        // Create VideoCapturer
         VideoCapturer videoCapturer = createCameraCapturer();
         VideoSource videoSource = peerConnectionFactory.createVideoSource(videoCapturer.isScreencast());
         videoCapturer.initialize(surfaceTextureHelper, context, videoSource.getCapturerObserver());
         videoCapturer.startCapture(480, 640, 30);
 
-        // create VideoTrack
+        // Create VideoTrack
         this.videoTrack = peerConnectionFactory.createVideoTrack("100", videoSource);
-        // display in localView
+
+        // Display in localView
         this.videoTrack.addSink(localVideoView);
     }
 

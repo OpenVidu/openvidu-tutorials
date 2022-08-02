@@ -54,12 +54,14 @@ public class Session {
         this.views_container = views_container;
         this.activity = activity;
 
+        // Creating a new PeerConnectionFactory instance
         PeerConnectionFactory.InitializationOptions.Builder optionsBuilder = PeerConnectionFactory.InitializationOptions.builder(activity.getApplicationContext());
         optionsBuilder.setEnableInternalTracer(true);
         PeerConnectionFactory.InitializationOptions opt = optionsBuilder.createInitializationOptions();
         PeerConnectionFactory.initialize(opt);
         PeerConnectionFactory.Options options = new PeerConnectionFactory.Options();
 
+        // Using software encoder and decoder
         final VideoEncoderFactory encoderFactory;
         final VideoDecoderFactory decoderFactory;
         encoderFactory = new SoftwareVideoEncoderFactory();
