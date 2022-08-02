@@ -1,23 +1,27 @@
-/* eslint-disable max-len */
-/* eslint-disable @typescript-eslint/naming-convention */
-import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
-
-import { Device, OpenVidu, Publisher, PublisherProperties, Session, StreamEvent, StreamManager, Subscriber } from 'openvidu-browser';
-import { throwError as observableThrowError } from 'rxjs';
-import { catchError } from 'rxjs/operators';
-import { AlertController, Platform } from '@ionic/angular';
-
+import { HttpClient } from '@angular/common/http';
+import { Component, HostListener, OnDestroy } from '@angular/core';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { AlertController, Platform } from '@ionic/angular';
+import {
+	Device,
+	OpenVidu,
+	Publisher,
+	PublisherProperties,
+	Session,
+	StreamEvent,
+	StreamManager,
+	Subscriber
+} from 'openvidu-browser';
 
 @Component({
 	selector: 'app-root',
 	templateUrl: 'app.component.html',
 	styleUrls: ['app.component.scss']
 })
-export class AppComponent implements OnInit, OnDestroy {
-	OPENVIDU_SERVER_URL = 'https://demos.openvidu.io';
-	OPENVIDU_SERVER_SECRET = 'MY_SECRET';
+export class AppComponent implements OnDestroy {
+
+	APPLICATION_SERVER_URL = location.protocol + '//' + location.hostname + ':5000/';
+
 	ANDROID_PERMISSIONS = [
 		this.androidPermissions.PERMISSION.CAMERA,
 		this.androidPermissions.PERMISSION.RECORD_AUDIO,
@@ -42,23 +46,21 @@ export class AppComponent implements OnInit, OnDestroy {
 	private microphones: Device[];
 	private cameraSelected: Device;
 	private microphoneSelected: Device;
-	private isFrontCamera = true;
+	private isFrontCamera: boolean = false;
 
 	constructor(
 		private httpClient: HttpClient,
 		private platform: Platform,
 		private androidPermissions: AndroidPermissions,
 		private alertController: AlertController
-	) {}
+	) {
+		this.generateParticipantInfo();
+	}
 
 	@HostListener('window:beforeunload')
 	beforeunloadHandler() {
 		// On window closed leave session
 		this.leaveSession();
-	}
-
-	ngOnInit() {
-		this.generateParticipantInfo();
 	}
 
 	ngOnDestroy() {
@@ -98,11 +100,10 @@ export class AppComponent implements OnInit, OnDestroy {
 
 		// --- 4) Connect to the session with a valid user token ---
 
-		// 'getToken' method is simulating what your server-side should do.
-		// 'token' parameter should be retrieved and returned by your own backend
 		try {
+			// Get a token from the OpenVidu deployment
 			const token = await this.getToken();
-			// First param is the token got from OpenVidu Server. Second param will be used by every user on event
+			// First param is the token got from OpenVidu deployment. Second param will be used by every user on event
 			// 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
 			await this.session.connect(token, { clientData: this.myUserName });
 
@@ -122,7 +123,7 @@ export class AppComponent implements OnInit, OnDestroy {
 	async initPublisher() {
 		// Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
 		// element: we will manage it on our own) and with the desired properties
-		const publisher: Publisher = this.OV.initPublisher(undefined, {
+		const publisher: Publisher = await this.OV.initPublisherAsync(undefined, {
 			audioSource: undefined, // The source of audio. If undefined default microphone
 			videoSource: undefined, // The source of video. If undefined default webcam
 			publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
@@ -137,13 +138,9 @@ export class AppComponent implements OnInit, OnDestroy {
 
 		// --- 6) Publish your stream ---
 
-		try {
-			await this.session.publish(publisher);
-			// Store our Publisher
-			this.publisher = publisher;
-		} catch (error) {
-			console.error(error);
-		}
+		await this.session.publish(publisher);
+		// Store our Publisher
+		this.publisher = publisher;
 	}
 
 	leaveSession() {
@@ -163,7 +160,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
 	async swapCamera() {
 		try {
-			const newCamera = this.cameras.find((cam) => cam.deviceId !== this.cameraSelected.deviceId);
+			const newCamera = this.cameras.find(cam => cam.deviceId !== this.cameraSelected.deviceId);
 			if (!!newCamera) {
 				this.isFrontCamera = !this.isFrontCamera;
 				const pp: PublisherProperties = {
@@ -179,7 +176,6 @@ export class AppComponent implements OnInit, OnDestroy {
 				const videoTrack: MediaStreamTrack = newTrack.getVideoTracks()[0];
 				await (this.publisher as Publisher).replaceTrack(videoTrack);
 				this.cameraSelected = newCamera;
-
 			}
 		} catch (error) {
 			console.error(error);
@@ -197,79 +193,37 @@ export class AppComponent implements OnInit, OnDestroy {
 		this.microphoneIcon = publish ? 'mic' : 'mic-off';
 	}
 
-	async presentSettingsAlert() {
-		const alert = await this.alertController.create({
-			header: 'OpenVidu Server config',
-			inputs: [
-				{
-					name: 'url',
-					type: 'text',
-					value: 'https://demos.openvidu.io',
-					placeholder: 'URL'
-				},
-				{
-					name: 'secret',
-					type: 'text',
-					value: 'MY_SECRET',
-					placeholder: 'Secret'
-				}
-			],
-			buttons: [
-				{
-					text: 'Cancel',
-					role: 'cancel',
-					cssClass: 'secondary'
-				},
-				{
-					text: 'Ok',
-					handler: (data) => {
-						this.OPENVIDU_SERVER_URL = data.url;
-						this.OPENVIDU_SERVER_SECRET = data.secret;
-					}
-				}
-			]
-		});
-
-		await alert.present();
-	}
-
 	private async initDevices() {
 		this.devices = await this.OV.getDevices();
-		this.cameras = this.devices.filter((d) => d.kind === 'videoinput');
-		this.microphones = this.devices.filter((d) => d.kind === 'audioinput' && d.label !== 'Default');
+
+		this.cameras = this.devices.filter(d => d.kind === 'videoinput');
+		this.microphones = this.devices.filter(d => d.kind === 'audioinput' && d.label !== 'Default');
 
 		this.cameraSelected = this.cameras[0];
 		this.microphoneSelected = this.microphones[0];
 	}
 
-	private checkAndroidPermissions(): Promise<void> {
-		console.log('Requesting Android Permissions');
-		return new Promise((resolve, reject) => {
-			this.androidPermissions
-				.requestPermissions(this.ANDROID_PERMISSIONS)
-				.then(() => {
-					const promisesArray: Promise<any>[] = [];
-					this.ANDROID_PERMISSIONS.forEach((permission) => {
-						console.log('Checking ', permission);
-						promisesArray.push(this.androidPermissions.checkPermission(permission));
-					});
-					Promise.all(promisesArray)
-						.then((responses) => {
-							let allHasPermissions = true;
-							responses.forEach((response, i) => {
-								allHasPermissions = response.hasPermission;
-								if (!allHasPermissions) {
-									reject(new Error('Permissions denied: ' + this.ANDROID_PERMISSIONS[i]));
-								}
-							});
-							resolve();
-						})
-						.catch((err) => {
-							console.log(err);
-						});
-				})
-				.catch((err) => console.error('Error requesting permissions: ', err));
-		});
+	private async checkAndroidPermissions(): Promise<void> {
+		await this.platform.ready();
+		try {
+			await this.androidPermissions.requestPermissions(this.ANDROID_PERMISSIONS);
+			const promisesArray: Promise<any>[] = [];
+			this.ANDROID_PERMISSIONS.forEach((permission) => {
+				console.log('Checking ', permission);
+				promisesArray.push(this.androidPermissions.checkPermission(permission));
+			});
+			const responses = await Promise.all(promisesArray);
+			let allHasPermissions = true;
+			responses.forEach((response, i) => {
+				allHasPermissions = response.hasPermission;
+				if (!allHasPermissions) {
+					throw (new Error('Permissions denied: ' + this.ANDROID_PERMISSIONS[i]));
+				}
+			});
+		} catch (error) {
+			console.error('Error requesting or checking permissions: ', error);
+			throw (error);
+		}
 	}
 
 	private generateParticipantInfo() {
@@ -285,89 +239,77 @@ export class AppComponent implements OnInit, OnDestroy {
 		}
 	}
 
-	/*
-	 * --------------------------
-	 * SERVER-SIDE RESPONSIBILITY
-	 * --------------------------
-	 * This method retrieve the mandatory user token from OpenVidu Server,
-	 * in this case making use Angular http API.
-	 * This behaviour MUST BE IN YOUR SERVER-SIDE IN PRODUCTION. In this case:
-	 *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
-	 *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
-	 *   3) The Connection.token must be consumed in Session.connect() method
+	async presentSettingsAlert() {
+		const alert = await this.alertController.create({
+			header: 'OpenVidu deployment',
+			inputs: [
+				{
+					name: 'url',
+					type: 'text',
+					value: 'https://demos.openvidu.io/',
+					placeholder: 'URL',
+				}
+			],
+			buttons: [
+				{
+					text: 'Cancel',
+					role: 'cancel',
+					cssClass: 'secondary',
+				},
+				{
+					text: 'Ok',
+					handler: (data) => {
+						this.APPLICATION_SERVER_URL = data.url;
+					},
+				},
+			],
+		});
+
+		await alert.present();
+	}
+
+
+	/**
+	 * --------------------------------------------
+	 * GETTING A TOKEN FROM YOUR APPLICATION SERVER
+	 * --------------------------------------------
+	 * The methods below request the creation of a Session and a Token to
+	 * your application server. This keeps your OpenVidu deployment secure.
+	 * 
+	 * In this sample code, there is no user control at all. Anybody could
+	 * access your application server endpoints! In a real production
+	 * environment, your application server must identify the user to allow
+	 * access to the endpoints.
+	 * 
+	 * Visit https://docs.openvidu.io/en/stable/application-server to learn
+	 * more about the integration of OpenVidu in your application server.
 	 */
-
-	private getToken(): Promise<string> {
-		if (this.platform.is('ios') && this.platform.is('capacitor') && this.OPENVIDU_SERVER_URL === 'https://localhost:4443') {
-			// To make easier first steps with iOS apps, use demos OpenVidu Sever if no custom valid server is configured
-			this.OPENVIDU_SERVER_URL = 'https://demos.openvidu.io';
+	async getToken(): Promise<string> {
+		if (
+			this.platform.is('ios') &&
+			this.platform.is('cordova') &&
+			this.APPLICATION_SERVER_URL === 'http://localhost:5000/'
+		) {
+			// To make easier first steps with iOS apps, use demos OpenVidu deployment when no custom deployment is configured
+			this.APPLICATION_SERVER_URL = 'https://demos.openvidu.io/';
 		}
-		return this.createSession(this.mySessionId).then((sessionId) => this.createToken(sessionId));
+		const sessionId = await this.createSession(this.mySessionId);
+		return await this.createToken(sessionId);
 	}
 
-	private createSession(sessionId) {
-		return new Promise((resolve, reject) => {
-			const body = JSON.stringify({ customSessionId: sessionId });
-			const options = {
-				headers: new HttpHeaders({
-					Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
-					'Content-Type': 'application/json'
-				})
-			};
-			return this.httpClient
-				.post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions', body, options)
-				.pipe(
-					catchError((error) => {
-						if (error.status === 409) {
-							resolve(sessionId);
-						} else {
-							console.warn(
-								'No connection to OpenVidu Server. This may be a certificate error at ' + this.OPENVIDU_SERVER_URL
-							);
-							if (
-								window.confirm(
-									'No connection to OpenVidu Server. This may be a certificate error at "' +
-										this.OPENVIDU_SERVER_URL +
-										'"\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server' +
-										'is up and running at "' +
-										this.OPENVIDU_SERVER_URL +
-										'"'
-								)
-							) {
-								location.assign(this.OPENVIDU_SERVER_URL + '/accept-certificate');
-							}
-						}
-						return observableThrowError(error);
-					})
-				)
-				.subscribe((response: any) => {
-					console.log(response);
-					resolve(response.id);
-				});
-		});
+	createSession(sessionId) {
+		return this.httpClient.post(
+			this.APPLICATION_SERVER_URL + 'api/sessions',
+			{ customSessionId: sessionId },
+			{ headers: { 'Content-Type': 'application/json' }, responseType: 'text' }
+		).toPromise();
 	}
 
-	private createToken(sessionId): Promise<string> {
-		return new Promise((resolve, reject) => {
-			const body = JSON.stringify({});
-			const options = {
-				headers: new HttpHeaders({
-					Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
-					'Content-Type': 'application/json'
-				})
-			};
-			return this.httpClient
-				.post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection', body, options)
-				.pipe(
-					catchError((error) => {
-						reject(error);
-						return observableThrowError(error);
-					})
-				)
-				.subscribe((response: any) => {
-					console.log(response);
-					resolve(response.token);
-				});
-		});
+	createToken(sessionId) {
+		return this.httpClient.post(
+			this.APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
+			{ customSessionId: sessionId },
+			{ headers: { 'Content-Type': 'application/json' }, responseType: 'text' }
+		).toPromise();
 	}
 }

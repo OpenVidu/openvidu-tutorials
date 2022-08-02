@@ -1,7 +1,7 @@
 import { CapacitorConfig } from '@capacitor/cli';
 
 const config: CapacitorConfig = {
-  appId: 'io.ionic.starter',
+  appId: 'io.openvidu.ionic',
   appName: 'openvidu-ionic-capacitor',
   webDir: 'www',
   bundledWebRuntime: false
