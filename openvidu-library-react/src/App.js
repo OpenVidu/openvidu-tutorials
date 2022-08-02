@@ -1,13 +1,13 @@
 import React, { Component } from 'react';
 import './App.css';
-import axios from 'axios';
+
 import OpenViduSession from 'openvidu-react';
+import axios from 'axios';
 
 class App extends Component {
     constructor(props) {
         super(props);
-        this.OPENVIDU_SERVER_URL = 'https://' + window.location.hostname + ':4443';
-        this.OPENVIDU_SERVER_SECRET = 'MY_SECRET';
+        this.APPLICATION_SERVER_URL = window.location.protocol + "//" + window.location.hostname + ":5000/";
         this.state = {
             mySessionId: 'SessionA',
             myUserName: 'OpenVidu_User_' + Math.floor(Math.random() * 100),
@@ -49,15 +49,14 @@ class App extends Component {
         });
     }
 
-    joinSession(event) {
+    async joinSession(event) {
+        event.preventDefault();
         if (this.state.mySessionId && this.state.myUserName) {
-            this.getToken().then((token) => {
-                this.setState({
-                    token: token,
-                    session: true,
-                });
+            const token = await this.getToken();
+            this.setState({
+                token: token,
+                session: true,
             });
-            event.preventDefault();
         }
     }
 
@@ -115,80 +114,39 @@ class App extends Component {
         );
     }
 
+
     /**
-     * --------------------------
-     * SERVER-SIDE RESPONSIBILITY
-     * --------------------------
-     * These methods retrieve the mandatory user token from OpenVidu Server.
-     * This behaviour MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
-     * the API REST, openvidu-java-client or openvidu-node-client):
-     *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
-     *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
-     *   3) The Connection.token must be consumed in Session.connect() method
+     * --------------------------------------------
+     * GETTING A TOKEN FROM YOUR APPLICATION SERVER
+     * --------------------------------------------
+     * The methods below request the creation of a Session and a Token to
+     * your application server. This keeps your OpenVidu deployment secure.
+     * 
+     * In this sample code, there is no user control at all. Anybody could
+     * access your application server endpoints! In a real production
+     * environment, your application server must identify the user to allow
+     * access to the endpoints.
+     * 
+     * Visit https://docs.openvidu.io/en/stable/application-server to learn
+     * more about the integration of OpenVidu in your application server.
      */
-
-    getToken() {
-        return this.createSession(this.state.mySessionId)
-            .then((sessionId) => this.createToken(sessionId))
-            .catch((Err) => console.error(Err));
+    async getToken() {
+        const sessionId = await this.createSession(this.state.mySessionId);
+        return await this.createToken(sessionId);
     }
 
-    createSession(sessionId) {
-        return new Promise((resolve, reject) => {
-            var data = JSON.stringify({ customSessionId: sessionId });
-            axios
-                .post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions', data, {
-                    headers: {
-                        Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then((response) => {
-                    console.log('CREATE SESION', response);
-                    resolve(response.data.id);
-                })
-                .catch((response) => {
-                    var error = Object.assign({}, response);
-                    if (error.response && error.response.status === 409) {
-                        resolve(sessionId);
-                    } else {
-                        console.log(error);
-                        console.warn(
-                            'No connection to OpenVidu Server. This may be a certificate error at ' + this.OPENVIDU_SERVER_URL,
-                        );
-                        if (
-                            window.confirm(
-                                'No connection to OpenVidu Server. This may be a certificate error at "' +
-                                    this.OPENVIDU_SERVER_URL +
-                                    '"\n\nClick OK to navigate and accept it. ' +
-                                    'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' +
-                                    this.OPENVIDU_SERVER_URL +
-                                    '"',
-                            )
-                        ) {
-                            window.location.assign(this.OPENVIDU_SERVER_URL + '/accept-certificate');
-                        }
-                    }
-                });
+    async createSession(sessionId) {
+        const response = await axios.post(this.APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId }, {
+            headers: { 'Content-Type': 'application/json', },
         });
+        return response.data; // The sessionId
     }
 
-    createToken(sessionId) {
-        return new Promise((resolve, reject) => {
-            var data = JSON.stringify({});
-            axios
-                .post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection', data, {
-                    headers: {
-                        Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then((response) => {
-                    console.log('TOKEN', response);
-                    resolve(response.data.token);
-                })
-                .catch((error) => reject(error));
+    async createToken(sessionId) {
+        const response = await axios.post(this.APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections', {}, {
+            headers: { 'Content-Type': 'application/json', },
         });
+        return response.data; // The token
     }
 }
 
