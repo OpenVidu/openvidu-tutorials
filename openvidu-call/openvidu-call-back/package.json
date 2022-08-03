@@ -4,7 +4,6 @@
         "url": "https://github.com/OpenVidu/openvidu-call/issues"
     },
     "dependencies": {
-        "axios": "0.27.2",
         "btoa": "1.2.1",
         "cookie-parser": "1.4.6",
         "cookie-session": "^2.0.0",

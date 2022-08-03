@@ -19,7 +19,7 @@ app.get('/', async (req: Request, res: Response) => {
 		let recordings = [];
 		if ((!!sessionId && IS_RECORDING_ENABLED && openviduService.isValidToken(sessionId, req.cookies)) || isAdminDashboard) {
 			if (isAdminDashboard) {
-				recordings = await openviduService.listAllRecordings(true);
+				recordings = await openviduService.listAllRecordings();
 			} else {
 				const date = openviduService.getDateFromCookie(req.cookies);
 				recordings = await openviduService.listRecordingsBySessionIdAndDate(sessionId, date);
@@ -113,7 +113,7 @@ app.delete('/delete/:recordingId', async (req: Request, res: Response) => {
 			console.log(`Deleting recording ${recordingId}`);
 			await openviduService.deleteRecording(recordingId);
 			if (isAdminDashboard && !!req['session']) {
-				recordings = await openviduService.listAllRecordings(true);
+				recordings = await openviduService.listAllRecordings();
 			} else {
 				const date = openviduService.getDateFromCookie(req.cookies);
 				recordings = await openviduService.listRecordingsBySessionIdAndDate(sessionId, date);

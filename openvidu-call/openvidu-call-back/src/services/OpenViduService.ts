@@ -1,6 +1,5 @@
 import { Connection, ConnectionProperties, OpenVidu, OpenViduRole, Recording, Session, SessionProperties } from 'openvidu-node-client';
 import { OPENVIDU_URL, OPENVIDU_SECRET } from '../config';
-import axios from 'axios';
 
 export class OpenViduService {
 	RECORDING_TOKEN_NAME = 'ovCallRecordingToken';
@@ -101,17 +100,8 @@ export class OpenViduService {
 		return this.openvidu.getRecording(recordingId);
 	}
 
-	public async listAllRecordings(withB64Thumbnail: boolean = false): Promise<Recording[]> {
-		let recordings = await this.openvidu.listRecordings();
-		if (withB64Thumbnail) {
-			for (const rec of recordings) {
-				let thumbnailUrl = `${rec.url.substring(0, rec.url.lastIndexOf('/'))}/${rec.id}.jpg`;
-				const headers = { Authorization: this.getBasicAuth() };
-				let image = await axios.get(thumbnailUrl, { headers, responseType: 'arraybuffer' });
-				rec['thumbnailB64'] = `data:${image.headers['content-type']};base64,${Buffer.from(image.data).toString('base64')}`;
-			}
-		}
-		return recordings;
+	public async listAllRecordings(): Promise<Recording[]> {
+		return await this.openvidu.listRecordings();
 	}
 
 	public async listRecordingsBySessionIdAndDate(sessionId: string, date: number) {

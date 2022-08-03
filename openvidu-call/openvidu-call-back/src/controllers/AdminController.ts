@@ -24,7 +24,7 @@ app.post('/login', async (req: Request, res: Response) => {
 				req['session'] = { token };
 				openviduService.adminTokens.push(token);
 			}
-			const recordings = await openviduService.listAllRecordings(true);
+			const recordings = await openviduService.listAllRecordings();
 			console.log(`${recordings.length} recordings found`);
 			res.status(200).send(JSON.stringify({ recordings }));
 		} catch (error) {
