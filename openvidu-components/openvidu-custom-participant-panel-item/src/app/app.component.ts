@@ -1,12 +1,12 @@
-import { Component, OnInit } from '@angular/core';
-import { TokenModel } from 'openvidu-angular';
-import { catchError, throwError as observableThrowError } from 'rxjs';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Component, OnInit } from "@angular/core";
+import { HttpClient } from "@angular/common/http";
+import { lastValueFrom } from "rxjs";
 
+import { TokenModel } from "openvidu-angular";
 
 @Component({
-  selector: 'app-root',
-  template: `
+	selector: 'app-root',
+	template: `
 		<ov-videoconference [tokens]="tokens" [toolbarDisplaySessionName]="false">
 			<div *ovParticipantPanelItem="let participant" style="display: flex">
 				<p>{{ participant.nickname }}</p>
@@ -18,16 +18,17 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 			</div>
 		</ov-videoconference>
   `,
-  styles: []
+	styles: []
 })
-export class AppComponent implements OnInit{
-  title = 'openvidu-custom-participant-panel-item';
-  tokens!: TokenModel;
-	sessionId = 'participants-panel-directive-example';
-	OPENVIDU_SERVER_URL = 'https://localhost:4443';
-	OPENVIDU_SERVER_SECRET = 'MY_SECRET';
+export class AppComponent implements OnInit {
 
-	constructor(private httpClient: HttpClient) {}
+	APPLICATION_SERVER_URL = window.location.protocol + '//' + window.location.hostname + ':5000/';
+
+	title = 'openvidu-custom-participant-panel-item';
+	sessionId = 'participants-panel-directive-example';
+	tokens!: TokenModel;
+
+	constructor(private httpClient: HttpClient) { }
 
 	async ngOnInit() {
 		this.tokens = {
@@ -36,89 +37,40 @@ export class AppComponent implements OnInit{
 		};
 	}
 
-      	/**
-	 * --------------------------
-	 * SERVER-SIDE RESPONSIBILITY
-	 * --------------------------
-	 * This method retrieve the mandatory user token from OpenVidu Server,
-	 * in this case making use Angular http API.
-	 * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION. In this case:
-	 *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
-	 *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
-	 *   3) The Connection.token must be consumed in Session.connect() method
+	/**
+	 * --------------------------------------------
+	 * GETTING A TOKEN FROM YOUR APPLICATION SERVER
+	 * --------------------------------------------
+	 * The methods below request the creation of a Session and a Token to
+	 * your application server. This keeps your OpenVidu deployment secure.
+	 * 
+	 * In this sample code, there is no user control at all. Anybody could
+	 * access your application server endpoints! In a real production
+	 * environment, your application server must identify the user to allow
+	 * access to the endpoints.
+	 * 
+	 * Visit https://docs.openvidu.io/en/stable/application-server to learn
+	 * more about the integration of OpenVidu in your application server.
 	 */
 
-	getToken(): Promise<string> {
-		return this.createSession(this.sessionId).then((sessionId: string) => {
-			return this.createToken(sessionId);
-		});
+	async getToken(): Promise<string> {
+		const sessionId = await this.createSession(this.sessionId);
+		return await this.createToken(sessionId);
 	}
 
 	createSession(sessionId: string): Promise<string> {
-		return new Promise((resolve, reject) => {
-			const body = JSON.stringify({ customSessionId: sessionId });
-			const options = {
-				headers: new HttpHeaders({
-					Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
-					'Content-Type': 'application/json'
-				})
-			};
-			return this.httpClient
-				.post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions', body, options)
-				.pipe(
-					catchError((error) => {
-						if (error.status === 409) {
-							resolve(sessionId);
-						} else {
-							console.warn(
-								'No connection to OpenVidu Server. This may be a certificate error at ' + this.OPENVIDU_SERVER_URL
-							);
-							if (
-								window.confirm(
-									'No connection to OpenVidu Server. This may be a certificate error at "' +
-										this.OPENVIDU_SERVER_URL +
-										'"\n\nClick OK to navigate and accept it. If no certificate warning is shown, then check that your OpenVidu Server' +
-										'is up and running at "' +
-										this.OPENVIDU_SERVER_URL +
-										'"'
-								)
-							) {
-								location.assign(this.OPENVIDU_SERVER_URL + '/accept-certificate');
-							}
-						}
-						return observableThrowError(error);
-					})
-				)
-				.subscribe((response: any) => {
-					console.log(response);
-					resolve(response['id']);
-				});
-		});
+		return lastValueFrom(this.httpClient.post(
+			this.APPLICATION_SERVER_URL + 'api/sessions',
+			{ customSessionId: sessionId },
+			{ headers: { 'Content-Type': 'application/json' }, responseType: 'text' }
+		));
 	}
 
 	createToken(sessionId: string): Promise<string> {
-		return new Promise((resolve, reject) => {
-			const body = {};
-			const options = {
-				headers: new HttpHeaders({
-					Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SERVER_SECRET),
-					'Content-Type': 'application/json'
-				})
-			};
-			return this.httpClient
-				.post(this.OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection', body, options)
-				.pipe(
-					catchError((error) => {
-						reject(error);
-						return observableThrowError(error);
-					})
-				)
-				.subscribe((response: any) => {
-					console.log(response);
-					resolve(response['token']);
-				});
-		});
+		return lastValueFrom(this.httpClient.post(
+			this.APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
+			{ customSessionId: sessionId },
+			{ headers: { 'Content-Type': 'application/json' }, responseType: 'text' }
+		));
 	}
-
-
 }
