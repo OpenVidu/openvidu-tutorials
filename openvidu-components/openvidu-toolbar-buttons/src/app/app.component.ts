@@ -7,7 +7,7 @@ import { TokenModel, OpenViduService, ParticipantService } from "openvidu-angula
 @Component({
 	selector: 'app-root',
 	template: `
-    <ov-videoconference [tokens]="tokens" [toolbarDisplaySessionName]="false">
+    	<ov-videoconference [tokens]="tokens" [toolbarDisplaySessionName]="false">
 			<div *ovToolbarAdditionalButtons style="text-align: center;">
 				<button mat-icon-button (click)="toggleVideo()">
 					<mat-icon>videocam</mat-icon>

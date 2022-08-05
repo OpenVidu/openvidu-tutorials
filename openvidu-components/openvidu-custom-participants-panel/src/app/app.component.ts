@@ -44,10 +44,7 @@ export class AppComponent implements OnInit {
 	localParticipantSubs!: Subscription;
 	remoteParticipantsSubs!: Subscription;
 
-	constructor(
-		private httpClient: HttpClient,
-		private participantService: ParticipantService
-	) { }
+	constructor(private httpClient: HttpClient, private participantService: ParticipantService) { }
 
 	async ngOnInit() {
 		this.tokens = {
@@ -65,7 +62,6 @@ export class AppComponent implements OnInit {
 		this.localParticipantSubs = this.participantService.localParticipantObs.subscribe((p) => {
 			this.localParticipant = p;
 		});
-
 		this.remoteParticipantsSubs = this.participantService.remoteParticipantsObs.subscribe((participants) => {
 			this.remoteParticipants = participants;
 		});

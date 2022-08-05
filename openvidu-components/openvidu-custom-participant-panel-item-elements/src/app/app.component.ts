@@ -30,10 +30,7 @@ export class AppComponent implements OnInit {
 
 	connected = true;
 
-	constructor(
-		private httpClient: HttpClient,
-		private openviduService: OpenViduService
-	) { }
+	constructor(private httpClient: HttpClient, private openviduService: OpenViduService) { }
 
 	async ngOnInit() {
 		this.tokens = {

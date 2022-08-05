@@ -54,10 +54,11 @@ export class AppComponent implements OnInit {
 		};
 	}
 
-	async ngOnDestroy() {
+	ngOnDestroy() {
 		this.localParticipantSubs.unsubscribe();
 		this.remoteParticipantsSubs.unsubscribe();
 	}
+
 	subscribeToParticipants() {
 		this.localParticipantSubs = this.participantService.localParticipantObs.subscribe((p) => {
 			this.localParticipant = p;

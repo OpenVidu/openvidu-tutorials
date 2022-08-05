@@ -52,7 +52,7 @@ export class AppComponent implements OnInit {
 	}
 
 	handleRemoteHand() {
-		// Subscribe to hand toggling events from others
+		// Subscribe to hand toggling events from other participants
 		this.session.on(`signal:${SignalApp.HAND_TOGGLE}`, (event: any) => {
 			const connectionId = event.from.connectionId;
 			const participant = <ParticipantAppModel>this.participantService.getRemoteParticipantByConnectionId(connectionId);

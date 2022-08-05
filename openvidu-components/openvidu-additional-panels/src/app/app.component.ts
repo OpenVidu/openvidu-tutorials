@@ -69,6 +69,7 @@ export class AppComponent {
 			screen: await this.getToken(),
 		};
 	}
+
 	subscribeToPanelToggling() {
 		this.panelService.panelOpenedObs.subscribe(
 			(ev: { opened: boolean; type?: PanelType | string }) => {
