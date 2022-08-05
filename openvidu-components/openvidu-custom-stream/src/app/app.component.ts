@@ -27,7 +27,6 @@ export class AppComponent implements OnInit {
 
 	APPLICATION_SERVER_URL = window.location.protocol + '//' + window.location.hostname + ':5000/';
 
-	title = 'openvidu-custom-stream';
 	sessionId = 'toolbar-directive-example';
 	tokens!: TokenModel;
 

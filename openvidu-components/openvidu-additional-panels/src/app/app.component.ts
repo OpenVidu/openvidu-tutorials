@@ -51,7 +51,6 @@ export class AppComponent {
 
 	APPLICATION_SERVER_URL = window.location.protocol + '//' + window.location.hostname + ':5000/';
 
-	title = "openvidu-additional-panels";
 	sessionId = "toolbar-additionalbtn-directive-example";
 	tokens!: TokenModel;
 

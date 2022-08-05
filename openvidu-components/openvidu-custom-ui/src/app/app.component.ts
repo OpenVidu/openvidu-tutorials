@@ -6,14 +6,13 @@ import { TokenModel } from "openvidu-angular";
 
 @Component({
   selector: 'app-root',
-  template: ` <ov-videoconference [tokens]="tokens"></ov-videoconference> `,
+  template: '<ov-videoconference [tokens]="tokens"></ov-videoconference>',
   styles: ['']
 })
 export class AppComponent {
 
   APPLICATION_SERVER_URL = window.location.protocol + '//' + window.location.hostname + ':5000/';
 
-  title = 'openvidu-custom-ui';
   sessionId = 'openvidu-custom-ui';
   tokens!: TokenModel;
 

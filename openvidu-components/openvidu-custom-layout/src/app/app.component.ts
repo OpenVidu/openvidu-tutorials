@@ -37,7 +37,6 @@ export class AppComponent implements OnInit {
 
 	APPLICATION_SERVER_URL = window.location.protocol + '//' + window.location.hostname + ':5000/';
 
-	title = "openvidu-custom-layout";
 	sessionId = 'layout-directive-example';
 	tokens!: TokenModel;
 
