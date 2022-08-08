@@ -11,9 +11,9 @@ openvidu-internet-explorer
 
 > IE support is a paid feature. Please, contact OpenVidu team through https://openvidu.io/commercial if you are interested
 
-This is an adaptation of [openvidu-insecure-js](https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-insecure-js) application with all necessary changes to work fine on IE 11.
+This is an adaptation of [openvidu-js](https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-js) application with all necessary changes to work fine on IE 11.
 
-<!-- Visit [docs.openvidu.io/en/stable/tutorials/openvidu-insecure-js/](http://docs.openvidu.io/en/stable/tutorials/openvidu-insecure-js/) -->
+<!-- Visit [docs.openvidu.io/en/stable/tutorials/openvidu-js/](http://docs.openvidu.io/en/stable/tutorials/openvidu-js/) -->
 
 OpenVidu Team has been able to bring complete, standards-compliant WebRTC funcionality to Microsoft Internet Explorer desktop browser (v 11). This feature has been released thanks to [Temasys WebRTC Plugin](https://temasys.io/products/plugin/).
 

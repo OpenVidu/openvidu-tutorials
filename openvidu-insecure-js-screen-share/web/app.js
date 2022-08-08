@@ -33,7 +33,8 @@ function joinSession() {
 
 	// --- 3) Specify the actions when events of type 'streamCreated' take
 	// --- place in the session. The reason why we're using two different objects
-	// --- is to handle diferently the subscribers when it is of 'camera' type, or 'SCREEN' type ---
+	// --- is to handle diferently the subscribers when it is of 'CAMERA' type, or 'SCREEN' type ---
+
 	// ------- 3.1) Handle subscribers of 'CAMERA' type
 	sessionCamera.on('streamCreated', event => {
 		if (event.stream.typeOfVideo == "CAMERA") {
@@ -46,6 +47,7 @@ function joinSession() {
 			});
 		}
 	});
+
 	// ------- 3.2) Handle subscribers of 'Screen' type
 	sessionScreen.on('streamCreated', event => {
 		if (event.stream.typeOfVideo == "SCREEN") {
@@ -71,14 +73,12 @@ function joinSession() {
 	});
 
 
-	// --- 4) Connect to the session with a valid user token. ---
-	// 'getToken' method is simulating what your server-side should do.
-	// 'token' parameter should be retrieved and returned by your own backend
+	// --- 4) Connect to the session with two different tokens: one for the camera and other for the screen ---
 
-	// -------4.1 Get the token for the 'sessionCamera' object
+	// --- 4.1) Get the token for the 'sessionCamera' object
 	getToken(mySessionId).then(token => {
 
-		// First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
+		// First param is the token got from the OpenVidu deployment. Second param can be retrieved by every user on event
 		// 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
 		sessionCamera.connect(token, { clientData: myUserName })
 			.then(() => {
@@ -120,7 +120,7 @@ function joinSession() {
 			});
 	});
 
-	// -------4.1 Get the token for the 'sessionScreen' object
+	// --- 4.2) Get the token for the 'sessionScreen' object
 	getToken(mySessionId).then((tokenScreen) => {
 		// Create a token for screen share
 		sessionScreen.connect(tokenScreen, { clientData: myUserName }).then(() => {
@@ -132,16 +132,16 @@ function joinSession() {
 	});
 }
 
-// --- 9). Create a function to be called when the 'Screen share' button is clicked.
+// --- 9) Function to be called when the 'Screen share' button is clicked
 function publishScreenShare() {
-	// --- 9.1) To create a publisherScreen it is very important that the property 'videoSource' is set to 'screen'
+	// --- 9.1) To create a publisherScreen set the property 'videoSource' to 'screen'
 	var publisherScreen = OVScreen.initPublisher("container-screens", { videoSource: "screen" });
 
-	// --- 9.2) If the user grants access to the screen share function, publish the screen stream
+	// --- 9.2) Publish the screen share stream only after the user grants permission to the browser
 	publisherScreen.once('accessAllowed', (event) => {
 		document.getElementById('buttonScreenShare').style.visibility = 'hidden';
 		screensharing = true;
-		// It is very important to define what to do when the stream ends.
+		// If the user closes the shared window or stops sharing it, unpublish the stream
 		publisherScreen.stream.getMediaStream().getVideoTracks()[0].addEventListener('ended', () => {
 			console.log('User pressed the "Stop sharing" button');
 			sessionScreen.unpublish(publisherScreen);
@@ -178,16 +178,16 @@ function leaveSession() {
 	screensharing = false;
 }
 
+window.onbeforeunload = function () {
+	if (sessionCamera) sessionCamera.disconnect();
+	if (sessionScreen) sessionScreen.disconnect();
+};
+
 /* APPLICATION SPECIFIC METHODS */
 
 window.addEventListener('load', function () {
 	generateParticipantInfo();
 });
-
-window.onbeforeunload = function () {
-	if (sessionCamera) sessionCamera.disconnect();
-	if (sessionScreen) sessionScreen.disconnect();
-};
 
 function generateParticipantInfo() {
 	document.getElementById("sessionId").value = "SessionScreenA";
@@ -247,62 +247,49 @@ function initMainVideo(videoElement, userData) {
 
 
 /**
- * --------------------------
- * SERVER-SIDE RESPONSIBILITY
- * --------------------------
- * These methods retrieve the mandatory user token from OpenVidu Server.
- * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
- * the API REST, openvidu-java-client or openvidu-node-client):
- *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
- *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
- *   3) The Connection.token must be consumed in Session.connect() method
+ * --------------------------------------------
+ * GETTING A TOKEN FROM YOUR APPLICATION SERVER
+ * --------------------------------------------
+ * The methods below request the creation of a Session and a Token to
+ * your application server. This keeps your OpenVidu deployment secure.
+ * 
+ * In this sample code, there is no user control at all. Anybody could
+ * access your application server endpoints! In a real production
+ * environment, your application server must identify the user to allow
+ * access to the endpoints.
+ * 
+ * Visit https://docs.openvidu.io/en/stable/application-server to learn
+ * more about the integration of OpenVidu in your application server.
  */
 
-var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-var OPENVIDU_SERVER_SECRET = "MY_SECRET";
+ var APPLICATION_SERVER_URL = window.location.protocol + "//" + window.location.hostname + ":5000/";
 
-function getToken(mySessionId) {
-	return createSession(mySessionId).then(sessionId => createToken(sessionId));
-}
-
-function createSession(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessions
-	return new Promise((resolve, reject) => {
-		$.ajax({
-			type: "POST",
-			url: OPENVIDU_SERVER_URL + "/openvidu/api/sessions",
-			data: JSON.stringify({ customSessionId: sessionId }),
-			headers: {
-				"Authorization": "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
-				"Content-Type": "application/json"
-			},
-			success: response => resolve(response.id),
-			error: (error) => {
-				if (error.status === 409) {
-					resolve(sessionId);
-				} else {
-					console.warn('No connection to OpenVidu Server. This may be a certificate error at ' + OPENVIDU_SERVER_URL);
-					if (window.confirm('No connection to OpenVidu Server. This may be a certificate error at \"' + OPENVIDU_SERVER_URL + '\"\n\nClick OK to navigate and accept it. ' +
-						'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' + OPENVIDU_SERVER_URL + '"')) {
-						location.assign(OPENVIDU_SERVER_URL + '/accept-certificate');
-					}
-				}
-			}
-		});
-	});
-}
-
-function createToken(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessionsltsession_idgtconnection
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            type: 'POST',
-            url: OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection',
-            data: JSON.stringify({}),
-            headers: {
-                'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
-                'Content-Type': 'application/json',
-            },
-            success: (response) => resolve(response.token),
-            error: (error) => reject(error)
-        });
-    });
-}
+ function getToken(mySessionId) {
+	 return createSession(mySessionId).then(sessionId => createToken(sessionId));
+ }
+ 
+ function createSession(sessionId) {
+	 return new Promise((resolve, reject) => {
+		 $.ajax({
+			 type: "POST",
+			 url: APPLICATION_SERVER_URL + "api/sessions",
+			 data: JSON.stringify({ customSessionId: sessionId }),
+			 headers: { "Content-Type": "application/json" },
+			 success: response => resolve(response), // The sessionId
+			 error: (error) => reject(error)
+		 });
+	 });
+ }
+ 
+ function createToken(sessionId) {
+	 return new Promise((resolve, reject) => {
+		 $.ajax({
+			 type: 'POST',
+			 url: APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
+			 data: JSON.stringify({}),
+			 headers: { "Content-Type": "application/json" },
+			 success: (response) => resolve(response), // The token
+			 error: (error) => reject(error)
+		 });
+	 });
+ }

@@ -1,5 +1,5 @@
 
-$(document).ready(async() => {
+$(document).ready(async () => {
     var webComponent = document.querySelector('openvidu-webcomponent');
     var form = document.getElementById('main');
 
@@ -32,15 +32,15 @@ $(document).ready(async() => {
         });
     });
 
-    webComponent.addEventListener('onJoinButtonClicked', (event) => {});
-    webComponent.addEventListener('onToolbarLeaveButtonClicked', (event) => {});
-    webComponent.addEventListener('onToolbarCameraButtonClicked', (event) => {});
-    webComponent.addEventListener('onToolbarMicrophoneButtonClicked', (event) => {});
-    webComponent.addEventListener('onToolbarScreenshareButtonClicked', (event) => {});
-    webComponent.addEventListener('onToolbarParticipantsPanelButtonClicked', (event) => {});
-    webComponent.addEventListener('onToolbarChatPanelButtonClicked', (event) => {});
-    webComponent.addEventListener('onToolbarFullscreenButtonClicked', (event) => {});
-    webComponent.addEventListener('onParticipantCreated', (event) => {});
+    webComponent.addEventListener('onJoinButtonClicked', (event) => { });
+    webComponent.addEventListener('onToolbarLeaveButtonClicked', (event) => { });
+    webComponent.addEventListener('onToolbarCameraButtonClicked', (event) => { });
+    webComponent.addEventListener('onToolbarMicrophoneButtonClicked', (event) => { });
+    webComponent.addEventListener('onToolbarScreenshareButtonClicked', (event) => { });
+    webComponent.addEventListener('onToolbarParticipantsPanelButtonClicked', (event) => { });
+    webComponent.addEventListener('onToolbarChatPanelButtonClicked', (event) => { });
+    webComponent.addEventListener('onToolbarFullscreenButtonClicked', (event) => { });
+    webComponent.addEventListener('onParticipantCreated', (event) => { });
 
 });
 
@@ -51,7 +51,7 @@ async function joinSession() {
 
     // Requesting tokens
     var promiseResults = await Promise.all([getToken(sessionName), getToken(sessionName)]);
-    var tokens = {webcam: promiseResults[0], screen: promiseResults[1]};
+    var tokens = { webcam: promiseResults[0], screen: promiseResults[1] };
 
     //Getting the webcomponent element
     var webComponent = document.querySelector('openvidu-webcomponent');
@@ -75,15 +75,15 @@ async function joinSession() {
 
     // webComponent.toolbarScreenshareButton = true;
     // webComponent.toolbarFullscreenButton = true;
-	// webComponent.toolbarLeaveButton = true;
-	// webComponent.toolbarChatPanelButton = true;
-	// webComponent.toolbarParticipantsPanelButton = true;
-	// webComponent.toolbarDisplayLogo = true;
-	// webComponent.toolbarDisplaySessionName = true;
-	// webComponent.streamDisplayParticipantName = true;
-	// webComponent.streamDisplayAudioDetection = true;
-	// webComponent.streamSettingsButton = true;
-	// webComponent.participantPanelItemMuteButton = true;
+    // webComponent.toolbarLeaveButton = true;
+    // webComponent.toolbarChatPanelButton = true;
+    // webComponent.toolbarParticipantsPanelButton = true;
+    // webComponent.toolbarDisplayLogo = true;
+    // webComponent.toolbarDisplaySessionName = true;
+    // webComponent.streamDisplayParticipantName = true;
+    // webComponent.streamDisplayAudioDetection = true;
+    // webComponent.streamSettingsButton = true;
+    // webComponent.participantPanelItemMuteButton = true;
 
     webComponent.tokens = tokens;
 }
@@ -94,70 +94,50 @@ function hideForm() {
 
 }
 
+
 /**
- * --------------------------
- * SERVER-SIDE RESPONSIBILITY
- * --------------------------
- * These methods retrieve the mandatory user token from OpenVidu Server.
- * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
- * the API REST, openvidu-java-client or openvidu-node-client):
- *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
- *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
- *   3) The Connection.token must be consumed in Session.connect() method
+ * --------------------------------------------
+ * GETTING A TOKEN FROM YOUR APPLICATION SERVER
+ * --------------------------------------------
+ * The methods below request the creation of a Session and a Token to
+ * your application server. This keeps your OpenVidu deployment secure.
+ * 
+ * In this sample code, there is no user control at all. Anybody could
+ * access your application server endpoints! In a real production
+ * environment, your application server must identify the user to allow
+ * access to the endpoints.
+ * 
+ * Visit https://docs.openvidu.io/en/stable/application-server to learn
+ * more about the integration of OpenVidu in your application server.
  */
 
-var OPENVIDU_SERVER_URL = "https://localhost:4443";
-var OPENVIDU_SERVER_SECRET = 'MY_SECRET';
+var APPLICATION_SERVER_URL = window.location.protocol + "//" + window.location.hostname + ":5000/";
 
-function getToken(sessionName) {
-    return createSession(sessionName).then((sessionId) => createToken(sessionId));
+function getToken(mySessionId) {
+    return createSession(mySessionId).then(sessionId => createToken(sessionId));
 }
 
-function createSession(sessionName) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessions
+function createSession(sessionId) {
     return new Promise((resolve, reject) => {
         $.ajax({
-            type: 'POST',
-            url: OPENVIDU_SERVER_URL + '/openvidu/api/sessions',
-            data: JSON.stringify({ customSessionId: sessionName }),
-            headers: {
-                Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
-                'Content-Type': 'application/json',
-            },
-            success: (response) => resolve(response.id),
-            error: (error) => {
-                if (error.status === 409) {
-                    resolve(sessionName);
-                } else {
-                    console.warn('No connection to OpenVidu Server. This may be a certificate error at ' + OPENVIDU_SERVER_URL);
-                    if (
-                        window.confirm(
-                            'No connection to OpenVidu Server. This may be a certificate error at "' +
-                                OPENVIDU_SERVER_URL +
-                                '"\n\nClick OK to navigate and accept it. ' +
-                                'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' +
-                                OPENVIDU_SERVER_URL +
-                                '"',
-                        )
-                    ) {
-                        location.assign(OPENVIDU_SERVER_URL + '/accept-certificate');
-                    }
-                }
-            },
+            type: "POST",
+            url: APPLICATION_SERVER_URL + "api/sessions",
+            data: JSON.stringify({ customSessionId: sessionId }),
+            headers: { "Content-Type": "application/json" },
+            success: response => resolve(response), // The sessionId
+            error: (error) => reject(error)
         });
     });
 }
 
-function createToken(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessionsltsession_idgtconnection
+function createToken(sessionId) {
     return new Promise((resolve, reject) => {
         $.ajax({
             type: 'POST',
-            url: OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection',
+            url: APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
             data: JSON.stringify({}),
-            headers: {
-                'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
-                'Content-Type': 'application/json',
-            },
-            success: (response) => resolve(response.token),
+            headers: { "Content-Type": "application/json" },
+            success: (response) => resolve(response), // The token
             error: (error) => reject(error)
         });
     });

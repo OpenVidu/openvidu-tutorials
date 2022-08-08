@@ -1,22 +1,23 @@
-import axios from 'axios';
 import { OpenVidu } from 'openvidu-browser';
+
+import axios from 'axios';
 import React, { Component } from 'react';
 import './App.css';
 import UserVideoComponent from './UserVideoComponent';
 
-const OPENVIDU_SERVER_URL = 'https://' + window.location.hostname + ':4443';
-const OPENVIDU_SERVER_SECRET = 'MY_SECRET';
+const APPLICATION_SERVER_URL = window.location.protocol + "//" + window.location.hostname + ":5000/";
 
 
 class App extends Component {
     constructor(props) {
         super(props);
 
+        // These properties are in the state's component in order to re-render the HTML whenever their values change
         this.state = {
             mySessionId: 'SessionA',
             myUserName: 'Participant' + Math.floor(Math.random() * 100),
             session: undefined,
-            mainStreamManager: undefined,
+            mainStreamManager: undefined,  // Main video of the page. Will be the 'publisher' or one of the 'subscribers'
             publisher: undefined,
             subscribers: [],
         };
@@ -117,27 +118,20 @@ class App extends Component {
 
                 // --- 4) Connect to the session with a valid user token ---
 
-                // 'getToken' method is simulating what your server-side should do.
-                // 'token' parameter should be retrieved and returned by your own backend
+                // Get a token from the OpenVidu deployment
                 this.getToken().then((token) => {
-                    // First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
+                    // First param is the token got from the OpenVidu deployment. Second param can be retrieved by every user on event
                     // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-                    mySession
-                        .connect(
-                            token,
-                            { clientData: this.state.myUserName },
-                        )
+                    mySession.connect(token, { clientData: this.state.myUserName })
                         .then(async () => {
-                            var devices = await this.OV.getDevices();
-                            var videoDevices = devices.filter(device => device.kind === 'videoinput');
 
                             // --- 5) Get your own camera stream ---
 
                             // Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
                             // element: we will manage it on our own) and with the desired properties
-                            let publisher = this.OV.initPublisher(undefined, {
+                            let publisher = await this.OV.initPublisherAsync(undefined, {
                                 audioSource: undefined, // The source of audio. If undefined default microphone
-                                videoSource: videoDevices[0].deviceId, // The source of video. If undefined default webcam
+                                videoSource: undefined, // The source of video. If undefined default webcam
                                 publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
                                 publishVideo: true, // Whether you want to start publishing with your video enabled or not
                                 resolution: '640x480', // The resolution of your video
@@ -150,9 +144,15 @@ class App extends Component {
 
                             mySession.publish(publisher);
 
+                            // Obtain the current video device in use
+                            var devices = await this.OV.getDevices();
+                            var videoDevices = devices.filter(device => device.kind === 'videoinput');
+                            var currentVideoDeviceId = publisher.stream.getMediaStream().getVideoTracks()[0].getSettings().deviceId;
+                            var currentVideoDevice = videoDevices.find(device => device.deviceId === currentVideoDeviceId);
+
                             // Set the main video in the page to display our webcam and store our Publisher
                             this.setState({
-                                currentVideoDevice: videoDevices[0],
+                                currentVideoDevice: currentVideoDevice,
                                 mainStreamManager: publisher,
                                 publisher: publisher,
                             });
@@ -188,15 +188,15 @@ class App extends Component {
     }
 
     async switchCamera() {
-        try{
+        try {
             const devices = await this.OV.getDevices()
             var videoDevices = devices.filter(device => device.kind === 'videoinput');
 
-            if(videoDevices && videoDevices.length > 1) {
+            if (videoDevices && videoDevices.length > 1) {
 
                 var newVideoDevice = videoDevices.filter(device => device.deviceId !== this.state.currentVideoDevice.deviceId)
 
-                if (newVideoDevice.length > 0){
+                if (newVideoDevice.length > 0) {
                     // Creating a new publisher with specific videoSource
                     // In mobile devices the default and first camera is the front one
                     var newPublisher = this.OV.initPublisher(undefined, {
@@ -211,15 +211,15 @@ class App extends Component {
 
                     await this.state.session.publish(newPublisher)
                     this.setState({
-                        currentVideoDevice: newVideoDevice,
+                        currentVideoDevice: newVideoDevice[0],
                         mainStreamManager: newPublisher,
                         publisher: newPublisher,
                     });
                 }
             }
-          } catch (e) {
+        } catch (e) {
             console.error(e);
-          }
+        }
     }
 
     render() {
@@ -310,79 +310,39 @@ class App extends Component {
         );
     }
 
+
     /**
-     * --------------------------
-     * SERVER-SIDE RESPONSIBILITY
-     * --------------------------
-     * These methods retrieve the mandatory user token from OpenVidu Server.
-     * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
-     * the API REST, openvidu-java-client or openvidu-node-client):
-     *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
-     *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
-     *   3) The Connection.token must be consumed in Session.connect() method
+     * --------------------------------------------
+     * GETTING A TOKEN FROM YOUR APPLICATION SERVER
+     * --------------------------------------------
+     * The methods below request the creation of a Session and a Token to
+     * your application server. This keeps your OpenVidu deployment secure.
+     * 
+     * In this sample code, there is no user control at all. Anybody could
+     * access your application server endpoints! In a real production
+     * environment, your application server must identify the user to allow
+     * access to the endpoints.
+     * 
+     * Visit https://docs.openvidu.io/en/stable/application-server to learn
+     * more about the integration of OpenVidu in your application server.
      */
-
-    getToken() {
-        return this.createSession(this.state.mySessionId).then((sessionId) => this.createToken(sessionId));
+    async getToken() {
+        const sessionId = await this.createSession(this.state.mySessionId);
+        return await this.createToken(sessionId);
     }
 
-    createSession(sessionId) {
-        return new Promise((resolve, reject) => {
-            var data = JSON.stringify({ customSessionId: sessionId });
-            axios
-                .post(OPENVIDU_SERVER_URL + '/openvidu/api/sessions', data, {
-                    headers: {
-                        Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then((response) => {
-                    console.log('CREATE SESION', response);
-                    resolve(response.data.id);
-                })
-                .catch((response) => {
-                    var error = Object.assign({}, response);
-                    if (error?.response?.status === 409) {
-                        resolve(sessionId);
-                    } else {
-                        console.log(error);
-                        console.warn(
-                            'No connection to OpenVidu Server. This may be a certificate error at ' +
-                            OPENVIDU_SERVER_URL,
-                        );
-                        if (
-                            window.confirm(
-                                'No connection to OpenVidu Server. This may be a certificate error at "' +
-                                OPENVIDU_SERVER_URL +
-                                '"\n\nClick OK to navigate and accept it. ' +
-                                'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' +
-                                OPENVIDU_SERVER_URL +
-                                '"',
-                            )
-                        ) {
-                            window.location.assign(OPENVIDU_SERVER_URL + '/accept-certificate');
-                        }
-                    }
-                });
+    async createSession(sessionId) {
+        const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId }, {
+            headers: { 'Content-Type': 'application/json', },
         });
+        return response.data; // The sessionId
     }
 
-    createToken(sessionId) {
-        return new Promise((resolve, reject) => {
-            var data = {};
-            axios
-                .post(OPENVIDU_SERVER_URL + "/openvidu/api/sessions/" + sessionId + "/connection", data, {
-                    headers: {
-                        Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
-                        'Content-Type': 'application/json',
-                    },
-                })
-                .then((response) => {
-                    console.log('TOKEN', response);
-                    resolve(response.data.token);
-                })
-                .catch((error) => reject(error));
+    async createToken(sessionId) {
+        const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections', {}, {
+            headers: { 'Content-Type': 'application/json', },
         });
+        return response.data; // The token
     }
 }
 

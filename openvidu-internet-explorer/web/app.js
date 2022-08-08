@@ -22,13 +22,13 @@ function joinSession() {
 	// --- 3) Specify the actions when events take place in the session ---
 
 	// On every new Stream received...
-	session.on('streamCreated', function(event) {
+	session.on('streamCreated', function (event) {
 
 		// Subscribe to the Stream to receive it. HTML video will be appended to element with 'video-container' id
 		var subscriber = session.subscribe(event.stream, 'video-container');
 
 		// When the HTML video has been appended to DOM...
-		subscriber.on('videoElementCreated', function(event) {
+		subscriber.on('videoElementCreated', function (event) {
 
 			// Add a new <p> element for the user's nickname just below its video
 			appendUserData(subscriber, event.element, subscriber.stream.connection);
@@ -36,7 +36,7 @@ function joinSession() {
 	});
 
 	// On every Stream destroyed...
-	session.on('streamDestroyed', function(event) {
+	session.on('streamDestroyed', function (event) {
 
 		// Delete the HTML element with the user's nickname. HTML videos are automatically removed from DOM
 		removeUserData(event.stream.connection);
@@ -45,14 +45,13 @@ function joinSession() {
 
 	// --- 4) Connect to the session with a valid user token ---
 
-	// 'getToken' method is simulating what your server-side should do.
-	// 'token' parameter should be retrieved and returned by your own backend
-	getToken(mySessionId).then(function(token) {
+	// Get a token from the OpenVidu deployment
+	getToken(mySessionId).then(function (token) {
 
-		// First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
+		// First param is the token got from the OpenVidu deployment. Second param can be retrieved by every user on event
 		// 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
 		session.connect(token, { clientData: myUserName })
-			.then(function() {
+			.then(function () {
 
 				// --- 5) Set page layout for active call ---
 
@@ -93,7 +92,7 @@ function joinSession() {
 				session.publish(publisher);
 
 			})
-			.catch(function(error) {
+			.catch(function (error) {
 				console.log('There was an error connecting to the session:', error.code, error.message);
 			});
 	});
@@ -177,7 +176,7 @@ function addClickListener(streamManager, videoElement, userData) {
 			differentVideo = mainVideo.srcObject !== videoElement.srcObject
 		}
 		if (differentVideo) {
-			$('#main-video').fadeOut("fast", function() {
+			$('#main-video').fadeOut("fast", function () {
 				$('#main-video p').html(userData);
 				streamManager.addVideoElement(mainVideo);
 				$('#main-video').fadeIn("fast");
@@ -198,28 +197,31 @@ function initMainVideo(publisher, userData) {
 }
 
 
-
 /**
- * --------------------------
- * SERVER-SIDE RESPONSIBILITY
- * --------------------------
- * These methods retrieve the mandatory user token from OpenVidu Server.
- * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
- * the API REST, openvidu-java-client or openvidu-node-client):
- *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
- *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
- *   3) The Connection.token must be consumed in Session.connect() method
+ * --------------------------------------------
+ * GETTING A TOKEN FROM YOUR APPLICATION SERVER
+ * --------------------------------------------
+ * The methods below request the creation of a Session and a Token to
+ * your application server. This keeps your OpenVidu deployment secure.
+ * 
+ * In this sample code, there is no user control at all. Anybody could
+ * access your application server endpoints! In a real production
+ * environment, your application server must identify the user to allow
+ * access to the endpoints.
+ * 
+ * Visit https://docs.openvidu.io/en/stable/application-server to learn
+ * more about the integration of OpenVidu in your application server.
  */
 
 var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
 var OPENVIDU_SERVER_SECRET = "MY_SECRET";
 
 function getToken(mySessionId) {
-	return createSession(mySessionId).then(function(sessionId) { return createToken(sessionId); });
+	return createSession(mySessionId).then(function (sessionId) { return createToken(sessionId); });
 }
 
 function createSession(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessions
-	return new Promise(function(resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		$.ajax({
 			type: "POST",
 			url: OPENVIDU_SERVER_URL + "/openvidu/api/sessions",
@@ -228,8 +230,8 @@ function createSession(sessionId) { // See https://docs.openvidu.io/en/stable/re
 				"Authorization": "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
 				"Content-Type": "application/json"
 			},
-			success: function(response) { resolve(response.id); },
-			error: function(error) {
+			success: function (response) { resolve(response.id); },
+			error: function (error) {
 				if (error.status === 409) {
 					resolve(sessionId);
 				} else {
@@ -245,7 +247,7 @@ function createSession(sessionId) { // See https://docs.openvidu.io/en/stable/re
 }
 
 function createToken(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessionsltsession_idgtconnection
-	return new Promise(function(resolve, reject) {
+	return new Promise(function (resolve, reject) {
 		$.ajax({
 			type: "POST",
 			url: OPENVIDU_SERVER_URL + "/openvidu/api/sessions/" + sessionId + "/connection",
@@ -254,8 +256,8 @@ function createToken(sessionId) { // See https://docs.openvidu.io/en/stable/refe
 				"Authorization": "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
 				"Content-Type": "application/json"
 			},
-			success: function(response) { resolve(response.token); },
-			error: function(error) { reject(error); }
+			success: function (response) { resolve(response.token); },
+			error: function (error) { reject(error); }
 		});
 	});
 }

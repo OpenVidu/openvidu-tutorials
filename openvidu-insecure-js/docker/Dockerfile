@@ -4,12 +4,12 @@ RUN apk update && \
     # apk add wget && \
     rm -rf /var/cache/apk/*
 
-# Install insecure-js
-COPY ./web /var/www/openvidu-insecure-js
-RUN chown -R nginx:nginx /var/www/openvidu-insecure-js
+# Install openvidu-js
+COPY ./web /var/www/openvidu-js
+RUN chown -R nginx:nginx /var/www/openvidu-js
 
 # Nginx conf
-COPY ./docker/openvidu-insecure-js.conf /etc/nginx/conf.d/default.conf
+COPY ./docker/openvidu-js.conf /etc/nginx/conf.d/default.conf
 
 # Entrypoint
 COPY ./docker/entrypoint.sh /usr/local/bin

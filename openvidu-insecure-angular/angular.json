@@ -3,7 +3,7 @@
   "version": 1, 
   "newProjectRoot": "projects",
   "projects": {
-    "openvidu-insecure-angular": {
+    "openvidu-angular": {
       "projectType": "application",
       "schematics": {},
       "root": "",
@@ -13,7 +13,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/openvidu-insecure-angular",
+            "outputPath": "dist/openvidu-angular",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
@@ -62,18 +62,18 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "openvidu-insecure-angular:build"
+            "browserTarget": "openvidu-angular:build"
           },
           "configurations": {
             "production": {
-              "browserTarget": "openvidu-insecure-angular:build:production"
+              "browserTarget": "openvidu-angular:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "openvidu-insecure-angular:build"
+            "browserTarget": "openvidu-angular:build"
           }
         },
         "test": {
@@ -110,15 +110,15 @@
           "builder": "@angular-devkit/build-angular:protractor",
           "options": {
             "protractorConfig": "e2e/protractor.conf.js",
-            "devServerTarget": "openvidu-insecure-angular:serve"
+            "devServerTarget": "openvidu-angular:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "openvidu-insecure-angular:serve:production"
+              "devServerTarget": "openvidu-angular:serve:production"
             }
           }
         }
       }
     }},
-  "defaultProject": "openvidu-insecure-angular"
+  "defaultProject": "openvidu-angular"
 }

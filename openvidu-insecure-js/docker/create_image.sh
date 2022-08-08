@@ -2,5 +2,5 @@
 
 pushd ../
 
-docker build -f docker/Dockerfile -t openvidu/openvidu-insecure-js-demo .
-docker tag openvidu/openvidu-insecure-js-demo:latest openvidu/openvidu-insecure-js-demo:2.18.0
+docker build -f docker/Dockerfile -t openvidu/openvidu-js-demo .
+docker tag openvidu/openvidu-js-demo:latest openvidu/openvidu-js-demo:2.18.0

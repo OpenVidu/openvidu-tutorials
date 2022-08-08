@@ -6,9 +6,9 @@
 
 [![][OpenViduLogo]](http://openvidu.io)
 
-openvidu-insecure-js-screen-share
+openvidu-js-screen-share
 ===
 
-Visit [docs.openvidu.io/en/stable/tutorials/openvidu-insecure-js-screen-share/](http://docs.openvidu.io/en/stable/tutorials/openvidu-insecure-js-screen-share/)
+Visit [docs.openvidu.io/en/stable/tutorials/openvidu-js-screen-share/](http://docs.openvidu.io/en/stable/tutorials/openvidu-js-screen-share/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120

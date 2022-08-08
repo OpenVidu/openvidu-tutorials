@@ -52,51 +52,54 @@ function joinSession() {
 
   // --- 4) Connect to the session with a valid user token ---
 
-  // 'getToken' method is simulating what your server-side should do.
-  // 'token' parameter should be retrieved and returned by your own backend
+  // Get a token from the OpenVidu deployment
   getToken(mySessionId).then(token => {
-    // First param is the token got from OpenVidu Server. Second param can be retrieved by every user on event
+
+    // First param is the token got from the OpenVidu deployment. Second param can be retrieved by every user on event
     // 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
     session.connect(token, { clientData: myUserName })
       .then(() => {
+
         // --- 5) Set page layout for active call ---
 
-        $("#session-title").text(mySessionId);
-        $("#join").hide();
-        $("#session").show();
+        document.getElementById('session-title').innerText = mySessionId;
+        document.getElementById('join').style.display = 'none';
+        document.getElementById('session').style.display = 'block';
 
         // --- 6) Get your own camera stream with the desired properties ---
 
-        var publisherProperties = {
+        var publisher = OV.initPublisher('video-container', {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
-          publishAudio: true, // Whether you want to start publishing with your audio unmuted or not
-          publishVideo: true, // Whether you want to start publishing with your video enabled or not
-          resolution: "640x360", // The resolution of your video
-          framerate: 24,
-          mirror: true, // Whether to mirror your local video or not
-        };
-
-        publisher = OV.initPublisher("video-container", publisherProperties);
+          publishAudio: true,  	  // Whether you want to start publishing with your audio unmuted or not
+          publishVideo: true,  	  // Whether you want to start publishing with your video enabled or not
+          resolution: '640x480',  // The resolution of your video
+          frameRate: 24,			    // The frame rate of your video
+          insertMode: 'APPEND',	  // How the video is inserted in the target element 'video-container'
+          mirror: true       	    // Whether to mirror your local video or not
+        });
 
         // --- 7) Specify the actions when events take place in our publisher ---
 
         // When our HTML video has been added to DOM...
-        publisher.on("videoElementCreated", event => {
-          appendUserData(event.element, publisher);
-          initMainVideo(publisher, myUserName);
+        publisher.on('videoElementCreated', function (event) {
+          initMainVideo(event.element, myUserName);
+          appendUserData(event.element, myUserName);
+          event.element['muted'] = true;
         });
         // When our video has started playing...
-        publisher.on("streamPlaying", event => {
-          $("#spinner-" + publisher.stream.connection.connectionId).remove();
-          $("#virtual-background-btns").show();
+        publisher.on('streamPlaying', event => {
+          $('#spinner-' + publisher.stream.connection.connectionId).remove();
+          $('#virtual-background-btns').show();
         });
 
         // --- 8) Publish your stream ---
+
         session.publish(publisher);
+
       })
       .catch(error => {
-        console.log("There was an error connecting to the session:", error.code, error.message);
+        console.log('There was an error connecting to the session:', error.code, error.message);
       });
   });
 }
@@ -195,10 +198,10 @@ function appendUserData(videoElement, streamManager) {
   // Insert user nickname
   var dataNode = $(
     '<div id="data-' +
-      nodeId +
-      '" class="data-node"><p>' +
-      userData +
-      "</p></div>"
+    nodeId +
+    '" class="data-node"><p>' +
+    userData +
+    "</p></div>"
   );
   dataNode.insertAfter($(videoElement));
   // Insert spinner loader
@@ -278,79 +281,49 @@ function imageVirtualBackgroundButtons() {
 
 
 /**
- * --------------------------
- * SERVER-SIDE RESPONSIBILITY
- * --------------------------
- * These methods retrieve the mandatory user token from OpenVidu Server.
- * This behavior MUST BE IN YOUR SERVER-SIDE IN PRODUCTION (by using
- * the REST API, openvidu-java-client or openvidu-node-client):
- *   1) Initialize a Session in OpenVidu Server	(POST /openvidu/api/sessions)
- *   2) Create a Connection in OpenVidu Server (POST /openvidu/api/sessions/<SESSION_ID>/connection)
- *   3) The Connection.token must be consumed in Session.connect() method
+ * --------------------------------------------
+ * GETTING A TOKEN FROM YOUR APPLICATION SERVER
+ * --------------------------------------------
+ * The methods below request the creation of a Session and a Token to
+ * your application server. This keeps your OpenVidu deployment secure.
+ * 
+ * In this sample code, there is no user control at all. Anybody could
+ * access your application server endpoints! In a real production
+ * environment, your application server must identify the user to allow
+ * access to the endpoints.
+ * 
+ * Visit https://docs.openvidu.io/en/stable/application-server to learn
+ * more about the integration of OpenVidu in your application server.
  */
 
-var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-var OPENVIDU_SERVER_SECRET = "MY_SECRET";
+var APPLICATION_SERVER_URL = window.location.protocol + "//" + window.location.hostname + ":5000/";
 
 function getToken(mySessionId) {
-  return createSession(mySessionId).then((sessionId) => createToken(sessionId));
+  return createSession(mySessionId).then(sessionId => createToken(sessionId));
 }
 
 function createSession(sessionId) {
-  // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessions
   return new Promise((resolve, reject) => {
     $.ajax({
       type: "POST",
-      url: OPENVIDU_SERVER_URL + "/openvidu/api/sessions",
+      url: APPLICATION_SERVER_URL + "api/sessions",
       data: JSON.stringify({ customSessionId: sessionId }),
-      headers: {
-        Authorization: "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
-        "Content-Type": "application/json",
-      },
-      success: (response) => resolve(response.id),
-      error: (error) => {
-        if (error.status === 409) {
-          resolve(sessionId);
-        } else {
-          console.warn(
-            "No connection to OpenVidu Server. This may be a certificate error at " +
-              OPENVIDU_SERVER_URL
-          );
-          if (
-            window.confirm(
-              'No connection to OpenVidu Server. This may be a certificate error at "' +
-                OPENVIDU_SERVER_URL +
-                '"\n\nClick OK to navigate and accept it. ' +
-                'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' +
-                OPENVIDU_SERVER_URL +
-                '"'
-            )
-          ) {
-            location.assign(OPENVIDU_SERVER_URL + "/accept-certificate");
-          }
-        }
-      },
+      headers: { "Content-Type": "application/json" },
+      success: response => resolve(response), // The sessionId
+      error: (error) => reject(error)
     });
   });
 }
 
 function createToken(sessionId) {
-  // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessionsltsession_idgtconnection
   return new Promise((resolve, reject) => {
     $.ajax({
-      type: "POST",
-      url:
-        OPENVIDU_SERVER_URL +
-        "/openvidu/api/sessions/" +
-        sessionId +
-        "/connection",
+      type: 'POST',
+      url: APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
       data: JSON.stringify({}),
-      headers: {
-        Authorization: "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
-        "Content-Type": "application/json",
-      },
-      success: (response) => resolve(response.token),
-      error: (error) => reject(error),
+      headers: { "Content-Type": "application/json" },
+      success: (response) => resolve(response), // The token
+      error: (error) => reject(error)
     });
   });
 }

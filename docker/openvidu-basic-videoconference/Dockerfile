@@ -12,7 +12,7 @@ RUN mkdir -p /var/www/openvidu-basic-videoconference && \
         "https://github.com/OpenVidu/openvidu-tutorials/archive/v${OPENVIDU_TUTORIALS_VERSION}.tar.gz" && \
     tar zxf /tmp/openvidu-tutorials.tar.gz -C /tmp && \
     rm /tmp/openvidu-tutorials.tar.gz && \
-    cp -r /tmp/openvidu-tutorials*/openvidu-insecure-js/web/* /var/www/openvidu-basic-videoconference && \
+    cp -r /tmp/openvidu-tutorials*/openvidu-js/web/* /var/www/openvidu-basic-videoconference && \
     rm -r /tmp/openvidu-tutorials* && \
     chown -R nginx:nginx /var/www/openvidu-basic-videoconference
 

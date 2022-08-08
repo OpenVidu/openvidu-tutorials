@@ -6,9 +6,9 @@
 
 [![][OpenViduLogo]](http://openvidu.io)
 
-openvidu-insecure-js
+openvidu-js
 ===
 
-Visit [docs.openvidu.io/en/stable/tutorials/openvidu-insecure-js/](http://docs.openvidu.io/en/stable/tutorials/openvidu-insecure-js/)
+Visit [docs.openvidu.io/en/stable/tutorials/openvidu-js/](http://docs.openvidu.io/en/stable/tutorials/openvidu-js/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120

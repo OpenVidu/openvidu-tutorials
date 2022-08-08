@@ -1,5 +1,5 @@
 {
-  "name": "openvidu-insecure-react",
+  "name": "openvidu-react",
   "version": "2.22.0",
   "private": true,
   "dependencies": {

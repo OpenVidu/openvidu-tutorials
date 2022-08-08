@@ -12,10 +12,11 @@ import { StreamManager } from "openvidu-browser";
 	template: '<video #videoElement style="width: 100%"></video>',
 })
 export class OpenViduVideoComponent implements AfterViewInit {
+
 	@ViewChild("videoElement") elementRef: ElementRef;
 	_streamManager: StreamManager;
 
-	constructor() {}
+	constructor() { }
 
 	ngAfterViewInit() {
 		this.updateVideoView();

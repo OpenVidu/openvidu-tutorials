@@ -32,8 +32,8 @@ if [[ ! -z "$FROM_VERSION_SDK" || ! -z "$TO_VERSION_SDK" ]]; then
 fi
 echo
 
-NPM_TUTORIALS="openvidu-insecure-angular
-                openvidu-insecure-react
+NPM_TUTORIALS="openvidu-angular
+                openvidu-react
                 openvidu-library-react
                 openvidu-ionic
                 openvidu-js-node
@@ -41,7 +41,7 @@ NPM_TUTORIALS="openvidu-insecure-angular
                 openvidu-recording-node
                 openvidu-react-native
                 openvidu-electron
-                openvidu-insecure-vue
+                openvidu-vue
                 openvidu-call/openvidu-call-front
                 openvidu-call/openvidu-call-back"
 
@@ -54,7 +54,7 @@ MAVEN_TUTORIALS="openvidu-js-java
 find -type f -name 'package-lock.json' -exec rm {} \;
 find -type d -name 'node_modules' -prune -exec rm -rf {} \;
 
-# Updating openvidu-browser dependencies in package.json files [openvidu-insecure-angular, openvidu-insecure-react, openvidu-ionic, openvidu-insecure-vue]
+# Updating openvidu-browser dependencies in package.json files [openvidu-angular, openvidu-react, openvidu-ionic, openvidu-vue]
 find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-browser\": \"$FROM_VERSION\"/\"openvidu-browser\": \"$TO_VERSION\"/" {} \;
 
 # Updating openvidu-react dependencies in package.json files [openvidu-library-react]

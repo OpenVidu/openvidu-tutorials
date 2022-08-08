@@ -1,5 +1,5 @@
 {
-  "name": "openvidu-insecure-vue",
+  "name": "openvidu-vue",
   "version": "2.22.0",
   "private": true,
   "scripts": {

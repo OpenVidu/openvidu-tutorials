@@ -4,12 +4,12 @@ RUN apk update && \
     # apk add wget && \
     rm -rf /var/cache/apk/*
 
-# Install insecure-js
-COPY ./web /var/www/openvidu-insecure-js-screen-share
-RUN chown -R nginx:nginx /var/www/openvidu-insecure-js-screen-share
+# Install openvidu-js-screen-share
+COPY ./web /var/www/openvidu-js-screen-share
+RUN chown -R nginx:nginx /var/www/openvidu-js-screen-share
 
 # Nginx conf
-COPY ./docker/openvidu-insecure-js-screen-share.conf /etc/nginx/conf.d/default.conf
+COPY ./docker/openvidu-js-screen-share.conf /etc/nginx/conf.d/default.conf
 
 # Entrypoint
 COPY ./docker/entrypoint.sh /usr/local/bin
