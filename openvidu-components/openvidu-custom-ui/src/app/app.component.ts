@@ -57,7 +57,7 @@ export class AppComponent {
   createToken(sessionId: string): Promise<string> {
     return lastValueFrom(this.httpClient.post(
       this.APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
-      { customSessionId: sessionId },
+      {},
       { headers: { 'Content-Type': 'application/json' }, responseType: 'text' }
     ));
   }

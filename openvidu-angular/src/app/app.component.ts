@@ -76,7 +76,7 @@ export class AppComponent implements OnDestroy {
 
     // --- 4) Connect to the session with a valid user token ---
 
-		// Get a token from the OpenVidu deployment
+    // Get a token from the OpenVidu deployment
     this.getToken().then(token => {
 
       // First param is the token got from the OpenVidu deployment. Second param can be retrieved by every user on event
@@ -178,7 +178,7 @@ export class AppComponent implements OnDestroy {
   createToken(sessionId) {
     return this.httpClient.post(
       this.APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
-      { customSessionId: sessionId },
+      {},
       { headers: { 'Content-Type': 'application/json' }, responseType: 'text' }
     ).toPromise();
   }
