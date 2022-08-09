@@ -69,7 +69,7 @@ app.MapPost("/api/sessions/{sessionId}/connections", async (HttpRequest request,
         var contentString = await streamContent.ReadAsStringAsync();
         content = new StringContent(contentString, Encoding.UTF8, "application/json");
     }
-    HttpResponseMessage response = await client.PostAsync("openvidu/api/sessions/" + sessionId + "/connection", content);
+    HttpResponseMessage response = await client.PostAsync("openvidu/api/sessions/" + sessionId.Trim('"') + "/connection", content);
     response.EnsureSuccessStatusCode();
     var responseBody = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
     var token = responseBody["token"].ToString().Trim('"');
