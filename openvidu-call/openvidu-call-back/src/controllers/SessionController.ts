@@ -37,7 +37,7 @@ app.post('/', async (req: Request, res: Response) => {
 			 * To identify who is able to manage session recording, the code sends a cookie with a token to the session creator.
 			 * The relation between cookies and sessions are stored in backend memory.
 			 *
-			 * This authentication & autorization system is pretty basic and it is not for production.
+			 * This authentication & authorization system is pretty basic and it is not for production.
 			 * We highly recommend IMPLEMENT YOUR OWN USER MANAGEMENT with persistence for a properly and secure recording feature.
 			 *
 			 * ! *********** WARN *********** !
