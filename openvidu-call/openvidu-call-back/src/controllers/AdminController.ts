@@ -40,4 +40,3 @@ app.post('/logout', async (req: Request, res: Response) => {
 	openviduService.adminTokens = openviduService.adminTokens.filter((token) => token !== req['session'].token);
 	req['session'] = {};
 });
-

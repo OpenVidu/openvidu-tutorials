@@ -24,7 +24,7 @@ app.post('/', async (req: Request, res: Response) => {
 		const hasValidToken = openviduService.isValidToken(sessionId, req.cookies);
 		const isSessionCreator = hasValidToken || sessionCreated.activeConnections.length === 0;
 		const role: OpenViduRole = isSessionCreator && IS_RECORDING_ENABLED ? OpenViduRole.MODERATOR : OpenViduRole.PUBLISHER;
-		const response = {cameraToken : '', screenToken: '', recordingEnabled: IS_RECORDING_ENABLED, recordings: []};
+		const response = { cameraToken: '', screenToken: '', recordingEnabled: IS_RECORDING_ENABLED, recordings: [] };
 		const cameraConnection = await openviduService.createConnection(sessionCreated, nickname, role);
 		const screenConnection = await openviduService.createConnection(sessionCreated, nickname, role);
 		response.cameraToken = cameraConnection.token;
@@ -49,12 +49,12 @@ app.post('/', async (req: Request, res: Response) => {
 			openviduService.recordingMap.set(sessionId, { token: recordingToken, recordingId: '' });
 		}
 
-		if(IS_RECORDING_ENABLED){
+		if (IS_RECORDING_ENABLED) {
 			date = date || openviduService.getDateFromCookie(req.cookies);
 			try {
 				response.recordings = await openviduService.listRecordingsBySessionIdAndDate(sessionId, date);
 			} catch (error) {
-				if(error.message === '501'){
+				if (error.message === '501') {
 					console.log('Recording is diasbled in OpenVidu Server. Disabling it in OpenVidu Call');
 					response.recordings = [];
 					response.recordingEnabled = false;
@@ -67,13 +67,13 @@ app.post('/', async (req: Request, res: Response) => {
 		console.error(error);
 		let message = 'Cannot connect with OpenVidu Server';
 		let code = Number(error?.message);
-		if(error.message === 500){
-			message = 'Unexpected error when creating the Connection object.'
-		} else if (error.message === 404){
+		if (error.message === 500) {
+			message = 'Unexpected error when creating the Connection object.';
+		} else if (error.message === 404) {
 			message = 'No session exists';
 		}
-		if(typeof code !== 'number') {
-			code = 503
+		if (typeof code !== 'number') {
+			code = 503;
 		}
 		res.status(code).send({ message });
 	}
