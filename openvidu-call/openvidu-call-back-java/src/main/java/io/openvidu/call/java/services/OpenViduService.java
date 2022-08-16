@@ -52,13 +52,16 @@ public class OpenViduService {
 	}
 
 	public long getDateFromCookie(String recordingToken) {
-
-		if (!recordingToken.isEmpty()) {
-			MultiValueMap<String, String> cookieTokenParams = UriComponentsBuilder.fromUriString(recordingToken).build()
-					.getQueryParams();
-			String date = cookieTokenParams.get("createdAt").get(0);
-			return Long.parseLong(date);
-		} else {
+		try {
+			if (!recordingToken.isEmpty()) {
+				MultiValueMap<String, String> cookieTokenParams = UriComponentsBuilder.fromUriString(recordingToken).build()
+						.getQueryParams();
+				String date = cookieTokenParams.get("createdAt").get(0);
+				return Long.parseLong(date);
+			} else {
+				return System.currentTimeMillis();
+			}
+		} catch(Exception e) {
 			return System.currentTimeMillis();
 		}
 	}

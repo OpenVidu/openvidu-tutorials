@@ -25,12 +25,16 @@ export class OpenViduService {
 	}
 
 	getDateFromCookie(cookies: any): number {
-		const cookieToken = cookies[this.RECORDING_TOKEN_NAME];
-		if (!!cookieToken) {
-			const cookieTokenUrl = new URL(cookieToken);
-			const date = cookieTokenUrl?.searchParams.get('createdAt');
-			return Number(date);
-		} else {
+		try {
+			const cookieToken = cookies[this.RECORDING_TOKEN_NAME];
+			if (!!cookieToken) {
+				const cookieTokenUrl = new URL(cookieToken);
+				const date = cookieTokenUrl?.searchParams.get('createdAt');
+				return Number(date);
+			} else {
+				return Date.now();
+			}
+		} catch (error) {
 			return Date.now();
 		}
 	}
@@ -62,7 +66,7 @@ export class OpenViduService {
 			}
 			return false;
 		} catch (error) {
-			console.log(error)
+			console.log(error);
 			return false;
 		}
 	}
@@ -79,7 +83,9 @@ export class OpenViduService {
 		console.log(`Requesting token for session ${session.sessionId}`);
 		let connectionProperties: ConnectionProperties = { role };
 		if (!!nickname) {
-			connectionProperties.data = JSON.stringify({ openviduCustomConnectionId: nickname });
+			connectionProperties.data = JSON.stringify({
+				openviduCustomConnectionId: nickname
+			});
 		}
 		console.log('Connection Properties:', connectionProperties);
 		return session.createConnection(connectionProperties);
