@@ -43,7 +43,7 @@ public class RecordingController {
 	private ProxyService proxyService;
 
 	@GetMapping("")
-	public ResponseEntity<List<Recording>> getRecordings(
+	public ResponseEntity<?> getRecordings(
 			@CookieValue(name = OpenViduService.RECORDING_TOKEN_NAME, defaultValue = "") String recordingToken) {
 		try {
 			List<Recording> recordings = new ArrayList<Recording>();
@@ -64,7 +64,7 @@ public class RecordingController {
 				String message = IS_RECORDING_ENABLED ? "Permissions denied to drive recording"
 						: "Recording is disabled";
 				System.err.println(message);
-				return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+				return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
 
 			}
 		} catch (OpenViduJavaClientException | OpenViduHttpException error) {
@@ -75,13 +75,13 @@ public class RecordingController {
 				message = "No recording exist for the session";
 			}
 			System.err.println(message);
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 
 	}
 
 	@PostMapping("/start")
-	public ResponseEntity<Recording> startRecording(@RequestBody(required = false) Map<String, String> params,
+	public ResponseEntity<?> startRecording(@RequestBody(required = false) Map<String, String> params,
 			@CookieValue(name = OpenViduService.RECORDING_TOKEN_NAME, defaultValue = "") String recordingToken) {
 
 		try {
@@ -93,9 +93,9 @@ public class RecordingController {
 				return new ResponseEntity<>(startingRecording, HttpStatus.OK);
 
 			} else {
-
-				System.out.println("Permissions denied for starting recording in session " + sessionId);
-				return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+				String message = "Permissions denied for starting recording in session " + sessionId;
+				System.out.println(message);
+				return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
 			}
 		} catch (OpenViduJavaClientException | OpenViduHttpException error) {
 			error.printStackTrace();
@@ -109,14 +109,14 @@ public class RecordingController {
 				message = "The session has no connected participants";
 			}
 			System.err.println(message);
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
 
 		}
 
 	}
 
 	@PostMapping("/stop")
-	public ResponseEntity<List<Recording>> stopRecording(@RequestBody(required = false) Map<String, String> params,
+	public ResponseEntity<?> stopRecording(@RequestBody(required = false) Map<String, String> params,
 			@CookieValue(name = OpenViduService.RECORDING_TOKEN_NAME, defaultValue = "") String recordingToken) {
 		try {
 			String sessionId = params.get("sessionId");
@@ -131,12 +131,14 @@ public class RecordingController {
 					openviduService.recordingMap.get(sessionId).setRecordingId("");
 					return new ResponseEntity<>(recordingList, HttpStatus.OK);
 				} else {
-					System.err.println("Session was not being recorded");
-					return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+					String message = "Session was not being recorded";
+					System.err.println(message);
+					return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
 				}
 			} else {
-				System.err.println("Permissions denied to drive recording");
-				return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+				String message = "Permissions denied to drive recording";
+				System.err.println(message);
+				return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
 			}
 		} catch (OpenViduJavaClientException | OpenViduHttpException error) {
 			error.printStackTrace();
@@ -148,12 +150,12 @@ public class RecordingController {
 				message = "Recording has STARTING status. Wait until STARTED status before stopping the recording";
 			}
 			System.err.println(message);
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
 	@DeleteMapping("/delete/{recordingId}")
-	public ResponseEntity<List<Recording>> deleteRecording(@PathVariable String recordingId,
+	public ResponseEntity<?> deleteRecording(@PathVariable String recordingId,
 			@CookieValue(name = OpenViduService.RECORDING_TOKEN_NAME, defaultValue = "") String recordingToken,
 			@CookieValue(name = "session", defaultValue = "") String sessionToken) {
 		try {
@@ -163,8 +165,9 @@ public class RecordingController {
 
 			if ((!sessionId.isEmpty() && openviduService.isValidToken(sessionId, recordingToken)) || isAdminDashboard) {
 				if (recordingId.isEmpty()) {
-					System.err.println("Missing recording id parameter.");
-					return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+					String message = "Missing recording id parameter.";
+					System.err.println(message);
+					return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
 				}
 
 				System.out.println("Deleting recording " + recordingId);
@@ -178,8 +181,9 @@ public class RecordingController {
 				return new ResponseEntity<>(recordings, HttpStatus.OK);
 
 			} else {
-				System.err.println("Permissions denied to drive recording");
-				return new ResponseEntity<>(recordings, HttpStatus.FORBIDDEN);
+				String message = "Permissions denied to drive recording";
+				System.err.println(message);
+				return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
 			}
 		} catch (OpenViduJavaClientException | OpenViduHttpException error) {
 			error.printStackTrace();
@@ -193,7 +197,7 @@ public class RecordingController {
 				message = "No recording exists for the session";
 			}
 			System.err.println(message);
-			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 
@@ -206,8 +210,9 @@ public class RecordingController {
 		String sessionId = this.openviduService.getSessionIdFromCookie(recordingToken);
 		if ((!sessionId.isEmpty() && openviduService.isValidToken(sessionId, recordingToken)) || isAdminDashboard) {
 			if (recordingId.isEmpty()) {
-				System.err.println("Missing recording id parameter.");
-				return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+				String message = "Missing recording id parameter.";
+				System.err.println(message);
+				return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
 			} else {
 				try {
 					return proxyService.processProxyRequest(req, res);
@@ -217,8 +222,9 @@ public class RecordingController {
 				return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		} else {
-			System.err.println("Permissions denied to drive recording");
-			return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
+			String message = "Permissions denied to drive recording";
+			System.err.println(message);
+			return new ResponseEntity<>(message, HttpStatus.FORBIDDEN);
 		}
 
 	}

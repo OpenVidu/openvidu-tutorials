@@ -28,8 +28,14 @@ app.post('/login', async (req: Request, res: Response) => {
 			console.log(`${recordings.length} recordings found`);
 			res.status(200).send(JSON.stringify({ recordings }));
 		} catch (error) {
-			console.error(error);
-			res.status(500).send('Unexpected error getting recordings');
+			const code = Number(error?.message);
+			if(code === 501){
+				console.log('501. OpenVidu Server recording module is disabled.');
+				res.status(200).send();
+			} else {
+				console.error(error);
+				res.status(500).send('Unexpected error getting recordings');
+			}
 		}
 	} else {
 		res.status(403).send('Permissions denied');

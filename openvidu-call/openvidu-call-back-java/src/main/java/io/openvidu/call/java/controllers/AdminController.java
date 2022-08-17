@@ -36,9 +36,10 @@ public class AdminController {
 	private OpenViduService openviduService;
 
 	@PostMapping("/login")
-	public ResponseEntity<Map<String, Object>> login(@RequestBody(required = false) Map<String, String> params,
+	public ResponseEntity<?> login(@RequestBody(required = false) Map<String, String> params,
 			@CookieValue(name = OpenViduService.RECORDING_TOKEN_NAME, defaultValue = "") String recordingToken, HttpServletResponse res) {
 		
+		String message = "";
 		Map<String, Object> response = new HashMap<String, Object>();
 		
 		String password = params.get("password");
@@ -69,13 +70,21 @@ public class AdminController {
 
 				return new ResponseEntity<>(response, HttpStatus.OK);
 			} catch (OpenViduJavaClientException | OpenViduHttpException error) {
+				
+				if(Integer.parseInt(error.getMessage()) == 501) {
+					System.err.println(error.getMessage() + ". OpenVidu Server recording module is disabled.");
+					return new ResponseEntity<>(response, HttpStatus.OK);
+				} else {
+					message = error.getMessage() + " Unexpected error getting recordings";
+					error.printStackTrace();
+					System.err.println(message);
+					return new ResponseEntity<>(message, HttpStatus.INTERNAL_SERVER_ERROR);
+				}
 
-				error.printStackTrace();
-				System.err.println(error.getMessage() + "Unexpected error getting recordings");
-				return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
 		} else {
-			System.err.println("Permissions denied");
+			message = "Permissions denied";
+			System.err.println(message);
 			return new ResponseEntity<>(null, HttpStatus.FORBIDDEN);
 		}
 
