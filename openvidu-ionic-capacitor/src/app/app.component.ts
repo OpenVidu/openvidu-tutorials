@@ -1,4 +1,5 @@
 import { HttpClient } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
 import { Component, HostListener, OnDestroy } from '@angular/core';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { AlertController, Platform } from '@ionic/angular';
@@ -20,7 +21,7 @@ import {
 })
 export class AppComponent implements OnDestroy {
 
-	APPLICATION_SERVER_URL = location.protocol + '//' + location.hostname + ':5000/';
+	APPLICATION_SERVER_URL = 'http://localhost:5000/';
 
 	ANDROID_PERMISSIONS = [
 		this.androidPermissions.PERMISSION.CAMERA,
@@ -55,6 +56,10 @@ export class AppComponent implements OnDestroy {
 		private alertController: AlertController
 	) {
 		this.generateParticipantInfo();
+		if (this.platform.is('hybrid') && this.APPLICATION_SERVER_URL === 'http://localhost:5000/') {
+			// To make easier first steps with mobile devices, use demos OpenVidu deployment when no custom deployment is provided
+			this.APPLICATION_SERVER_URL = 'https://demos.openvidu.io/';
+		}
 	}
 
 	@HostListener('window:beforeunload')
@@ -246,7 +251,7 @@ export class AppComponent implements OnDestroy {
 				{
 					name: 'url',
 					type: 'text',
-					value: 'https://demos.openvidu.io/',
+					value: this.APPLICATION_SERVER_URL,
 					placeholder: 'URL',
 				}
 			],
@@ -285,31 +290,25 @@ export class AppComponent implements OnDestroy {
 	 * more about the integration of OpenVidu in your application server.
 	 */
 	async getToken(): Promise<string> {
-		if (
-			this.platform.is('ios') &&
-			this.platform.is('cordova') &&
-			this.APPLICATION_SERVER_URL === 'http://localhost:5000/'
-		) {
-			// To make easier first steps with iOS apps, use demos OpenVidu deployment when no custom deployment is configured
-			this.APPLICATION_SERVER_URL = 'https://demos.openvidu.io/';
-		}
 		const sessionId = await this.createSession(this.mySessionId);
 		return await this.createToken(sessionId);
 	}
 
-	createSession(sessionId) {
-		return this.httpClient.post(
+	async createSession(sessionId) {
+		const response = this.httpClient.post(
 			this.APPLICATION_SERVER_URL + 'api/sessions',
 			{ customSessionId: sessionId },
 			{ headers: { 'Content-Type': 'application/json' }, responseType: 'text' }
-		).toPromise();
+		);
+		return lastValueFrom(response);
 	}
 
-	createToken(sessionId) {
-		return this.httpClient.post(
+	async createToken(sessionId) {
+		const response = this.httpClient.post(
 			this.APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
-			{ customSessionId: sessionId },
+			{},
 			{ headers: { 'Content-Type': 'application/json' }, responseType: 'text' }
-		).toPromise();
+		);
+		return lastValueFrom(response);
 	}
 }
