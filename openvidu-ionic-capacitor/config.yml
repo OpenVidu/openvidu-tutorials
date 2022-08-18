@@ -1,0 +1,25 @@
+platforms:
+  android:
+    versionName: 1.0.0
+    manifest:
+      - file: AndroidManifest.xml
+        target: manifest
+        merge: |
+          <manifest>
+            <uses-permission android:name="android.permission.CAMERA" />
+            <uses-permission android:name="android.permission.RECORD_AUDIO" />
+            <uses-permission android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+          </manifest>
+      - file: AndroidManifest.xml
+        target: manifest/application/activity
+        attrs:
+          android:exported: true
+    # gradle:
+    #   - file: variables.gradle
+    #     target:
+    #       ext:
+    #         minSdkVersion:
+    #     replace:
+    #       minSdkVersion: 22
+  ios:
+    version: 1.0.0

@@ -1,4 +1,4 @@
-package io.ionic.starter;
+package io.openvidu.ionic;
 
 import com.getcapacitor.BridgeActivity;
 
