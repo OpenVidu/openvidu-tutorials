@@ -10,7 +10,7 @@ import { OpenVidu, Publisher, Session, StreamEvent, StreamManager, Subscriber } 
 })
 export class AppComponent implements OnDestroy {
 
-  APPLICATION_SERVER_URL = window.location.protocol + '//' + window.location.hostname + ':5000/';
+  APPLICATION_SERVER_URL = 'http://localhost:5000/';
 
   // OpenVidu objects
   OV: OpenVidu;

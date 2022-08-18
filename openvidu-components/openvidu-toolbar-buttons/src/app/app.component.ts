@@ -22,7 +22,7 @@ import { TokenModel, OpenViduService, ParticipantService } from "openvidu-angula
 })
 export class AppComponent implements OnInit {
 
-	APPLICATION_SERVER_URL = window.location.protocol + '//' + window.location.hostname + ':5000/';
+	APPLICATION_SERVER_URL = 'http://localhost:5000/';
 
 	sessionId = 'toolbar-additionalbtn-directive-example';
 	tokens!: TokenModel;

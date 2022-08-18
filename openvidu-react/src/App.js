@@ -5,7 +5,7 @@ import React, { Component } from 'react';
 import './App.css';
 import UserVideoComponent from './UserVideoComponent';
 
-const APPLICATION_SERVER_URL = window.location.protocol + "//" + window.location.hostname + ":5000/";
+const APPLICATION_SERVER_URL = "http://localhost:5000/";
 
 
 class App extends Component {

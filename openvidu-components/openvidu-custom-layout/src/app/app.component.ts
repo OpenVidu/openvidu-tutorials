@@ -35,7 +35,7 @@ import { TokenModel, ParticipantService, ParticipantAbstractModel } from "openvi
 })
 export class AppComponent implements OnInit {
 
-	APPLICATION_SERVER_URL = window.location.protocol + '//' + window.location.hostname + ':5000/';
+	APPLICATION_SERVER_URL = 'http://localhost:5000/';
 
 	sessionId = 'layout-directive-example';
 	tokens!: TokenModel;

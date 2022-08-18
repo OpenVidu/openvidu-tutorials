@@ -1,12 +1,8 @@
-// OpenVidu variables
 var OV;
 var session;
 var publisher;
-
-// Application variables
 var role = 'PUBLISHER'; 	// ['SUBSCRIBER', 'PUBLISHER', 'MODERATOR']
-var selectedStreamManager; 	// Our Publisher or any Subscriber (see https://openvidu.io/api/openvidu-browser/classes/streammanager.html)
-
+var selectedStreamManager; 	// Our Publisher or any Subscriber (see https://docs.openvidu.io/en/stable/api/openvidu-browser/classes/StreamManager.html)
 
 
 /* OPENVIDU METHODS */
@@ -59,7 +55,6 @@ function joinSession() {
 
 	// On every Stream destroyed...
 	session.on('streamDestroyed', event => {
-
 		// Delete the HTML element with the user's nickname. HTML videos are automatically removed from DOM
 		removeUserData(event.stream.connection);
 	});
@@ -76,86 +71,85 @@ function joinSession() {
 
 		// First param is the token got from the OpenVidu deployment. Second param can be retrieved by every user on event
 		// 'streamCreated' (property Stream.connection.data), and will be appended to DOM as the user's nickname
-		session.connect(token, { clientData: myUserName })
-			.then(() => {
+		session.connect(token, { clientData: myUserName }).then(() => {
 
-				// --- 5) Set page layout for active call ---
+			// --- 5) Set page layout for active call ---
 
-				$('#session-title').text(mySessionId);
-				$('#join').hide();
-				$('#session').show();
+			$('#session-title').text(mySessionId);
+			$('#join').hide();
+			$('#session').show();
 
-				// --- 6) Get your own camera stream with the desired properties ---
+			// --- 6) Get your own camera stream with the desired properties ---
 
-				if (role !== 'SUBSCRIBER') {
-					var publisherProperties = {
-						audioSource: undefined, // The source of audio. If undefined default microphone
-						videoSource: undefined, // The source of video. If undefined default webcam
-						publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
-						publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
-						resolution: '1280x720',  // The resolution of your video
-						frameRate: 30,			// The frame rate of your video
-						insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
-						mirror: false       	// Whether to mirror your local video or not
-					};
+			if (role !== 'SUBSCRIBER') {
+				var publisherProperties = {
+					audioSource: undefined, // The source of audio. If undefined default microphone
+					videoSource: undefined, // The source of video. If undefined default webcam
+					publishAudio: true,  	// Whether you want to start publishing with your audio unmuted or not
+					publishVideo: true,  	// Whether you want to start publishing with your video enabled or not
+					resolution: '1280x720',  // The resolution of your video
+					frameRate: 30,			// The frame rate of your video
+					insertMode: 'APPEND',	// How the video is inserted in the target element 'video-container'
+					mirror: false       	// Whether to mirror your local video or not
+				};
 
-					// If the filter should be enabled from the beginning of the publishing
-					if (startWithFilterEnabled) {
-						publisherProperties.filter = {
-							type: 'GStreamerFilter',
-							options: { "command": "videobalance saturation=0.0" }
-						}
+				// If the filter should be enabled from the beginning of the publishing
+				if (startWithFilterEnabled) {
+					publisherProperties.filter = {
+						type: 'GStreamerFilter',
+						options: { "command": "videobalance saturation=0.0" }
 					}
+				}
 
-					publisher = OV.initPublisher('video-container', publisherProperties);
+				publisher = OV.initPublisher('video-container', publisherProperties);
 
-					// --- 7) Specify the actions when events take place in our publisher ---
+				// --- 7) Specify the actions when events take place in our publisher ---
 
-					// When our HTML video has been added to DOM...
-					publisher.on('videoElementCreated', function (event) {
-						appendUserData(event.element, publisher);
-						initMainVideo(publisher, myUserName);
-					});
-					// When our video has started playing...
-					publisher.on('streamPlaying', function (event) {
-						$('#spinner-' + publisher.stream.connection.connectionId).remove();
-						$('#filter-btns').show();
-						$('#buttonApplyFilter').prop('value', 'Apply filter to your stream');
-						$('#buttonRemoveFilter').prop('value', 'Remove filter of your stream');
-						$('#buttonApplyFilter').prop('disabled', false);
-						$('#buttonRemoveFilter').prop('disabled', false);
-						if (startWithFilterEnabled) {
+				// When our HTML video has been added to DOM...
+				publisher.on('videoElementCreated', function (event) {
+					appendUserData(event.element, publisher);
+					initMainVideo(publisher, myUserName);
+				});
+				// When our video has started playing...
+				publisher.on('streamPlaying', function (event) {
+					$('#spinner-' + publisher.stream.connection.connectionId).remove();
+					$('#filter-btns').show();
+					$('#buttonApplyFilter').prop('value', 'Apply filter to your stream');
+					$('#buttonRemoveFilter').prop('value', 'Remove filter of your stream');
+					$('#buttonApplyFilter').prop('disabled', false);
+					$('#buttonRemoveFilter').prop('disabled', false);
+					if (startWithFilterEnabled) {
+						showRemoveFilterButtons();
+					} else {
+						showApplyFilterButtons();
+					}
+				});
+
+				// Listen to your filter being applied or removed to update the filter control buttons
+				publisher.on('streamPropertyChanged', function (event) {
+					// If the changed property is the filter and the current selected streamManager is our publisher
+					if (publisher === selectedStreamManager && event.changedProperty === 'filter') {
+						if (!!event.newValue) {
 							showRemoveFilterButtons();
 						} else {
 							showApplyFilterButtons();
 						}
-					});
+					}
+				});
 
-					// Listen to your filter being applied or removed to update the filter control buttons
-					publisher.on('streamPropertyChanged', function (event) {
-						// If the changed property is the filter and the current selected streamManager is our publisher
-						if (publisher === selectedStreamManager && event.changedProperty === 'filter') {
-							if (!!event.newValue) {
-								showRemoveFilterButtons();
-							} else {
-								showApplyFilterButtons();
-							}
-						}
-					});
+				// --- 8) Publish your stream, indicating you want to receive your remote stream to see the filters ---
+				publisher.subscribeToRemote();
+				session.publish(publisher);
 
-					// --- 8) Publish your stream, indicating you want to receive your remote stream to see the filters ---
-					publisher.subscribeToRemote();
-					session.publish(publisher);
-
-				} else {
-					// Show a message warning the subscriber cannot publish
-					$('#main-video video').css("background", "url('resources/images/subscriber-msg.jpg') round");
-					$('#filter-btns').hide();
-				}
-			})
-			.catch(error => {
-				console.log('There was an error connecting to the session:', error.code, error.message);
-			});
+			} else {
+				// Show a message warning the subscriber cannot publish
+				$('#main-video video').css("background", "url('resources/images/subscriber-msg.jpg') round");
+				$('#filter-btns').hide();
+			}
+		})
+		.catch(error => {
+			console.log('There was an error connecting to the session:', error.code, error.message);
+		});
 	});
 }
 
@@ -174,6 +168,10 @@ function leaveSession() {
 	$('#filter-btns').hide();
 	$('#session').hide();
 }
+
+window.onbeforeunload = function () {
+	if (session) session.disconnect();
+};
 
 
 // --- Filter related methods ---
@@ -257,10 +255,6 @@ window.addEventListener('load', function () {
 	generateParticipantInfo();
 	$('[data-toggle="tooltip"]').tooltip({ container: 'body', trigger: 'hover' });
 });
-
-window.onbeforeunload = function () {
-	if (session) session.disconnect();
-};
 
 function generateParticipantInfo() {
 	$('#sessionId').val("SessionA");
@@ -381,66 +375,45 @@ function initMainVideo(streamManager, userData) {
  * more about the integration of OpenVidu in your application server.
  */
 
-var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-var OPENVIDU_SERVER_SECRET = "MY_SECRET";
+var APPLICATION_SERVER_URL = "http://localhost:5000/";
 
-function getToken(mySessionId, role) {
-	return createSession(mySessionId).then(sessionId => createToken(sessionId, role));
+function getToken(mySessionId) {
+	return createSession(mySessionId).then(sessionId => createToken(sessionId));
 }
 
-
-function createSession(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessions
+function createSession(sessionId) {
 	return new Promise((resolve, reject) => {
 		$.ajax({
 			type: "POST",
-			url: OPENVIDU_SERVER_URL + "/openvidu/api/sessions",
+			url: APPLICATION_SERVER_URL + "api/sessions",
 			data: JSON.stringify({ customSessionId: sessionId }),
-			headers: {
-				"Authorization": "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
-				"Content-Type": "application/json"
-			},
-			success: response => resolve(response.id),
-			error: (error) => {
-				if (error.status === 409) {
-					resolve(sessionId);
-				} else {
-					console.warn('No connection to OpenVidu Server. This may be a certificate error at ' + OPENVIDU_SERVER_URL);
-					if (window.confirm('No connection to OpenVidu Server. This may be a certificate error at \"' + OPENVIDU_SERVER_URL + '\"\n\nClick OK to navigate and accept it. ' +
-						'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' + OPENVIDU_SERVER_URL + '"')) {
-						location.assign(OPENVIDU_SERVER_URL + '/accept-certificate');
-					}
-				}
-			}
+			headers: { "Content-Type": "application/json" },
+			success: response => resolve(response), // The sessionId
+			error: (error) => reject(error)
 		});
 	});
 }
 
-
-function createToken(sessionId, role) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessionsltsession_idgtconnection
+function createToken(sessionId, role) {
 	var openviduRole;
 	var jsonBody = {
 		role: role,
 		kurentoOptions: {}
 	};
-
 	if (openviduRole !== 'SUBSCRIBER') {
 		// Only the PUBLISHERS and MODERATORS need to configure the ability of applying filters
 		jsonBody.kurentoOptions = {
 			allowedFilters: ['FaceOverlayFilter', 'ChromaFilter', 'GStreamerFilter']
 		}
 	}
-
 	return new Promise((resolve, reject) => {
 		$.ajax({
-			type: "POST",
-			url: OPENVIDU_SERVER_URL + "/openvidu/api/sessions/" + sessionId + "/connection",
+			type: 'POST',
+			url: APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
 			data: JSON.stringify(jsonBody),
-			headers: {
-				"Authorization": "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
-				"Content-Type": "application/json"
-			},
-			success: response => resolve(response.token),
-			error: error => reject(error)
+			headers: { "Content-Type": "application/json" },
+			success: (response) => resolve(response), // The token
+			error: (error) => reject(error)
 		});
 	});
 }

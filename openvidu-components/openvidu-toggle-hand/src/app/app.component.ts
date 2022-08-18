@@ -31,7 +31,7 @@ enum SignalApp {
 })
 export class AppComponent implements OnInit {
 
-	APPLICATION_SERVER_URL = window.location.protocol + '//' + window.location.hostname + ':5000/';
+	APPLICATION_SERVER_URL = 'http://localhost:5000/';
 
 	tokens: { webcam: string; screen: string };
 	hasHandRaised: boolean = false;

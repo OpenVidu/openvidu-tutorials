@@ -49,7 +49,7 @@ import UserVideo from "./components/UserVideo";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const APPLICATION_SERVER_URL = window.location.protocol + "//" + window.location.hostname + ":5000/";
+const APPLICATION_SERVER_URL = "http://localhost:5000/";
 
 export default {
   name: "App",

@@ -7,7 +7,7 @@ import axios from 'axios';
 class App extends Component {
     constructor(props) {
         super(props);
-        this.APPLICATION_SERVER_URL = window.location.protocol + "//" + window.location.hostname + ":5000/";
+        this.APPLICATION_SERVER_URL = "http://localhost:5000/";
         this.state = {
             mySessionId: 'SessionA',
             myUserName: 'OpenVidu_User_' + Math.floor(Math.random() * 100),

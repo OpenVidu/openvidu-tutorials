@@ -22,7 +22,7 @@ import {
 })
 export class AppComponent implements OnDestroy {
 
-	APPLICATION_SERVER_URL = location.protocol + '//' + location.hostname + ':5000/';
+	APPLICATION_SERVER_URL = 'http://localhost:5000/';
 
 	ANDROID_PERMISSIONS = [
 		this.androidPermissions.PERMISSION.CAMERA,
