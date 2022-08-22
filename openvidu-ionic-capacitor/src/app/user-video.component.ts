@@ -27,14 +27,16 @@ import { StreamManager } from 'openvidu-browser';
 			}
 		`
 	],
-	template: ` <div>
-		<ov-video [streamManager]="streamManager"></ov-video>
+	template: `
 		<div>
-			<p>{{ nickname }}</p>
-		</div>
-	</div>`
+			<ov-video [streamManager]="streamManager"></ov-video>
+			<div>
+				<p>{{ nickname }}</p>
+			</div>
+		</div>`
 })
 export class UserVideoComponent implements OnInit {
+
 	nickname = '';
 
 	@Input()

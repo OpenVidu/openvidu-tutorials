@@ -1,4 +1,5 @@
 import { HttpClient } from '@angular/common/http';
+import { lastValueFrom } from 'rxjs';
 import { Component, HostListener, OnDestroy } from '@angular/core';
 import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
 import { SplashScreen } from '@ionic-native/splash-screen/ngx';
@@ -53,20 +54,20 @@ export class AppComponent implements OnDestroy {
 	constructor(
 		private httpClient: HttpClient,
 		private platform: Platform,
-		private splashScreen: SplashScreen,
-		private statusBar: StatusBar,
 		private androidPermissions: AndroidPermissions,
-		private alertController: AlertController
+		private alertController: AlertController,
+		private splashScreen: SplashScreen,
+		private statusBar: StatusBar
 	) {
-		this.initializeApp();
-		this.generateParticipantInfo();
-	}
-
-	initializeApp() {
 		this.platform.ready().then(() => {
 			this.statusBar.overlaysWebView(false);
 			this.splashScreen.hide();
 		});
+		this.generateParticipantInfo();
+		if (this.platform.is('hybrid') && this.APPLICATION_SERVER_URL === 'http://localhost:5000/') {
+			// To make easier first steps with mobile devices, use demos OpenVidu deployment when no custom deployment is provided
+			this.APPLICATION_SERVER_URL = 'https://demos.openvidu.io/';
+		}
 	}
 
 	@HostListener('window:beforeunload')
@@ -120,19 +121,12 @@ export class AppComponent implements OnDestroy {
 			await this.session.connect(token, { clientData: this.myUserName });
 
 			// --- 5) Requesting and Checking Android Permissions
-			if (this.platform.is('cordova')) {
-				// Ionic platform
-				if (this.platform.is('android')) {
-					console.log('Android platform');
-					await this.checkAndroidPermissions();
-					this.initPublisher();
-				} else if (this.platform.is('ios')) {
-					console.log('iOS platform');
-					this.initPublisher();
-				}
-			} else {
-				this.initPublisher();
+			if (this.platform.is('hybrid') && this.platform.is('android')) {
+				console.log('Ionic Android platform');
+				await this.checkAndroidPermissions();
 			}
+
+			this.initPublisher();
 		} catch (error) {
 			console.log('There was an error connecting to the session:', error.code, error.message);
 		}
@@ -225,16 +219,19 @@ export class AppComponent implements OnDestroy {
 		await this.platform.ready();
 		try {
 			await this.androidPermissions.requestPermissions(this.ANDROID_PERMISSIONS);
-			const camera = await this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.CAMERA);
-			const audio = await this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.RECORD_AUDIO);
-			const modifyAudio = await this.androidPermissions.checkPermission(this.androidPermissions.PERMISSION.MODIFY_AUDIO_SETTINGS);
-
-			if (!camera.hasPermission || !audio.hasPermission || !modifyAudio.hasPermission) {
-				throw new Error('Permissions denied: \n CAMERA = ' + camera.hasPermission +
-					'\n AUDIO = ' + audio.hasPermission +
-					'\n AUDIO_SETTINGS = ' + modifyAudio.hasPermission
-				);
-			}
+			const promisesArray: Promise<any>[] = [];
+			this.ANDROID_PERMISSIONS.forEach((permission) => {
+				console.log('Checking ', permission);
+				promisesArray.push(this.androidPermissions.checkPermission(permission));
+			});
+			const responses = await Promise.all(promisesArray);
+			let allHasPermissions = true;
+			responses.forEach((response, i) => {
+				allHasPermissions = response.hasPermission;
+				if (!allHasPermissions) {
+					throw (new Error('Permissions denied: ' + this.ANDROID_PERMISSIONS[i]));
+				}
+			});
 		} catch (error) {
 			console.error('Error requesting or checking permissions: ', error);
 			throw (error);
@@ -261,7 +258,7 @@ export class AppComponent implements OnDestroy {
 				{
 					name: 'url',
 					type: 'text',
-					value: 'https://demos.openvidu.io/',
+					value: this.APPLICATION_SERVER_URL,
 					placeholder: 'URL',
 				}
 			],
@@ -300,31 +297,25 @@ export class AppComponent implements OnDestroy {
 	 * more about the integration of OpenVidu in your application server.
 	 */
 	async getToken(): Promise<string> {
-		if (
-			this.platform.is('ios') &&
-			this.platform.is('cordova') &&
-			this.APPLICATION_SERVER_URL === 'http://localhost:5000/'
-		) {
-			// To make easier first steps with iOS apps, use demos OpenVidu deployment when no custom deployment is configured
-			this.APPLICATION_SERVER_URL = 'https://demos.openvidu.io/';
-		}
 		const sessionId = await this.createSession(this.mySessionId);
 		return await this.createToken(sessionId);
 	}
 
-	createSession(sessionId) {
-		return this.httpClient.post(
+	async createSession(sessionId) {
+		const response = this.httpClient.post(
 			this.APPLICATION_SERVER_URL + 'api/sessions',
 			{ customSessionId: sessionId },
 			{ headers: { 'Content-Type': 'application/json' }, responseType: 'text' }
-		).toPromise();
+		);
+		return lastValueFrom(response);
 	}
 
-	createToken(sessionId) {
-		return this.httpClient.post(
+	async createToken(sessionId) {
+		const response = this.httpClient.post(
 			this.APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
 			{},
 			{ headers: { 'Content-Type': 'application/json' }, responseType: 'text' }
-		).toPromise();
+		);
+		return lastValueFrom(response);
 	}
 }

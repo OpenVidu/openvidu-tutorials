@@ -6,13 +6,15 @@ import { StreamManager } from 'openvidu-browser';
 
 @Component({
 	selector: 'ov-video',
-	template: '<video #videoElement style="width: 100%;"></video>'
+	template: '<video #videoElement style="width: 100%"></video>'
 })
 export class OpenViduVideoComponent implements AfterViewInit {
+
 	@ViewChild('videoElement') elementRef: ElementRef;
+
 	_streamManager: StreamManager;
 
-	constructor() {}
+	constructor() { }
 
 	ngAfterViewInit() {
 		this.updateVideoView();
@@ -21,7 +23,7 @@ export class OpenViduVideoComponent implements AfterViewInit {
 	@Input()
 	set streamManager(streamManager: StreamManager) {
 		this._streamManager = streamManager;
-		if(!!this.elementRef){
+		if (!!this.elementRef) {
 			this.updateVideoView();
 		}
 	}

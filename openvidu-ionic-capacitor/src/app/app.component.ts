@@ -113,9 +113,8 @@ export class AppComponent implements OnDestroy {
 			await this.session.connect(token, { clientData: this.myUserName });
 
 			// --- 5) Requesting and Checking Android Permissions
-			if (this.platform.is('capacitor') && this.platform.is('android')) {
-				// Ionic platform
-				console.log('Android platform');
+			if (this.platform.is('hybrid') && this.platform.is('android')) {
+				console.log('Ionic Android platform');
 				await this.checkAndroidPermissions();
 			}
 
