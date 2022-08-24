@@ -1,7 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
 import { Component, HostListener, OnDestroy } from '@angular/core';
-import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
+import { AndroidPermissions } from '@ionic-native/android-permissions/ngx';
+import { SplashScreen } from '@ionic-native/splash-screen/ngx';
+import { StatusBar } from '@ionic-native/status-bar/ngx';
 import { AlertController, Platform } from '@ionic/angular';
 import {
 	Device,
@@ -17,7 +19,7 @@ import {
 @Component({
 	selector: 'app-root',
 	templateUrl: 'app.component.html',
-	styleUrls: ['app.component.scss']
+	styleUrls: ['app.component.css']
 })
 export class AppComponent implements OnDestroy {
 
@@ -53,8 +55,14 @@ export class AppComponent implements OnDestroy {
 		private httpClient: HttpClient,
 		private platform: Platform,
 		private androidPermissions: AndroidPermissions,
-		private alertController: AlertController
+		private alertController: AlertController,
+		private splashScreen: SplashScreen,
+		private statusBar: StatusBar
 	) {
+		this.platform.ready().then(() => {
+			this.statusBar.overlaysWebView(false);
+			this.splashScreen.hide();
+		});
 		this.generateParticipantInfo();
 		if (this.platform.is('hybrid') && this.APPLICATION_SERVER_URL === 'http://localhost:5000/') {
 			// To make easier first steps with mobile devices, use demos OpenVidu deployment when no custom deployment is provided

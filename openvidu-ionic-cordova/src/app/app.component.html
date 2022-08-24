@@ -1,16 +1,22 @@
-<ion-app class="transparent">
+<ion-app>
 	<ion-header>
 		<ion-toolbar color="dark">
-			<img class="demo-logo" src="assets/images/openvidu_vert_white_bg_trans_cropped.png" />
+			<img
+				class="demo-logo"
+				src="assets/images/openvidu_vert_white_bg_trans_cropped.png"
+			/>
 			<ion-buttons slot="primary">
-				<ion-button color="light" href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-ionic">
+				<ion-button
+					color="light"
+					href="https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-ionic-cordova"
+				>
 					<ion-icon slot="icon-only" name="logo-github"></ion-icon>
 				</ion-button>
 			</ion-buttons>
 		</ion-toolbar>
 	</ion-header>
 
-	<ion-content class="ion-padding transparent" *ngIf="!session">
+	<ion-content class="ion-padding" *ngIf="!session">
 		<div id="img-div">
 			<img src="assets/images/openvidu_grey_bg_transp_cropped.png" />
 		</div>
@@ -49,7 +55,7 @@
 		</ion-fab>
 	</ion-content>
 
-	<ion-content [scrollEvents]="true" *ngIf="session" class="transparent">
+	<ion-content *ngIf="session">
 		<div id="session-header">
 			<h1 id="session-title">{{ mySessionId }}</h1>
 		</div>
@@ -72,16 +78,21 @@
 		</ion-grid>
 
 		<ion-fab vertical="bottom" horizontal="end" slot="fixed">
-			<ion-fab-button class="action-button" color="light" id="camButton" (click)="swapCamera()">
+			<ion-fab-button
+      class="action-button"
+				color="light"
+				id="camButton"
+				(click)="swapCamera()"
+			>
 				<ion-icon name="camera-reverse-sharp"></ion-icon>
 			</ion-fab-button>
 
 			<ion-fab-button (click)="toggleMicrophone()" class="action-button">
-				<ion-icon name="{{ microphoneIcon }}"></ion-icon>
+				<ion-icon name="{{microphoneIcon}}"></ion-icon>
 			</ion-fab-button>
 
 			<ion-fab-button (click)="toggleCamera()" class="action-button">
-				<ion-icon name="{{ cameraIcon }}"></ion-icon>
+				<ion-icon name="{{cameraIcon}}"></ion-icon>
 			</ion-fab-button>
 
 			<ion-fab-button color="danger" (click)="leaveSession()" class="action-button">

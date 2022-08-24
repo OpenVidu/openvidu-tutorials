@@ -1,19 +1,17 @@
-import {
-	AfterViewInit,
-	Component,
-	ElementRef,
-	Input,
-	ViewChild,
-} from "@angular/core";
-import { StreamManager } from "openvidu-browser";
+/* eslint-disable @typescript-eslint/member-ordering */
+/* eslint-disable no-underscore-dangle */
+/* eslint-disable @angular-eslint/component-selector */
+import { AfterViewInit, Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { StreamManager } from 'openvidu-browser';
 
 @Component({
-	selector: "ov-video",
-	template: '<video #videoElement style="width: 100%"></video>',
+	selector: 'ov-video',
+	template: '<video #videoElement style="width: 100%"></video>'
 })
 export class OpenViduVideoComponent implements AfterViewInit {
 
-	@ViewChild("videoElement") elementRef: ElementRef;
+	@ViewChild('videoElement') elementRef: ElementRef;
+
 	_streamManager: StreamManager;
 
 	constructor() { }
@@ -25,12 +23,12 @@ export class OpenViduVideoComponent implements AfterViewInit {
 	@Input()
 	set streamManager(streamManager: StreamManager) {
 		this._streamManager = streamManager;
-		this.updateVideoView();
+		if (!!this.elementRef) {
+			this.updateVideoView();
+		}
 	}
 
 	private updateVideoView() {
-		if (!!this.elementRef) {
-			this._streamManager.addVideoElement(this.elementRef.nativeElement);
-		}
+		this._streamManager.addVideoElement(this.elementRef.nativeElement);
 	}
 }
