@@ -15,7 +15,7 @@ RUN apk update && \
 
 # Install basic-webinar
 RUN mkdir -p /opt/openvidu-basic-webinar
-COPY --from=build /basic-webinar/target/openvidu-js-java-*.jar /opt/openvidu-basic-webinar/openvidu-basic-webinar.jar
+COPY --from=build /basic-webinar/target/openvidu-roles-java-*.jar /opt/openvidu-basic-webinar/openvidu-basic-webinar.jar
 # Entrypoint
 COPY ./docker/entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/entrypoint.sh

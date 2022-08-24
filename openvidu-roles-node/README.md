@@ -6,9 +6,9 @@
 
 [![][OpenViduLogo]](http://openvidu.io)
 
-openvidu-js-java
+openvidu-roles-node
 ===
 
-Visit [docs.openvidu.io/en/stable/tutorials/openvidu-js-java/](http://docs.openvidu.io/en/stable/tutorials/openvidu-js-java/)
+Visit [docs.openvidu.io/en/stable/tutorials/openvidu-roles-node/](http://docs.openvidu.io/en/stable/tutorials/openvidu-roles-node/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120

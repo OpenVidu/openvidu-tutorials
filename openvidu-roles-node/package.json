@@ -1,5 +1,5 @@
 {
-  "name": "openvidu-js-node",
+  "name": "openvidu-roles-node",
   "version": "2.22.0",
   "description": "",
   "main": "server.js",

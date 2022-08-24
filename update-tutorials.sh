@@ -36,8 +36,7 @@ NPM_TUTORIALS="openvidu-angular
                 openvidu-react
                 openvidu-library-react
                 openvidu-ionic
-                openvidu-js-node
-                openvidu-mvc-node
+                openvidu-roles-node
                 openvidu-recording-node
                 openvidu-react-native
                 openvidu-electron
@@ -45,8 +44,7 @@ NPM_TUTORIALS="openvidu-angular
                 openvidu-call/openvidu-call-front
                 openvidu-call/openvidu-call-back"
 
-MAVEN_TUTORIALS="openvidu-js-java
-                openvidu-mvc-java
+MAVEN_TUTORIALS="openvidu-roles-java
                 openvidu-recording-java
                 openvidu-ipcameras"
 
@@ -69,7 +67,7 @@ find . -type f -name 'package.json' -exec sed -i "s/file:openvidu-react-native-a
 # If server SDKs must be udpated
 if [[ -n "$FROM_VERSION_SDK" && -n "$TO_VERSION_SDK" ]]; then
 
-    # Updating openvidu-node-client dependencies in package.json files [openvidu-js-node, openvidu-mvc-node, openvidu-recording-node]
+    # Updating openvidu-node-client dependencies in package.json files [openvidu-roles-node, openvidu-recording-node]
     find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-node-client\": \"$FROM_VERSION_SDK\"/\"openvidu-node-client\": \"$TO_VERSION_SDK\"/" {} \;
 
     # Updating openvidu-java-client dependencies in pom.xml files

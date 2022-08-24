@@ -10,4 +10,4 @@ JAVA_PROPERTIES="-Djava.security.egd=file:/dev/./urandom"
 [ ! -z "${OPENVIDU_SECRET}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dopenvidu.secret=${OPENVIDU_SECRET}"
 [ ! -z "${APP_PORT}" ] && JAVA_PROPERTIES=" ${JAVA_PROPERTIES} -Dserver.port=${APP_PORT}"
 
-java ${JAVA_PROPERTIES} -jar /opt/openvidu-js-java.jar
+java ${JAVA_PROPERTIES} -jar /opt/openvidu-roles-java.jar

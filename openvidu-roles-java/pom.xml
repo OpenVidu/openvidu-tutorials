@@ -4,12 +4,12 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>io.openvidu</groupId>
-	<artifactId>openvidu-js-java</artifactId>
+	<artifactId>openvidu-roles-java</artifactId>
 	<version>2.22.0</version>
 	<packaging>jar</packaging>
 
-	<name>openvidu-js-java</name>
-	<url>https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-js-java</url>
+	<name>openvidu-roles-java</name>
+	<url>https://github.com/OpenVidu/openvidu-tutorials/tree/master/openvidu-roles-java</url>
 
 	<parent>
 		<groupId>org.springframework.boot</groupId>

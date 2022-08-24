@@ -9,8 +9,8 @@ RUN apk update && \
 
 # Install basic-videoconference
 RUN mkdir -p /opt/openvidu-basic-webinar && \
-    wget -L -O /opt/openvidu-js-java.jar \
-        "https://github.com/OpenVidu/openvidu-tutorials/releases/download/v${OPENVIDU_TUTORIALS_VERSION}/openvidu-js-java-${OPENVIDU_TUTORIALS_VERSION}.jar"
+    wget -L -O /opt/openvidu-roles-java.jar \
+        "https://github.com/OpenVidu/openvidu-tutorials/releases/download/v${OPENVIDU_TUTORIALS_VERSION}/openvidu-roles-java-${OPENVIDU_TUTORIALS_VERSION}.jar"
 
 # Entrypoint
 COPY ./entrypoint.sh /usr/local/bin
