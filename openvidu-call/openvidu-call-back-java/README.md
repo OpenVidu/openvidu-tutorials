@@ -1,6 +1,6 @@
-# openvidu-basic-java
+# openvidu-call-back-java
 
-This is a minimal OpenVidu server application sample built for Java with Spring Boot. Visit [Application server](https://docs.openvidu.io/en/stable/application-server/) documentation for further context.
+This is a fully functional OpenVidu Call server application sample built for Java with Spring Boot. Visit [OpenVidu Call](https://docs.openvidu.io/en/stable//components/openvidu-call/) documentation for further context.
 
 It internally uses [openvidu-java-client SDK](https://docs.openvidu.io/en/stable/reference-docs/openvidu-java-client/).
 
@@ -15,7 +15,7 @@ Download repository
 
 ```
 git clone git@github.com:OpenVidu/openvidu-tutorials.git
-cd openvidu-tutorials/openvidu-basic-java
+cd openvidu-tutorials/openvidu-call/openvidu-call-back-java
 ```
 
 Run the application

@@ -5,7 +5,6 @@ public class RecordingData {
 	String token;
 	String recordingId;
 	public RecordingData(String token, String recordingId) {
-		super();
 		this.token = token;
 		this.recordingId = recordingId;
 	}

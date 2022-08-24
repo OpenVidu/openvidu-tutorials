@@ -22,7 +22,7 @@
 		<java.version>11</java.version>
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.source>11</maven.compiler.source>
-		<start-class>io.openvidu.basic.java.App</start-class>
+		<start-class>io.openvidu.call.java.App</start-class>
 	</properties>
 
 
