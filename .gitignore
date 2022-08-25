@@ -39,3 +39,7 @@ openvidu-angular-components/.angular/
 openvidu-ionic/.angular/
 
 openvidu-ionic-capacitor/android/.idea/
+
+openvidu-call/openvidu-call-back/public/
+
+openvidu-call/openvidu-call-back-java/src/main/resources/static/
