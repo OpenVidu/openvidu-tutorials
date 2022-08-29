@@ -7,12 +7,14 @@ ARG BASE_HREF=/
 
 COPY . .
 
-# Build OpenVidu call
+RUN npm install --location=global npm
+
+# Build OpenVidu Call frontend
 RUN rm openvidu-call-front/package-lock.json && \
-    # Install openvidu-call-front dependencies and build it for production
+    # Install frontend dependencies and build it for production
     cd openvidu-call-front && npm install && \
-    cd ../ && npm run build-prod ${BASE_HREF} --prefix openvidu-call-front && \
-    rm -rf openvidu-call-front
+    npm run prod:build ${BASE_HREF} && \
+    cd ../ && rm -rf openvidu-call-front
 
 FROM node:lts-alpine3.16
 
@@ -20,12 +22,14 @@ WORKDIR /opt/openvidu-call
 
 COPY --from=openvidu-call-build /openvidu-call/openvidu-call-back .
 
-# Install openvidu-call-back dependencies and build it for production
+RUN npm install --location=global npm
+
+# Install backend dependencies and build it for production
 RUN npm install && \
     npm run build
 
 # Entrypoint
-COPY docker/entrypoint.sh /usr/local/bin
+COPY docker/node-entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN apk add curl && \
     chmod +x /usr/local/bin/entrypoint.sh
 
