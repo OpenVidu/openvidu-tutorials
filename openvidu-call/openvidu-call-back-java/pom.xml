@@ -51,6 +51,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>openvidu-call-back-java</finalName>
 	</build>
 
 </project>
