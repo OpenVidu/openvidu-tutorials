@@ -37,14 +37,13 @@
     "name": "openvidu-call",
     "private": true,
     "scripts": {
-        "build": "./node_modules/@angular/cli/bin/ng build && npm run copy:backend",
-        "build-prod": "func() { ./node_modules/@angular/cli/bin/ng.js build --configuration production --base-href=\"${1:-/}\" && npm run copy:backend-prod; }; func",
-        "copy:backend": "cp -a dist/openvidu-call/. ../openvidu-call-back/public/",
-        "copy:backend-prod": "mkdir -p ../openvidu-call-back/dist/public && cp -a dist/openvidu-call/. ../openvidu-call-back/dist/public/",
+        "dev:start": "ng serve --ssl --configuration development",
+        "dev:build": "./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back/public/",
+        "prod:build": "func() { ./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back/public/ --configuration production --base-href=\"${1:-/}\"; }; func",
+        "dev:build-java": "./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back-java/src/main/resources/static/",
+        "prod:build-java": "func() { ./node_modules/@angular/cli/bin/ng.js build --output-path ../openvidu-call-back-java/src/main/resources/static/ --configuration production --base-href=\"${1:-/}\"; }; func",
         "e2e": "ng e2e",
         "lint": "ng lint",
-        "start": "ng serve --ssl --configuration development",
-        "start:https": "ng serve --host 192.168.1.161 --ssl --ssl-key cert.key --ssl-cert cert.crt",
         "test": "ng test openvidu-call --watch=false --code-coverage"
     },
     "version": "2.22.0"
