@@ -111,11 +111,11 @@ public class SessionController {
 
 		} catch (OpenViduJavaClientException | OpenViduHttpException e) {
 
-			if (Integer.parseInt(e.getMessage()) == 501) {
+			if (e.getMessage() != null && Integer.parseInt(e.getMessage()) == 501) {
 				System.err.println("OpenVidu Server recording module is disabled");
 				response.put("recordingEnabled", false);
 				return new ResponseEntity<>(response, HttpStatus.OK);
-			} else if (Integer.parseInt(e.getMessage()) == 401) {
+			} else if (e.getMessage() != null && Integer.parseInt(e.getMessage()) == 401) {
 				System.err.println("OpenVidu credentials are wrong.");
 				return new ResponseEntity<>(null, HttpStatus.UNAUTHORIZED);
 
