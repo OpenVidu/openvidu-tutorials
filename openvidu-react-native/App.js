@@ -5,7 +5,12 @@ import axios from 'axios';
 
 import { OpenViduReactNativeAdapter, OpenVidu, RTCView } from 'openvidu-react-native-adapter';
 
-const APPLICATION_SERVER_URL = 'https://demos.openvidu.io/';
+/**
+ * It is necessary to change the APPLICATION_SERVER_URL for communicating with the server application.
+ * Also you need to edit the ./android/app/src/main/res/xml/network_security_config.xml file adding your IP as a domain
+ * for allowing to use the certs in an Android device.
+ */
+const APPLICATION_SERVER_URL = 'https://X.X.X.X/';
 
 type Props = {};
 export default class App extends Component<Props> {
@@ -16,7 +21,7 @@ export default class App extends Component<Props> {
 		ovReact.initialize();
 
 		this.state = {
-			mySessionId: 'testReact',
+			mySessionId: 'react-native',
 			myUserName: 'Participant' + Math.floor(Math.random() * 100),
 			session: undefined,
 			mainStreamManager: undefined,
@@ -165,7 +170,6 @@ export default class App extends Component<Props> {
 
 					// --- 5) Get your own camera stream ---
 					if (this.state.role !== 'SUBSCRIBER') {
-
 						// Init a publisher passing undefined as targetElement (we don't want OpenVidu to insert a video
 						// element: we will manage it on our own) and with the desired properties
 
@@ -182,15 +186,19 @@ export default class App extends Component<Props> {
 						// --- 6) Publish your stream ---
 
 						// Set the main video in the page to display our webcam and store our Publisher
-						this.setState({
-							mainStreamManager: publisher,
-							videoSource: !properties.videoSource ? '1' : properties.videoSource, // 0: back camera | 1: user camera |
-						}, () => {
-							mySession.publish(publisher);
-						});
+						this.setState(
+							{
+								mainStreamManager: publisher,
+								videoSource: !publisher.properties.videoSource ? '1' : publisher.properties.videoSource, // 0: back camera | 1: user camera |
+							},
+							() => {
+								mySession.publish(publisher);
+							},
+						);
 					}
 					this.setState({ connected: true });
 				} catch (error) {
+					console.log(error);
 					console.log('There was an error connecting to the session:', error.code, error.message);
 					this.setState({
 						joinBtnEnabled: true,
@@ -206,7 +214,7 @@ export default class App extends Component<Props> {
 			if (stream.connection && JSON.parse(stream.connection.data) && JSON.parse(stream.connection.data).clientData) {
 				return JSON.parse(stream.connection.data).clientData;
 			}
-		} catch (error) { }
+		} catch (error) {}
 		return '';
 	}
 
@@ -432,19 +440,18 @@ export default class App extends Component<Props> {
 		);
 	}
 
-
 	/**
 	 * --------------------------------------------
 	 * GETTING A TOKEN FROM YOUR APPLICATION SERVER
 	 * --------------------------------------------
 	 * The methods below request the creation of a Session and a Token to
 	 * your application server. This keeps your OpenVidu deployment secure.
-	 * 
+	 *
 	 * In this sample code, there is no user control at all. Anybody could
 	 * access your application server endpoints! In a real production
 	 * environment, your application server must identify the user to allow
 	 * access to the endpoints.
-	 * 
+	 *
 	 * Visit https://docs.openvidu.io/en/stable/application-server to learn
 	 * more about the integration of OpenVidu in your application server.
 	 */
@@ -454,16 +461,24 @@ export default class App extends Component<Props> {
 	}
 
 	async createSession(sessionId) {
-		const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions', { customSessionId: sessionId }, {
-			headers: { 'Content-Type': 'application/json', },
-		});
+		const response = await axios.post(
+			APPLICATION_SERVER_URL + 'api/sessions',
+			{ customSessionId: sessionId },
+			{
+				headers: { 'Content-Type': 'application/json' },
+			},
+		);
 		return response.data; // The sessionId
 	}
 
 	async createToken(sessionId) {
-		const response = await axios.post(APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections', {}, {
-			headers: { 'Content-Type': 'application/json', },
-		});
+		const response = await axios.post(
+			APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
+			{},
+			{
+				headers: { 'Content-Type': 'application/json' },
+			},
+		);
 		return response.data; // The token
 	}
 }
@@ -473,7 +488,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'center',
 		alignItems: 'center',
 		flex: 1,
-		paddingTop: Platform.OS == 'ios' ? 20 : 0,
+		paddingTop: Platform.OS === 'ios' ? 20 : 0,
 	},
 	selfView: {
 		width: '100%',
