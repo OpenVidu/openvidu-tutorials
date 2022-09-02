@@ -3,7 +3,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 install! 'cocoapods', :deterministic_uuids => false
 
-platform :ios, '11.0'
+platform :ios, '13.0'
 
 target 'openvidu_react_native' do
   # Pods for openvidu_react_native
