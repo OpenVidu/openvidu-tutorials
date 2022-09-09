@@ -28,6 +28,9 @@ RUN npm install --location=global npm
 RUN npm install && \
     npm run build
 
+# Move frontend build to dist
+RUN mv public dist/
+
 # Entrypoint
 COPY docker/node-entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN apk add curl && \
