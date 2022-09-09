@@ -34,8 +34,8 @@ printf '\n          Demos container tag:  openvidu/openvidu-call-demos:%s'  "${R
 printf '\n     -------------------------------------------------------------'
 printf '\n'
 
-docker build -f docker/Dockerfile -t openvidu/openvidu-call:${RELEASE_VERSION} --build-arg BASE_HREF=${CALL_BASE_HREF} .
-docker build -f docker/Dockerfile -t openvidu/openvidu-call:${RELEASE_VERSION}-demos --build-arg BASE_HREF=${DEMOS_BASE_HREF} .
+docker build -f docker/Dockerfile.node -t openvidu/openvidu-call:${RELEASE_VERSION} --build-arg BASE_HREF=${CALL_BASE_HREF} .
+docker build -f docker/Dockerfile.node -t openvidu/openvidu-call:${RELEASE_VERSION}-demos --build-arg BASE_HREF=${DEMOS_BASE_HREF} .
 
 printf '\n'
 printf '\n     Pushing containers to OpenVidu DockerHub'
