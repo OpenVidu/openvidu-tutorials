@@ -1,4 +1,4 @@
-require("dotenv").config();
+require("dotenv").config(!!process.env.CONFIG ? {path: process.env.CONFIG} : {});
 var express = require("express");
 var bodyParser = require("body-parser");
 var http = require("http");
@@ -24,6 +24,8 @@ app.use(bodyParser.json());
 server.listen(5000, () => {
   console.log("Application started");
 });
+
+console.warn('Application server connecting to OpenVidu at ' + process.env.OPENVIDU_URL);
 
 var openvidu = new OpenVidu(
   process.env.OPENVIDU_URL,
