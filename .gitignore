@@ -34,11 +34,9 @@ openvidu-react-native-androidx/ios/build/
 
 *.tgz
 
-openvidu-angular-components/.angular/
-
-openvidu-ionic/.angular/
-
-openvidu-ionic-capacitor/android/.idea/
+*/.angular/
+*/.idea/
+*/node_modules/
 
 openvidu-call/openvidu-call-back/public/
 
