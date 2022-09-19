@@ -168,5 +168,8 @@
       }
     }
   },
-  "defaultProject": "openvidu-call"
+  "defaultProject": "openvidu-call",
+  "cli": {
+    "analytics": false
+  }
 }
