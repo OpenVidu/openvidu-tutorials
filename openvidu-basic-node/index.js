@@ -20,6 +20,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Allow application/json
 app.use(bodyParser.json());
 
+// Serve static resources if available
+app.use(express.static(__dirname + '/public'));
+
 // Serve application
 server.listen(5000, () => {
   console.log("Application started");
@@ -48,3 +51,5 @@ app.post("/api/sessions/:sessionId/connections", async (req, res) => {
     res.send(connection.token);
   }
 });
+
+process.on('uncaughtException', err => console.error(err));

@@ -55,11 +55,15 @@ export class AppComponent implements OnDestroy {
 		private androidPermissions: AndroidPermissions,
 		private alertController: AlertController
 	) {
+
 		this.generateParticipantInfo();
+
+		// WARNING!! To make easier first steps with mobile devices, this code allows
+		// using the demos OpenVidu deployment when no custom deployment is provided
 		if (this.platform.is('hybrid') && this.APPLICATION_SERVER_URL === 'http://localhost:5000/') {
-			// To make easier first steps with mobile devices, use demos OpenVidu deployment when no custom deployment is provided
 			this.APPLICATION_SERVER_URL = 'https://demos.openvidu.io/';
 		}
+
 	}
 
 	@HostListener('window:beforeunload')

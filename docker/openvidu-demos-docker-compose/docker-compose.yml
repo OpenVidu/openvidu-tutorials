@@ -51,10 +51,10 @@ services:
         ports:
             - "5442:80"
         environment:
-            - URL_OV_BASIC_VIDEOCONFERENCE=http://openvidu-basic-videoconference:80
-            - URL_OV_BASIC_SCREENSHARE=http://openvidu-basic-screenshare:80
+            - URL_OV_BASIC_VIDEOCONFERENCE=http://openvidu-basic-videoconference:5000
+            - URL_OV_BASIC_SCREENSHARE=http://openvidu-basic-screenshare:5000
             - URL_OV_BASIC_WEBINAR=https://openvidu-basic-webinar:5000
             - URL_OV_CLASSROOM=https://openvidu-classroom:5000
-            - URL_OV_GETAROOM=http://openvidu-getaroom:80
+            - URL_OV_GETAROOM=http://openvidu-getaroom:5000
             - URL_OV_CALL=http://openvidu-call:5000
             - REDIRECT_INDEX_TO_DOMAIN=${REDIRECT_INDEX_TO_DOMAIN:-}

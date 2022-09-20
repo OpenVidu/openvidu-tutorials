@@ -1,18 +1,15 @@
-FROM nginx:1.19.2-alpine
+FROM node:16-alpine3.16
 
-RUN apk update && \
-    # apk add wget && \
-    rm -rf /var/cache/apk/*
+# Copy openvidu-basic-node
+COPY ./openvidu-basic-node /var/www/openvidu-basic-node
 
-# Install basic-videoconference
-COPY ./web /var/www/openvidu-getaroom
-RUN chown -R nginx:nginx /var/www/openvidu-getaroom
+# Install openvidu-basic-node dependencies
+RUN npm --prefix /var/www/openvidu-basic-node install
 
-# Nginx conf
-COPY ./docker/openvidu-getaroom.conf /etc/nginx/conf.d/default.conf
+# Copy static files to openvidu-basic-node
+RUN mkdir -p /var/www/openvidu-basic-node/public
+COPY ./web /var/www/openvidu-basic-node/public
 
-# Entrypoint
-COPY ./docker/entrypoint.sh /usr/local/bin
-RUN chmod +x /usr/local/bin/entrypoint.sh
+WORKDIR /var/www/openvidu-basic-node
 
-CMD /usr/local/bin/entrypoint.sh
+ENTRYPOINT [ "node", "index.js" ]

@@ -1,22 +1,15 @@
-FROM nginx:1.23.1-alpine
-
-RUN apk update && \
-    apk add --update npm && \
-    rm -rf /var/cache/apk/*
-
-# Install openvidu-js
-COPY ./web /var/www/openvidu-js
-RUN chown -R nginx:nginx /var/www/openvidu-js
+FROM node:16-alpine3.16
 
 # Copy openvidu-basic-node
 COPY ./openvidu-basic-node /var/www/openvidu-basic-node
+
+# Install openvidu-basic-node dependencies
 RUN npm --prefix /var/www/openvidu-basic-node install
 
-# Nginx conf
-COPY ./docker/openvidu-js.conf /etc/nginx/conf.d/default.conf
+# Copy static files to openvidu-basic-node
+RUN mkdir -p /var/www/openvidu-basic-node/public
+COPY ./web /var/www/openvidu-basic-node/public
 
-# Entrypoint
-COPY ./docker/entrypoint.sh /usr/local/bin
-RUN chmod +x /usr/local/bin/entrypoint.sh
+WORKDIR /var/www/openvidu-basic-node
 
-CMD /usr/local/bin/entrypoint.sh
+ENTRYPOINT [ "node", "index.js" ]
