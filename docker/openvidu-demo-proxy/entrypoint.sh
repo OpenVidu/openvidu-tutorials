@@ -1,6 +1,7 @@
 #!/bin/sh
 
 # Show input enviroment variables
+echo "Application server: ${URL_APPLICATION_SERVER}"
 echo "openvidu-basic-videoconference: ${URL_OV_BASIC_VIDEOCONFERENCE}"
 echo "openvidu-basic-screenshare: ${URL_OV_BASIC_SCREENSHARE}"
 echo "openvidu-basic-webinar: ${URL_OV_BASIC_WEBINAR}"
@@ -9,6 +10,7 @@ echo "openvidu-getaroom: ${URL_OV_GETAROOM}"
 echo "openvidu-call: ${URL_OV_CALL}"
 
 # Load nginx conf files
+sed -i "s|url_application_server|${URL_APPLICATION_SERVER}|" /etc/nginx/conf.d/default.conf
 sed -i "s|url_ov_basic_videoconference|${URL_OV_BASIC_VIDEOCONFERENCE}|" /etc/nginx/conf.d/default.conf
 sed -i "s|url_ov_basic_screenshare|${URL_OV_BASIC_SCREENSHARE}|" /etc/nginx/conf.d/default.conf
 sed -i "s|url_ov_basic_webinar|${URL_OV_BASIC_WEBINAR}|" /etc/nginx/conf.d/default.conf
