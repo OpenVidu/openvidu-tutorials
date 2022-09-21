@@ -61,6 +61,10 @@ export class AppComponent implements OnDestroy {
 		// WARNING!! To make easier first steps with mobile devices, this code allows
 		// using the demos OpenVidu deployment when no custom deployment is provided
 		if (this.platform.is('hybrid') && this.APPLICATION_SERVER_URL === 'http://localhost:5000/') {
+			/**
+			 * WARNING: this APPLICATION_SERVER_URL is not secure and is only meant for a first quick test.
+			 * Anyone could access your video sessions. You should modify the APPLICATION_SERVER_URL to a custom private one.
+			 */
 			this.APPLICATION_SERVER_URL = 'https://demos.openvidu.io/';
 		}
 
