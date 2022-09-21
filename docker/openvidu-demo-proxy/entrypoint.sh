@@ -2,11 +2,11 @@
 
 # Show input enviroment variables
 echo "Application server: ${URL_APPLICATION_SERVER}"
-echo "openvidu-basic-videoconference: ${URL_OV_JS_DEMO}"
-echo "openvidu-basic-screenshare: ${URL_OV_JS_SCREENSHARE_DEMO}"
-echo "openvidu-basic-webinar: ${URL_OV_ROLES_JAVA_DEMO}"
-echo "openvidu-classroom: ${URL_OV_CLASSROOM_DEMO}"
-echo "openvidu-getaroom: ${URL_OV_GETAROOM_DEMO}"
+echo "openvidu-js-demo: ${URL_OV_JS_DEMO}"
+echo "openvidu-js-screen-share-demo: ${URL_OV_JS_SCREENSHARE_DEMO}"
+echo "openvidu-roles-java-demo: ${URL_OV_ROLES_JAVA_DEMO}"
+echo "openvidu-classroom-demo: ${URL_OV_CLASSROOM_DEMO}"
+echo "openvidu-getaroom-demo: ${URL_OV_GETAROOM_DEMO}"
 echo "openvidu-call: ${URL_OV_CALL}"
 
 # Load nginx conf files
