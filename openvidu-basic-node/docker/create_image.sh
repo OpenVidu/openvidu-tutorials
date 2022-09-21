@@ -5,4 +5,5 @@ if [ $# -eq 0 ]; then
 fi
 
 pushd ../
-docker build -f docker/Dockerfile -t openvidu/openvidu-roles-java:"${1}" .
+
+docker build --pull --no-cache --rm=true -f docker/Dockerfile -t openvidu/openvidu-basic-node:"$1" .

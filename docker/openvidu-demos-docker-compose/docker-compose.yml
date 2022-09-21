@@ -2,36 +2,36 @@ version: '3.1'
 
 services:
 
-    openvidu-basic-videoconference:
-        image: openvidu/openvidu-basic-videoconference:2.22.0
+    openvidu-js-screen-share-demo:
+        image: openvidu/openvidu-js-screen-share-demo:2.22.0
         restart: on-failure
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
-    openvidu-basic-screenshare:
-        image: openvidu/openvidu-basic-screenshare:2.22.0
+    openvidu-js-demo:
+        image: openvidu/openvidu-js-demo:2.22.0
         restart: on-failure
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
-    openvidu-basic-webinar:
-        image: openvidu/openvidu-basic-webinar:2.22.0
+    openvidu-roles-java-demo:
+        image: openvidu/openvidu-roles-java-demo:2.22.0
         restart: on-failure
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
-    openvidu-classroom:
-        image: openvidu/openvidu-classroom:2.22.0
+    openvidu-classroom-demo:
+        image: openvidu/openvidu-classroom-demo:2.22.0
         restart: on-failure
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
-    openvidu-getaroom:
-        image: openvidu/openvidu-getaroom:2.22.0
+    openvidu-getaroom-demo:
+        image: openvidu/openvidu-getaroom-demo:2.22.0
         restart: on-failure
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
@@ -45,16 +45,24 @@ services:
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
             - CALL_OPENVIDU_CERTTYPE=${CERTIFICATE_TYPE}
 
+    openvidu-basic-node-demo:
+        image: openvidu/openvidu-basic-node-demo:2.22.0
+        restart: on-failure
+        environment:
+            - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
+            - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
+
     demos-page:
         image: openvidu/openvidu-demo-proxy:2.22.0
         restart: on-failure
         ports:
             - "5442:80"
         environment:
-            - URL_OV_BASIC_VIDEOCONFERENCE=http://openvidu-basic-videoconference:5000
-            - URL_OV_BASIC_SCREENSHARE=http://openvidu-basic-screenshare:5000
-            - URL_OV_BASIC_WEBINAR=https://openvidu-basic-webinar:5000
-            - URL_OV_CLASSROOM=https://openvidu-classroom:5000
-            - URL_OV_GETAROOM=http://openvidu-getaroom:5000
+            - URL_OV_JS_DEMO=http://openvidu-js-demo:5000
+            - URL_OV_JS_SCREENSHARE_DEMO=http://openvidu-js-screen-share-demo:5000
+            - URL_OV_ROLES_JAVA_DEMO=https://openvidu-roles-java-demo:5000
+            - URL_OV_CLASSROOM_DEMO=https://openvidu-classroom-demo:5000
+            - URL_OV_GETAROOM_DEMO=http://openvidu-getaroom-demo:5000
             - URL_OV_CALL=http://openvidu-call:5000
+            - URL_APPLICATION_SERVER=http://openvidu-basic-node-demo:5000
             - REDIRECT_INDEX_TO_DOMAIN=${REDIRECT_INDEX_TO_DOMAIN:-}

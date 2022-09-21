@@ -2,20 +2,20 @@
 
 # Show input enviroment variables
 echo "Application server: ${URL_APPLICATION_SERVER}"
-echo "openvidu-basic-videoconference: ${URL_OV_BASIC_VIDEOCONFERENCE}"
-echo "openvidu-basic-screenshare: ${URL_OV_BASIC_SCREENSHARE}"
-echo "openvidu-basic-webinar: ${URL_OV_BASIC_WEBINAR}"
-echo "openvidu-classroom: ${URL_OV_CLASSROOM}"
-echo "openvidu-getaroom: ${URL_OV_GETAROOM}"
+echo "openvidu-basic-videoconference: ${URL_OV_JS_DEMO}"
+echo "openvidu-basic-screenshare: ${URL_OV_JS_SCREENSHARE_DEMO}"
+echo "openvidu-basic-webinar: ${URL_OV_ROLES_JAVA_DEMO}"
+echo "openvidu-classroom: ${URL_OV_CLASSROOM_DEMO}"
+echo "openvidu-getaroom: ${URL_OV_GETAROOM_DEMO}"
 echo "openvidu-call: ${URL_OV_CALL}"
 
 # Load nginx conf files
 sed -i "s|url_application_server|${URL_APPLICATION_SERVER}|" /etc/nginx/conf.d/default.conf
-sed -i "s|url_ov_basic_videoconference|${URL_OV_BASIC_VIDEOCONFERENCE}|" /etc/nginx/conf.d/default.conf
-sed -i "s|url_ov_basic_screenshare|${URL_OV_BASIC_SCREENSHARE}|" /etc/nginx/conf.d/default.conf
-sed -i "s|url_ov_basic_webinar|${URL_OV_BASIC_WEBINAR}|" /etc/nginx/conf.d/default.conf
-sed -i "s|url_ov_classroom|${URL_OV_CLASSROOM}|" /etc/nginx/conf.d/default.conf
-sed -i "s|url_ov_getaroom|${URL_OV_GETAROOM}|" /etc/nginx/conf.d/default.conf
+sed -i "s|url_ov_js_demo|${URL_OV_JS_DEMO}|" /etc/nginx/conf.d/default.conf
+sed -i "s|url_ov_js_screenshare_demo|${URL_OV_JS_SCREENSHARE_DEMO}|" /etc/nginx/conf.d/default.conf
+sed -i "s|url_ov_roles_java_demo|${URL_OV_ROLES_JAVA_DEMO}|" /etc/nginx/conf.d/default.conf
+sed -i "s|url_ov_classroom_demo|${URL_OV_CLASSROOM_DEMO}|" /etc/nginx/conf.d/default.conf
+sed -i "s|url_ov_getaroom_demo|${URL_OV_GETAROOM_DEMO}|" /etc/nginx/conf.d/default.conf
 sed -i "s|url_ov_call|${URL_OV_CALL}|" /etc/nginx/conf.d/default.conf
 
 cat > /tmp/redirect_index_to_domain.tpl <<EOL

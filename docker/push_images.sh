@@ -5,13 +5,11 @@ if [ $# -eq 0 ]; then
     exit 1
 fi
 
-for folder in */ ; do
-    folder=${folder%/}
-    echo
-    echo "Pushing image openvidu/$folder:$1"
-    echo
-    cd "$folder"  || exit
-    docker push openvidu/$folder:$1
-    docker push openvidu/$folder:latest
-    cd ..
-done
+# Push images
+docker push openvidu/openvidu-js-demo:"$1"
+docker push openvidu/openvidu-js-screen-share-demo:"$1"
+docker push openvidu/openvidu-roles-java-demo:"$1"
+docker push openvidu/openvidu-classroom-demo:"$1"
+docker push openvidu/openvidu-getaroom-demo:"$1"
+docker push openvidu/openvidu-basic-node-demo:"$1"
+docker push openvidu/openvidu-demo-proxy:"$1"
