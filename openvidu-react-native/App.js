@@ -6,11 +6,10 @@ import axios from 'axios';
 import { OpenViduReactNativeAdapter, OpenVidu, RTCView } from 'openvidu-react-native-adapter';
 
 /**
- * It is necessary to change the APPLICATION_SERVER_URL for communicating with the server application.
- * Also you need to edit the ./android/app/src/main/res/xml/network_security_config.xml file adding your IP as a domain
- * for allowing to use the certs in an Android device.
+ * WARNING: this APPLICATION_SERVER_URL is not secure and is only meant for a first quick test.
+ * Anyone could access your video sessions. You should modify the APPLICATION_SERVER_URL to a custom private one.
  */
-const APPLICATION_SERVER_URL = 'https://X.X.X.X/';
+const APPLICATION_SERVER_URL = 'https://demos.openvidu.io/';
 
 type Props = {};
 export default class App extends Component<Props> {
