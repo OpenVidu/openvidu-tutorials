@@ -3,42 +3,42 @@ version: '3.1'
 services:
 
     openvidu-js-screen-share-demo:
-        image: openvidu/openvidu-js-screen-share-demo:2.22.0
+        image: openvidu/openvidu-js-screen-share-demo:2.23.0
         restart: on-failure
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
     openvidu-js-demo:
-        image: openvidu/openvidu-js-demo:2.22.0
+        image: openvidu/openvidu-js-demo:2.23.0
         restart: on-failure
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
     openvidu-roles-java-demo:
-        image: openvidu/openvidu-roles-java-demo:2.22.0
+        image: openvidu/openvidu-roles-java-demo:2.23.0
         restart: on-failure
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
     openvidu-classroom-demo:
-        image: openvidu/openvidu-classroom-demo:2.22.0
+        image: openvidu/openvidu-classroom-demo:2.23.0
         restart: on-failure
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
     openvidu-getaroom-demo:
-        image: openvidu/openvidu-getaroom-demo:2.22.0
+        image: openvidu/openvidu-getaroom-demo:2.23.0
         restart: on-failure
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
     openvidu-call:
-        image: openvidu/openvidu-call:2.22.0-demos
+        image: openvidu/openvidu-call:2.23.0-demos
         restart: on-failure
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
@@ -46,14 +46,14 @@ services:
             - CALL_OPENVIDU_CERTTYPE=${CERTIFICATE_TYPE}
 
     openvidu-basic-node-demo:
-        image: openvidu/openvidu-basic-node-demo:2.22.0
+        image: openvidu/openvidu-basic-node-demo:2.23.0
         restart: on-failure
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
 
     demos-page:
-        image: openvidu/openvidu-demo-proxy:2.22.0
+        image: openvidu/openvidu-demo-proxy:2.23.0
         restart: on-failure
         ports:
             - "5442:80"
