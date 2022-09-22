@@ -6,4 +6,4 @@ fi
 
 pushd ../
 
-docker build --pull --no-cache --rm=true -f docker/Dockerfile -t openvidu/openvidu-basic-node:"$1" .
+docker build --pull --no-cache --rm=true -f docker/Dockerfile -t "$1" .
