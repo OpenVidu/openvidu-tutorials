@@ -25,6 +25,7 @@ if [[ -z "$FROM_VERSION_SDK" || -z "$TO_VERSION_SDK" ]]; then
     fi
 fi
 
+echo
 echo "## Updating openvidu-tutorials"
 echo "## From $FROM_VERSION to $TO_VERSION"
 if [[ ! -z "$FROM_VERSION_SDK" || ! -z "$TO_VERSION_SDK" ]]; then
@@ -36,17 +37,21 @@ NPM_TUTORIALS="openvidu-angular
                 openvidu-react
                 openvidu-library-react
                 openvidu-ionic
+                openvidu-ionic/electron
+                openvidu-ionic-cordova
                 openvidu-roles-node
                 openvidu-recording-node
                 openvidu-react-native
                 openvidu-electron
                 openvidu-vue
+                openvidu-basic-node
                 openvidu-call/openvidu-call-front
                 openvidu-call/openvidu-call-back"
 
 MAVEN_TUTORIALS="openvidu-roles-java
                 openvidu-recording-java
-                openvidu-ipcameras"
+                openvidu-ipcameras
+                openvidu-basic-java"
 
 # Delete all package-lock.json and node_modules
 find -type f -name 'package-lock.json' -exec rm {} \;
@@ -60,6 +65,7 @@ find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-react\": \"$FROM_
 
 # Updating openvidu-angular dependencies in package.json files [openvidu-call, openvidu-components/*]
 find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-angular\": \"$FROM_VERSION\"/\"openvidu-angular\": \"$TO_VERSION\"/" {} \;
+find . -type f -name 'package.json' -exec sed -i "s/file:openvidu-angular-$FROM_VERSION.tgz/file:openvidu-angular-$TO_VERSION.tgz/" {} \;
 
 # Updating openvidu-react-native-adapter dependencies in package.json files [openvidu-react-native]
 find . -type f -name 'package.json' -exec sed -i "s/file:openvidu-react-native-adapter-$FROM_VERSION.tgz/file:openvidu-react-native-adapter-$TO_VERSION.tgz/" {} \;
@@ -67,7 +73,7 @@ find . -type f -name 'package.json' -exec sed -i "s/file:openvidu-react-native-a
 # If server SDKs must be udpated
 if [[ -n "$FROM_VERSION_SDK" && -n "$TO_VERSION_SDK" ]]; then
 
-    # Updating openvidu-node-client dependencies in package.json files [openvidu-roles-node, openvidu-recording-node]
+    # Updating openvidu-node-client dependencies in package.json files [openvidu-roles-node, openvidu-recording-node, openvidu-basic-node]
     find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-node-client\": \"$FROM_VERSION_SDK\"/\"openvidu-node-client\": \"$TO_VERSION_SDK\"/" {} \;
 
     # Updating openvidu-java-client dependencies in pom.xml files
@@ -111,6 +117,21 @@ do
     echo
     echo "###############################"
     echo "Compiling NPM project $tutorial"
+    echo "###############################"
+    echo
+    pushd $tutorial
+    npm --no-git-tag-version --allow-same-version version $TO_VERSION
+    npm install --force || true
+    popd
+done
+
+# Run "npm install" in every OpenVidu Components tutorial
+readarray -d '' OPENVIDU_COMPONENTS_TUTORIALS < <(find ./openvidu-components -mindepth 1 -maxdepth 1 -type d -print0)
+for tutorial in ${OPENVIDU_COMPONENTS_TUTORIALS[@]}
+do
+    echo
+    echo "###############################"
+    echo "Compiling NPM OpenVidu Components project $tutorial"
     echo "###############################"
     echo
     pushd $tutorial
