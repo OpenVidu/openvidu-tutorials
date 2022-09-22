@@ -12,4 +12,6 @@ COPY ./web /opt/openvidu-basic-node/public
 
 WORKDIR /opt/openvidu-basic-node
 
-ENTRYPOINT [ "node", "index.js" ]
+COPY docker/entrypoint.sh .
+
+ENTRYPOINT [ "./entrypoint.sh" ]

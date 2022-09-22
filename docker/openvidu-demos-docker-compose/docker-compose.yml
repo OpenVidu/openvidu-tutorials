@@ -8,6 +8,7 @@ services:
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
+            - OPENVIDU_APPLICATION_SERVER_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
 
     openvidu-js-demo:
         image: openvidu/openvidu-js-demo:2.23.0
@@ -15,6 +16,7 @@ services:
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
+            - OPENVIDU_APPLICATION_SERVER_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
 
     openvidu-roles-java-demo:
         image: openvidu/openvidu-roles-java-demo:2.23.0
@@ -36,6 +38,7 @@ services:
         environment:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
+            - OPENVIDU_APPLICATION_SERVER_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
 
     openvidu-call:
         image: openvidu/openvidu-call:2.23.0-demos
