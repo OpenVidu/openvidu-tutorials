@@ -10,7 +10,7 @@
         "@angular/platform-browser": "14.2.2",
         "@angular/platform-browser-dynamic": "14.2.2",
         "@angular/router": "14.2.2",
-        "openvidu-angular": "file:openvidu-angular-2.22.0.tgz",
+        "openvidu-angular": "2.22.0",
         "rxjs": "7.5.6",
         "unique-names-generator": "4.7.1",
         "zone.js": "0.11.8"
