@@ -273,50 +273,33 @@ function updateLayout() {
  * more about the integration of OpenVidu in your application server.
  */
 
-var OPENVIDU_SERVER_URL = "https://" + location.hostname + ":4443";
-var OPENVIDU_SERVER_SECRET = "MY_SECRET";
+var APPLICATION_SERVER_URL = "http://localhost:5000/";
 
 function getToken(mySessionId) {
-	return createSession(mySessionId).then(sId => createToken(sId));
+	return createSession(mySessionId).then(sessionId => createToken(sessionId));
 }
 
-function createSession(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessions
+function createSession(sessionId) {
 	return new Promise((resolve, reject) => {
 		$.ajax({
 			type: "POST",
-			url: OPENVIDU_SERVER_URL + "/openvidu/api/sessions",
+			url: APPLICATION_SERVER_URL + "api/sessions",
 			data: JSON.stringify({ customSessionId: sessionId }),
-			headers: {
-				"Authorization": "Basic " + btoa("OPENVIDUAPP:" + OPENVIDU_SERVER_SECRET),
-				"Content-Type": "application/json"
-			},
-			success: response => resolve(response.id),
-			error: (error) => {
-				if (error.status === 409) {
-					resolve(sessionId);
-				} else {
-					console.warn('No connection to OpenVidu Server. This may be a certificate error at ' + OPENVIDU_SERVER_URL);
-					if (window.confirm('No connection to OpenVidu Server. This may be a certificate error at \"' + OPENVIDU_SERVER_URL + '\"\n\nClick OK to navigate and accept it. ' +
-						'If no certificate warning is shown, then check that your OpenVidu Server is up and running at "' + OPENVIDU_SERVER_URL + '"')) {
-						location.assign(OPENVIDU_SERVER_URL + '/accept-certificate');
-					}
-				}
-			}
+			headers: { "Content-Type": "application/json" },
+			success: response => resolve(response), // The sessionId
+			error: (error) => reject(error)
 		});
 	});
 }
 
-function createToken(sessionId) { // See https://docs.openvidu.io/en/stable/reference-docs/REST-API/#post-openviduapisessionsltsession_idgtconnection
+function createToken(sessionId) {
 	return new Promise((resolve, reject) => {
 		$.ajax({
 			type: 'POST',
-			url: OPENVIDU_SERVER_URL + '/openvidu/api/sessions/' + sessionId + '/connection',
+			url: APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
 			data: JSON.stringify({}),
-			headers: {
-				'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + OPENVIDU_SERVER_SECRET),
-				'Content-Type': 'application/json',
-			},
-			success: (response) => resolve(response.token),
+			headers: { "Content-Type": "application/json" },
+			success: (response) => resolve(response), // The token
 			error: (error) => reject(error)
 		});
 	});
