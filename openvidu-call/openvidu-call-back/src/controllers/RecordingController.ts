@@ -143,6 +143,7 @@ export const proxyGETRecording = createProxyMiddleware({
 	onProxyReq: (proxyReq, req: Request, res: Response) => {
 		const isAdminDashboard = openviduService.adminTokens.includes(req['session'].token);
 		const sessionId = openviduService.getSessionIdFromCookie(req.cookies);
+		proxyReq.removeHeader('Cookie');
 		if ((!!sessionId && openviduService.isValidToken(sessionId, req.cookies)) || isAdminDashboard) {
 			const recordingId: string = req.params.recordingId;
 			if (!recordingId) {
@@ -154,6 +155,9 @@ export const proxyGETRecording = createProxyMiddleware({
 		} else {
 			return res.status(403).send(JSON.stringify({ message: 'Permissions denied to drive recording' }));
 		}
+	},
+	onProxyRes: (proxyRes, req: Request, res: Response) => {
+		proxyRes.headers['set-cookie'] = null;
 	},
 	onError: (error, req: Request, res: Response) => {
 		console.log(error);
