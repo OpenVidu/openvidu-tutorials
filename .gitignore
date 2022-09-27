@@ -41,3 +41,5 @@ openvidu-react-native-androidx/ios/build/
 openvidu-call/openvidu-call-back/public/
 
 openvidu-call/openvidu-call-back-java/src/main/resources/static/
+
+openvidu-components/openvidu-admin-dashboard/.vscode/
