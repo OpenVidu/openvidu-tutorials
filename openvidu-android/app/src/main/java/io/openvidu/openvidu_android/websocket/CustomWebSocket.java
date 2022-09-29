@@ -164,22 +164,6 @@ public class CustomWebSocket extends AsyncTask<SessionActivity, Void, Void> impl
                 session.setIceServers(iceServers);
             }
 
-            // TODO: start block to remove after 2.23
-            if (result.has("coturnIp") && result.has("coturnPort")) {
-                final String turnHost = result.getString("coturnIp");
-                final String turnPort = result.getString("coturnPort");
-                session.setIceServerUri("turn:" + turnHost + ":" + turnPort);
-            }
-            if (result.has("turnUsername")) {
-                final String turnUser = result.getString("turnUsername");
-                session.setIceServerUser(turnUser);
-            }
-            if (result.has("turnCredential")) {
-                final String turnPass = result.getString("turnCredential");
-                session.setIceServerPass(turnPass);
-            }
-            // TODO: end block to remove after 2.23
-
             PeerConnection localPeerConnection = session.createLocalPeerConnection();
 
             localParticipant.setPeerConnection(localPeerConnection);

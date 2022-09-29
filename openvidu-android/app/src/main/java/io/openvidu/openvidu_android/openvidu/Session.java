@@ -79,28 +79,6 @@ public class Session {
     }
 
     public PeerConnection createLocalPeerConnection() {
-        // TODO: start block to remove after 2.23
-        do {
-            if (iceServers.isEmpty()) {
-                if (iceServerUri != null) {
-                    IceServer.Builder iceServerBuilder;
-                    try {
-                        iceServerBuilder = IceServer.builder(iceServerUri);
-                    } catch (IllegalArgumentException e) {
-                        break;
-                    }
-                    if (iceServerUser != null) {
-                        iceServerBuilder.setUsername(iceServerUser);
-                    }
-                    if (iceServerPass != null) {
-                        iceServerBuilder.setPassword(iceServerPass);
-                    }
-                    iceServers.add(iceServerBuilder.createIceServer());
-                }
-            }
-        } while (false);
-        // TODO: end block to remove after 2.23
-
         PeerConnection.RTCConfiguration config =
                 new PeerConnection.RTCConfiguration(iceServers.isEmpty()
                         ? iceServersDefault
@@ -148,28 +126,6 @@ public class Session {
     }
 
     public void createRemotePeerConnection(final String connectionId) {
-        // TODO: start block to remove after 2.23
-        do {
-            if (iceServers.isEmpty()) {
-                if (iceServerUri != null) {
-                    IceServer.Builder iceServerBuilder;
-                    try {
-                        iceServerBuilder = IceServer.builder(iceServerUri);
-                    } catch (IllegalArgumentException e) {
-                        break;
-                    }
-                    if (iceServerUser != null) {
-                        iceServerBuilder.setUsername(iceServerUser);
-                    }
-                    if (iceServerPass != null) {
-                        iceServerBuilder.setPassword(iceServerPass);
-                    }
-                    iceServers.add(iceServerBuilder.createIceServer());
-                }
-            }
-        } while (false);
-        // TODO: end block to remove after 2.23
-
         PeerConnection.RTCConfiguration config =
                 new PeerConnection.RTCConfiguration(iceServers.isEmpty()
                         ? iceServersDefault
@@ -260,24 +216,6 @@ public class Session {
     public String getToken() {
         return this.token;
     }
-
-    // TODO: start block to remove after 2.23
-    private String iceServerUri = null;
-    private String iceServerUser = null;
-    private String iceServerPass = null;
-
-    public void setIceServerUri(String uri) {
-        iceServerUri = uri;
-    }
-
-    public void setIceServerUser(String user) {
-        iceServerUser = user;
-    }
-
-    public void setIceServerPass(String pass) {
-        iceServerPass = pass;
-    }
-    // TODO: end block to remove after 2.23
 
     public void setIceServers(List<IceServer> iceServers) {
         this.iceServers = iceServers;
