@@ -30,8 +30,9 @@ public class App {
 	static String OPENVIDU_SECRET;
 	static Map<String, String> IP_CAMERAS = new HashMap<String, String>() {
 		{
-			put("Big Buck Bunny", "rtsp://wowzaec2demo.streamlock.net/vod/mp4:BigBuckBunny_115k.mov");
-			put("Parking URJC", "rtsp://openvidu:MY_SECRET@193.147.62.13:554/stream1");
+		 	put("Amsterdam", "http://92.110.185.114:8080/mjpg/video.mjpg");
+		 	put("Czech Republic", "http://185.137.146.14:80/mjpg/video.mjpg");
+			put("Japan bridge", "http://211.132.61.124:80/mjpg/video.mjpg");
 		}
 	};
 
