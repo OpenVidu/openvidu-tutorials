@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { Platform, TextInput, ScrollView, Button, StyleSheet, Text, View, Image, PermissionsAndroid } from 'react-native';
-import InCallManager from 'react-native-incall-manager';
 import axios from 'axios';
+import React, { Component } from 'react';
+import { Button, Image, PermissionsAndroid, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import InCallManager from 'react-native-incall-manager';
 
-import { OpenViduReactNativeAdapter, OpenVidu, RTCView } from 'openvidu-react-native-adapter';
+import { OpenVidu, OpenViduReactNativeAdapter, RTCView } from 'openvidu-react-native-adapter';
 
 /**
  * WARNING: this APPLICATION_SERVER_URL is not secure and is only meant for a first quick test.
@@ -387,6 +387,8 @@ export default class App extends Component<Props> {
 								justifyContent: 'center',
 								alignItems: 'center',
 								padding: 20,
+								height: 300,
+								width: '100%',
 							}}>
 							<Image style={styles.img} source={require('./resources/images/openvidu_grey_bg_transp_cropped.png')} />
 						</View>
@@ -501,8 +503,8 @@ const styles = StyleSheet.create({
 		padding: 10,
 	},
 	img: {
-		flex: 1,
-		width: 400,
-		height: 200,
+		height: '60%',
+		maxWidth: '90%',
+		resizeMode: 'stretch',
 	},
 });
