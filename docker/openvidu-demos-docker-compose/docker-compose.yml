@@ -47,6 +47,11 @@ services:
             - OPENVIDU_URL=https://${DOMAIN_OR_PUBLIC_IP:-}:${HTTPS_PORT:-443}
             - OPENVIDU_SECRET=${OPENVIDU_SECRET:-}
             - CALL_OPENVIDU_CERTTYPE=${CERTIFICATE_TYPE}
+            - CALL_PRIVATE_ACCESS=${CALL_PRIVATE_ACCESS:-DISABLED}
+            - CALL_USER=${CALL_USER:-}
+            - CALL_SECRET=${CALL_SECRET:-}
+            - CALL_ADMIN_SECRET=${CALL_ADMIN_SECRET:-}
+            - CALL_RECORDING=${CALL_RECORDING:-}
 
     openvidu-basic-node-demo:
         image: openvidu/openvidu-basic-node-demo:2.23.0
