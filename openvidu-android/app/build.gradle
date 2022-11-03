@@ -46,7 +46,7 @@ dependencies {
     implementation 'com.jakewharton:butterknife:10.2.0'
     implementation 'com.squareup.okhttp3:okhttp:4.2.0'
     implementation 'com.neovisionaries:nv-websocket-client:2.9'
-    implementation 'org.webrtc:google-webrtc:1.0.32006'
+    implementation 'com.github.webrtc-sdk:android:104.5112.03'
     annotationProcessor 'com.jakewharton:butterknife-compiler:10.2.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.4.0'
