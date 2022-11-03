@@ -89,7 +89,6 @@ public class Session {
         config.continualGatheringPolicy =
                 PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY;
         config.keyType = PeerConnection.KeyType.ECDSA;
-        config.enableDtlsSrtp = true;
         config.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
 
         PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(config, new CustomPeerConnectionObserver("local") {
@@ -136,7 +135,6 @@ public class Session {
         config.continualGatheringPolicy =
                 PeerConnection.ContinualGatheringPolicy.GATHER_CONTINUALLY;
         config.keyType = PeerConnection.KeyType.ECDSA;
-        config.enableDtlsSrtp = true;
         config.sdpSemantics = PeerConnection.SdpSemantics.UNIFIED_PLAN;
 
         PeerConnection peerConnection = peerConnectionFactory.createPeerConnection(config, new CustomPeerConnectionObserver("remotePeerCreation") {
