@@ -113,6 +113,5 @@
         }
       }
     }
-  },
-  "defaultProject": "openvidu-custom-participant-panel-item-elements"
+  }
 }
