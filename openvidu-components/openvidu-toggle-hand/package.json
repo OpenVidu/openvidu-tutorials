@@ -1,6 +1,6 @@
 {
   "name": "openvidu-toggle-hand",
-  "version": "2.23.0",
+  "version": "2.24.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve --configuration development",
@@ -21,8 +21,8 @@
     "@angular/platform-browser": "13.1.2",
     "@angular/platform-browser-dynamic": "13.1.2",
     "@angular/router": "13.1.2",
-    "openvidu-angular": "2.23.1",
-    "openvidu-browser": "2.23.0",
+    "openvidu-angular": "2.24.0",
+    "openvidu-browser": "2.24.0",
     "rxjs": "7.5.2",
     "tslib": "2.0.0",
     "zone.js": "0.11.4"

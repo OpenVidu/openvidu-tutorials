@@ -44,14 +44,13 @@ NPM_TUTORIALS="openvidu-angular
                 openvidu-react-native
                 openvidu-electron
                 openvidu-vue
-                openvidu-basic-node
-                openvidu-call/openvidu-call-front
-                openvidu-call/openvidu-call-back"
+                openvidu-basic-node"
 
 MAVEN_TUTORIALS="openvidu-roles-java
                 openvidu-recording-java
                 openvidu-ipcameras
-                openvidu-basic-java"
+                openvidu-basic-java
+                openvidu-fault-tolerance"
 
 # Delete all package-lock.json and node_modules
 find -type f -name 'package-lock.json' -exec rm {} \;
@@ -86,7 +85,7 @@ if [[ -n "$FROM_VERSION_SDK" && -n "$TO_VERSION_SDK" ]]; then
 
 fi
 
-# Update every <script src="openvidu-browser-VERSION.js"></script> import in every *.html or *.ejs file (14 files changed)
+# Update every <script src="openvidu-browser-VERSION.js"></script> import in every *.html or *.ejs file (15 files changed)
 for file in *.html *.ejs; do
     echo
     echo "###############################"
