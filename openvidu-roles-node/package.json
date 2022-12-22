@@ -1,6 +1,6 @@
 {
   "name": "openvidu-roles-node",
-  "version": "2.24.0",
+  "version": "2.25.0",
   "description": "",
   "main": "server.js",
   "scripts": {
@@ -20,6 +20,6 @@
     "body-parser": "1.19.0",
     "express": "4.17.1",
     "express-session": "1.17.1",
-    "openvidu-node-client": "2.24.0"
+    "openvidu-node-client": "2.25.0"
   }
 }
