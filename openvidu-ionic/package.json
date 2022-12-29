@@ -14,7 +14,9 @@
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build:full": "npm run trapeze && ionic cap sync"
+    "build:full": "npm run trapeze && ionic cap sync",
+    "build:android": "npm run build:full && ionic cap build android --no-open && cd android && ./gradlew assembleDebug && ./gradlew assembleRelease",
+    "copy:android": "cp ./android/app/build/outputs/apk/debug/openvidu-ionic.apk /opt/openvidu/android/."
   },
   "private": true,
   "dependencies": {

@@ -260,16 +260,19 @@ export class AppComponent implements OnDestroy {
 					type: 'text',
 					value: this.APPLICATION_SERVER_URL,
 					placeholder: 'URL',
+					id: 'url-input',
 				}
 			],
 			buttons: [
 				{
 					text: 'Cancel',
 					role: 'cancel',
+					id: 'cancel-btn',
 					cssClass: 'secondary',
 				},
 				{
 					text: 'Ok',
+					id: 'ok-btn',
 					handler: (data) => {
 						this.APPLICATION_SERVER_URL = data.url;
 					},
