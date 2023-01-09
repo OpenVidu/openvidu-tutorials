@@ -60,3 +60,5 @@ buck-out/
 /ios/Pods/
 
 org.eclipse.buildship.core.prefs
+
+index.android.bundle
