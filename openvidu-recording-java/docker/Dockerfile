@@ -1,6 +1,6 @@
 
 FROM maven:3.6.3 as build
-WORKDIR /basic-webinar
+WORKDIR /openvidu-recording-java
 COPY ./pom.xml pom.xml
 COPY ./src/main src/main
 
@@ -14,8 +14,8 @@ RUN apk update && \
     rm -rf /var/cache/apk/*
 
 # Install basic-webinar
-RUN mkdir -p /opt/openvidu-basic-webinar
-COPY --from=build /basic-webinar/target/openvidu-roles-java-*.jar /opt/openvidu-basic-webinar/openvidu-basic-webinar.jar
+RUN mkdir -p /opt/openvidu-recording-java
+COPY --from=build /openvidu-recording-java/target/openvidu-recording-java-*.jar /opt/openvidu-recording-java/openvidu-recording-java.jar
 # Entrypoint
 COPY ./docker/entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/entrypoint.sh

@@ -43,13 +43,13 @@
 </template>
 
 <script>
-import { OpenVidu } from "openvidu-browser";
 import axios from "axios";
+import { OpenVidu } from "openvidu-browser";
 import UserVideo from "./components/UserVideo";
 
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
-const APPLICATION_SERVER_URL = "http://localhost:5000/";
+const APPLICATION_SERVER_URL = process.env.NODE_ENV === 'production' ? '' : 'http://localhost:5000/';
 
 export default {
   name: "App",
@@ -169,12 +169,12 @@ export default {
      * --------------------------------------------
      * The methods below request the creation of a Session and a Token to
      * your application server. This keeps your OpenVidu deployment secure.
-     * 
+     *
      * In this sample code, there is no user control at all. Anybody could
      * access your application server endpoints! In a real production
      * environment, your application server must identify the user to allow
      * access to the endpoints.
-     * 
+     *
      * Visit https://docs.openvidu.io/en/stable/application-server to learn
      * more about the integration of OpenVidu in your application server.
      */

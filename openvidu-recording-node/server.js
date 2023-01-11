@@ -3,16 +3,8 @@
 var OpenVidu = require('openvidu-node-client').OpenVidu;
 var OpenViduRole = require('openvidu-node-client').OpenViduRole;
 
-// Check launch arguments: must receive openvidu-server URL and the secret
-if (process.argv.length != 4) {
-    console.log("Usage: node " + __filename + " OPENVIDU_URL OPENVIDU_SECRET");
-    process.exit(-1);
-}
 // For demo purposes we ignore self-signed certificate
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0"
-var port = process.env.PORT || 5000;
-var useSSL = (process.env.USE_SSL === 'false') ? false : true
-
 
 // Node imports
 var express = require('express');
@@ -20,6 +12,30 @@ var fs = require('fs');
 var httpServer = (useSSL) ? require('https') : require('http');
 var bodyParser = require('body-parser'); // Pull information from HTML POST (express4)
 var app = express(); // Create our app with express
+
+// Environment variable: PORT where the node server is listening
+var SERVER_PORT = process.env.SERVER_PORT || 5000;
+// Environment variable: URL where our OpenVidu server is listening
+var OPENVIDU_URL = process.env.OPENVIDU_URL || process.argv[2] || 'http://localhost:4443';
+// Environment variable: secret shared with our OpenVidu server
+var OPENVIDU_SECRET = process.env.OPENVIDU_SECRET || process.argv[3] || 'MY_SECRET';
+
+var useSSL = (process.env.USE_SSL === 'false') ? false : true
+
+
+// Entrypoint to OpenVidu Node Client SDK
+var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
+
+// Collection to pair session names with OpenVidu Session objects
+var mapSessions = {};
+// Collection to pair session names with tokens
+var mapSessionNamesTokens = {};
+
+// Listen (start app with node server.js)
+var options = (useSSL) ? {
+    key: fs.readFileSync('openvidukey.pem'),
+    cert: fs.readFileSync('openviducert.pem')
+} : {}
 
 // Server configuration
 app.use(express.static(__dirname + '/public')); // Set the static files location
@@ -31,29 +47,12 @@ app.use(bodyParser.json({
     type: 'application/vnd.api+json'
 })); // Parse application/vnd.api+json as json
 
-// Listen (start app with node server.js)
-var options = (useSSL) ? {
-    key: fs.readFileSync('openvidukey.pem'),
-    cert: fs.readFileSync('openviducert.pem')
-} : {}
-httpServer.createServer(options, app).listen(port);
 
-// Environment variable: URL where our OpenVidu server is listening
-var OPENVIDU_URL = process.argv[2];
-// Environment variable: secret shared with our OpenVidu server
-var OPENVIDU_SECRET = process.argv[3];
-
-// Entrypoint to OpenVidu Node Client SDK
-var OV = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
-
-// Collection to pair session names with OpenVidu Session objects
-var mapSessions = {};
-// Collection to pair session names with tokens
-var mapSessionNamesTokens = {};
-
-console.log(`App listening with ${(useSSL) ? "https": "http"} on port ${port} connected to OpenVidu at ${OPENVIDU_URL}`);
-
-
+httpServer.createServer(options, app).listen(SERVER_PORT, () => {
+    console.log(`App listening with ${(useSSL) ? "https": "http"} on port ${SERVER_PORT}`);
+    console.log(`OPENVIDU_URL: ${OPENVIDU_URL}`);
+    console.log(`OPENVIDU_SECRET: ${OPENVIDU_SECRET}`);
+});
 
 
 /* Session API */

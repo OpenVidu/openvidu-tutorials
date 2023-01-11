@@ -7,4 +7,11 @@ if [ -n "${OPENVIDU_APPLICATION_SERVER_URL}" ]; then
         public/app.js
 fi
 
+if [ -n "${SERVER_PORT}" ]; then
+    # Replace SERVER_PORT at frontend app
+    sed -i \
+        "s|var APPLICATION_SERVER_URL = \"http://localhost:5000/\";|var APPLICATION_SERVER_URL = \"http://localhost:${SERVER_PORT}/\";|" \
+        public/app.js
+fi
+
 exec node index.js "$*"

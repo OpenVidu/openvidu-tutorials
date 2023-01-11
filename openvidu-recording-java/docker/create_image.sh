@@ -5,4 +5,4 @@ if [ $# -eq 0 ]; then
 fi
 
 pushd ../
-docker build --pull --no-cache --rm=true -f docker/Dockerfile -t "$1" .
+docker build -f docker/Dockerfile -t "$1" .
