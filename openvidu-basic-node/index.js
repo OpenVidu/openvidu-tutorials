@@ -6,6 +6,13 @@ var OpenVidu = require("openvidu-node-client").OpenVidu;
 var cors = require("cors");
 var app = express();
 
+// Environment variable: PORT where the node server is listening
+var SERVER_PORT = process.env.SERVER_PORT || 5000;
+// Environment variable: URL where our OpenVidu server is listening
+var OPENVIDU_URL = process.env.OPENVIDU_URL || 'http://localhost:4443';
+// Environment variable: secret shared with our OpenVidu server
+var OPENVIDU_SECRET = process.env.OPENVIDU_SECRET || 'MY_SECRET';
+
 // Enable CORS support
 app.use(
   cors({
@@ -14,6 +21,7 @@ app.use(
 );
 
 var server = http.createServer(app);
+var openvidu = new OpenVidu(OPENVIDU_URL, OPENVIDU_SECRET);
 
 // Allow application/x-www-form-urlencoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -24,16 +32,10 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/public'));
 
 // Serve application
-server.listen(5000, () => {
-  console.log("Application started");
+server.listen(SERVER_PORT, () => {
+  console.log("Application started on port: ", SERVER_PORT);
+  console.warn('Application server connecting to OpenVidu at ' + OPENVIDU_URL);
 });
-
-console.warn('Application server connecting to OpenVidu at ' + process.env.OPENVIDU_URL);
-
-var openvidu = new OpenVidu(
-  process.env.OPENVIDU_URL,
-  process.env.OPENVIDU_SECRET
-);
 
 app.post("/api/sessions", async (req, res) => {
   var session = await openvidu.createSession(req.body);

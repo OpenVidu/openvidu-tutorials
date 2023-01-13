@@ -9,6 +9,7 @@ app = Flask(__name__)
 cors = CORS(app, resources={r"/*": {"origins": "*"}})
 
 # Load env variables
+SERVER_PORT = os.environ.get("SERVER_PORT")
 OPENVIDU_URL = os.environ.get("OPENVIDU_URL")
 OPENVIDU_SECRET = os.environ.get("OPENVIDU_SECRET")
 
@@ -47,4 +48,4 @@ def createConnection(sessionId):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0")
+    app.run(debug=True, host="0.0.0.0", port=SERVER_PORT)

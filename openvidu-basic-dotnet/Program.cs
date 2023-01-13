@@ -8,6 +8,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
+IConfiguration config = new ConfigurationBuilder()
+                .SetBasePath(Directory.GetCurrentDirectory())
+                .AddJsonFile("appsettings.json")
+                .AddEnvironmentVariables().Build();
+
+// Load env variables
+var SERVER_PORT = config.GetValue<int>("SERVER_PORT");
+var OPENVIDU_URL = config.GetValue<string>("OPENVIDU_URL");
+var OPENVIDU_SECRET = config.GetValue<string>("OPENVIDU_SECRET");
+
 // Enable CORS support
 builder.Services.AddCors(options =>
 {
@@ -18,17 +28,13 @@ builder.Services.AddCors(options =>
                       });
 });
 
+builder.WebHost.UseKestrel(serverOptions => {
+    serverOptions.ListenAnyIP(SERVER_PORT);
+});
+
 var app = builder.Build();
 app.UseCors(MyAllowSpecificOrigins);
 
-IConfiguration config = new ConfigurationBuilder()
-                .SetBasePath(Directory.GetCurrentDirectory())
-                .AddJsonFile("appsettings.json")
-                .AddEnvironmentVariables().Build();
-
-// Load env variables
-var OPENVIDU_URL = config.GetValue<string>("OPENVIDU_URL");
-var OPENVIDU_SECRET = config.GetValue<string>("OPENVIDU_SECRET");
 
 // Allow for insecure certificate in OpenVidu deployment
 var handler = new HttpClientHandler
