@@ -52,6 +52,23 @@ MAVEN_TUTORIALS="openvidu-roles-java
                 openvidu-basic-java
                 openvidu-fault-tolerance"
 
+COMPONENTS_TUTORIALS="openvidu-components/openvidu-additional-panels
+                    openvidu-components/openvidu-admin-dashboard
+                    openvidu-components/openvidu-custom-activities-panel
+                    openvidu-components/openvidu-custom-chat-panel
+                    openvidu-components/openvidu-custom-layout
+                    openvidu-components/openvidu-custom-panels
+                    openvidu-components/openvidu-custom-participant-panel-item
+                    openvidu-components/openvidu-custom-participant-panel-item-elements
+                    openvidu-components/openvidu-custom-participants-panel
+                    openvidu-components/openvidu-custom-stream
+                    openvidu-components/openvidu-custom-toolbar
+                    openvidu-components/openvidu-custom-ui
+                    openvidu-components/openvidu-toggle-hand
+                    openvidu-components/openvidu-toolbar-buttons
+                    openvidu-components/openvidu-toolbar-panel-buttons"
+
+
 # Delete all package-lock.json and node_modules
 find -type f -name 'package-lock.json' -exec rm {} \;
 find -type d -name 'node_modules' -prune -exec rm -rf {} \;
@@ -125,8 +142,8 @@ do
 done
 
 # Run "npm install" in every OpenVidu Components tutorial
-readarray -d '' OPENVIDU_COMPONENTS_TUTORIALS < <(find ./openvidu-components -mindepth 1 -maxdepth 1 -type d -print0)
-for tutorial in ${OPENVIDU_COMPONENTS_TUTORIALS[@]}
+readarray -d '' COMPONENTS_TUTORIALS < <(find ./openvidu-components -mindepth 1 -maxdepth 1 -type d -print0)
+for tutorial in ${COMPONENTS_TUTORIALS[@]}
 do
     echo
     echo "###############################"
