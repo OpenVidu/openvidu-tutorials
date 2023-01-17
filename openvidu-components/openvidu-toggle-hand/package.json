@@ -5,9 +5,7 @@
     "ng": "ng",
     "start": "ng serve --configuration development",
     "build": "ng build",
-    "test": "ng test",
-    "lint": "ng lint",
-    "e2e": "ng e2e"
+    "build:prod": "./node_modules/@angular/cli/bin/ng.js build --output-path ./openvidu-basic-node/public/ --configuration production"
   },
   "private": true,
   "dependencies": {

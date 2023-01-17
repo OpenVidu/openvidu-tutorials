@@ -1,12 +1,13 @@
-import { Component, OnInit } from "@angular/core";
+import { animate, style, transition, trigger } from "@angular/animations";
 import { HttpClient } from "@angular/common/http";
-import { trigger, transition, style, animate } from "@angular/animations";
+import { Component, OnInit } from "@angular/core";
 import { lastValueFrom } from "rxjs";
 
-import { ParticipantService, OpenViduService } from "openvidu-angular";
+import { OpenViduService, ParticipantService } from "openvidu-angular";
 import { ParticipantAppModel } from "./models/participant-app.model";
 
 import { Session, SignalOptions } from "openvidu-browser";
+import { environment } from 'src/environments/environment';
 
 enum SignalApp {
 	HAND_TOGGLE = 'handToggle'
@@ -31,7 +32,7 @@ enum SignalApp {
 })
 export class AppComponent implements OnInit {
 
-	APPLICATION_SERVER_URL = 'http://localhost:5000/';
+	APPLICATION_SERVER_URL = environment.applicationServerUrl;
 
 	tokens: { webcam: string; screen: string };
 	hasHandRaised: boolean = false;
@@ -91,12 +92,12 @@ export class AppComponent implements OnInit {
 	 * --------------------------------------------
 	 * The methods below request the creation of a Session and a Token to
 	 * your application server. This keeps your OpenVidu deployment secure.
-	 * 
+	 *
 	 * In this sample code, there is no user control at all. Anybody could
 	 * access your application server endpoints! In a real production
 	 * environment, your application server must identify the user to allow
 	 * access to the endpoints.
-	 * 
+	 *
 	 * Visit https://docs.openvidu.io/en/stable/application-server to learn
 	 * more about the integration of OpenVidu in your application server.
 	 */

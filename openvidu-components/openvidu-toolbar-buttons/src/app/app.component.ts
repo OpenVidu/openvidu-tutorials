@@ -1,8 +1,9 @@
-import { Component, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
+import { Component, OnInit } from "@angular/core";
 import { lastValueFrom } from "rxjs";
 
-import { TokenModel, OpenViduService, ParticipantService } from "openvidu-angular";
+import { OpenViduService, ParticipantService, TokenModel } from "openvidu-angular";
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-root',
@@ -22,7 +23,7 @@ import { TokenModel, OpenViduService, ParticipantService } from "openvidu-angula
 })
 export class AppComponent implements OnInit {
 
-	APPLICATION_SERVER_URL = 'http://localhost:5000/';
+	APPLICATION_SERVER_URL = environment.applicationServerUrl;
 
 	sessionId = 'toolbar-additionalbtn-directive-example';
 	tokens!: TokenModel;
@@ -56,12 +57,12 @@ export class AppComponent implements OnInit {
 	 * --------------------------------------------
 	 * The methods below request the creation of a Session and a Token to
 	 * your application server. This keeps your OpenVidu deployment secure.
-	 * 
+	 *
 	 * In this sample code, there is no user control at all. Anybody could
 	 * access your application server endpoints! In a real production
 	 * environment, your application server must identify the user to allow
 	 * access to the endpoints.
-	 * 
+	 *
 	 * Visit https://docs.openvidu.io/en/stable/application-server to learn
 	 * more about the integration of OpenVidu in your application server.
 	 */

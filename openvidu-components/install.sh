@@ -10,7 +10,6 @@ TUTORIALS=(
   'openvidu-custom-participants-panel'
   'openvidu-custom-stream'
   'openvidu-custom-toolbar'
-  'openvidu-custom-toolbar'
   'openvidu-custom-ui'
   'openvidu-toggle-hand'
   'openvidu-toolbar-buttons'

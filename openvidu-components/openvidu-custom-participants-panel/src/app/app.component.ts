@@ -1,6 +1,6 @@
-import { Component, OnInit } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Subscription, lastValueFrom } from "rxjs";
+import { Component, OnInit } from "@angular/core";
+import { lastValueFrom, Subscription } from "rxjs";
 
 import { ParticipantAbstractModel, ParticipantService, TokenModel } from "openvidu-angular";
 
@@ -34,7 +34,7 @@ import { ParticipantAbstractModel, ParticipantService, TokenModel } from "openvi
 })
 export class AppComponent implements OnInit {
 
-	APPLICATION_SERVER_URL = 'http://localhost:5000/';
+	APPLICATION_SERVER_URL = environment.applicationServerUrl;
 
 	sessionId = 'participants-panel-directive-example';
 	tokens!: TokenModel;

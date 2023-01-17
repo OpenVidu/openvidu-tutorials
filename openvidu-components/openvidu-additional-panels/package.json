@@ -5,7 +5,9 @@
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
-    "watch": "ng build --watch --configuration development"
+    "watch": "ng build --watch --configuration development",
+    "build:prod": "./node_modules/@angular/cli/bin/ng.js build --output-path ./openvidu-basic-node/public/ --configuration production"
+
   },
   "private": true,
   "dependencies": {
