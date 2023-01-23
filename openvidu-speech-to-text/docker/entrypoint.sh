@@ -5,12 +5,9 @@ if [ -n "${OPENVIDU_APPLICATION_SERVER_URL}" ]; then
     sed -i \
         "s|var APPLICATION_SERVER_URL = \"http://localhost:5000/\";|var APPLICATION_SERVER_URL = \"${OPENVIDU_APPLICATION_SERVER_URL}/\";|" \
         public/app.js
-fi
-
-if [ -n "${SERVER_PORT}" ]; then
-    # Replace SERVER_PORT at frontend app
+else
     sed -i \
-        "s|var APPLICATION_SERVER_URL = \"http://localhost:5000/\";|var APPLICATION_SERVER_URL = \"http://localhost:${SERVER_PORT}/\";|" \
+        "s|var APPLICATION_SERVER_URL = \"http://localhost:5000/\";|var APPLICATION_SERVER_URL = \"\";|" \
         public/app.js
 fi
 

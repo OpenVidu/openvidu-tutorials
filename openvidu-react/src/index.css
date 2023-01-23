@@ -159,12 +159,8 @@ a:hover .demo-logo {
 	display: inline-block;
 }
 
-#buttonLeaveSession {
+#buttonLeaveSession, #buttonSwitchCamera {
 	float: right;
-	margin-top: 20px;
-}
-#buttonSwitchCamera {
-	float: left;
 	margin-top: 20px;
 }
 
