@@ -3,6 +3,7 @@ import { Component, OnInit } from '@angular/core';
 import { lastValueFrom } from "rxjs";
 
 import { TokenModel } from 'openvidu-angular';
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-root',

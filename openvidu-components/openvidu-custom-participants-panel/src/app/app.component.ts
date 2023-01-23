@@ -3,6 +3,7 @@ import { Component, OnInit } from "@angular/core";
 import { lastValueFrom, Subscription } from "rxjs";
 
 import { ParticipantAbstractModel, ParticipantService, TokenModel } from "openvidu-angular";
+import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-root',
