@@ -10,6 +10,6 @@
 openvidu-tutorials
 ===
 
-Visit [openvidu.io/tutorials](http://openvidu.io/tutorials)
+Visit [Developing your video app](https://docs.openvidu.io/en/stable/developing-your-video-app/)
 
 [OpenViduLogo]: https://secure.gravatar.com/avatar/5daba1d43042f2e4e85849733c8e5702?s=120
