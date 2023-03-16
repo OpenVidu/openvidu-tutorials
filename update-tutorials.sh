@@ -108,7 +108,15 @@ for tutorial in ${NPM_TUTORIALS}; do
     echo
     pushd $tutorial
     npm --no-git-tag-version --allow-same-version version $NEW_VERSION
-    npm install --force || true
+
+    # Ignore openvidu-react-native failure
+    # It fails if openvidu-react-native-adapter-*.tgz is not available
+    if [ "$tutorial" == "openvidu-react-native" ]; then
+        npm install --force || true
+    else
+        npm install --force
+    fi
+
     popd
 done
 
@@ -122,7 +130,7 @@ for tutorial in ${COMPONENTS_TUTORIALS[@]}; do
     echo
     pushd $tutorial
     npm --no-git-tag-version --allow-same-version version $NEW_VERSION
-    npm install --force || true
+    npm install
     popd
 done
 
@@ -135,7 +143,7 @@ for tutorial in ${MAVEN_TUTORIALS}; do
     echo
     cd $tutorial
     mvn versions:set -DnewVersion=$NEW_VERSION
-    mvn clean compile package || true
+    mvn clean compile package
     cd ..
 done
 
