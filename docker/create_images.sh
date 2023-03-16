@@ -33,9 +33,13 @@ pushd openvidu-getaroom/docker || exit 1
 popd || exit 1
 
 # Build openvidu-classroom-demo
-pushd ../classroom-demo/docker || exit 1
-./create_image.sh "openvidu/openvidu-classroom-demo:$1"
-popd || exit 1
+if [ -d "../classroom-demo/docker" ]; then
+    pushd ../classroom-demo/docker || exit 1
+    ./create_image.sh "openvidu/openvidu-classroom-demo:$1"
+    popd || exit 1
+else
+    echo "classroom-demo not found. Skipping..."
+fi
 
 # =======================
 # Building Basic application servers
