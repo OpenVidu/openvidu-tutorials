@@ -12,14 +12,14 @@ pushd ..
 # Building tutorials
 # =======================
 
-# Build openvidu-js-screenshare-demo
-pushd openvidu-js-screen-share/docker || exit 1
-./create_image.sh "openvidu/openvidu-js-screen-share-demo:$1"
-popd || exit 1
-
 # Build openvidu-js-demo
 pushd openvidu-js/docker || exit 1
 ./create_image.sh "openvidu/openvidu-js-demo:$1"
+popd || exit 1
+
+# Build openvidu-js-screenshare-demo
+pushd openvidu-js-screen-share/docker || exit 1
+./create_image.sh "openvidu/openvidu-js-screen-share-demo:$1"
 popd || exit 1
 
 # Build openvidu-roles-demo
