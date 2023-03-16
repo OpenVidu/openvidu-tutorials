@@ -11,7 +11,7 @@
 
 	<groupId>io.openvidu</groupId>
 	<artifactId>openvidu-ipcameras</artifactId>
-	<version>2.25.0</version>
+	<version>2.26.0</version>
 	<packaging>jar</packaging>
 
 	<name>openvidu-ipcameras</name>
@@ -46,7 +46,7 @@
 		<dependency>
 			<groupId>io.openvidu</groupId>
 			<artifactId>openvidu-java-client</artifactId>
-			<version>2.25.0</version>
+			<version>2.26.0</version>
 		</dependency>
 
 		<dependency>

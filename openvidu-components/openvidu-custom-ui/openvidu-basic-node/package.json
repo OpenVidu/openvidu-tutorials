@@ -7,6 +7,6 @@
     "cors": "2.8.5",
     "dotenv": "16.0.1",
     "express": "4.18.1",
-    "openvidu-node-client": "2.25.0"
+    "openvidu-node-client": "2.26.2"
   }
 }

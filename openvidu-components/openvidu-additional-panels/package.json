@@ -1,13 +1,12 @@
 {
   "name": "openvidu-additional-panels",
-  "version": "2.25.0",
+  "version": "2.26.0",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "build:prod": "./node_modules/@angular/cli/bin/ng.js build --output-path ./openvidu-basic-node/public/ --configuration production"
-
   },
   "private": true,
   "dependencies": {
@@ -21,7 +20,7 @@
     "@angular/platform-browser": "^14.2.11",
     "@angular/platform-browser-dynamic": "^14.2.11",
     "@angular/router": "^14.2.11",
-    "openvidu-angular": "2.25.0",
+    "openvidu-angular": "2.26.0",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
