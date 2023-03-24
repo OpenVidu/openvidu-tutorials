@@ -1,17 +1,17 @@
 #!/bin/bash
 set -eo pipefail
 
-if [[ -z "$NEW_VERSION" || -z "$FROM_OPENVIDU_BROWSER_VERSION" || -z "$TO_OPENVIDU_BROWSER_VERSION" || -z "$FROM_OPENVIDU_NODE_CLIENT_VERSION" || -z "$TO_OPENVIDU_NODE_CLIENT_VERSION" || -z "$TO_OPENVIDU_JAVA_CLIENT_VERSION" ]]; then
+if [[ -z "$VERSION" || -z "$FROM_OPENVIDU_BROWSER_VERSION" || -z "$TO_OPENVIDU_BROWSER_VERSION" || -z "$FROM_OPENVIDU_NODE_CLIENT_VERSION" || -z "$TO_OPENVIDU_NODE_CLIENT_VERSION" || -z "$TO_OPENVIDU_JAVA_CLIENT_VERSION" ]]; then
     echo
     echo "Must declare:"
-    echo "- The new version of the projects with NEW_VERSION"
+    echo "- The new version of the projects with VERSION"
     echo "- The previous and new version of openvidu-browser (and related libraries) with FROM_OPENVIDU_BROWSER_VERSION and TO_OPENVIDU_BROWSER_VERSION"
     echo "- The previous and new version of openvidu-node-client with FROM_OPENVIDU_NODE_CLIENT_VERSION and TO_OPENVIDU_NODE_CLIENT_VERSION"
     echo "- The new version of openvidu-java-client with TO_OPENVIDU_JAVA_CLIENT_VERSION"
     echo
     echo "Example of use:"
     echo
-    echo "export NEW_VERSION=2.26.0"
+    echo "export VERSION=2.26.0"
     echo "export FROM_OPENVIDU_BROWSER_VERSION=2.25.0"
     echo "export TO_OPENVIDU_BROWSER_VERSION=2.26.0"
     echo "export FROM_OPENVIDU_NODE_CLIENT_VERSION=2.25.0"
@@ -23,7 +23,7 @@ if [[ -z "$NEW_VERSION" || -z "$FROM_OPENVIDU_BROWSER_VERSION" || -z "$TO_OPENVI
 fi
 
 echo
-echo "## Updating openvidu-tutorials to $NEW_VERSION"
+echo "## Updating openvidu-tutorials to $VERSION"
 echo "## - From openvidu-browser $FROM_OPENVIDU_BROWSER_VERSION to $TO_OPENVIDU_BROWSER_VERSION"
 echo "## - From openvidu-node-client $FROM_OPENVIDU_NODE_CLIENT_VERSION to $TO_OPENVIDU_NODE_CLIENT_VERSION"
 echo "## - To openvidu-java-client $TO_OPENVIDU_JAVA_CLIENT_VERSION"
@@ -86,7 +86,7 @@ for file in *.html *.ejs; do
 done
 
 # Update every openvidu-browser-VERSION.js file (15 FILES CHANGED)
-wget https://github.com/OpenVidu/openvidu/releases/download/v$NEW_VERSION/openvidu-browser-$TO_OPENVIDU_BROWSER_VERSION.js
+wget https://github.com/OpenVidu/openvidu/releases/download/v$VERSION/openvidu-browser-$TO_OPENVIDU_BROWSER_VERSION.js
 readarray MY_ARRAY < <(find -name "openvidu-browser-$FROM_OPENVIDU_BROWSER_VERSION.js" -printf "%h\n" | sort -u)
 for directory in ${MY_ARRAY[@]}; do
     echo
@@ -107,7 +107,7 @@ for tutorial in ${NPM_TUTORIALS}; do
     echo "###############################"
     echo
     pushd $tutorial
-    npm --no-git-tag-version --allow-same-version version $NEW_VERSION
+    npm --no-git-tag-version --allow-same-version version $VERSION
 
     # Ignore openvidu-react-native failure
     # It fails if openvidu-react-native-adapter-*.tgz is not available
@@ -129,7 +129,7 @@ for tutorial in ${COMPONENTS_TUTORIALS[@]}; do
     echo "###############################"
     echo
     pushd $tutorial
-    npm --no-git-tag-version --allow-same-version version $NEW_VERSION
+    npm --no-git-tag-version --allow-same-version version $VERSION
     npm install
     popd
 done
@@ -142,7 +142,7 @@ for tutorial in ${MAVEN_TUTORIALS}; do
     echo "###############################"
     echo
     cd $tutorial
-    mvn versions:set -DnewVersion=$NEW_VERSION
+    mvn versions:set -DnewVersion=$VERSION
     mvn clean compile package
     cd ..
 done
@@ -153,7 +153,7 @@ echo
 echo "###############################"
 echo "Updating openvidu-webcomponent tutorial"
 echo "###############################"
-wget https://github.com/OpenVidu/openvidu/releases/download/v$NEW_VERSION/openvidu-webcomponent-$TO_OPENVIDU_BROWSER_VERSION.zip
+wget https://github.com/OpenVidu/openvidu/releases/download/v$VERSION/openvidu-webcomponent-$TO_OPENVIDU_BROWSER_VERSION.zip
 mkdir openvidu-webcomponent-$TO_OPENVIDU_BROWSER_VERSION
 mv openvidu-webcomponent-$TO_OPENVIDU_BROWSER_VERSION.zip openvidu-webcomponent-$TO_OPENVIDU_BROWSER_VERSION/openvidu-webcomponent-$TO_OPENVIDU_BROWSER_VERSION.zip
 unzip openvidu-webcomponent-$TO_OPENVIDU_BROWSER_VERSION/openvidu-webcomponent-$TO_OPENVIDU_BROWSER_VERSION.zip -d openvidu-webcomponent-$TO_OPENVIDU_BROWSER_VERSION/.
