@@ -165,6 +165,10 @@ rm -rf openvidu-webcomponent-$TO_OPENVIDU_BROWSER_VERSION
 sed -i "s/<script src=\"openvidu-webcomponent-$FROM_OPENVIDU_BROWSER_VERSION.js\"><\/script>/<script src=\"openvidu-webcomponent-$TO_OPENVIDU_BROWSER_VERSION.js\"><\/script>/" openvidu-webcomponent/web/index.html
 sed -i "s/<link rel=\"stylesheet\" href=\"openvidu-webcomponent-$FROM_OPENVIDU_BROWSER_VERSION.css\">/<link rel=\"stylesheet\" href=\"openvidu-webcomponent-$TO_OPENVIDU_BROWSER_VERSION.css\">/" openvidu-webcomponent/web/index.html
 
+# Update parameter "sdkVersion" in openvidu-android
+
+sed -i -r "s%\"sdkVersion\",(\s*)\"([[:alnum:]._-]+)\"%\"sdkVersion\",\1\"${TO_OPENVIDU_BROWSER_VERSION}\"%g" openvidu-android/app/src/main/java/io/openvidu/openvidu_android/websocket/CustomWebSocket.java
+
 echo
 echo "###################################"
 echo "SUCCESS UPDATING OPENVIDU-TUTORIALS"
