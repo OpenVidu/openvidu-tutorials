@@ -55,8 +55,9 @@ find -type d -name 'node_modules' -prune -exec rm -rf {} \;
 # Updating openvidu-browser dependencies in package.json files [openvidu-angular, openvidu-react, openvidu-ionic, openvidu-vue]
 find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-browser\": \"$FROM_OPENVIDU_BROWSER_VERSION\"/\"openvidu-browser\": \"$TO_OPENVIDU_BROWSER_VERSION\"/" {} \;
 
+## TODO: change this when OpenVidu Components for React is released
 # Updating openvidu-react dependencies in package.json files [openvidu-library-react]
-find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-react\": \"$FROM_OPENVIDU_BROWSER_VERSION\"/\"openvidu-react\": \"$TO_OPENVIDU_BROWSER_VERSION\"/" {} \;
+# find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-react\": \"$FROM_OPENVIDU_BROWSER_VERSION\"/\"openvidu-react\": \"$TO_OPENVIDU_BROWSER_VERSION\"/" {} \;
 
 # Updating openvidu-angular dependencies in package.json files [openvidu-call, openvidu-components/*]
 find . -type f -name 'package.json' -exec sed -i "s/\"openvidu-angular\": \"$FROM_OPENVIDU_BROWSER_VERSION\"/\"openvidu-angular\": \"$TO_OPENVIDU_BROWSER_VERSION\"/" {} \;
