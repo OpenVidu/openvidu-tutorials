@@ -167,7 +167,10 @@ async function connectToSessionWithToken(token) {
 
 async function getToken() {
 
-	sessionId = $("#sessionId").val(); // Video-call chosen by the user
+	// Check if #join is hidden
+	if ($('#join').is(':visible')) {
+		sessionId = $("#sessionId").val(); // Video-call chosen by the user
+	}
 	var mustRetry = true;
 
 	while (mustRetry) {
