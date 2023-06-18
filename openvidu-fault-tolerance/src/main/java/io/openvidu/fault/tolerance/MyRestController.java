@@ -59,7 +59,7 @@ public class MyRestController {
 		try {
 			session = this.openVidu.createSession(props);
 		} catch (OpenViduHttpException e) {
-			if (e.getStatus() == 502 || e.getStatus() == 503 || e.getStatus() == 504) {
+			if ((e.getStatus() >= 500 && e.getStatus() <= 504) || e.getStatus() == 404) {
 				log.warn("The node handling the createSession operation is crashed ({}: {}). Retry", e.getStatus(),
 						e.getMessage());
 				try {
@@ -97,7 +97,7 @@ public class MyRestController {
 				// The session wasn't found in OpenVidu Server
 				return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 			}
-			if (e2.getStatus() == 502 || e2.getStatus() == 503 || e2.getStatus() == 504) {
+			if (e2.getStatus() >= 500 && e2.getStatus() <= 504) {
 				log.warn("The node handling the createConnection operation is crashed ({}: {}). Retry", e2.getStatus(),
 						e2.getMessage());
 				try {
