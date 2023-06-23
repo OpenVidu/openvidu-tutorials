@@ -33,10 +33,12 @@ pushd openvidu-getaroom/docker || exit 1
 popd || exit 1
 
 # Build openvidu-classroom-demo
-if [ -d "../classroom-demo/docker" ]; then
-    pushd ../classroom-demo/docker || exit 1
+if [ -d "../classroom-demo" ]; then
+    pushd ../classroom-demo || exit 1
     ./ci-scripts/build.sh --build-front
     ./ci-scripts/build.sh --build-back
+    popd || exit 1
+    pushd ../classroom-demo/docker || exit 1
     ./create_image.sh "$1"
     popd || exit 1
 else
