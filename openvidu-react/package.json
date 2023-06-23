@@ -1,10 +1,10 @@
 {
   "name": "openvidu-react",
-  "version": "2.27.0",
+  "version": "2.28.0",
   "private": true,
   "dependencies": {
     "axios": "0.21.1",
-    "openvidu-browser": "2.27.0",
+    "openvidu-browser": "2.28.0",
     "react": "17.0.1",
     "react-dom": "17.0.1",
     "react-scripts": "4.0.3"
