@@ -35,7 +35,7 @@ popd || exit 1
 # Build openvidu-classroom-demo
 if [ -d "../classroom-demo/docker" ]; then
     pushd ../classroom-demo/docker || exit 1
-    ./create_image.sh "openvidu/openvidu-classroom-demo:$1"
+    ./create_image.sh "$1"
     popd || exit 1
 else
     echo "classroom-demo not found. Skipping..."
