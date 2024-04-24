@@ -1,4 +1,4 @@
-arguments=
+arguments=--init-script /home/csantosm/.config/Code/User/globalStorage/redhat.java/1.29.0/config_linux/org.eclipse.osgi/55/0/.cp/gradle/init/init.gradle --init-script /home/csantosm/.config/Code/User/globalStorage/redhat.java/1.29.0/config_linux/org.eclipse.osgi/55/0/.cp/gradle/protobuf/init.gradle
 auto.sync=false
 build.scans.enabled=false
 connection.gradle.distribution=GRADLE_DISTRIBUTION(WRAPPER)
