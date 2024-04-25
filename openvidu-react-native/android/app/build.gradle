@@ -89,6 +89,7 @@ def reactNativeArchitectures() {
 }
 
 android {
+    namespace "com.openvidu_react_native"
     ndkVersion rootProject.ext.ndkVersion
     compileSdkVersion rootProject.ext.compileSdkVersion
 
