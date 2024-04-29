@@ -74,6 +74,8 @@ public class SessionActivity extends AppCompatActivity {
     private Session session;
     private CustomHttpClient httpClient;
 
+    private EglBase rootEglBase = EglBase.create();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -209,7 +211,6 @@ public class SessionActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        EglBase rootEglBase = EglBase.create();
         localVideoView.init(rootEglBase.getEglBaseContext(), null);
         localVideoView.setMirror(true);
         localVideoView.setEnableHardwareScaler(true);
@@ -265,7 +266,7 @@ public class SessionActivity extends AppCompatActivity {
             SurfaceViewRenderer videoView = (SurfaceViewRenderer) ((ViewGroup) rowView).getChildAt(0);
             remoteParticipant.setVideoView(videoView);
             videoView.setMirror(false);
-            EglBase rootEglBase = EglBase.create();
+
             videoView.init(rootEglBase.getEglBaseContext(), null);
             videoView.setZOrderMediaOverlay(true);
             View textView = ((ViewGroup) rowView).getChildAt(1);
@@ -299,6 +300,10 @@ public class SessionActivity extends AppCompatActivity {
     private boolean arePermissionGranted() {
         return (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_DENIED) &&
                 (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_DENIED);
+    }
+
+    public EglBase getRootEglBase() {
+        return rootEglBase;
     }
 
     @Override
