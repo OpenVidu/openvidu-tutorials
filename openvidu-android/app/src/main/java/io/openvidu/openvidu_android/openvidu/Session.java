@@ -10,6 +10,7 @@ import io.openvidu.openvidu_android.observers.CustomPeerConnectionObserver;
 import io.openvidu.openvidu_android.observers.CustomSdpObserver;
 import io.openvidu.openvidu_android.websocket.CustomWebSocket;
 
+import org.webrtc.EglBase;
 import org.webrtc.IceCandidate;
 import org.webrtc.MediaConstraints;
 import org.webrtc.MediaStream;
@@ -47,12 +48,14 @@ public class Session {
     private PeerConnectionFactory peerConnectionFactory;
     private CustomWebSocket websocket;
     private SessionActivity activity;
+    private EglBase rootEglBase;
 
     public Session(String id, String token, LinearLayout views_container, SessionActivity activity) {
         this.id = id;
         this.token = token;
         this.views_container = views_container;
         this.activity = activity;
+        this.rootEglBase = activity.getRootEglBase();
 
         // Creating a new PeerConnectionFactory instance
         PeerConnectionFactory.InitializationOptions.Builder optionsBuilder = PeerConnectionFactory.InitializationOptions.builder(activity.getApplicationContext());
@@ -233,6 +236,11 @@ public class Session {
 
     public PeerConnectionFactory getPeerConnectionFactory() {
         return this.peerConnectionFactory;
+    }
+
+
+    public EglBase getRootEglBase() {
+        return this.rootEglBase;
     }
 
     public void addRemoteParticipant(RemoteParticipant remoteParticipant) {

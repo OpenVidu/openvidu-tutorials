@@ -40,14 +40,14 @@ public class LocalParticipant extends Participant {
 
     public void startCamera() {
 
-        final EglBase.Context eglBaseContext = EglBase.create().getEglBaseContext();
         PeerConnectionFactory peerConnectionFactory = this.session.getPeerConnectionFactory();
 
         // Create AudioSource
         AudioSource audioSource = peerConnectionFactory.createAudioSource(new MediaConstraints());
         this.audioTrack = peerConnectionFactory.createAudioTrack("101", audioSource);
 
-        surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread", eglBaseContext);
+        surfaceTextureHelper = SurfaceTextureHelper.create("CaptureThread", this.session.getRootEglBase()
+                .getEglBaseContext());
 
         // Create VideoCapturer
         VideoCapturer videoCapturer = createCameraCapturer();
