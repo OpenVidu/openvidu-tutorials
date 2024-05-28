@@ -1,6 +1,6 @@
 {
   "name": "openvidu-library-react",
-  "version": "2.29.0",
+  "version": "2.30.0",
   "private": true,
   "dependencies": {
     "axios": "0.19.2",
