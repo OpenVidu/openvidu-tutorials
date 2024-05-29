@@ -73,10 +73,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "openvidu-custom-toolbar:build:production"
+              "buildTarget": "openvidu-custom-toolbar:build:production"
             },
             "development": {
-              "browserTarget": "openvidu-custom-toolbar:build:development"
+              "buildTarget": "openvidu-custom-toolbar:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -84,7 +84,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "openvidu-custom-toolbar:build"
+            "buildTarget": "openvidu-custom-toolbar:build"
           }
         },
         "test": {

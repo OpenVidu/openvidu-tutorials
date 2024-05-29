@@ -97,10 +97,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "openvidu-custom-participant-panel-item-elements:build:production"
+              "buildTarget": "openvidu-custom-participant-panel-item-elements:build:production"
             },
             "development": {
-              "browserTarget": "openvidu-custom-participant-panel-item-elements:build:development"
+              "buildTarget": "openvidu-custom-participant-panel-item-elements:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -108,7 +108,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "openvidu-custom-participant-panel-item-elements:build"
+            "buildTarget": "openvidu-custom-participant-panel-item-elements:build"
           }
         }
       }

@@ -97,10 +97,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "openvidu-panel-buttons:build:production"
+              "buildTarget": "openvidu-panel-buttons:build:production"
             },
             "development": {
-              "browserTarget": "openvidu-panel-buttons:build:development"
+              "buildTarget": "openvidu-panel-buttons:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -108,7 +108,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "openvidu-panel-buttons:build"
+            "buildTarget": "openvidu-panel-buttons:build"
           }
         }
       }

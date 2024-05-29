@@ -14,3 +14,10 @@
     right: 40px;
     bottom: 0px;
 }
+
+#hand-notification mat-icon {
+    font-size: 20px;
+    position: relative;
+    top: -7px;
+    left: -9px;
+}

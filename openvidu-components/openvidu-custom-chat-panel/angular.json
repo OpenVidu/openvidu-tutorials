@@ -97,10 +97,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "openvidu-custom-chat-panel:build:production"
+              "buildTarget": "openvidu-custom-chat-panel:build:production"
             },
             "development": {
-              "browserTarget": "openvidu-custom-chat-panel:build:development"
+              "buildTarget": "openvidu-custom-chat-panel:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -108,7 +108,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "openvidu-custom-chat-panel:build"
+            "buildTarget": "openvidu-custom-chat-panel:build"
           }
         }
       }

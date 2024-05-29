@@ -16,7 +16,7 @@
             "outputPath": "dist/openvidu-toggle-hand",
             "index": "src/index.html",
             "main": "src/main.ts",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": ["zone.js"],
             "tsConfig": "tsconfig.app.json",
             "aot": true,
             "assets": [
@@ -72,39 +72,21 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "openvidu-toggle-hand:build"
+            "buildTarget": "openvidu-toggle-hand:build"
           },
           "configurations": {
             "development": {
-              "browserTarget": "openvidu-toggle-hand:build:development"
+              "buildTarget": "openvidu-toggle-hand:build:development"
             },
             "production": {
-              "browserTarget": "openvidu-toggle-hand:build:production"
+              "buildTarget": "openvidu-toggle-hand:build:production"
             }
           }
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "openvidu-toggle-hand:build"
-          }
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "main": "src/test.ts",
-            "polyfills": "src/polyfills.ts",
-            "tsConfig": "tsconfig.spec.json",
-            "karmaConfig": "karma.conf.js",
-            "assets": [
-              "src/favicon.ico",
-              "src/assets"
-            ],
-            "styles": [
-              "./node_modules/@angular/material/prebuilt-themes/indigo-pink.css",
-              "src/styles.scss"
-            ],
-            "scripts": []
+            "buildTarget": "openvidu-toggle-hand:build"
           }
         },
         "lint": {

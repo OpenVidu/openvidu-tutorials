@@ -6,9 +6,9 @@ import { AppComponent } from './app.component';
 import { OpenViduAngularConfig, OpenViduAngularModule } from 'openvidu-angular';
 import { environment } from 'src/environments/environment';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { MatLegacyMenuModule as MatMenuModule } from '@angular/material/legacy-menu';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatIconModule } from '@angular/material/icon';
-import { MatLegacyButtonModule as MatButtonModule } from '@angular/material/legacy-button';
+import { MatButtonModule } from '@angular/material/button';
 
 const config: OpenViduAngularConfig = {
   production: environment.production
