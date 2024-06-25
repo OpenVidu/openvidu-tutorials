@@ -1,3 +1,0 @@
-# openvidu-basic-php
-
-Coming soon...

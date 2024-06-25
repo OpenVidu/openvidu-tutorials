@@ -1,0 +1,16 @@
+#my-panels {
+	height: 100%;
+	overflow: hidden;
+}
+#my-panel1,
+#my-panel2 {
+	text-align: center;
+	height: calc(100% - 40px);
+	margin: 20px;
+}
+#my-panel1 {
+	background: #c9ffb2;
+}
+#my-panel2 {
+	background: #ddf2ff;
+}

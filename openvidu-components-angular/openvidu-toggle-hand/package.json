@@ -1,0 +1,36 @@
+{
+	"name": "openvidu-toggle-hand",
+	"version": "2.27.0",
+	"scripts": {
+		"start": "ng serve --port=5080 --host=0.0.0.0",
+		"build": "ng build",
+		"build:prod": "ng build --output-path ./openvidu-basic-node/public/ --configuration production"
+	},
+	"private": true,
+	"dependencies": {
+		"@angular/animations": "18.0.1",
+		"@angular/cdk": "18.0.1",
+		"@angular/common": "18.0.1",
+		"@angular/compiler": "18.0.1",
+		"@angular/core": "18.0.1",
+		"@angular/forms": "18.0.1",
+		"@angular/material": "18.0.1",
+		"@angular/platform-browser": "18.0.1",
+		"@angular/platform-browser-dynamic": "18.0.1",
+		"@angular/router": "18.0.1",
+		"openvidu-components-angular": "^3.0.0-dev5",
+		"rxjs": "7.5.2",
+		"tslib": "2.0.0",
+		"zone.js": "0.14.6"
+	},
+	"devDependencies": {
+		"@angular-devkit/build-angular": "18.0.2",
+		"@angular/cli": "18.0.2",
+		"@angular/compiler-cli": "18.0.1",
+		"@types/node": "^20.12.12",
+		"codelyzer": "^6.0.0",
+		"ts-node": "~8.3.0",
+		"tslint": "~6.1.0",
+		"typescript": "^5.4.5"
+	}
+}

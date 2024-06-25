@@ -1,7 +1,0 @@
-{
-  "name": "openvidu-ionic",
-  "integrations": {
-    "capacitor": {}
-  },
-  "type": "angular"
-}
