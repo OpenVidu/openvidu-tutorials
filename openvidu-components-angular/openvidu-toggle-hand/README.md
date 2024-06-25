@@ -1,0 +1,1 @@
+# openvidu-toggle-hand
