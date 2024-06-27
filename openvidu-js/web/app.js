@@ -6,6 +6,10 @@ var session;
 
 function joinSession() {
 
+	// --- 0) Change the button ---
+	document.getElementById("join-btn").disabled = true;
+	document.getElementById("join-btn").value = "Joining...";
+
 	var mySessionId = document.getElementById("sessionId").value;
 	var myUserName = document.getElementById("userName").value;
 
@@ -91,6 +95,9 @@ function joinSession() {
 			})
 			.catch(error => {
 				console.log('There was an error connecting to the session:', error.code, error.message);
+			})
+			.finally(() => {
+				enableBtn();
 			});
 	});
 }
@@ -108,6 +115,8 @@ function leaveSession() {
 	// Back to 'Join session' page
 	document.getElementById('join').style.display = 'block';
 	document.getElementById('session').style.display = 'none';
+
+	enableBtn();
 }
 
 window.onbeforeunload = function () {
@@ -173,6 +182,11 @@ function initMainVideo(videoElement, userData) {
 	document.querySelector('#main-video video').srcObject = videoElement.srcObject;
 	document.querySelector('#main-video p').innerHTML = userData;
 	document.querySelector('#main-video video')['muted'] = true;
+}
+
+function enableBtn (){
+	document.getElementById("join-btn").disabled = false;
+	document.getElementById("join-btn").value = "Join!";
 }
 
 
