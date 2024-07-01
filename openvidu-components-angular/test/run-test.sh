@@ -17,14 +17,13 @@ TUTORIALS=(
   '../openvidu-toolbar-buttons'
   '../openvidu-toolbar-panel-buttons'
 )
-# Inicializar contadores de tests exitosos y fallidos
+# Initialize counters for successful and failed tests
 SUCCESS=0
 FAILURE=0
 
 for tutorial in "${TUTORIALS[@]}"
 do
   echo "Processing $tutorial..."
-
 
   if [ -d "$tutorial" ]; then
 
@@ -33,40 +32,37 @@ do
     rm -f package-lock.json
     npm install openvidu-components-angular@latest
 
-
-#  Verificar si el puerto 5080 está en uso y matar el proceso si es necesario
+    # Check if port 5080 is in use and kill the process if necessary
     PORT_IN_USE=$(lsof -i :5080 | grep LISTEN)
     if [ -n "$PORT_IN_USE" ]; then
       echo "Port 5080 is in use. Killing the process..."
       kill -9 $(lsof -ti :5080)
     fi
 
-
-    # Iniciar la aplicación
+    # Start the application
     echo "Starting the application in $tutorial..."
     npm run start &
     APP_PID=$!
 
-    # Esperar un tiempo para que la aplicación se inicie
+    # Wait some time for the application to start
     sleep 20
 
-    # Ejecutar el test
+    # Run the test
     echo "Running test for $tutorial..."
-    node ../test/test.js
+    node ../test/test.js "$tutorial"
 
-     # Verificar si el test falló
+    # Check if the test failed
     if [ $? -eq 1 ]; then
       echo "ERROR!! Test failed for $tutorial"
-      ((FAILURE++)) # Incrementar el contador de fallos
+      ((FAILURE++))
     else
-      ((SUCCESS++)) # Incrementar el contador de éxitos
+      ((SUCCESS++))
     fi
 
 
-    # Detener la aplicación
     echo "Stopping the application in $tutorial..."
     kill $APP_PID
-    wait $APP_PID 2>/dev/null # Esperar a que el proceso se detenga antes de continuar
+    wait $APP_PID 2>/dev/null # Wait for the process to stop before continuing
 
     cd - || { echo "Cannot return to previous directory"; exit 1; }
   else
@@ -74,7 +70,11 @@ do
   fi
 done
 
-# Mostrar resumen de los tests
 echo "Summary:"
 echo "Successful tests: $SUCCESS"
 echo "Failed tests: $FAILURE"
+
+# Exit with an error code if there are failed tests
+if [ $FAILURE -gt 0 ]; then
+  exit 1
+fi

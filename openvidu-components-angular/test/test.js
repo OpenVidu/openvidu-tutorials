@@ -1,8 +1,18 @@
 const puppeteer = require('puppeteer');
 
 (async () => {
-	// Iniciar el navegador
-	console.log('Iniciando navegador');
+
+	const args = process.argv.slice(2);
+    const project = args[0];
+    let selector;
+
+    // Determine the correct selector based on the project
+    if (project.includes('openvidu-admin-dashboard')) {
+        selector = 'ov-admin-login';
+    } else {
+        selector = '#join-button';
+    }
+
 	const browser = await puppeteer.launch({
 		args: [
 			'--use-fake-ui-for-media-stream',
@@ -10,25 +20,19 @@ const puppeteer = require('puppeteer');
 		],
 	});
 	const page = await browser.newPage();
+	await page.goto('http://localhost:5080');
 
-	console.log('Navegando a la aplicación');
-
-	// Navegar a la aplicación
-	await page.goto('https://192-168-1-47.openvidu-local.dev:5443');
-
-	// Esperar a que el elemento con el ID #join-button aparezca
 	try {
-		console.log('Esperando a que #join-button aparezca');
-		await page.waitForSelector('#join-button', { timeout: 10000 });
-		console.log('#join-button encontrado');
+		console.log(`Waiting for ${selctor} to appear in the DOM...`);
+		await page.waitForSelector(selector, { timeout: 10000 });
+		console.log(`${selctor} found!`);
 	} catch (error) {
 		const screenshotPath = `screenshot-${Date.now()}.png`;
 		await page.screenshot({ path: screenshotPath });
-		console.error('Error: #join-button no encontrado');
+		console.error(`Error: ${selector} not found`);
 		console.error('ERROR!! Test failed: #join-button not found');
-   		process.exit(1); // Salir del script con un código de error
+   		process.exit(1);
 	}
 
-	// Cerrar el navegador
 	await browser.close();
 })();
