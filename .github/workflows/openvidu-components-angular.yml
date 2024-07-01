@@ -21,4 +21,5 @@ jobs:
     - name: Run tests
       run: |
         cd openvidu-components-angular/test
+        npm install
         ./run-test.sh
