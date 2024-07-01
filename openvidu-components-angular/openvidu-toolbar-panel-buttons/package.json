@@ -1,6 +1,6 @@
 {
 	"name": "openvidu-toolbar-panel-buttons",
-	"version": "2.27.0",
+	"version": "3.0.0-beta1",
 	"scripts": {
 		"start": "ng serve --port=5080 --host=0.0.0.0",
 		"build": "ng build",
