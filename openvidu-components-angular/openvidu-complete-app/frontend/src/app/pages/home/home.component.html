@@ -1,0 +1,171 @@
+<div class="section1">
+  <mat-toolbar id="header">
+    @if (isUserLogged) {
+      <div id="logout-content">
+        <span>Hi {{ username }}, do you want to logout?</span>
+        <button matTooltip="Logout" mat-icon-button id="logout-btn" (click)="logout()">
+          <mat-icon>logout</mat-icon>
+        </button>
+      </div>
+    }
+  </mat-toolbar>
+  <div class="openvidu-slogan-container">
+    <a href="https://openvidu.io/" target="_blank">
+      <img id="form-img" src="assets/images/openvidu_logo.png" />
+    </a>
+    <h4 id="slogan-text">Videoconference rooms in one click</h4>
+  </div>
+  @if (!loading) {
+    <div class="form-container">
+      <div class="grid">
+        @if (isPrivateAccess && !isUserLogged) {
+          <form
+            [formGroup]="loginForm"
+            novalidate
+            (ngSubmit)="login()"
+            id="form-login"
+            class="form login"
+            >
+            <div class="form-field" id="login-username">
+              <label for="login-username" [ngClass]="{ error: loginError }">
+                <mat-icon matTooltip="Username">person</mat-icon>
+                <span class="hidden">Username</span>
+              </label>
+              <input
+                formControlName="username"
+                autocomplete="off"
+                type="text"
+                name="username"
+                class="form-input"
+                placeholder="Username"
+                />
+            </div>
+            <div class="form-field" id="login-password">
+              <label for="login-password" [ngClass]="{ error: loginError }">
+                <mat-icon matTooltip="Password">lock</mat-icon>
+                <span class="hidden">Password</span>
+              </label>
+              <input
+                formControlName="password"
+                type="password"
+                name="password"
+                class="form-input"
+                placeholder="Password"
+                />
+            </div>
+            @if (loginError) {
+              <div class="roomError" id="login-error">Authentication failed. Try again.</div>
+            }
+            <div class="form-field">
+              <button
+                mat-button
+                id="join-btn"
+                type="submit"
+                [disabled]="loginForm.invalid"
+                >
+                Login
+              </button>
+            </div>
+            @if (serverConnectionError) {
+              <div class="roomError" id="serverConnectionError">
+                <mat-icon>error</mat-icon>
+                <span>Server connection failed!</span>
+              </div>
+            }
+          </form>
+        }
+        @if (isUserLogged || !isPrivateAccess) {
+          <form
+            [formGroup]="roomForm"
+            novalidate
+            (ngSubmit)="goToVideoRoom()"
+            id="form-room"
+            class="form login"
+            >
+            <div class="form-field">
+              <label for="room-name-input" [ngClass]="{ error: roomForm.get('roomName').invalid }">
+                <mat-icon matTooltip="Room name">video_camera_front</mat-icon>
+                <span class="hidden">Room Name</span></label
+                >
+                <input
+                  formControlName="roomName"
+                  autocomplete="off"
+                  id="room-name-input"
+                  type="text"
+                  name="roomName"
+                  class="form-input"
+                  placeholder="Room Name"
+                  (keydown)="keyDown($event)"
+                  />
+                  @if (roomForm.get('roomName').value) {
+                    <button matSuffix mat-icon-button aria-label="Clear" id="clear-room-name-btn" (click)="clearRoomName()">
+                      <mat-icon>close</mat-icon>
+                    </button>
+                  }
+                <button
+                  matTooltip="Generate new room name"
+                  mat-icon-button
+                  id="room-name-generator-btn"
+                  (click)="generateRoomName($event)"
+                  >
+                  <mat-icon>cached</mat-icon>
+                </button>
+              </div>
+              @if (roomForm.get('roomName').hasError('required')) {
+                <div
+                  class="roomError"
+                  id="requiredNameError"
+                  >
+                  Room name is required
+                </div>
+              }
+              @if (roomForm.get('roomName').hasError('minlength')) {
+                <div class="roomError" id="shortNameError">
+                  Room name is too short!
+                </div>
+              }
+              <div class="form-field">
+                <button
+                  mat-button
+                  id="join-btn"
+                  type="submit"
+                  [disabled]="roomForm.invalid"
+                  >
+                  JOIN
+                </button>
+              </div>
+              @if (serverConnectionError) {
+                <div class="roomError" id="serverConnectionError">
+                  <mat-icon>error</mat-icon>
+                  <span>Server connection failed!</span>
+                </div>
+              }
+            </form>
+          }
+        </div>
+      </div>
+    }
+
+    <mat-toolbar class="footer">
+      <span>
+        Photo by
+        <a
+          rel="noopener noreferrer"
+          target="_blank"
+          href="https://unsplash.com/@danielleone?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
+          >
+          Daniel Leone
+        </a>
+        on
+        <a
+          href="https://unsplash.com/s/photos/mountain?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText"
+          target="_blank"
+          >
+          Unsplash
+        </a>
+      </span>
+      <div id="completeapp-version">
+        <span>{{ version }}</span>
+      </div>
+    </mat-toolbar>
+  </div>

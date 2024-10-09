@@ -1,0 +1,45 @@
+{
+	"name": "openvidu-complete-app",
+	"version": "3.0.0-beta2",
+	"description": "OpenVidu Complete App Server",
+	"author": "OpenVidu",
+	"license": "Apache-2.0",
+	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
+	"type": "module",
+	"scripts": {
+		"build": "tsc",
+		"start": "node dist/src/server.js",
+		"dev:start": "cross-env USE_HTTPS=false TESTING_MODE=ENABLED nodemon -I --exec node --experimental-specifier-resolution=node --loader ts-node/esm ./src/server.ts",
+		"lint": "eslint src --fix",
+		"format": "prettier --ignore-path .gitignore --write '**/*.{ts,js,json,md}'",
+		"pack": "npm pack"
+	},
+	"dependencies": {
+		"@aws-sdk/client-s3": "3.654.0",
+		"chalk": "5.3.0",
+		"cors": "2.8.5",
+		"dotenv": "16.4.5",
+		"express": "4.21.0",
+		"express-basic-auth": "1.2.1",
+		"livekit-server-sdk": "2.6.2",
+		"winston": "3.14.2"
+	},
+	"devDependencies": {
+		"@types/chai": "4.3.19",
+		"@types/cookie-parser": "1.4.7",
+		"@types/cors": "2.8.17",
+		"@types/express": "4.17.21",
+		"@types/node": "20.12.14",
+		"@typescript-eslint/eslint-plugin": "6.7.5",
+		"@typescript-eslint/parser": "6.7.5",
+		"chai": "4.3.10",
+		"cross-env": "7.0.3",
+		"eslint": "8.50.0",
+		"eslint-config-prettier": "9.0.0",
+		"nodemon": "3.1.7",
+		"prettier": "3.3.3",
+		"ts-node": "10.9.2",
+		"typescript": "5.4.5"
+	}
+}

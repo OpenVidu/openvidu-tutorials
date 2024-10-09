@@ -1,0 +1,28 @@
+{
+	"compileOnSave": false,
+	"compilerOptions": {
+		"baseUrl": "./",
+		"module": "esnext",
+		"outDir": "./dist/out-tsc",
+		"sourceMap": true,
+		"esModuleInterop": true,
+		"declaration": false,
+		"moduleResolution": "node",
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"resolveJsonModule": true,
+		"target": "ES2022",
+		"typeRoots": ["node_modules/@types"],
+		"lib": ["es2017", "dom"],
+		"paths": {
+			"core-js/es7/reflect": ["./node_modules/core-js/proposals/reflect-metadata"],
+			"@app/*": ["src/app/*"],
+			"@services/*": ["src/app/services/*"],
+			"@models/*": ["src/app/models/*"],
+			"@guards/*": ["src/app/guards/*"],
+			"@pages/*": ["src/app/pages/*"],
+			"@environment/*": ["src/environments/*"]
+		},
+		"useDefineForClassFields": false
+	}
+}
