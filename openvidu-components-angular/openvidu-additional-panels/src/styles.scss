@@ -14,10 +14,16 @@
 	--ov-panel-text-color: #1d1d1d;
 	--ov-panel-background: #ffffff;
 
-	--ov-buttons-radius: 50%; // border-radius property
+	--ov-toolbar-buttons-radius: 50%; // border-radius property
 	--ov-leave-button-radius: 10px;
 	--ov-video-radius: 5px;
 	--ov-panel-radius: 5px;
   }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+	height: 100%;
+}
+body {
+	margin: 0;
+	font-family: Roboto, 'Helvetica Neue', sans-serif;
+}

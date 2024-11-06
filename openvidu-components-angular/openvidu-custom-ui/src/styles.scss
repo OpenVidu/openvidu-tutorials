@@ -1,26 +1,36 @@
 /* You can add global styles to this file, and also import other style files */
 
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+html,
+body {
+  height: 100%;
+}
+body {
+  margin: 0;
+  font-family: Roboto, "Helvetica Neue", sans-serif;
+}
 
 // Custom openvidu-components styles
 :root {
-	--ov-primary-color: #cf9d9d;
-	--ov-secondary-color: #f0efef;
-	--ov-tertiary-color: #598eff;
-	--ov-warn-color: #EB5144;
-	--ov-accent-color: #ffae35;
-	--ov-light-color: #e6e6e6;
+	/* Basic colors */
+	--ov-background-color: #ffb7b7; // Background color
+	--ov-surface-color: #d0bcff; // Surfaces colors (panels, dialogs)
 
-	--ov-logo-background-color: #3a3d3d;
+	/* Text colors */
+	--ov-text-primary-color: #111111; // Text color over primary background
+	--ov-text-surface-color: #1d1d1d; // Text color over surface background
 
-	--ov-text-color: #0f0f0f;
+	/* Action colors */
+	--ov-primary-action-color: #273235; // Primary color for buttons, etc.
+	--ov-secondary-action-color: #f1f1f1; // Secondary color for buttons, etc.
+	--ov-accent-action-color: #3300ab; // Color for highlighted elements
 
-	--ov-panel-text-color: #1d1d1d;
-	--ov-panel-background: #ffffff;
+	/* Status colors */
+	--ov-error-color: #eb5144; // Error color
+	--ov-warn-color: #ffba53; // Warning color
 
-	--ov-buttons-radius: 1%; // border-radius property
-	--ov-leave-button-radius: 5px;
-	--ov-video-radius: 0px;
-	--ov-panel-radius: 0px;
+	/* Radius */
+	--ov-toolbar-buttons-radius: 20%; // Radius for toolbar buttons
+	--ov-leave-button-radius: 20px; // Radius for leave button
+	--ov-video-radius: 5px; // Radius for video elements
+	--ov-surface-radius: 5px; // Radius for surface elements
 }
