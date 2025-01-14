@@ -1,6 +1,6 @@
 {
   "name": "openvidu-electron",
-  "version": "2.30.0",
+  "version": "2.31.0",
   "description": "OpenVidu Electron Tutorial",
   "main": "src/main.js",
   "scripts": {
@@ -25,7 +25,7 @@
     "@electron/remote": "2.0.8",
     "axios": "0.27.2",
     "electron-squirrel-startup": "1.0.0",
-    "openvidu-browser": "2.30.0"
+    "openvidu-browser": "2.31.0"
   },
   "config": {
     "forge": {
