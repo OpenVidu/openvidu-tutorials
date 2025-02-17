@@ -29,7 +29,7 @@ do
 
     cd "$tutorial" || { echo "Cannot enter directory $tutorial"; exit 1; }
     rm -rf node_modules
-    rm -f package-lock.json
+    # rm -f package-lock.json
     npm install openvidu-components-angular@latest
 
     # Check if port 5080 is in use and kill the process if necessary
