@@ -1,0 +1,315 @@
+html {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  padding-top: 50px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+header {
+  height: 50px;
+  width: 100%;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 30px;
+  background-color: #4d4d4d;
+}
+
+header h1 {
+  margin: 0;
+  font-size: 1.5em;
+  font-weight: bold;
+}
+
+header a {
+  color: #ccc;
+  text-decoration: none;
+}
+
+header a:hover {
+  color: #a9a9a9;
+}
+
+header i {
+  padding: 5px 5px;
+  font-size: 2em;
+}
+
+main {
+  flex: 1;
+  padding: 20px;
+}
+
+#join {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  height: 100%;
+}
+
+#join-dialog {
+  width: 70%;
+  max-width: 900px;
+  padding: 60px;
+  border-radius: 6px;
+  background-color: #f0f0f0;
+}
+
+#join-dialog h2 {
+  color: #4d4d4d;
+  font-size: 60px;
+  font-weight: bold;
+  text-align: center;
+}
+
+#join-dialog form {
+  text-align: left;
+}
+
+#join-dialog label {
+  display: block;
+  margin-bottom: 10px;
+  color: #0088aa;
+  font-weight: bold;
+  font-size: 20px;
+}
+
+.form-control {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  box-sizing: border-box;
+  color: #0088aa;
+  font-weight: bold;
+}
+
+.form-control:focus {
+  color: #0088aa;
+  border-color: #0088aa;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(0, 136, 170, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(0, 136, 170, 0.6);
+}
+
+#join-dialog button {
+  display: block;
+  margin: 20px auto 0;
+}
+
+.btn {
+  font-weight: bold;
+}
+
+.btn-success {
+  background-color: #06d362;
+  border-color: #06d362;
+}
+
+.btn-success:hover {
+  background-color: #1abd61;
+  border-color: #1abd61;
+}
+
+#room {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+#room-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1000px;
+  padding: 0 20px;
+  margin-bottom: 20px;
+}
+
+#room-title {
+  font-size: 2em;
+  font-weight: bold;
+  margin: 0;
+}
+
+#layout-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1000px;
+  height: 100%;
+}
+
+.video-container {
+  position: relative;
+  background: #3b3b3b;
+  aspect-ratio: 16/9;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.video-container video {
+  width: 100%;
+  height: 100%;
+}
+
+.video-container .participant-data {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.participant-data p {
+  background: #f8f8f8;
+  margin: 0;
+  padding: 0 5px;
+  color: #777777;
+  font-weight: bold;
+  border-bottom-right-radius: 4px;
+}
+
+#transcription-container {
+  display: grid;
+  grid-template-columns: auto 2fr;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 1000px;
+  height: 100%;
+}
+
+#transcription {
+  margin-top: 20px;
+  max-width: 1000px;
+}
+
+#transcription:disabled {
+    color: #a0a0a0;
+}
+
+footer {
+  height: 60px;
+  width: 100%;
+  padding: 10px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #4d4d4d;
+}
+
+footer a {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+footer .text {
+  color: #ccc;
+  margin: 0;
+}
+
+footer .text span {
+  color: white;
+  font-weight: bold;
+}
+
+#openvidu-logo {
+  height: 35px;
+  -webkit-transition: all 0.1s ease-in-out;
+  -moz-transition: all 0.1s ease-in-out;
+  -o-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
+}
+
+#openvidu-logo:hover {
+  -webkit-filter: grayscale(0.5);
+  filter: grayscale(0.5);
+}
+
+/* Media Queries */
+@media screen and (max-width: 768px) {
+  header {
+    padding: 10px 15px;
+  }
+
+  #join-dialog {
+    width: 90%;
+    padding: 30px;
+  }
+
+  #join-dialog h2 {
+    font-size: 50px;
+  }
+
+  #layout-container {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+
+  footer {
+    padding: 10px 15px;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  header {
+    padding: 10px;
+  }
+
+  #join-dialog {
+    width: 100%;
+    padding: 20px;
+  }
+
+  #join-dialog h2 {
+    font-size: 40px;
+  }
+
+  #layout-container {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+
+  .video-container {
+    aspect-ratio: 9/16;
+  }
+
+  footer {
+    padding: 10px;
+  }
+}
+
+form input {
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px 0 0 5px;
+}
+
+form button {
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-left: none;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+  border-radius: 0 5px 5px 0;
+}

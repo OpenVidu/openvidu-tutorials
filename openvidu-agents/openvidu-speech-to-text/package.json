@@ -1,0 +1,16 @@
+{
+    "name": "openvidu-speech-to-text",
+    "version": "1.0.0",
+    "description": "Simple video-call application with speech to text capabilities using OpenVidu Agents",
+    "main": "src/index.js",
+    "type": "module",
+    "scripts": {
+        "start": "node src/index.js"
+    },
+    "dependencies": {
+        "cors": "^2.8.5",
+        "dotenv": "^16.4.7",
+        "express": "^5.0.1",
+        "livekit-server-sdk": "^2.10.2"
+    }
+}
