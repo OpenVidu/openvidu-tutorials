@@ -47,8 +47,8 @@ app.post("/token", async (req, res) => {
   return res.json({ token });
 });
 
-// Store the agent dispatch ID to stop transcription
-var agentDispatchId;
+// Store agent dispatch IDs to stop transcriptions
+var agentDispatchIds = new Map();
 
 // Start the agent dispatch for STT
 app.post("/stt", async (req, res) => {
@@ -59,7 +59,7 @@ app.post("/stt", async (req, res) => {
       roomName,
       AGENT_NAME
     );
-    agentDispatchId = agentDispatch.id;
+    agentDispatchIds.set(roomName, agentDispatch.id);
     return res.json({ agentDispatch });
   } catch (error) {
     console.error("Error creating agent dispatch", error);
@@ -71,7 +71,12 @@ app.post("/stt", async (req, res) => {
 app.delete("/stt", async (req, res) => {
   const { roomName } = req.body;
   try {
+    const agentDispatchId = agentDispatchIds.get(roomName);
+    if (!agentDispatchId) {
+      return res.status(404).send("Agent dispatch not found");
+    }
     await agentDispatchClient.deleteDispatch(agentDispatchId, roomName);
+    agentDispatchIds.delete(roomName);
     return res.status(200).send();
   } catch (error) {
     console.error("Error deleting agent dispatch", error);
