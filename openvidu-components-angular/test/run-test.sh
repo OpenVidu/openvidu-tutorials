@@ -13,6 +13,7 @@ TUTORIALS=(
   '../openvidu-custom-stream'
   '../openvidu-custom-toolbar'
   '../openvidu-custom-ui'
+  '../openvidu-custom-lang'
   '../openvidu-toggle-hand'
   '../openvidu-toolbar-buttons'
   '../openvidu-toolbar-panel-buttons'
