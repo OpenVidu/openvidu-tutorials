@@ -17,6 +17,8 @@ const puppeteer = require('puppeteer');
 		args: [
 			'--use-fake-ui-for-media-stream',
 			'--use-fake-device-for-media-stream',
+			'--no-sandbox',
+			'--disable-setuid-sandbox',
 		],
 	});
 	const page = await browser.newPage();
@@ -33,7 +35,10 @@ const puppeteer = require('puppeteer');
 		const screenshotPath = `screenshot-${Date.now()}.png`;
 		await page.screenshot({ path: screenshotPath });
 		console.error(`Error: ${selector} not found`);
-		console.error(`ERROR!! Test failed: ${selector} not found on ${url}`, error);
+		console.error(
+			`ERROR!! Test failed: ${selector} not found on ${url}`,
+			error
+		);
 		process.exit(1);
 	} finally {
 		await browser.close();
