@@ -3,6 +3,7 @@ const puppeteer = require('puppeteer');
 (async () => {
 	const args = process.argv.slice(2);
 	const project = args[0];
+	const port = args[1] || '5080'; // Get port from arguments or default to 5080
 	let selector;
 
 	// Determine the correct selector based on the project
@@ -19,7 +20,10 @@ const puppeteer = require('puppeteer');
 		],
 	});
 	const page = await browser.newPage();
-	await page.goto('http://localhost:5080');
+	const url = `http://localhost:${port}`;
+
+	console.log(`Navigating to ${url}`);
+	await page.goto(url);
 
 	try {
 		console.log(`Waiting for ${selector} to appear in the DOM...`);
@@ -29,7 +33,7 @@ const puppeteer = require('puppeteer');
 		const screenshotPath = `screenshot-${Date.now()}.png`;
 		await page.screenshot({ path: screenshotPath });
 		console.error(`Error: ${selector} not found`);
-		console.error('ERROR!! Test failed: #join-button not found', error);
+		console.error(`ERROR!! Test failed: ${selector} not found on ${url}`, error);
 		process.exit(1);
 	} finally {
 		await browser.close();
