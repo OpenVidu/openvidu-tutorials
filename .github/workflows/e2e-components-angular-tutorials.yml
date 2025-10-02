@@ -1,0 +1,64 @@
+name: E2E Test Angular Components tutorials
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build_and_start_tutorials:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+
+    - name: Run tests
+      run: |
+        cd openvidu-components-angular/test
+        npm install
+        ./run-test.sh
+
+  demo_app_e2e_test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Build OpenVidu Components Angular
+        id: build
+        uses: OpenVidu/actions/build-openvidu-components-angular@main
+
+      - name: Download OpenVidu Components Angular package
+        uses: actions/download-artifact@v4
+        with:
+            name: ${{ steps.build.outputs.artifact_name }}
+            path: './openvidu-demo-app'
+
+      - name: Setup OpenVidu Local Deployment
+        uses: OpenVidu/actions/start-openvidu-local-deployment@main
+        with:
+          ref-openvidu-local-deployment: "development"
+          openvidu-edition: "community"
+      - name: Install demo app dependencies
+        run: |
+          npm install openvidu-components-angular-*.tgz --prefix frontend
+          npm install --prefix backend
+          npm run build --prefix backend
+          npm run build-prod --prefix frontend
+      - name: Run demo app
+        env:
+            CALL_PRIVATE_ACCESS: false
+        run: npm start --prefix backend &
+      - name: Run E2E Auth tests
+        env:
+          LAUNCH_MODE: CI
+        run: npm run e2e:auth --prefix frontend
+
