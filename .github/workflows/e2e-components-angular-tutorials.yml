@@ -40,7 +40,7 @@ jobs:
         uses: actions/download-artifact@v4
         with:
             name: ${{ steps.build.outputs.artifact_name }}
-            path: './openvidu-demo-app'
+            path: './openvidu-components-angular/openvidu-demo-app'
 
       - name: Setup OpenVidu Local Deployment
         uses: OpenVidu/actions/start-openvidu-local-deployment@main
@@ -49,16 +49,31 @@ jobs:
           openvidu-edition: "community"
       - name: Install demo app dependencies
         run: |
-          npm install openvidu-components-angular-*.tgz --prefix frontend
+          cd openvidu-components-angular/openvidu-demo-app
+          npm install ${{ steps.build.outputs.package_filename }} --prefix frontend
           npm install --prefix backend
           npm run build --prefix backend
           npm run build-prod --prefix frontend
       - name: Run demo app
         env:
-            CALL_PRIVATE_ACCESS: false
-        run: npm start --prefix backend &
-      - name: Run E2E Auth tests
+            DEMO_APP_PRIVATE_ACCESS: false
+        run: npm start --prefix openvidu-components-angular/openvidu-demo-app/backend &
+      - name: Run Chrome Browser
+        run: docker run --network=host -d -p 4444:4444 selenium/standalone-chrome:127.0
+      - name: Wait for Selenium to be ready
+        run: |
+          echo "Waiting for Selenium to be ready..."
+          for i in {1..30}; do
+            if curl -s http://localhost:4444/wd/hub/status > /dev/null; then
+              echo "Selenium is ready!"
+              break
+            fi
+            echo "Attempt $i: Selenium not ready yet, waiting..."
+            sleep 2
+          done
+          curl -s http://localhost:4444/wd/hub/status || (echo "Selenium failed to start" && exit 1)
+      - name: Run E2E Home tests
         env:
           LAUNCH_MODE: CI
-        run: npm run e2e:auth --prefix frontend
+        run: npm run e2e:home --prefix openvidu-components-angular/openvidu-demo-app/frontend
 
