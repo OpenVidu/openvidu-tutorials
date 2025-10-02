@@ -1,1 +1,0 @@
-# openvidu-complete-app
