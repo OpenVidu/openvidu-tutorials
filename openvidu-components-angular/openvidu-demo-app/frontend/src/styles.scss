@@ -1,0 +1,44 @@
+@use '@angular/material' as mat;
+@use './assets/styles/openvidu-theme.scss';
+
+@include mat.elevation-classes();
+@include mat.app-background();
+
+html {
+	@include mat.elevation-classes();
+	@include mat.app-background();
+	@include mat.all-component-bases(openvidu-theme.$light-theme);
+	@include mat.all-component-colors(openvidu-theme.$light-theme);
+	@include mat.all-component-typographies(openvidu-theme.$light-theme);
+	@include mat.all-component-densities(openvidu-theme.$light-theme);
+}
+html,
+body {
+	height: 100%;
+	overflow: hidden;
+}
+body {
+	margin: 0;
+	font-family: 'Roboto', 'RobotoDraft', Helvetica, Arial, sans-serif;
+}
+
+// Custom openvidu-components styles
+:root {
+	--ov-background-color: #1f2020;
+	--ov-surface-color: #ffffff;
+
+	--ov-primary-action-color: #273235;
+	--ov-secondary-action-color: #a5b9a6;
+	--ov-accent-action-color: #00aad4;
+
+	--ov-error-color: #eb5144;
+	--ov-warn-color: #ffba53;
+
+	--ov-text-primary-color: #ffffff;
+	--ov-text-surface-color: #1d1d1d;
+
+	--ov-toolbar-buttons-radius: 50%;
+	--ov-leave-button-radius: 10px;
+	--ov-video-radius: 5px;
+	--ov-surface-radius: 5px;
+}

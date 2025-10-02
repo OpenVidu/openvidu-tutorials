@@ -1,0 +1,255 @@
+$loginBorderRadus: 0.35rem;
+$loginColor: #e6e6e6;
+$loginError: #770000;
+$loginInputBackgroundColor: #434a52;
+$loginInputHoverBackgroundColor: #3c4249;
+$loginLabelBackgroundColor: #363b41;
+$loginSubmitBackgroundColor: #0087a9;
+$loginSubmitDisabledBackgroundColor: #264b55;
+
+$loginSubmitColor: #eee;
+$loginSubmitDisabledColor: #bdbdbd;
+
+$loginSubmitHoverBackgroundColor: #006a85;
+$iconFill: #606468;
+$formGap: 0.375rem;
+
+.section1 {
+	background:
+		linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0.2)),
+		url('../../../assets/images/bg.webp') top center no-repeat;
+	background-size: cover;
+	height: 100%;
+	text-align: center;
+	position: relative;
+	color: $loginColor;
+}
+
+#header,
+.footer {
+	background-color: transparent;
+	color: $loginColor;
+}
+
+.roomError {
+	font-size: 14px;
+	color: $loginError;
+	text-shadow: 0.2px 0px #ffffff;
+	text-align: left;
+	font-weight: 600;
+}
+
+.roomError mat-icon {
+	vertical-align: bottom;
+	padding-right: 4px;
+}
+
+.footer {
+	position: absolute;
+	bottom: 0;
+	font-size: 9px;
+	height: auto;
+}
+
+.footer a {
+	color: $loginColor;
+}
+
+#app-version,
+#logout-content {
+	right: 15px;
+	position: absolute;
+	font-size: 13px;
+}
+
+h4 {
+	font-size: 25px;
+	font-weight: 300;
+	color: #ffffff;
+	position: relative;
+	padding-bottom: 5px;
+}
+
+/* Extra small devices (phones, 600px and down) */
+@media only screen and (max-width: 600px) {
+	#header_img,
+	.ovVersion,
+	.footer {
+		display: none;
+	}
+}
+
+.openvidu-slogan-container {
+	margin-top: 80px;
+}
+
+#form-img {
+	max-width: 290px;
+	margin-right: 10px;
+	margin-top: 10px;
+	padding: 15px;
+}
+
+/* Extra large devices (large laptops and desktops, 1200px and up) */
+@media only screen and (min-width: 1200px) {
+	.section1 {
+		background-attachment: fixed;
+	}
+}
+
+.grid {
+	inline-size: 90%;
+	margin-inline: auto;
+	max-inline-size: 26rem;
+}
+
+.hidden {
+	border: 0;
+	clip: rect(0 0 0 0);
+	height: 1px;
+	margin: -1px;
+	overflow: hidden;
+	padding: 0;
+	position: absolute;
+	width: 1px;
+}
+
+.icons {
+	display: none;
+}
+
+.icon {
+	block-size: 1em;
+	display: inline-block;
+	fill: $iconFill;
+	inline-size: 1em;
+	vertical-align: middle;
+}
+
+input {
+	background-image: none;
+	border: 0;
+	color: inherit;
+	font: inherit;
+	margin: 0;
+	outline: 0;
+	padding: 0;
+	transition: background-color 0.3s;
+}
+
+input[type='submit'] {
+	cursor: pointer;
+}
+
+.form {
+	display: grid;
+	gap: $formGap;
+}
+
+.form input[type='password'],
+.form input[type='text'],
+.form button[type='submit'] {
+	inline-size: 100%;
+}
+
+.form-field {
+	display: flex;
+}
+
+.form-input {
+	flex: 1;
+}
+
+.login {
+	color: $loginColor;
+}
+
+.login label.error {
+	background-color: $loginError;
+}
+.login label,
+.login input[type='text'],
+.login input[type='password'] {
+	border-radius: $loginBorderRadus;
+	padding: 0.85rem;
+}
+#room-name-input {
+	border-radius: 0;
+}
+
+.login button[type='submit'] {
+	border-radius: $loginBorderRadus;
+	padding: 0.4rem;
+	cursor: pointer;
+}
+
+.login button:disabled[type='submit'] {
+	cursor: auto;
+	color: $loginSubmitDisabledColor !important;
+	background-color: $loginSubmitDisabledBackgroundColor !important;
+}
+
+.login label {
+	background-color: $loginLabelBackgroundColor;
+	border-bottom-right-radius: 0;
+	border-top-right-radius: 0;
+	padding-inline: 1.25rem;
+}
+
+.login input[type='password'],
+.login input[type='text'] {
+	background-color: $loginInputBackgroundColor;
+	border-bottom-left-radius: 0;
+	border-top-left-radius: 0;
+	font-size: 16px;
+}
+
+.login input[type='password']:focus,
+.login input[type='password']:hover,
+.login input[type='text']:focus,
+.login input[type='text']:hover {
+	background-color: $loginInputHoverBackgroundColor;
+}
+
+.login button[type='submit'] {
+	background-color: $loginSubmitBackgroundColor;
+	color: $loginSubmitColor;
+	font-weight: 500;
+	text-transform: uppercase;
+}
+
+.login button[type='submit']:focus,
+.login button[type='submit']:hover {
+	background-color: $loginSubmitHoverBackgroundColor;
+}
+#clear-room-name-btn {
+	height: auto;
+	background-color: $loginInputBackgroundColor;
+	border-radius: 0;
+	color: $loginColor;
+	mat-icon {
+		vertical-align: middle;
+	}
+}
+#room-name-generator-btn {
+	height: auto;
+	background-color: $loginInputBackgroundColor;
+	border-radius: $loginBorderRadus;
+	border-bottom-left-radius: 0;
+	border-top-left-radius: 0;
+	color: $loginColor;
+	mat-icon {
+		vertical-align: middle;
+	}
+	&:hover {
+		background-color: $loginInputHoverBackgroundColor;
+	}
+}
+
+p {
+	margin-block: 1.5rem;
+}
+
+.text--center {
+	text-align: center;
+}

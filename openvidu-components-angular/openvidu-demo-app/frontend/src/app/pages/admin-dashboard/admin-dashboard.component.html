@@ -1,0 +1,13 @@
+@if (!loading && !isParticipantLoggedIn) {
+	<ov-admin-login [error]="error" (onLoginRequested)="onLoginClicked($event)"></ov-admin-login>
+}
+
+@if (!loading && isParticipantLoggedIn) {
+	<ov-admin-dashboard
+		[recordingsList]="recordings"
+		(onLogoutRequested)="onLogoutClicked()"
+		(onLoadMoreRecordingsRequested)="onLoadMoreRecordingsRequested($event)"
+		(onRefreshRecordingsRequested)="onRefreshRecordingsClicked()"
+		(onRecordingDeleteRequested)="onDeleteRecordingClicked($event)"
+	></ov-admin-dashboard>
+}

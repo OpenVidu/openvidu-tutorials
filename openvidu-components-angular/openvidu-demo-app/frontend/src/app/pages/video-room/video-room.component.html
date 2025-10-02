@@ -1,0 +1,21 @@
+<ov-videoconference
+  [token]="token"
+  [tokenError]="serverError"
+  (onTokenRequested)="onTokenRequested($event)"
+  (onParticipantLeft)="onParticipantLeft($event)"
+  (onRecordingStartRequested)="onRecordingStartRequested($event)"
+  (onRecordingStopRequested)="onRecordingStopRequested($event)"
+  (onRecordingDeleteRequested)="onRecordingDeleteRequested($event)"
+  (onBroadcastingStartRequested)="onBroadcastingStartRequested($event)"
+  (onBroadcastingStopRequested)="onBroadcastingStopRequested($event)"
+  >
+</ov-videoconference>
+
+@if (!loading && serverError) {
+  <div class="error">
+    <mat-icon>error</mat-icon>
+    <span>
+      {{ serverError }}
+    </span>
+  </div>
+}
