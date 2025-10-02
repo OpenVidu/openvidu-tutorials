@@ -77,3 +77,13 @@ jobs:
           LAUNCH_MODE: CI
         run: npm run e2e:home --prefix openvidu-components-angular/openvidu-demo-app/frontend
 
+      - name: Run Room Tests
+        env:
+          LAUNCH_MODE: CI
+        run: npm run e2e:room --prefix openvidu-components-angular/openvidu-demo-app/frontend
+
+      - name: Run Recordings Tests
+        env:
+          LAUNCH_MODE: CI
+        run: npm run e2e:recordings --prefix openvidu-components-angular/openvidu-demo-app/frontend
+
