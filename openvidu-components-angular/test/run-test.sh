@@ -1,6 +1,5 @@
 #!/bin/bash
-# Eliminamos el "set -e" para evitar que el script se detenga con cualquier error
-# Añadimos set -o pipefail para detectar errores en pipelines pero permitir que el script continúe
+
 set -o pipefail
 
 # Configuration parameters (can be overridden with environment variables)
