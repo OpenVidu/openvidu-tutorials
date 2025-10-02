@@ -1,24 +1,24 @@
 /* You can add global styles to this file, and also import other style files */
 
 :root {
-	--ov-primary-color: #303030;
-	--ov-secondary-color: #3e3f3f;
-	--ov-tertiary-color: #598eff;
-	--ov-warn-color: #EB5144;
-	--ov-accent-color: #ffae35;
-	--ov-light-color: #e6e6e6;
+	--ov-background-color: #1f2020;
+	--ov-surface-color: #ffffff;
 
-	--ov-logo-background-color: #3a3d3d;
-	--ov-text-color: #ffffff;
+	--ov-primary-action-color: #273235;
+	--ov-secondary-action-color: #a5b9a6;
+	--ov-accent-action-color: #00aad4;
 
-	--ov-panel-text-color: #1d1d1d;
-	--ov-panel-background: #ffffff;
+	--ov-error-color: #eb5144;
+	--ov-warn-color: #ffba53;
 
-	--ov-toolbar-buttons-radius: 50%; // border-radius property
+	--ov-text-primary-color: #ffffff;
+	--ov-text-surface-color: #1d1d1d;
+
+	--ov-toolbar-buttons-radius: 50%;
 	--ov-leave-button-radius: 10px;
 	--ov-video-radius: 5px;
-	--ov-panel-radius: 5px;
-  }
+	--ov-surface-radius: 5px;
+}
 html,
 body {
 	height: 100%;

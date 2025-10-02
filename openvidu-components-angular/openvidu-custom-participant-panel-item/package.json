@@ -10,26 +10,26 @@
 	},
 	"private": true,
 	"dependencies": {
-		"@angular/animations": "^18.0.1",
-		"@angular/cdk": "^18.0.1",
-		"@angular/common": "^18.0.1",
-		"@angular/compiler": "^18.0.1",
-		"@angular/core": "^18.0.1",
-		"@angular/forms": "^18.0.1",
-		"@angular/material": "^18.0.1",
-		"@angular/platform-browser": "^18.0.1",
-		"@angular/platform-browser-dynamic": "^18.0.1",
-		"@angular/router": "^18.0.1",
-		"openvidu-components-angular": "^3.4.0",
-		"rxjs": "~7.5.0",
-		"tslib": "^2.3.0",
-		"zone.js": "~0.14.6"
+		"@angular/animations": "18.2.14",
+		"@angular/cdk": "18.2.14",
+		"@angular/common": "18.2.14",
+		"@angular/compiler": "18.2.14",
+		"@angular/core": "18.2.14",
+		"@angular/forms": "18.2.14",
+		"@angular/material": "18.2.14",
+		"@angular/platform-browser": "18.2.14",
+		"@angular/platform-browser-dynamic": "18.2.14",
+		"@angular/router": "18.2.14",
+		"openvidu-components-angular": "3.4.0",
+		"rxjs": "~7.5.7",
+		"tslib": "2.3.0",
+		"zone.js": "~0.14.10"
 	},
 	"devDependencies": {
-		"@angular/build": "^18.0.2",
-		"@angular/cli": "^18.0.2",
-		"@angular/compiler-cli": "^18.0.1",
-		"@types/node": "^20.12.12",
-		"typescript": "^5.4.5"
+		"@angular/build": "18.2.21",
+		"@angular/cli": "18.2.21",
+		"@angular/compiler-cli": "18.2.14",
+		"@types/node": "20.19.19",
+		"typescript": "5.4.5"
 	}
 }
