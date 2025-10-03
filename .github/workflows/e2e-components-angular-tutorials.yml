@@ -85,5 +85,8 @@ jobs:
       - name: Run Recordings Tests
         env:
           LAUNCH_MODE: CI
-        run: npm run e2e:recordings --prefix openvidu-components-angular/openvidu-demo-app/frontend
+        run: |
+          # Create downloads directory
+          mkdir -p /tmp/openvidu-components-angular-demo-app-downloads
+          npm run e2e:recordings --prefix openvidu-components-angular/openvidu-demo-app/frontend
 

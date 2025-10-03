@@ -79,6 +79,12 @@ describe('Testing recordings', () => {
 
 		// Check if the file is downloaded
 		const downloadsDir = OpenViduDemoAppConfig.downloadsDir;
+
+		// Ensure the downloads directory exists
+		if (!fs.existsSync(downloadsDir)) {
+			fs.mkdirSync(downloadsDir, { recursive: true });
+		}
+
 		const files = fs.readdirSync(downloadsDir);
 		const downloadedFile = files.find((file) => file.includes('Room-') && file.endsWith('.mp4'));
 
