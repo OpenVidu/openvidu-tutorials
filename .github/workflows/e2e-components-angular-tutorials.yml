@@ -58,8 +58,10 @@ jobs:
         env:
             DEMO_APP_PRIVATE_ACCESS: false
         run: npm start --prefix openvidu-components-angular/openvidu-demo-app/backend &
+      - name: Create downloads directory
+        run: mkdir -p /tmp/openvidu-components-angular-demo-app-downloads
       - name: Run Chrome Browser
-        run: docker run --network=host -d -p 4444:4444 selenium/standalone-chrome:127.0
+        run: docker run --network=host -d -p 4444:4444 -v /tmp/openvidu-components-angular-demo-app-downloads:/tmp/openvidu-components-angular-demo-app-downloads selenium/standalone-chrome:127.0
       - name: Wait for Selenium to be ready
         run: |
           echo "Waiting for Selenium to be ready..."
@@ -85,8 +87,5 @@ jobs:
       - name: Run Recordings Tests
         env:
           LAUNCH_MODE: CI
-        run: |
-          # Create downloads directory
-          mkdir -p /tmp/openvidu-components-angular-demo-app-downloads
-          npm run e2e:recordings --prefix openvidu-components-angular/openvidu-demo-app/frontend
+        run: npm run e2e:recordings --prefix openvidu-components-angular/openvidu-demo-app/frontend
 
