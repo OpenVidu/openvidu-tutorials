@@ -59,9 +59,11 @@ jobs:
             DEMO_APP_PRIVATE_ACCESS: false
         run: npm start --prefix openvidu-components-angular/openvidu-demo-app/backend &
       - name: Create downloads directory
-        run: mkdir -p /tmp/openvidu-components-angular-demo-app-downloads
+        run: |
+          mkdir -p /tmp/openvidu-components-angular-demo-app-downloads
+          chmod 777 /tmp/openvidu-components-angular-demo-app-downloads
       - name: Run Chrome Browser
-        run: docker run --network=host -d -p 4444:4444 -v /tmp/openvidu-components-angular-demo-app-downloads:/tmp/openvidu-components-angular-demo-app-downloads selenium/standalone-chrome:127.0
+        run: docker run --network=host -d -v /tmp/openvidu-components-angular-demo-app-downloads:/tmp/openvidu-components-angular-demo-app-downloads selenium/standalone-chrome:127.0
       - name: Wait for Selenium to be ready
         run: |
           echo "Waiting for Selenium to be ready..."
