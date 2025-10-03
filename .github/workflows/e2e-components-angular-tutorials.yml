@@ -2,6 +2,8 @@ name: E2E Test Angular Components tutorials
 on:
   push:
   pull_request:
+  repository_dispatch:
+    types: [openvidu-components-angular]
   workflow_dispatch:
 
 jobs:
