@@ -11,6 +11,7 @@ PARALLEL=${PARALLEL:-false}
 MAX_PARALLEL=${MAX_PARALLEL:-2}
 SKIP_INSTALL=${SKIP_INSTALL:-false}
 CLEAN_NODE_MODULES=${CLEAN_NODE_MODULES:-true}
+OPENVIDU_COMPONENTS_ANGULAR_VERSION=${OPENVIDU_COMPONENTS_ANGULAR_VERSION:-latest}
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -57,6 +58,7 @@ usage() {
   echo "  --retry-interval SEC   Seconds between retries (default: $RETRY_INTERVAL)"
   echo "  --skip-install         Skip npm install (default: $SKIP_INSTALL)"
   echo "  --keep-node-modules    Keep node_modules directory (default: !$CLEAN_NODE_MODULES)"
+  echo "  --openvidu-components-version VER Version of openvidu-components-angular to install (default: $OPENVIDU_COMPONENTS_ANGULAR_VERSION)"
   echo "  --skip TUTORIAL        Skip specific tutorial (can be used multiple times)"
   echo "  --only TUTORIAL        Run only specific tutorial (can be used multiple times)"
   echo "  -h, --help             Display this help message"
@@ -100,6 +102,10 @@ while [[ $# -gt 0 ]]; do
   --keep-node-modules)
     CLEAN_NODE_MODULES=false
     shift
+    ;;
+  --openvidu-components-version)
+    OPENVIDU_COMPONENTS_ANGULAR_VERSION=$2
+    shift 2
     ;;
   --skip)
     SKIP_TUTORIALS+=("$2")
@@ -201,12 +207,27 @@ run_test() {
   if [ "$SKIP_INSTALL" = false ]; then
     echo -e "${YELLOW}[$(date '+%H:%M:%S')] Installing dependencies for $tutorial_name...${NC}" | tee -a "$log_file"
     echo -e "${GRAY}" # Switch to gray for command output
-    npm install openvidu-components-angular@latest 2>&1 | tee -a "$log_file" || {
-      echo -e "${NC}${RED}[$(date '+%H:%M:%S')] Failed to install dependencies for $tutorial_name${NC}" | tee -a "$log_file"
-      echo "FAILED" >"$result_file"
-      popd >/dev/null
-      return
-    }
+
+    # Check if OPENVIDU_COMPONENTS_ANGULAR_VERSION is a file path
+    if [[ "$OPENVIDU_COMPONENTS_ANGULAR_VERSION" == file:* ]]; then
+      # Extract the path after 'file:'
+      PACKAGE_PATH="${OPENVIDU_COMPONENTS_ANGULAR_VERSION#file:}"
+      echo -e "${YELLOW}Installing from local package: $PACKAGE_PATH${NC}" | tee -a "$log_file"
+      npm install "$PACKAGE_PATH" 2>&1 | tee -a "$log_file" || {
+        echo -e "${NC}${RED}[$(date '+%H:%M:%S')] Failed to install dependencies for $tutorial_name${NC}" | tee -a "$log_file"
+        echo "FAILED" >"$result_file"
+        popd >/dev/null
+        return
+      }
+    else
+      # Install from npm registry
+      npm install openvidu-components-angular@${OPENVIDU_COMPONENTS_ANGULAR_VERSION} 2>&1 | tee -a "$log_file" || {
+        echo -e "${NC}${RED}[$(date '+%H:%M:%S')] Failed to install dependencies for $tutorial_name${NC}" | tee -a "$log_file"
+        echo "FAILED" >"$result_file"
+        popd >/dev/null
+        return
+      }
+    fi
     echo -e "${NC}" # Reset color
   fi
 
@@ -348,6 +369,7 @@ echo "  Timeout: $TIMEOUT ms"
 echo "  Application readiness checks: $MAX_RETRIES (every $RETRY_INTERVAL seconds)"
 echo "  Skip npm install: $SKIP_INSTALL"
 echo "  Clean node_modules: $CLEAN_NODE_MODULES"
+echo "  OpenVidu components version: $OPENVIDU_COMPONENTS_ANGULAR_VERSION"
 if [ ${#SKIP_TUTORIALS[@]} -gt 0 ]; then
   echo "  Skipping tutorials: ${SKIP_TUTORIALS[*]}"
 fi
