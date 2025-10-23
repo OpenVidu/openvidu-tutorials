@@ -28,7 +28,7 @@
     "@angular/compiler-cli": "20.3.7",
     "@types/chai": "4.3.19",
     "@types/mocha": "9.1.1",
-    "@types/node": "20.12.14",
+    "@types/node": "20.19.19",
     "@types/pixelmatch": "5.2.6",
     "@types/pngjs": "6.0.5",
     "@types/selenium-webdriver": "4.1.26",
