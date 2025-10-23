@@ -10,8 +10,8 @@ import { MatIcon } from '@angular/material/icon';
 import { MatIconButton } from '@angular/material/button';
 
 @Component({
-	selector: 'app-root',
-	template: `
+    selector: 'app-root',
+    template: `
 		<ov-videoconference
 			[token]="token"
 			[livekitUrl]="LIVEKIT_URL"
@@ -27,9 +27,8 @@ import { MatIconButton } from '@angular/material/button';
 			</div>
 		</ov-videoconference>
 	`,
-	styles: [],
-	standalone: true,
-	imports: [OpenViduComponentsModule, MatIconButton, MatIcon],
+    styles: [],
+    imports: [OpenViduComponentsModule, MatIconButton, MatIcon]
 })
 export class AppComponent {
 	// For local development, leave these variables empty

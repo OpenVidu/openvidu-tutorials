@@ -1,10 +1,8 @@
 #!/bin/bash
 
-
 TUTORIALS=(
   'openvidu-additional-panels'
   'openvidu-admin-dashboard'
-  'openvidu-complete-app/frontend'
   'openvidu-custom-activities-panel'
   'openvidu-custom-chat-panel'
   'openvidu-custom-lang'
@@ -19,6 +17,7 @@ TUTORIALS=(
   'openvidu-toggle-hand'
   'openvidu-toolbar-buttons'
   'openvidu-toolbar-panel-buttons'
+  'openvidu-demo-app/frontend'
 )
 
 for tutorial in "${TUTORIALS[@]}"

@@ -8,12 +8,10 @@ import {
 } from 'openvidu-components-angular';
 
 @Component({
-  selector: 'app-root',
-  template:
-    '<ov-videoconference [token]="token" [livekitUrl]="LIVEKIT_URL" (onTokenRequested)="onTokenRequested($event)"></ov-videoconference>',
-  styles: [''],
-  standalone: true,
-  imports: [OpenViduComponentsModule, ApiDirectiveModule],
+    selector: 'app-root',
+    template: '<ov-videoconference [token]="token" [livekitUrl]="LIVEKIT_URL" (onTokenRequested)="onTokenRequested($event)"></ov-videoconference>',
+    styles: [''],
+    imports: [OpenViduComponentsModule, ApiDirectiveModule]
 })
 export class AppComponent {
   // For local development, leave these variables empty

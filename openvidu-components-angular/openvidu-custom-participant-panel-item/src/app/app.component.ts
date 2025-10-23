@@ -8,8 +8,8 @@ import { MatIconButton } from '@angular/material/button';
 import { OpenViduComponentsModule } from 'openvidu-components-angular';
 
 @Component({
-	selector: 'app-root',
-	template: `
+    selector: 'app-root',
+    template: `
 		<!-- OpenVidu Video Conference Component -->
 		<ov-videoconference
 			[token]="token"
@@ -33,16 +33,15 @@ import { OpenViduComponentsModule } from 'openvidu-components-angular';
 			</div>
 		</ov-videoconference>
 	`,
-	styles: [],
-	standalone: true,
-	imports: [
-		OpenViduComponentsModule,
-		MatIconButton,
-		MatMenuTrigger,
-		MatIcon,
-		MatMenu,
-		MatMenuItem,
-	],
+    styles: [],
+    imports: [
+        OpenViduComponentsModule,
+        MatIconButton,
+        MatMenuTrigger,
+        MatIcon,
+        MatMenu,
+        MatMenuItem,
+    ]
 })
 export class AppComponent {
 	// For local development, leave these variables empty

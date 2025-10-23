@@ -14,8 +14,8 @@ import {
 } from 'openvidu-components-angular';
 
 @Component({
-	selector: 'app-root',
-	template: `
+    selector: 'app-root',
+    template: `
 		<!-- OpenVidu Video Conference Component -->
 		<ov-videoconference
 			[token]="token"
@@ -39,7 +39,7 @@ import {
 			</div>
 		</ov-videoconference>
 	`,
-	styles: `
+    styles: `
 		#my-panel {
 			background: #aafffc;
 			height: 100%;
@@ -47,8 +47,7 @@ import {
 			text-align: center;
 		}
 	`,
-	standalone: true,
-	imports: [OpenViduComponentsModule],
+    imports: [OpenViduComponentsModule]
 })
 export class AppComponent {
 	// For local development, leave these variables empty

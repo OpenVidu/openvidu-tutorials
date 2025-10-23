@@ -21,8 +21,8 @@ enum DataTopicApp {
 }
 
 @Component({
-	selector: 'app-root',
-	template: `
+    selector: 'app-root',
+    template: `
 		<ov-videoconference
 			[prejoin]="true"
 			[token]="token"
@@ -50,7 +50,7 @@ enum DataTopicApp {
 			</div>
 		</ov-videoconference>
 	`,
-	styles: `
+    styles: `
 		#call-container, #room-container {
 			height: 100%;
 		}
@@ -63,20 +63,19 @@ enum DataTopicApp {
 			bottom: 3px;
 		}
 	`,
-	animations: [
-		trigger('inOutHandAnimation', [
-			transition(':enter', [
-				style({ opacity: 0, transform: 'translateY(-100%)' }),
-				animate('300ms ease-in-out', style({ opacity: 1, transform: 'translateY(0)' }))
-			]),
-			transition(':leave', [
-				style({ opacity: 1, transform: 'translateY(0)' }),
-				animate('300ms ease-in-out', style({ opacity: 0, transform: 'translateY(-100%)' }))
-			])
-		])
-	],
-	standalone: true,
-	imports: [OpenViduComponentsModule, MatIconButton, MatIcon]
+    animations: [
+        trigger('inOutHandAnimation', [
+            transition(':enter', [
+                style({ opacity: 0, transform: 'translateY(-100%)' }),
+                animate('300ms ease-in-out', style({ opacity: 1, transform: 'translateY(0)' }))
+            ]),
+            transition(':leave', [
+                style({ opacity: 1, transform: 'translateY(0)' }),
+                animate('300ms ease-in-out', style({ opacity: 0, transform: 'translateY(-100%)' }))
+            ])
+        ])
+    ],
+    imports: [OpenViduComponentsModule, MatIconButton, MatIcon]
 })
 export class AppComponent {
 	// For local development, leave these variables empty

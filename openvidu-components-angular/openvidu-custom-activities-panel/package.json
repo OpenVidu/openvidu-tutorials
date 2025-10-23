@@ -1,35 +1,35 @@
 {
-	"name": "openvidu-custom-activities-panel",
-	"version": "3.4.0",
-	"scripts": {
-		"ng": "ng",
-		"start": "ng serve --port=5080 --host=0.0.0.0",
-		"build": "ng build",
-		"watch": "ng build --watch --configuration development",
-		"build:prod": "ng build --output-path ./openvidu-basic-node/public/ --configuration production"
-	},
-	"private": true,
-	"dependencies": {
-		"@angular/animations": "18.2.14",
-		"@angular/cdk": "18.2.14",
-		"@angular/common": "18.2.14",
-		"@angular/compiler": "18.2.14",
-		"@angular/core": "18.2.14",
-		"@angular/forms": "18.2.14",
-		"@angular/material": "18.2.14",
-		"@angular/platform-browser": "18.2.14",
-		"@angular/platform-browser-dynamic": "18.2.14",
-		"@angular/router": "18.2.14",
-		"openvidu-components-angular": "3.4.0",
-		"rxjs": "~7.5.7",
-		"tslib": "2.3.1",
-		"zone.js": "~0.14.10"
-	},
-	"devDependencies": {
-		"@angular/build": "18.2.21",
-		"@angular/cli": "18.2.21",
-		"@angular/compiler-cli": "18.2.14",
-		"@types/node": "20.19.19",
-		"typescript": "5.4.5"
-	}
+  "name": "openvidu-custom-activities-panel",
+  "version": "3.4.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --port=5080 --host=0.0.0.0",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "build:prod": "ng build --output-path ./openvidu-basic-node/public/ --configuration production"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "20.3.7",
+    "@angular/cdk": "19.2.19",
+    "@angular/common": "20.3.7",
+    "@angular/compiler": "20.3.7",
+    "@angular/core": "20.3.7",
+    "@angular/forms": "20.3.7",
+    "@angular/material": "19.2.19",
+    "@angular/platform-browser": "20.3.7",
+    "@angular/platform-browser-dynamic": "20.3.7",
+    "@angular/router": "20.3.7",
+    "openvidu-components-angular": "3.4.0",
+    "rxjs": "~7.5.7",
+    "tslib": "2.3.1",
+    "zone.js": "~0.15.1"
+  },
+  "devDependencies": {
+    "@angular/build": "^20.3.7",
+    "@angular/cli": "20.3.7",
+    "@angular/compiler-cli": "20.3.7",
+    "@types/node": "20.19.19",
+    "typescript": "5.8.3"
+  }
 }

@@ -8,8 +8,8 @@ import {
 } from 'openvidu-components-angular';
 
 @Component({
-  selector: 'app-root',
-  template: `
+    selector: 'app-root',
+    template: `
     <ov-videoconference
       [token]="token"
       [livekitUrl]="LIVEKIT_URL"
@@ -21,8 +21,7 @@ import {
       </div>
     </ov-videoconference>
   `,
-  standalone: true,
-  imports: [OpenViduComponentsModule],
+    imports: [OpenViduComponentsModule]
 })
 export class AppComponent {
   // For local development, leave these variables empty

@@ -4,8 +4,8 @@ import { lastValueFrom } from 'rxjs';
 import { OpenViduComponentsModule } from 'openvidu-components-angular';
 
 @Component({
-	selector: 'app-root',
-	template: `
+    selector: 'app-root',
+    template: `
 		<ov-videoconference
 			[token]="token"
 			[livekitUrl]="LIVEKIT_URL"
@@ -18,7 +18,7 @@ import { OpenViduComponentsModule } from 'openvidu-components-angular';
 			</div>
 		</ov-videoconference>
 	`,
-	styles: `
+    styles: `
 		#my-panel {
 			background: #aafffc;
 			height: 100%;
@@ -26,8 +26,7 @@ import { OpenViduComponentsModule } from 'openvidu-components-angular';
 			text-align: center;
 		}
 	`,
-	standalone: true,
-	imports: [OpenViduComponentsModule],
+    imports: [OpenViduComponentsModule]
 })
 export class AppComponent {
 	// For local development, leave these variables empty

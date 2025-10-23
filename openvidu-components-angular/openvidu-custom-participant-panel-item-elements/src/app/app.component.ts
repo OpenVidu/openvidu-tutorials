@@ -8,8 +8,8 @@ import {
 } from 'openvidu-components-angular';
 
 @Component({
-	selector: 'app-root',
-	template: `
+    selector: 'app-root',
+    template: `
 		<!-- OpenVidu Video Conference Component -->
 		@if (connected) {
 		<ov-videoconference
@@ -33,9 +33,8 @@ import {
 		<div style="text-align: center;">Session disconnected</div>
 		}
 	`,
-	styles: [],
-	standalone: true,
-	imports: [OpenViduComponentsModule],
+    styles: [],
+    imports: [OpenViduComponentsModule]
 })
 export class AppComponent {
 	// For local development, leave these variables empty

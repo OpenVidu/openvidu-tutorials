@@ -9,8 +9,8 @@ import {
 import { NgClass } from '@angular/common';
 
 @Component({
-	selector: 'app-root',
-	template: `
+    selector: 'app-root',
+    template: `
 		<!-- OpenVidu Video Conference Component -->
 		<ov-videoconference
 			[token]="token"
@@ -49,7 +49,7 @@ import { NgClass } from '@angular/common';
 			</div>
 		</ov-videoconference>
 	`,
-	styles: `
+    styles: `
 		.container {
 			display: flex;
 			flex-wrap: wrap;
@@ -64,8 +64,7 @@ import { NgClass } from '@angular/common';
 			display: none;
 		}
 	`,
-	standalone: true,
-	imports: [OpenViduComponentsModule, NgClass],
+    imports: [OpenViduComponentsModule, NgClass]
 })
 export class AppComponent implements OnInit, OnDestroy {
 	// For local development, leave these variables empty

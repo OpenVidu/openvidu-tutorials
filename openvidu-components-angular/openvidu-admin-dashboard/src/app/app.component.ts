@@ -8,8 +8,8 @@ import {
 } from 'openvidu-components-angular';
 
 @Component({
-	selector: 'app-root',
-	template: `
+    selector: 'app-root',
+    template: `
 		@if (logged) {
 		<ov-admin-dashboard
 			[recordingsList]="recordings()"
@@ -23,8 +23,7 @@ import {
 		</ov-admin-login>
 		}
 	`,
-	standalone: true,
-	imports: [OpenViduComponentsModule],
+    imports: [OpenViduComponentsModule]
 })
 export class AppComponent {
 	roomName = 'openvidu-admin-dashboard';

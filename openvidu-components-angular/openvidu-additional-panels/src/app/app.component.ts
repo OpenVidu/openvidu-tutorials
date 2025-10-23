@@ -13,8 +13,8 @@ import { MatIconButton } from '@angular/material/button';
 
 
 @Component({
-	selector: 'app-root',
-	template: `
+    selector: 'app-root',
+    template: `
 		<!-- OpenVidu Video Conference Component -->
 		<ov-videoconference
 			[token]="token"
@@ -48,7 +48,7 @@ import { MatIconButton } from '@angular/material/button';
 			</div>
 		</ov-videoconference>
 	`,
-	styles: `
+    styles: `
 		#my-panels {
 			height: 100%;
 			overflow: hidden;
@@ -66,8 +66,7 @@ import { MatIconButton } from '@angular/material/button';
 			background: #ddf2ff;
 		}
 	`,
-	standalone: true,
-	imports: [OpenViduComponentsModule, MatIconButton, MatIcon],
+    imports: [OpenViduComponentsModule, MatIconButton, MatIcon]
 })
 export class AppComponent {
 	// For local development, leave these variables empty

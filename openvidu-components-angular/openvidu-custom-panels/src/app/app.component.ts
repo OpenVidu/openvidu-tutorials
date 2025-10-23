@@ -5,8 +5,8 @@ import { lastValueFrom } from 'rxjs';
 import { OpenViduComponentsModule } from 'openvidu-components-angular';
 
 @Component({
-	selector: 'app-root',
-	template: `
+    selector: 'app-root',
+    template: `
 		<!-- OpenVidu Video Conference Component -->
 		<ov-videoconference
 			[token]="token"
@@ -30,7 +30,7 @@ import { OpenViduComponentsModule } from 'openvidu-components-angular';
 			</ov-panel>
 		</ov-videoconference>
 	`,
-	styles: `
+    styles: `
 		#my-chat-panel,
 		#my-participants-panel,
 		#my-activities-panel {
@@ -51,8 +51,7 @@ import { OpenViduComponentsModule } from 'openvidu-components-angular';
 			background: #ffddc9;
 		}
 	`,
-	standalone: true,
-	imports: [OpenViduComponentsModule],
+    imports: [OpenViduComponentsModule]
 })
 export class AppComponent {
 	// For local development, leave these variables empty
