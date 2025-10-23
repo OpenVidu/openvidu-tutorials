@@ -5,28 +5,21 @@ on:
   repository_dispatch:
     types: [openvidu-components-angular]
   workflow_dispatch:
+    inputs:
+      openvidu_components_angular_version:
+        description: 'Version of openvidu-components-angular (empty = build from source)'
+        required: false
+        default: ''
+
 
 jobs:
-  build_and_start_tutorials:
+  # Build from source only if no version specified
+  build_components:
     runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '22'
-
-    - name: Run tests
-      run: |
-        cd openvidu-components-angular/test
-        npm install
-        ./run-test.sh
-
-  demo_app_e2e_test:
-    runs-on: ubuntu-latest
+    if: github.event.inputs.openvidu_components_angular_version == '' || github.event.inputs.openvidu_components_angular_version == null
+    outputs:
+      artifact_name: ${{ steps.build.outputs.artifact_name }}
+      package_filename: ${{ steps.build.outputs.package_filename }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -38,10 +31,58 @@ jobs:
         id: build
         uses: OpenVidu/actions/build-openvidu-components-angular@main
 
+  build_and_start_tutorials:
+    runs-on: ubuntu-latest
+    needs: [build_components]
+    if: always() && (needs.build_components.result == 'success' || needs.build_components.result == 'skipped')
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '22'
+
+    # Download artifact if built from source - place it in the parent directory
+    - name: Download OpenVidu Components Angular package
+      if: needs.build_components.result == 'success'
+      uses: actions/download-artifact@v4
+      with:
+        name: ${{ needs.build_components.outputs.artifact_name }}
+        path: './openvidu-components-angular'
+
+    - name: Run tests
+      run: |
+        cd openvidu-components-angular/test
+        npm install
+        if [ -n "${{ needs.build_components.outputs.package_filename }}" ]; then
+          # Use local package - pass absolute path
+          ./run-test.sh --openvidu-components-version "file:$PWD/../${{ needs.build_components.outputs.package_filename }}"
+        else
+          # Use npm version
+          ./run-test.sh --openvidu-components-version "${{ github.event.inputs.openvidu_components_angular_version }}"
+        fi
+
+  demo_app_e2e_test:
+    runs-on: ubuntu-latest
+    needs: [build_components]
+    if: always() && (needs.build_components.result == 'success' || needs.build_components.result == 'skipped')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      # Download artifact if built from source
       - name: Download OpenVidu Components Angular package
+        if: needs.build_components.result == 'success'
         uses: actions/download-artifact@v4
         with:
-            name: ${{ steps.build.outputs.artifact_name }}
+            name: ${{ needs.build_components.outputs.artifact_name }}
             path: './openvidu-components-angular/openvidu-demo-app'
 
       - name: Setup OpenVidu Local Deployment
@@ -49,13 +90,22 @@ jobs:
         with:
           ref-openvidu-local-deployment: "development"
           openvidu-edition: "community"
+
       - name: Install demo app dependencies
         run: |
           cd openvidu-components-angular/openvidu-demo-app
-          npm install ${{ steps.build.outputs.package_filename }} --prefix frontend
+          if [ -n "${{ needs.build_components.outputs.package_filename }}" ]; then
+            echo "Installing from built artifact: ${{ needs.build_components.outputs.package_filename }}"
+            npm install ./${{ needs.build_components.outputs.package_filename }} --prefix frontend
+          else
+            VERSION="${{ github.event.inputs.openvidu_components_angular_version }}"
+            echo "Installing from npm: openvidu-components-angular@${VERSION}"
+            npm install "openvidu-components-angular@${VERSION}" --prefix frontend
+          fi
           npm install --prefix backend
           npm run build --prefix backend
           npm run build-prod --prefix frontend
+
       - name: Run demo app
         env:
             DEMO_APP_PRIVATE_ACCESS: false
