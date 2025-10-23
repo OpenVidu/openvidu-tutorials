@@ -237,7 +237,8 @@ describe('Testing Room', () => {
 			// includeAA: false,
 			// diffColor: [255, 0, 0]
 		});
-		fs.writeFileSync('diff.png', PNG.sync.write(diff));
+		const diffBuffer = PNG.sync.write(diff);
+		fs.writeFileSync('diff.png', new Uint8Array(diffBuffer));
 		expect(numDiffPixels).to.be.greaterThan(500, 'The virtual background was not applied correctly');
 	});
 });
