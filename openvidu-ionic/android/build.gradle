@@ -24,6 +24,28 @@ allprojects {
     }
 }
 
+subprojects { subproject ->
+    subproject.plugins.withId('com.android.library') {
+        subproject.extensions.configure(com.android.build.api.dsl.LibraryExtension) { extension ->
+            extension.compileOptions {
+                sourceCompatibility JavaVersion.VERSION_21
+                targetCompatibility JavaVersion.VERSION_21
+            }
+
+            if (!extension.namespace) {
+                switch (subproject.name) {
+                    case 'capacitor-android':
+                        extension.namespace = 'com.getcapacitor.android'
+                        break
+                    case 'capacitor-cordova-android-plugins':
+                        extension.namespace = 'capacitor.android.plugins'
+                        break
+                }
+            }
+        }
+    }
+}
+
 tasks.register("clean", Delete) {
     delete(rootProject.buildDir)
 }
