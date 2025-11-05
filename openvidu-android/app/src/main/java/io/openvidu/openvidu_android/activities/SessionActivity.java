@@ -32,9 +32,8 @@ import org.webrtc.VideoTrack;
 import java.io.IOException;
 import java.util.Random;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import io.openvidu.openvidu_android.R;
+import io.openvidu.openvidu_android.databinding.ActivityMainBinding;
 import io.openvidu.openvidu_android.fragments.PermissionsDialogFragment;
 import io.openvidu.openvidu_android.openvidu.LocalParticipant;
 import io.openvidu.openvidu_android.openvidu.RemoteParticipant;
@@ -53,22 +52,16 @@ public class SessionActivity extends AppCompatActivity {
     private static final int MY_PERMISSIONS_REQUEST_RECORD_AUDIO = 101;
     private static final int MY_PERMISSIONS_REQUEST = 102;
     private final String TAG = "SessionActivity";
-    @BindView(R.id.views_container)
-    LinearLayout views_container;
-    @BindView(R.id.start_finish_call)
-    Button start_finish_call;
-    @BindView(R.id.session_name)
-    EditText session_name;
-    @BindView(R.id.participant_name)
-    EditText participant_name;
-    @BindView(R.id.application_server_url)
-    EditText application_server_url;
-    @BindView(R.id.local_gl_surface_view)
-    SurfaceViewRenderer localVideoView;
-    @BindView(R.id.main_participant)
-    TextView main_participant;
-    @BindView(R.id.peer_container)
-    FrameLayout peer_container;
+
+    private ActivityMainBinding binding;
+    private LinearLayout views_container;
+    private Button start_finish_call;
+    private EditText session_name;
+    private EditText participant_name;
+    private EditText application_server_url;
+    private SurfaceViewRenderer localVideoView;
+    private TextView main_participant;
+    private FrameLayout peer_container;
 
     private String APPLICATION_SERVER_URL;
     private Session session;
@@ -80,10 +73,22 @@ public class SessionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        setContentView(R.layout.activity_main);
+        
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        
+        // Initialize view references
+        views_container = binding.viewsContainer;
+        start_finish_call = binding.startFinishCall;
+        session_name = binding.sessionName;
+        participant_name = binding.participantName;
+        application_server_url = binding.applicationServerUrl;
+        localVideoView = binding.localGlSurfaceView;
+        main_participant = binding.mainParticipant;
+        peer_container = binding.peerContainer;
+        
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         askForPermissions();
-        ButterKnife.bind(this);
         Random random = new Random();
         int randomIndex = random.nextInt(100);
         participant_name.setText(participant_name.getText().append(String.valueOf(randomIndex)));
