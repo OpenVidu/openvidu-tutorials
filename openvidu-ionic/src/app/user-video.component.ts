@@ -5,6 +5,7 @@ import { StreamManager } from 'openvidu-browser';
 
 @Component({
 	selector: 'user-video',
+	standalone: false,
 	styles: [
 		`
 			ov-video {

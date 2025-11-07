@@ -3,25 +3,17 @@ import { lastValueFrom } from 'rxjs';
 import { Component, HostListener, OnDestroy } from '@angular/core';
 import { AndroidPermissions } from '@awesome-cordova-plugins/android-permissions/ngx';
 import { AlertController, Platform } from '@ionic/angular';
-import {
-	Device,
-	OpenVidu,
-	Publisher,
-	PublisherProperties,
-	Session,
-	StreamEvent,
-	StreamManager,
-	Subscriber
-} from 'openvidu-browser';
+import { Device, OpenVidu, Publisher, PublisherProperties, Session, StreamEvent, StreamManager, Subscriber } from 'openvidu-browser';
 
 @Component({
 	selector: 'app-root',
 	templateUrl: 'app.component.html',
-	styleUrls: ['app.component.scss']
+	styleUrls: ['app.component.scss'],
+	standalone: false
 })
 export class AppComponent implements OnDestroy {
-
-	APPLICATION_SERVER_URL = 'http://localhost:5000/';
+	OPENVIDU_URL = 'http://localhost:4443/';
+	OPENVIDU_SECRET = 'MY_SECRET';
 
 	ANDROID_PERMISSIONS = [
 		this.androidPermissions.PERMISSION.CAMERA,
@@ -55,19 +47,17 @@ export class AppComponent implements OnDestroy {
 		private androidPermissions: AndroidPermissions,
 		private alertController: AlertController
 	) {
-
 		this.generateParticipantInfo();
 
 		// WARNING!! To make easier first steps with mobile devices, this code allows
 		// using the demos OpenVidu deployment when no custom deployment is provided
-		if (this.platform.is('hybrid') && this.APPLICATION_SERVER_URL === 'http://localhost:5000/') {
+		if (this.platform.is('hybrid') && this.OPENVIDU_URL === 'http://localhost:4443/') {
 			/**
-			 * WARNING: this APPLICATION_SERVER_URL is not secure and is only meant for a first quick test.
-			 * Anyone could access your video sessions. You should modify the APPLICATION_SERVER_URL to a custom private one.
+			 * WARNING: this OPENVIDU_URL is not secure and is only meant for a first quick test.
+			 * Anyone could access your video sessions. You should modify the OPENVIDU_URL to a custom private one.
 			 */
-			this.APPLICATION_SERVER_URL = 'https://demos.openvidu.io/';
+			this.OPENVIDU_URL = 'https://demos.openvidu.io/';
 		}
-
 	}
 
 	@HostListener('window:beforeunload')
@@ -172,7 +162,7 @@ export class AppComponent implements OnDestroy {
 
 	async swapCamera() {
 		try {
-			const newCamera = this.cameras.find(cam => cam.deviceId !== this.cameraSelected.deviceId);
+			const newCamera = this.cameras.find((cam) => cam.deviceId !== this.cameraSelected.deviceId);
 			if (!!newCamera) {
 				this.isFrontCamera = !this.isFrontCamera;
 				const pp: PublisherProperties = {
@@ -208,8 +198,8 @@ export class AppComponent implements OnDestroy {
 	private async initDevices() {
 		this.devices = await this.OV.getDevices();
 
-		this.cameras = this.devices.filter(d => d.kind === 'videoinput');
-		this.microphones = this.devices.filter(d => d.kind === 'audioinput' && d.label !== 'Default');
+		this.cameras = this.devices.filter((d) => d.kind === 'videoinput');
+		this.microphones = this.devices.filter((d) => d.kind === 'audioinput' && d.label !== 'Default');
 
 		this.cameraSelected = this.cameras[0];
 		this.microphoneSelected = this.microphones[0];
@@ -229,12 +219,12 @@ export class AppComponent implements OnDestroy {
 			responses.forEach((response, i) => {
 				allHasPermissions = response.hasPermission;
 				if (!allHasPermissions) {
-					throw (new Error('Permissions denied: ' + this.ANDROID_PERMISSIONS[i]));
+					throw new Error('Permissions denied: ' + this.ANDROID_PERMISSIONS[i]);
 				}
 			});
 		} catch (error) {
 			console.error('Error requesting or checking permissions: ', error);
-			throw (error);
+			throw error;
 		}
 	}
 
@@ -258,9 +248,16 @@ export class AppComponent implements OnDestroy {
 				{
 					name: 'url',
 					type: 'text',
-					value: this.APPLICATION_SERVER_URL,
+					value: this.OPENVIDU_URL,
 					placeholder: 'URL',
-					id: 'url-input',
+					id: 'url-input'
+				},
+				{
+					name: 'secret',
+					type: 'text',
+					value: this.OPENVIDU_SECRET,
+					placeholder: 'Secret',
+					id: 'secret-input'
 				}
 			],
 			buttons: [
@@ -268,34 +265,30 @@ export class AppComponent implements OnDestroy {
 					text: 'Cancel',
 					role: 'cancel',
 					id: 'cancel-btn',
-					cssClass: 'secondary',
+					cssClass: 'secondary'
 				},
 				{
 					text: 'Ok',
 					id: 'ok-btn',
 					handler: (data) => {
-						this.APPLICATION_SERVER_URL = data.url;
-					},
-				},
-			],
+						this.OPENVIDU_URL = data.url.endsWith('/') ? data.url : data.url + '/';
+						this.OPENVIDU_SECRET = data.secret;
+					}
+				}
+			]
 		});
 
 		await alert.present();
 	}
 
-
 	/**
 	 * --------------------------------------------
-	 * GETTING A TOKEN FROM YOUR APPLICATION SERVER
+	 * GETTING A TOKEN FROM OPENVIDU SERVER
 	 * --------------------------------------------
 	 * The methods below request the creation of a Session and a Token to
-	 * your application server. This keeps your OpenVidu deployment secure.
-	 * 
-	 * In this sample code, there is no user control at all. Anybody could
-	 * access your application server endpoints! In a real production
-	 * environment, your application server must identify the user to allow
-	 * access to the endpoints.
-	 * 
+	 * openvidu-server. In a real app this code should be secure in your
+	 * application server.
+	 *
 	 * Visit https://docs.openvidu.io/en/stable/application-server to learn
 	 * more about the integration of OpenVidu in your application server.
 	 */
@@ -306,19 +299,35 @@ export class AppComponent implements OnDestroy {
 
 	async createSession(sessionId) {
 		const response = this.httpClient.post(
-			this.APPLICATION_SERVER_URL + 'api/sessions',
+			this.OPENVIDU_URL + 'api/sessions',
 			{ customSessionId: sessionId },
-			{ headers: { 'Content-Type': 'application/json' }, responseType: 'text' }
+			{
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SECRET)
+				},
+				responseType: 'text'
+			}
 		);
-		return lastValueFrom(response);
+		const session = await lastValueFrom(response);
+		const parsedResponse = JSON.parse(session);
+		return parsedResponse.id;
 	}
 
 	async createToken(sessionId) {
 		const response = this.httpClient.post(
-			this.APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
+			this.OPENVIDU_URL + 'api/sessions/' + sessionId + '/connection',
 			{},
-			{ headers: { 'Content-Type': 'application/json' }, responseType: 'text' }
+			{
+				headers: {
+					'Content-Type': 'application/json',
+					Authorization: 'Basic ' + btoa('OPENVIDUAPP:' + this.OPENVIDU_SECRET)
+				},
+				responseType: 'text'
+			}
 		);
-		return lastValueFrom(response);
+		const connection = await lastValueFrom(response);
+		const parsedResponse = JSON.parse(connection);
+		return parsedResponse.token;
 	}
 }

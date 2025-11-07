@@ -1,4 +1,4 @@
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { RouteReuseStrategy } from '@angular/router';
@@ -13,8 +13,12 @@ import { OpenViduVideoComponent } from './ov-video.component';
 
 @NgModule({
 	declarations: [AppComponent, UserVideoComponent, OpenViduVideoComponent],
-	imports: [BrowserModule, FormsModule, IonicModule.forRoot(), HttpClientModule],
-	providers: [{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy }, AndroidPermissions],
+	imports: [BrowserModule, FormsModule, IonicModule.forRoot()],
+	providers: [
+		{ provide: RouteReuseStrategy, useClass: IonicRouteStrategy },
+		AndroidPermissions,
+		provideHttpClient(withInterceptorsFromDi())
+	],
 	bootstrap: [AppComponent]
 })
 export class AppModule {}

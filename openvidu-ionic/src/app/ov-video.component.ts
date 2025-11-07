@@ -6,7 +6,8 @@ import { StreamManager } from 'openvidu-browser';
 
 @Component({
 	selector: 'ov-video',
-	template: '<video #videoElement style="width: 100%"></video>'
+	template: '<video #videoElement style="width: 100%"></video>',
+	standalone: false
 })
 export class OpenViduVideoComponent implements AfterViewInit {
 

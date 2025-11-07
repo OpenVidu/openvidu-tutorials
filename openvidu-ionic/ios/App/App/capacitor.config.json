@@ -6,9 +6,16 @@
 	"android": {
 		"includePlugins": [
 			"cordova-plugin-android-permissions"
-		]
+		],
+		"allowMixedContent": true,
+		"webContentsDebuggingEnabled": true
 	},
 	"ios": {
 		"includePlugins": []
-	}
+	},
+	"server": {
+		"androidScheme": "https",
+		"cleartext": true
+	},
+	"packageClassList": []
 }
