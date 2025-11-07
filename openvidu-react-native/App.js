@@ -1,18 +1,11 @@
 import axios from 'axios';
 import React, { Component } from 'react';
-import { Button, Image, PermissionsAndroid, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Button, Image, Modal, PermissionsAndroid, Platform, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import InCallManager from 'react-native-incall-manager';
 
 import { OpenVidu, OpenViduReactNativeAdapter, RTCView } from 'openvidu-react-native-adapter';
 
-/**
- * WARNING: this APPLICATION_SERVER_URL is not secure and is only meant for a first quick test.
- * Anyone could access your video sessions. You should modify the APPLICATION_SERVER_URL to a custom private one.
- */
-const APPLICATION_SERVER_URL = 'https://demos.openvidu.io/';
-
-type Props = {};
-export default class App extends Component<Props> {
+export default class App extends Component {
 	constructor(props) {
 		super(props);
 
@@ -34,6 +27,11 @@ export default class App extends Component<Props> {
 			joinBtnEnabled: true,
 			isReconnecting: false,
 			connected: false,
+			openviduUrl: 'https://localhost:4443/',
+			openviduSecret: 'MY_SECRET',
+			settingsModalVisible: false,
+			tempOpenviduUrl: 'https://localhost:4443/',
+			tempOpenviduSecret: 'MY_SECRET',
 		};
 	}
 
@@ -213,7 +211,7 @@ export default class App extends Component<Props> {
 			if (stream.connection && JSON.parse(stream.connection.data) && JSON.parse(stream.connection.data).clientData) {
 				return JSON.parse(stream.connection.data).clientData;
 			}
-		} catch (error) {}
+		} catch (error) { }
 		return '';
 	}
 
@@ -312,9 +310,78 @@ export default class App extends Component<Props> {
 		this.setState({ speaker: !this.state.speaker });
 	}
 
+	openSettingsModal() {
+		this.setState({
+			settingsModalVisible: true,
+			tempOpenviduUrl: this.state.openviduUrl,
+			tempOpenviduSecret: this.state.openviduSecret,
+		});
+	}
+
+	closeSettingsModal() {
+		this.setState({ settingsModalVisible: false });
+	}
+
+	saveSettings() {
+		this.setState({
+			openviduUrl: this.state.tempOpenviduUrl,
+			openviduSecret: this.state.tempOpenviduSecret,
+			settingsModalVisible: false,
+		});
+	}
+
 	render() {
 		return (
 			<ScrollView>
+				{/* Settings Modal */}
+				<Modal
+					animationType="slide"
+					transparent={true}
+					visible={this.state.settingsModalVisible}
+					onRequestClose={() => this.closeSettingsModal()}>
+					<View style={styles.modalOverlay}>
+						<View style={styles.modalContainer}>
+							<Text style={styles.modalTitle}>OpenVidu Settings</Text>
+
+							<Text style={styles.label}>OpenVidu URL:</Text>
+							<TextInput
+								style={styles.input}
+								onChangeText={(tempOpenviduUrl) => this.setState({ tempOpenviduUrl })}
+								value={this.state.tempOpenviduUrl}
+								placeholder="https://your-openvidu-server.com/"
+								autoCapitalize="none"
+							/>
+
+							<Text style={styles.label}>OpenVidu Secret:</Text>
+							<TextInput
+								style={styles.input}
+								onChangeText={(tempOpenviduSecret) => this.setState({ tempOpenviduSecret })}
+								value={this.state.tempOpenviduSecret}
+								placeholder="MY_SECRET"
+								secureTextEntry={true}
+								autoCapitalize="none"
+							/>
+
+							<View style={styles.modalButtons}>
+								<View style={styles.modalButton}>
+									<Button
+										onPress={() => this.closeSettingsModal()}
+										title="Cancel"
+										color="#999"
+									/>
+								</View>
+								<View style={styles.modalButton}>
+									<Button
+										onPress={() => this.saveSettings()}
+										title="Save"
+										color="#841584"
+									/>
+								</View>
+							</View>
+						</View>
+					</View>
+				</Modal>
+
 				{this.state.connected ? (
 					<View>
 						{this.state.mainStreamManager && this.state.mainStreamManager.stream && (
@@ -419,6 +486,14 @@ export default class App extends Component<Props> {
 								color="#00cbff"
 							/>
 						</View>
+
+						<View style={styles.button}>
+							<Button
+								onPress={() => this.openSettingsModal()}
+								title="Settings"
+								color="#666"
+							/>
+						</View>
 					</View>
 				)}
 
@@ -443,15 +518,11 @@ export default class App extends Component<Props> {
 
 	/**
 	 * --------------------------------------------
-	 * GETTING A TOKEN FROM YOUR APPLICATION SERVER
+	 * GETTING A TOKEN FROM OPENVIDU SERVER
 	 * --------------------------------------------
 	 * The methods below request the creation of a Session and a Token to
-	 * your application server. This keeps your OpenVidu deployment secure.
-	 *
-	 * In this sample code, there is no user control at all. Anybody could
-	 * access your application server endpoints! In a real production
-	 * environment, your application server must identify the user to allow
-	 * access to the endpoints.
+	 * openvidu-server. In a real app this code should be secure in your
+	 * application server.
 	 *
 	 * Visit https://docs.openvidu.io/en/stable/application-server to learn
 	 * more about the integration of OpenVidu in your application server.
@@ -462,25 +533,31 @@ export default class App extends Component<Props> {
 	}
 
 	async createSession(sessionId) {
-		const response = await axios.post(
-			APPLICATION_SERVER_URL + 'api/sessions',
+		await axios.post(
+			this.state.openviduUrl + 'openvidu/api/sessions',
 			{ customSessionId: sessionId },
 			{
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + this.state.openviduSecret)
+				},
 			},
 		);
-		return response.data; // The sessionId
+		return sessionId;
 	}
 
 	async createToken(sessionId) {
 		const response = await axios.post(
-			APPLICATION_SERVER_URL + 'api/sessions/' + sessionId + '/connections',
+			this.state.openviduUrl + 'openvidu/api/sessions/' + sessionId + '/connection',
 			{},
 			{
-				headers: { 'Content-Type': 'application/json' },
+				headers: {
+					'Content-Type': 'application/json',
+					'Authorization': 'Basic ' + btoa('OPENVIDUAPP:' + this.state.openviduSecret)
+				},
 			},
 		);
-		return response.data; // The token
+		return response.data.token;
 	}
 }
 
@@ -506,5 +583,54 @@ const styles = StyleSheet.create({
 		height: '60%',
 		maxWidth: '90%',
 		resizeMode: 'stretch',
+	},
+	modalOverlay: {
+		flex: 1,
+		justifyContent: 'center',
+		alignItems: 'center',
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+	},
+	modalContainer: {
+		width: '85%',
+		backgroundColor: 'white',
+		borderRadius: 10,
+		padding: 20,
+		shadowColor: '#000',
+		shadowOffset: {
+			width: 0,
+			height: 2,
+		},
+		shadowOpacity: 0.25,
+		shadowRadius: 4,
+		elevation: 5,
+	},
+	modalTitle: {
+		fontSize: 20,
+		fontWeight: 'bold',
+		marginBottom: 20,
+		textAlign: 'center',
+	},
+	label: {
+		fontSize: 14,
+		fontWeight: '600',
+		marginTop: 10,
+		marginBottom: 5,
+	},
+	input: {
+		height: 40,
+		borderColor: 'gray',
+		borderWidth: 1,
+		borderRadius: 5,
+		paddingHorizontal: 10,
+		marginBottom: 10,
+	},
+	modalButtons: {
+		flexDirection: 'row',
+		justifyContent: 'space-around',
+		marginTop: 20,
+	},
+	modalButton: {
+		flex: 1,
+		marginHorizontal: 5,
 	},
 });
