@@ -145,12 +145,12 @@ public class SessionActivity extends AppCompatActivity {
             // Session Request
             RequestBody sessionBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
                     "{\"customSessionId\": \"" + sessionId + "\"}");
-            this.httpClient.httpCall("/api/sessions", "POST", "application/json", sessionBody, new Callback() {
+            this.httpClient.httpCall("/openvidu/api/sessions", "POST", "application/json", sessionBody, new Callback() {
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
                     int responseCode = response.code();
-                    Log.d(TAG, "POST /api/sessions response code: " + responseCode);
+                    Log.d(TAG, "POST /openvidu/api/sessions response code: " + responseCode);
 
                     // Accept both 200 OK (session created) and 409 Conflict (session already
                     // exists)
@@ -158,14 +158,14 @@ public class SessionActivity extends AppCompatActivity {
                         // Token Request
                         RequestBody tokenBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
                                 "{}");
-                        httpClient.httpCall("/api/sessions/" + sessionId + "/connection", "POST", "application/json",
+                        httpClient.httpCall("/openvidu/api/sessions/" + sessionId + "/connection", "POST", "application/json",
                                 tokenBody, new Callback() {
 
                                     @Override
                                     public void onResponse(@NotNull Call call, @NotNull Response response) {
                                         try {
                                             String responseString = response.body().string();
-                                            Log.d(TAG, "POST /api/sessions/connection response: " + responseString);
+                                            Log.d(TAG, "POST /openvidu/api/sessions/connection response: " + responseString);
 
                                             // Parse JSON response to extract token
                                             JSONObject jsonResponse = new JSONObject(responseString);
@@ -183,19 +183,19 @@ public class SessionActivity extends AppCompatActivity {
 
                                     @Override
                                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                                        Log.e(TAG, "Error POST /api/sessions/SESSION_ID/connection", e);
+                                        Log.e(TAG, "Error POST /openvidu/api/sessions/SESSION_ID/connection", e);
                                         connectionError(OPENVIDU_URL);
                                     }
                                 });
                     } else {
-                        Log.e(TAG, "Unexpected response code for POST /api/sessions: " + responseCode);
+                        Log.e(TAG, "Unexpected response code for POST /openvidu/api/sessions: " + responseCode);
                         connectionError(OPENVIDU_URL);
                     }
                 }
 
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                    Log.e(TAG, "Error POST /api/sessions", e);
+                    Log.e(TAG, "Error POST /openvidu/api/sessions", e);
                     connectionError(OPENVIDU_URL);
                 }
             });

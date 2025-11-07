@@ -299,7 +299,7 @@ export class AppComponent implements OnDestroy {
 
 	async createSession(sessionId) {
 		const response = this.httpClient.post(
-			this.OPENVIDU_URL + 'api/sessions',
+			this.OPENVIDU_URL + 'openvidu/api/sessions',
 			{ customSessionId: sessionId },
 			{
 				headers: {
@@ -316,7 +316,7 @@ export class AppComponent implements OnDestroy {
 
 	async createToken(sessionId) {
 		const response = this.httpClient.post(
-			this.OPENVIDU_URL + 'api/sessions/' + sessionId + '/connection',
+			this.OPENVIDU_URL + 'openvidu/api/sessions/' + sessionId + '/connection',
 			{},
 			{
 				headers: {
