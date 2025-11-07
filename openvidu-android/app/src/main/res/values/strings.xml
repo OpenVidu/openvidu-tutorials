@@ -1,7 +1,8 @@
 <resources>
-    <!-- WARNING: this application_server_url is not secure and is only meant for a first quick test.
-	     Anyone could access your video sessions. You should modify the application_server_url to a custom private one -->
-    <string name="application_server_url">https://demos.openvidu.io/</string>
+    <!-- WARNING: this openvidu_url is not secure and is only meant for a first quick test.
+	     Anyone could access your video sessions. You should modify the openvidu_url to a custom private one -->
+    <string name="openvidu_url">https://demos.openvidu.io/</string>
+    <string name="openvidu_secret">MY_SECRET</string>
     <string name="app_name">OpenVidu Android Sample</string>
     <string name="start_button">Join</string>
     <string name="session_name">Session Name</string>

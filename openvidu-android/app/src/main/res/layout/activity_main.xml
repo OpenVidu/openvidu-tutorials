@@ -93,14 +93,24 @@
             app:layout_constraintRight_toRightOf="parent">
 
             <EditText
-                android:id="@+id/application_server_url"
+                android:id="@+id/openvidu_url"
                 style="@android:style/Widget.Material.Button.Borderless.Colored"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:hint="@string/application_server_url"
+                android:hint="@string/openvidu_url"
                 android:inputType="text"
-                android:text="@string/application_server_url" />
+                android:text="@string/openvidu_url" />
+
+            <EditText
+                android:id="@+id/openvidu_secret"
+                style="@android:style/Widget.Material.Button.Borderless.Colored"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="@string/openvidu_secret"
+                android:inputType="textPassword"
+                android:text="@string/openvidu_secret" />
 
             <EditText
                 android:id="@+id/session_name"

@@ -58,12 +58,14 @@ public class SessionActivity extends AppCompatActivity {
     private Button start_finish_call;
     private EditText session_name;
     private EditText participant_name;
-    private EditText application_server_url;
+    private EditText openvidu_url;
+    private EditText openvidu_secret;
     private SurfaceViewRenderer localVideoView;
     private TextView main_participant;
     private FrameLayout peer_container;
 
-    private String APPLICATION_SERVER_URL;
+    private String OPENVIDU_URL;
+    private String OPENVIDU_SECRET;
     private Session session;
     private CustomHttpClient httpClient;
 
@@ -73,20 +75,21 @@ public class SessionActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        
+
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        
+
         // Initialize view references
         views_container = binding.viewsContainer;
         start_finish_call = binding.startFinishCall;
         session_name = binding.sessionName;
         participant_name = binding.participantName;
-        application_server_url = binding.applicationServerUrl;
+        openvidu_url = binding.openviduUrl;
+        openvidu_secret = binding.openviduSecret;
         localVideoView = binding.localGlSurfaceView;
         main_participant = binding.mainParticipant;
         peer_container = binding.peerContainer;
-        
+
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_HIDDEN);
         askForPermissions();
         Random random = new Random();
@@ -95,22 +98,22 @@ public class SessionActivity extends AppCompatActivity {
     }
 
     public void askForPermissions() {
-        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) &&
-                (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                        != PackageManager.PERMISSION_GRANTED)) {
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                &&
+                (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO},
+                    new String[] { Manifest.permission.CAMERA, Manifest.permission.RECORD_AUDIO },
                     MY_PERMISSIONS_REQUEST);
         } else if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.RECORD_AUDIO},
+                    new String[] { Manifest.permission.RECORD_AUDIO },
                     MY_PERMISSIONS_REQUEST_RECORD_AUDIO);
-        } else if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
-                != PackageManager.PERMISSION_GRANTED) {
+        } else if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this,
-                    new String[]{Manifest.permission.CAMERA},
+                    new String[] { Manifest.permission.CAMERA },
                     MY_PERMISSIONS_REQUEST_CAMERA);
         }
     }
@@ -125,8 +128,9 @@ public class SessionActivity extends AppCompatActivity {
             initViews();
             viewToConnectingState();
 
-            APPLICATION_SERVER_URL = application_server_url.getText().toString();
-            httpClient = new CustomHttpClient(APPLICATION_SERVER_URL);
+            OPENVIDU_URL = openvidu_url.getText().toString();
+            OPENVIDU_SECRET = openvidu_secret.getText().toString();
+            httpClient = new CustomHttpClient(OPENVIDU_URL, OPENVIDU_SECRET);
 
             String sessionId = session_name.getText().toString();
             getToken(sessionId);
@@ -139,46 +143,66 @@ public class SessionActivity extends AppCompatActivity {
     private void getToken(String sessionId) {
         try {
             // Session Request
-            RequestBody sessionBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{\"customSessionId\": \"" + sessionId + "\"}");
+            RequestBody sessionBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
+                    "{\"customSessionId\": \"" + sessionId + "\"}");
             this.httpClient.httpCall("/api/sessions", "POST", "application/json", sessionBody, new Callback() {
 
                 @Override
                 public void onResponse(@NotNull Call call, @NotNull Response response) throws IOException {
-                    Log.d(TAG, "responseString: " + response.body().string());
+                    int responseCode = response.code();
+                    Log.d(TAG, "POST /api/sessions response code: " + responseCode);
 
-                    // Token Request
-                    RequestBody tokenBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"), "{}");
-                    httpClient.httpCall("/api/sessions/" + sessionId + "/connections", "POST", "application/json", tokenBody, new Callback() {
+                    // Accept both 200 OK (session created) and 409 Conflict (session already
+                    // exists)
+                    if (responseCode == 200 || responseCode == 409) {
+                        // Token Request
+                        RequestBody tokenBody = RequestBody.create(MediaType.parse("application/json; charset=utf-8"),
+                                "{}");
+                        httpClient.httpCall("/api/sessions/" + sessionId + "/connection", "POST", "application/json",
+                                tokenBody, new Callback() {
 
-                        @Override
-                        public void onResponse(@NotNull Call call, @NotNull Response response) {
-                            String responseString = null;
-                            try {
-                                responseString = response.body().string();
-                            } catch (IOException e) {
-                                Log.e(TAG, "Error getting body", e);
-                            }
-                            getTokenSuccess(responseString, sessionId);
-                        }
+                                    @Override
+                                    public void onResponse(@NotNull Call call, @NotNull Response response) {
+                                        try {
+                                            String responseString = response.body().string();
+                                            Log.d(TAG, "POST /api/sessions/connection response: " + responseString);
 
-                        @Override
-                        public void onFailure(@NotNull Call call, @NotNull IOException e) {
-                            Log.e(TAG, "Error POST /api/sessions/SESSION_ID/connections", e);
-                            connectionError(APPLICATION_SERVER_URL);
-                        }
-                    });
+                                            // Parse JSON response to extract token
+                                            JSONObject jsonResponse = new JSONObject(responseString);
+                                            String token = jsonResponse.getString("token");
+
+                                            getTokenSuccess(token, sessionId);
+                                        } catch (IOException e) {
+                                            Log.e(TAG, "Error getting response body", e);
+                                            connectionError(OPENVIDU_URL);
+                                        } catch (JSONException e) {
+                                            Log.e(TAG, "Error parsing JSON response", e);
+                                            connectionError(OPENVIDU_URL);
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onFailure(@NotNull Call call, @NotNull IOException e) {
+                                        Log.e(TAG, "Error POST /api/sessions/SESSION_ID/connection", e);
+                                        connectionError(OPENVIDU_URL);
+                                    }
+                                });
+                    } else {
+                        Log.e(TAG, "Unexpected response code for POST /api/sessions: " + responseCode);
+                        connectionError(OPENVIDU_URL);
+                    }
                 }
 
                 @Override
                 public void onFailure(@NotNull Call call, @NotNull IOException e) {
                     Log.e(TAG, "Error POST /api/sessions", e);
-                    connectionError(APPLICATION_SERVER_URL);
+                    connectionError(OPENVIDU_URL);
                 }
             });
         } catch (IOException e) {
             Log.e(TAG, "Error getting token", e);
             e.printStackTrace();
-            connectionError(APPLICATION_SERVER_URL);
+            connectionError(OPENVIDU_URL);
         }
     }
 
@@ -188,7 +212,8 @@ public class SessionActivity extends AppCompatActivity {
 
         // Initialize our local participant and start local camera
         String participantName = participant_name.getText().toString();
-        LocalParticipant localParticipant = new LocalParticipant(participantName, session, this.getApplicationContext(), localVideoView);
+        LocalParticipant localParticipant = new LocalParticipant(participantName, session, this.getApplicationContext(),
+                localVideoView);
         localParticipant.startCamera();
         runOnUiThread(() -> {
             // Update local participant view
@@ -228,8 +253,10 @@ public class SessionActivity extends AppCompatActivity {
             localVideoView.release();
             start_finish_call.setText(getResources().getString(R.string.start_button));
             start_finish_call.setEnabled(true);
-            application_server_url.setEnabled(true);
-            application_server_url.setFocusableInTouchMode(true);
+            openvidu_url.setEnabled(true);
+            openvidu_url.setFocusableInTouchMode(true);
+            openvidu_secret.setEnabled(true);
+            openvidu_secret.setFocusableInTouchMode(true);
             session_name.setEnabled(true);
             session_name.setFocusableInTouchMode(true);
             participant_name.setEnabled(true);
@@ -242,8 +269,10 @@ public class SessionActivity extends AppCompatActivity {
     public void viewToConnectingState() {
         runOnUiThread(() -> {
             start_finish_call.setEnabled(false);
-            application_server_url.setEnabled(false);
-            application_server_url.setFocusable(false);
+            openvidu_url.setEnabled(false);
+            openvidu_url.setFocusable(false);
+            openvidu_secret.setEnabled(false);
+            openvidu_secret.setFocusable(false);
             session_name.setEnabled(false);
             session_name.setFocusable(false);
             participant_name.setEnabled(false);
@@ -262,7 +291,8 @@ public class SessionActivity extends AppCompatActivity {
         Handler mainHandler = new Handler(this.getMainLooper());
         Runnable myRunnable = () -> {
             View rowView = this.getLayoutInflater().inflate(R.layout.peer_video, null);
-            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT);
             lp.setMargins(0, 0, 0, 20);
             rowView.setLayoutParams(lp);
             int rowId = View.generateViewId();
@@ -293,18 +323,20 @@ public class SessionActivity extends AppCompatActivity {
     }
 
     public void leaveSession() {
-        if(this.session != null) {
+        if (this.session != null) {
             this.session.leaveSession();
         }
-        if(this.httpClient != null) {
+        if (this.httpClient != null) {
             this.httpClient.dispose();
         }
         viewToDisconnectedState();
     }
 
     private boolean arePermissionGranted() {
-        return (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_DENIED) &&
-                (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_DENIED);
+        return (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_DENIED)
+                &&
+                (ContextCompat.checkSelfPermission(this,
+                        Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_DENIED);
     }
 
     public EglBase getRootEglBase() {
