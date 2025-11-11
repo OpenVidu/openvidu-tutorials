@@ -51,8 +51,8 @@ describe('Testing Room', () => {
 		await browser.get(fixedUrl);
 
 		await utils.checkPrejoinIsPresent();
-		await utils.clearInput('#name-input');
-		await utils.sendKeys('#name-input', 'user');
+		await utils.clearInput('#participant-name-input');
+		await utils.sendKeys('#participant-name-input', 'user');
 
 		await utils.joinSession();
 
@@ -62,8 +62,8 @@ describe('Testing Room', () => {
 		await browser.switchTo().window(tabs[1]);
 
 		await utils.checkPrejoinIsPresent();
-		await utils.clearInput('#name-input');
-		await utils.sendKeys('#name-input', 'user');
+		await utils.clearInput('#participant-name-input');
+		await utils.sendKeys('#participant-name-input', 'user');
 
 		await utils.joinSession();
 
@@ -88,7 +88,7 @@ describe('Testing Room', () => {
 
 		await browser.switchTo().window(tabs[1]);
 		await utils.checkPrejoinIsPresent();
-		await utils.sendKeys('#name-input', 'participant2');
+		await utils.sendKeys('#participant-name-input', 'participant2');
 		await utils.joinSession();
 
 		// check if second tab received the remote video

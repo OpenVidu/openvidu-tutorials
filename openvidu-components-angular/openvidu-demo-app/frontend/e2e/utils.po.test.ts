@@ -121,7 +121,7 @@ export class OpenViduDemoAppPO {
 
 		await this.clickOn(`#effect-${bgId}`);
 		await this.clickOn('.panel-close-button');
-		await this.browser.sleep(2000);
+		await this.browser.sleep(3000);
 	}
 
 	async getNumberOfElements(selector: string): Promise<number> {
