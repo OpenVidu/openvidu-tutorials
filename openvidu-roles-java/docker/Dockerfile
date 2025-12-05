@@ -1,16 +1,15 @@
 
-FROM maven:3.6.3 as build
+FROM maven:3.9-eclipse-temurin-25 AS build
 WORKDIR /basic-webinar
 COPY ./pom.xml pom.xml
 COPY ./src/main src/main
 
-RUN mvn clean install
-RUN mvn -o package
+RUN mvn clean install -DskipTests
+RUN mvn -o package -DskipTests
 
-FROM alpine:3.11
+FROM eclipse-temurin:25-jre-alpine
 
 RUN apk update && \
-    apk add openjdk11-jre && \
     rm -rf /var/cache/apk/*
 
 # Install basic-webinar

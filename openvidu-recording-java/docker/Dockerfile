@@ -1,17 +1,16 @@
-
-FROM maven:3.6.3 as build
+FROM eclipse-temurin:25-jdk-noble AS build
+RUN apt-get update && apt-get install -y maven && rm -rf /var/lib/apt/lists/*
 WORKDIR /openvidu-recording-java
 COPY ./pom.xml pom.xml
 COPY ./src/main src/main
 
-RUN mvn clean install
-RUN mvn -o package
+RUN mvn clean install -DskipTests
+RUN mvn -o package -DskipTests
 
-FROM alpine:3.11
+FROM eclipse-temurin:25-jre-noble
 
-RUN apk update && \
-    apk add openjdk11-jre && \
-    rm -rf /var/cache/apk/*
+RUN apt-get update && \
+    rm -rf /var/lib/apt/lists/*
 
 # Install basic-webinar
 RUN mkdir -p /opt/openvidu-recording-java
@@ -20,7 +19,7 @@ COPY --from=build /openvidu-recording-java/target/openvidu-recording-java-*.jar 
 COPY ./docker/entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
-CMD /usr/local/bin/entrypoint.sh
+CMD ["/usr/local/bin/entrypoint.sh"]
 
 
 

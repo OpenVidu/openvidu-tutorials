@@ -14,19 +14,19 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>2.1.4.RELEASE</version>
+		<version>3.5.7</version>
 	</parent>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.version>1.8</java.version>
+		<java.version>17</java.version>
 		<start-class>io.openvidu.recording.java.App</start-class>
 		<docker.image.prefix>openvidu</docker.image.prefix>
 
 		<!-- Test dependencies versions -->
-		<junit.jupiter.version>5.0.3</junit.jupiter.version>
-		<junit.platform.version>1.3.2</junit.platform.version>
-		<selenium-jupiter.version>3.1.0</selenium-jupiter.version>
+		<junit.jupiter.version>5.10.2</junit.jupiter.version>
+		<junit.platform.version>1.10.2</junit.platform.version>
+		<selenium-jupiter.version>5.1.1</selenium-jupiter.version>
 	</properties>
 
 	<build>
@@ -65,9 +65,15 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.seleniumhq.selenium</groupId>
+			<artifactId>selenium-java</artifactId>
+			<version>4.31.0</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>io.github.bonigarcia</groupId>
 			<artifactId>webdrivermanager</artifactId>
-			<version>2.2.0</version>
+			<version>5.9.2</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -93,9 +99,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.openvidu</groupId>
-			<artifactId>openvidu-test-browsers</artifactId>
-			<version>1.0.0</version>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
 			<scope>test</scope>
 		</dependency>
 

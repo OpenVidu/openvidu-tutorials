@@ -2,7 +2,7 @@ package io.openvidu.basic.java;
 
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;

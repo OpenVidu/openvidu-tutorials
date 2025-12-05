@@ -2,13 +2,13 @@ package io.openvidu.recording.java.test;
 
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,20 +20,21 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.bonigarcia.seljup.SeleniumExtension;
+import io.github.bonigarcia.seljup.SeleniumJupiter;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import io.openvidu.java.client.OpenVidu;
 import io.openvidu.java.client.OpenViduHttpException;
 import io.openvidu.java.client.OpenViduJavaClientException;
 import io.openvidu.java.client.Recording;
 import io.openvidu.java.client.Recording.OutputMode;
-import io.openvidu.test.browsers.BrowserUser;
-import io.openvidu.test.browsers.ChromeUser;
 import ws.schild.jave.EncoderException;
 import ws.schild.jave.MultimediaInfo;
 import ws.schild.jave.MultimediaObject;
@@ -48,14 +49,14 @@ import ws.schild.jave.MultimediaObject;
  * @author Pablo Fuente (pablofuenteperez@gmail.com)
  */
 @DisplayName("E2E tests for openvidu-java-recording")
-@ExtendWith(SeleniumExtension.class)
+@ExtendWith(SeleniumJupiter.class)
 @RunWith(JUnitPlatform.class)
 public class AppTestE2e {
 
 	private static final Logger log = LoggerFactory.getLogger(AppTestE2e.class);
 
 	static String OPENVIDU_SECRET = "MY_SECRET";
-	static String OPENVIDU_URL = "https://localhost:4443/";
+	static String OPENVIDU_URL = "http://localhost:4443/";
 	static String APP_URL = "https://localhost:5000/";
 	static int NUMBER_OF_ATTEMPTS = 10;
 	static int RECORDING_DURATION = 5; // seconds
@@ -63,7 +64,8 @@ public class AppTestE2e {
 
 	static String RECORDING_PATH = "/opt/openvidu/recordings/";
 
-	private BrowserUser user;
+	private WebDriver driver;
+	private WebDriverWait waiter;
 	private static OpenVidu OV;
 
 	boolean deleteRecordings = true;
@@ -71,7 +73,8 @@ public class AppTestE2e {
 	@BeforeAll()
 	static void setupAll() {
 
-		WebDriverManager.chromedriver().setup();
+		// Let WebDriverManager auto-detect browser version and download matching driver
+		WebDriverManager.chromedriver().browserVersionDetectionCommand("/opt/google/chrome/chrome --version").setup();
 
 		String appUrl = System.getProperty("APP_URL");
 		if (appUrl != null) {
@@ -162,13 +165,22 @@ public class AppTestE2e {
 				log.error("Error listing recordings: {}", e2.getMessage());
 			}
 		}
-		this.user.dispose();
+		if (this.driver != null) {
+			this.driver.quit();
+		}
 	}
 
 	void setupBrowser() {
-		user = new ChromeUser("TestUser", 20, false);
-		user.getDriver().manage().timeouts().setScriptTimeout(20, TimeUnit.SECONDS);
-		user.getDriver().manage().window().setSize(new Dimension(1920, 1080));
+		ChromeOptions options = new ChromeOptions();
+		options.addArguments("--use-fake-ui-for-media-stream");
+		options.addArguments("--use-fake-device-for-media-stream");
+		options.addArguments("--ignore-certificate-errors");
+		options.addArguments("--no-sandbox");
+		options.addArguments("--disable-dev-shm-usage");
+		driver = new ChromeDriver(options);
+		waiter = new WebDriverWait(driver, Duration.ofSeconds(20));
+		driver.manage().timeouts().scriptTimeout(Duration.ofSeconds(20));
+		driver.manage().window().setSize(new Dimension(1920, 1080));
 	}
 
 	@Test
@@ -183,12 +195,12 @@ public class AppTestE2e {
 		String videoFile = "";
 
 		setupBrowser();
-		user.getDriver().get(APP_URL);
+		driver.get(APP_URL);
 
-		user.getDriver().findElement(By.id("join-btn")).click();
+		driver.findElement(By.id("join-btn")).click();
 		waitUntilEvents("connectionCreated", "videoElementCreated", "accessAllowed", "streamCreated", "streamPlaying");
 
-		user.getDriver().findElement(By.id("has-video-checkbox")).click();
+		driver.findElement(By.id("has-video-checkbox")).click();
 
 		while (durationDifferenceAcceptable && (i < NUMBER_OF_ATTEMPTS)) {
 
@@ -196,13 +208,13 @@ public class AppTestE2e {
 			log.info("Attempt {}", i + 1);
 			log.info("----------");
 
-			user.getDriver().findElement(By.id("buttonStartRecording")).click();
+			driver.findElement(By.id("buttonStartRecording")).click();
 
 			waitUntilEvents("recordingStarted");
 
 			Thread.sleep(RECORDING_DURATION * 1000);
 
-			user.getDriver().findElement(By.id("buttonStopRecording")).click();
+			driver.findElement(By.id("buttonStopRecording")).click();
 			waitUntilEvents("recordingStopped");
 
 			Recording rec = OV.listRecordings().get(0);
@@ -247,9 +259,9 @@ public class AppTestE2e {
 	}
 
 	private void waitUntilEvents(String... events) {
-		user.getWaiter().until(eventsToBe(events));
-		user.getDriver().findElement(By.id("clear-events-btn")).click();
-		user.getWaiter().until(ExpectedConditions.textToBePresentInElementLocated(By.id("textarea-events"), ""));
+		waiter.until(eventsToBe(events));
+		driver.findElement(By.id("clear-events-btn")).click();
+		waiter.until(ExpectedConditions.textToBePresentInElementLocated(By.id("textarea-events"), ""));
 	}
 
 	private ExpectedCondition<Boolean> eventsToBe(String... events) {
