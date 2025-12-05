@@ -1,6 +1,6 @@
 {
   "name": "openvidu-react-native",
-  "version": "2.31.0",
+  "version": "2.32.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -15,7 +15,7 @@
   "dependencies": {
     "axios": "1.6.8",
     "events": "3.3.0",
-    "openvidu-react-native-adapter": "file:openvidu-react-native-adapter-2.31.0.tgz",
+    "openvidu-react-native-adapter": "file:openvidu-react-native-adapter-2.32.0.tgz",
     "react": "18.2.0",
     "react-native": "0.73.0",
     "react-native-get-random-values": "1.8.0",
