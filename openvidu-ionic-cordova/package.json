@@ -1,6 +1,6 @@
 {
   "name": "openvidu-ionic-cordova",
-  "version": "2.32.0",
+  "version": "2.32.1",
   "author": "OpenVidu",
   "homepage": "https://openvidu.io/",
   "scripts": {
@@ -35,7 +35,7 @@
     "cordova-plugin-splashscreen": "6.0.1",
     "cordova-plugin-statusbar": "3.0.0",
     "core-js": "3.23.3",
-    "openvidu-browser": "2.32.0",
+    "openvidu-browser": "2.32.1",
     "rxjs": "7.5.5",
     "xcode": "3.0.1",
     "zone.js": "0.11.6"

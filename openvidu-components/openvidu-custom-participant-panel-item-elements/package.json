@@ -1,6 +1,6 @@
 {
   "name": "openvidu-custom-participant-panel-item-elements",
-  "version": "2.32.0",
+  "version": "2.32.1",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
