@@ -79,9 +79,9 @@ describe('Testing Room', () => {
 
 		await utils.joinSession();
 
-		await utils.waitForElement('#local-element-camera');
+		await utils.waitForElement('.local_participant');
 		const localVideo = await utils.waitForElement('.OV_video-element');
-		expect(await utils.isPresent('#local-element-camera')).to.be.true;
+		expect(await utils.isPresent('.local_participant')).to.be.true;
 		expect(await localVideo.isDisplayed()).to.be.true;
 
 		const tabs = await utils.openTab(fixedUrl);
@@ -92,12 +92,11 @@ describe('Testing Room', () => {
 		await utils.joinSession();
 
 		// check if second tab received the remote video
-		await utils.waitForElement('#local-element-camera');
+		await utils.waitForElement('.local_participant');
 		await utils.waitForElement('.OV_video-element');
 		await utils.waitForElement('.remote-participant');
 		expect(await utils.isPresent('.remote-participant')).to.be.true;
-		expect(await utils.isPresent('#local-element-camera')).to.be.true;
-
+		expect(await utils.isPresent('.local_participant')).to.be.true;
 		// check if first tab received the remote vide
 		await browser.switchTo().window(tabs[0]);
 		await utils.waitForElement('.remote-participant');
