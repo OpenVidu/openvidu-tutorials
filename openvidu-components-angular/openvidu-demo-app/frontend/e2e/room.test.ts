@@ -214,7 +214,7 @@ describe('Testing Room', () => {
 
 		await utils.checkToolbarIsPresent();
 
-		let localVideo = await utils.waitForElement('.OV_video-element');
+		let localVideo = await utils.waitForElement('.local_participant');
 
 		await saveScreenshot('before.png', localVideo);
 
@@ -222,7 +222,7 @@ describe('Testing Room', () => {
 
 		await utils.applyVirtualBackground('2');
 
-		localVideo = await utils.waitForElement('.OV_video-element');
+		localVideo = await utils.waitForElement('.local_participant');
 		await saveScreenshot('after.png', localVideo);
 
 		const img1 = PNG.sync.read(fs.readFileSync('before.png'));
