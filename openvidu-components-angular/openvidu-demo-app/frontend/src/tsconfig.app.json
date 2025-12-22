@@ -2,7 +2,10 @@
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
 		"outDir": "../out-tsc/app",
-		"types": []
+		"types": [
+			"dom-webcodecs",
+			"dom-mediacapture-transform"
+		]
 	},
 	"files": ["main.ts"],
 	"include": ["src/**/*.d.ts"],

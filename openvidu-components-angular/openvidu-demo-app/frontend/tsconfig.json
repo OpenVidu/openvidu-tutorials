@@ -19,6 +19,11 @@
       "es2021",
       "dom"
     ],
+    "types": [
+      "dom-webcodecs",
+      "dom-mediacapture-transform"
+    ],
+    "skipLibCheck": true,
     "paths": {
       "core-js/es7/reflect": [
         "./node_modules/core-js/proposals/reflect-metadata"
