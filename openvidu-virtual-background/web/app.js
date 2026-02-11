@@ -68,7 +68,7 @@ function joinSession() {
 
         // --- 6) Get your own camera stream with the desired properties ---
 
-        var publisher = OV.initPublisher('video-container', {
+        publisher = OV.initPublisher('video-container', {
           audioSource: undefined, // The source of audio. If undefined default microphone
           videoSource: undefined, // The source of video. If undefined default webcam
           publishAudio: true,  	  // Whether you want to start publishing with your audio unmuted or not
@@ -83,8 +83,8 @@ function joinSession() {
 
         // When our HTML video has been added to DOM...
         publisher.on('videoElementCreated', function (event) {
-          initMainVideo(event.element, myUserName);
-          appendUserData(event.element, myUserName);
+          initMainVideo(publisher, myUserName);
+          appendUserData(event.element, publisher);
           event.element['muted'] = true;
         });
         // When our video has started playing...
@@ -134,6 +134,7 @@ async function applyBlur() {
   blockVirtualBackgroundButtons();
   if (!!virtualBackground) {
     await publisher.stream.removeFilter();
+    virtualBackground = undefined;
   }
   virtualBackground = await publisher.stream.applyFilter("VB:blur");
   blurVirtualBackgroundButtons();
@@ -143,8 +144,9 @@ async function applyImage() {
   blockVirtualBackgroundButtons();
   if (!!virtualBackground) {
     await publisher.stream.removeFilter();
+    virtualBackground = undefined;
   }
-  var url = !!backgroundImageUrl ? backgroundImageUrl : "https://raw.githubusercontent.com/OpenVidu/openvidu.io/master/img/vb/office.jpeg";
+  var url = !!backgroundImageUrl ? backgroundImageUrl : "https://images.unsplash.com/photo-1497366216548-37526070297c?w=640&h=480&fit=crop";
   virtualBackground = await publisher.stream.applyFilter("VB:image", { url: url });
   imageVirtualBackgroundButtons();
 }
@@ -152,7 +154,7 @@ async function applyImage() {
 async function modifyImage(radioBtnEvent) {
   if (!!virtualBackground && virtualBackground.type === "VB:image") {
     blockVirtualBackgroundButtons();
-    var imageUrl = "https://raw.githubusercontent.com/OpenVidu/openvidu.io/master/img/vb/" + radioBtnEvent.value;
+    var imageUrl = radioBtnEvent.dataset.url;
     if (backgroundImageUrl !== imageUrl) {
       await virtualBackground.execMethod("update", { url: imageUrl });
       backgroundImageUrl = imageUrl;
