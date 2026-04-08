@@ -29,7 +29,7 @@ jobs:
           node-version: '22'
       - name: Build OpenVidu Components Angular
         id: build
-        uses: OpenVidu/actions/build-openvidu-components-angular@0f5592e91f0dca4c62e7a3cf412a6c17cf432b6d # v1.0.4
+        uses: OpenVidu/actions/build-openvidu-components-angular@70a3934be074a1a5099349fe07cf2a7ae61ebd5d # v1.0.5
 
   build_and_start_tutorials:
     runs-on: ubuntu-latest
@@ -86,7 +86,7 @@ jobs:
             path: './openvidu-components-angular/openvidu-demo-app'
 
       - name: Setup OpenVidu Local Deployment
-        uses: OpenVidu/actions/start-openvidu-local-deployment@0f5592e91f0dca4c62e7a3cf412a6c17cf432b6d # v1.0.4
+        uses: OpenVidu/actions/start-openvidu-local-deployment@70a3934be074a1a5099349fe07cf2a7ae61ebd5d # v1.0.5
         with:
           ref-openvidu-local-deployment: "development"
           openvidu-edition: "community"
