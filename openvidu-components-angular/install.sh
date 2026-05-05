@@ -27,7 +27,7 @@ do
   pushd "$tutorial" || exit 1
 
   # rm package-lock.json
-  npm version 3.6.1
+  npm version 3.7.0
   npm i openvidu-components-angular@latest
   popd || exit 1
 
