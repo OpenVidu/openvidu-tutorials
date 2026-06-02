@@ -7,10 +7,11 @@ import {
 	OpenViduComponentsModule,
 } from 'openvidu-components-angular';
 import { NgClass } from '@angular/common';
+import { CdkDrag } from '@angular/cdk/drag-drop';
 
 @Component({
-    selector: 'app-root',
-    template: `
+	selector: 'app-root',
+	template: `
 		<!-- OpenVidu Video Conference Component -->
 		<ov-videoconference
 			[token]="token"
@@ -22,34 +23,38 @@ import { NgClass } from '@angular/common';
 				<div class="container">
 					<!-- Local Participant's Tracks -->
 					@for (track of localParticipant.tracks; track track) {
-					<div
-						class="item"
-						[ngClass]="{
-							hidden:
-								track.isAudioTrack && !track.participant.onlyHasAudioTracks
-						}"
-					>
-						<ov-stream [track]="track"></ov-stream>
-					</div>
+						<div
+							cdkDrag
+							cdkDragBoundary=".container"
+							[cdkDragDisabled]="!track.isMinimized"
+							class="item"
+							[ngClass]="{
+								hidden:
+									track.isAudioTrack && !track.participant.onlyHasAudioTracks,
+								minimized: track.isMinimized,
+							}"
+						>
+							<ov-stream [track]="track"></ov-stream>
+						</div>
 					}
 
 					<!-- Remote Participants' Tracks -->
 					@for (track of remoteParticipants | tracks; track track) {
-					<div
-						class="item"
-						[ngClass]="{
-							hidden:
-								track.isAudioTrack && !track.participant.onlyHasAudioTracks
-						}"
-					>
-						<ov-stream [track]="track"></ov-stream>
-					</div>
+						<div
+							class="item"
+							[ngClass]="{
+								hidden:
+									track.isAudioTrack && !track.participant.onlyHasAudioTracks,
+							}"
+						>
+							<ov-stream [track]="track"></ov-stream>
+						</div>
 					}
 				</div>
 			</div>
 		</ov-videoconference>
 	`,
-    styles: `
+	styles: `
 		.container {
 			display: flex;
 			flex-wrap: wrap;
@@ -63,8 +68,18 @@ import { NgClass } from '@angular/common';
 		.hidden {
 			display: none;
 		}
+		/* When the user clicks the minimize button on the local ov-stream,
+		   track.isMinimized becomes true: the video shrinks into a small
+		   floating box and becomes draggable (drag is disabled otherwise). */
+		.minimized {
+			flex: 0 0 auto;
+			width: 230px;
+			height: 130px;
+			z-index: 999;
+			cursor: move;
+		}
 	`,
-    imports: [OpenViduComponentsModule, NgClass]
+	imports: [OpenViduComponentsModule, NgClass, CdkDrag],
 })
 export class AppComponent implements OnInit, OnDestroy {
 	// For local development, leave these variables empty
@@ -84,7 +99,7 @@ export class AppComponent implements OnInit, OnDestroy {
 
 	constructor(
 		private httpClient: HttpClient,
-		private participantService: ParticipantService
+		private participantService: ParticipantService,
 	) {
 		this.configureUrls();
 	}
@@ -135,11 +150,9 @@ export class AppComponent implements OnInit, OnDestroy {
 			});
 
 		this.remoteParticipantsSubs =
-			this.participantService.remoteParticipants$.subscribe(
-				(participants) => {
-					this.remoteParticipants = participants;
-				}
-			);
+			this.participantService.remoteParticipants$.subscribe((participants) => {
+				this.remoteParticipants = participants;
+			});
 	}
 
 	// Function to get a token from the server
@@ -150,7 +163,7 @@ export class AppComponent implements OnInit, OnDestroy {
 				this.httpClient.post<any>(this.APPLICATION_SERVER_URL + 'token', {
 					roomName,
 					participantName,
-				})
+				}),
 			);
 		} catch (error: any) {
 			// Handle errors, e.g., if the server is not reachable
