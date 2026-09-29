@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Version to set in every tutorial, e.g. ./install.sh 3.9.0
+VERSION="${1:?Usage: ./install.sh <version>}"
+
 TUTORIALS=(
   'openvidu-additional-panels'
   'openvidu-admin-dashboard'
@@ -27,7 +30,7 @@ do
   pushd "$tutorial" || exit 1
 
   # rm package-lock.json
-  npm version 3.7.0
+  npm version "$VERSION" --no-git-tag-version --allow-same-version
   npm i openvidu-components-angular@latest
   popd || exit 1
 
