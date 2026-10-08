@@ -30,7 +30,7 @@ jobs:
 
       - name: Build OpenVidu Components Angular
         id: build
-        uses: OpenVidu/actions/build-openvidu-components-angular@070fb73fda8fe7a08e28991b1c2d276f12a009ef # v1.0.22
+        uses: OpenVidu/actions/build-openvidu-components-angular@41526ed83a611649aa1cddc11cd58ec1e88c859e # v1.0.23
 
   build_and_start_tutorials:
     runs-on: ubuntu-latest
@@ -47,7 +47,7 @@ jobs:
         node-version: '22'
 
     - name: Install safe-chain
-      uses: OpenVidu/actions/install-safe-chain@070fb73fda8fe7a08e28991b1c2d276f12a009ef # v1.0.22
+      uses: OpenVidu/actions/install-safe-chain@41526ed83a611649aa1cddc11cd58ec1e88c859e # v1.0.23
 
     # Download artifact if built from source - place it in the parent directory
     - name: Download OpenVidu Components Angular package
@@ -82,7 +82,7 @@ jobs:
           node-version: '22'
 
       - name: Install safe-chain
-        uses: OpenVidu/actions/install-safe-chain@070fb73fda8fe7a08e28991b1c2d276f12a009ef # v1.0.22
+        uses: OpenVidu/actions/install-safe-chain@41526ed83a611649aa1cddc11cd58ec1e88c859e # v1.0.23
 
       # Download artifact if built from source
       - name: Download OpenVidu Components Angular package
@@ -93,7 +93,7 @@ jobs:
             path: './openvidu-components-angular/openvidu-demo-app'
 
       - name: Setup OpenVidu Local Deployment
-        uses: OpenVidu/actions/start-openvidu-local-deployment@070fb73fda8fe7a08e28991b1c2d276f12a009ef # v1.0.22
+        uses: OpenVidu/actions/start-openvidu-local-deployment@41526ed83a611649aa1cddc11cd58ec1e88c859e # v1.0.23
         with:
           ref-openvidu-local-deployment: "development"
           openvidu-edition: "community"
